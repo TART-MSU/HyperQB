@@ -53,7 +53,7 @@ To execute the experiments, execute corresponding run_<case_name>.sh script.
 
 ## People
 Authors:
-- [Tzu-Han Hsu](https://tzuhancs.github.io/){:target="_blank"}, Michigan State University. 
-- [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/){:target="_blank"}, Michigan State University.
-- [César Sánchez](https://software.imdea.org/~cesar/){:target="_blank"}, IMDEA Software Institute.
+- [Tzu-Han Hsu](https://tzuhancs.github.io/), Michigan State University. 
+- [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University.
+- [César Sánchez](https://software.imdea.org/~cesar/), IMDEA Software Institute.
 
