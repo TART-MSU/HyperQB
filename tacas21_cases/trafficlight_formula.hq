@@ -1,0 +1,1 @@
+exists x. exists y. F(*time[x] = time[y]* \/ ewGreen[x] <-> nsRed[y] ) /\ G~(ewGreen[x] <-> nsGreen[y])

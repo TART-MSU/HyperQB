@@ -1,0 +1,297 @@
+--
+-- // SNARK structure (with some accelerations):
+-- // 0   ------- STAND BY: could go to line:1/ line:10/ line:19
+-- // 	  popRight() starts:
+-- // 1   - getRightHat as rh
+-- // 2		- getLeftHat as lh
+-- // 3		- if (rh is self-pointing) return assign popRight_FAIL
+-- // 4 	- else if (rh equals lh)
+-- // 5			DCAS (RightHat, LeftHat, rh, lh, Dummy, Dummy)
+-- // 6			assign pop_result as rh->V
+-- // 7		- else  assign rhl as rh->L
+-- // 8				DCAS (RightHat, rh->L, rh, rhL, rhL, rh)
+-- // 9				assign popRight_result as rh->V, assign rh->R as DUMMY
+-- //     pushRight() starts:
+-- // 10    - assing nd as Y --> if null, return pushRight_FAIL
+-- // 11		- assign nd->R as Dummy,assign nd-> V as something (zero for now)
+-- // 12		- assign rh as RightHat, assign rhR as rh->R
+-- // 13		if (rh == rhR), assign nd -> L = Dummy, assign lh = LeftHat
+-- // 14			 DCAS (RightHat, LeftHat, rh, lh, nd, nd)
+-- // 15			 return pushRight_SUCCESS
+-- // 16		else   assign nd->L as rh
+-- // 17			   DCAS(RightHat, rh->R, rh, rhR, nd, nd)
+-- // 18			   return pushRight_SUCCESS
+-- //  	  popLeft() starts:
+-- // 19		- assign lh as LeftHat, assign rh as RightHat
+-- // 20		- if (lh is self-pointing), return assign popLeft_FAIL
+-- // 21		- else if (lh == rh)
+-- // 22				DCAS (LeftHat, RightHat, lh, rh, Dummy, Dummy)
+-- // 23				assign popLeft_result as lh -> V
+-- // 24		- else  assign lhR as lh->R
+-- // 25				DCAS (LeftHat, lh->R, lh, lhR, lfR, lh)
+-- // 26				assign popLeft_result as lh->V, assign lh_L as DDUMMY
+
+
+--  NODE ID: DUMMY=0 x=1, y=2, z=3
+--  Each node has three data:[leftpointer, value, rightpointer]
+
+MODULE main
+VAR
+	-- RightHat: array 0..1 of 0..2;
+	-- LeftHat:  array 0..1 of 0..2;
+	RightHat: 0..3; -- could be DUNNY, x, y, or z
+	LeftHat: 0..3; -- could be DUMMY, x, y, or z
+	AllNodes: array 0..3 of array 0..1 of 0..3; -- store X,Y,Z and their pointers, ignore DUMMY
+
+	First_ProcID: 1..3;
+	Second_ProcID: 1..3;
+	Third_ProcID: 1..3;
+
+	--- ('process' is problmatic)
+	-- proc1: process SNARK(RightHat, LeftHat, AllNodes);
+	-- proc2: process SNARK(RightHat, LeftHat, AllNodes);
+
+	-- with
+	proc1: SNARK(LeftHat, RightHat, AllNodes, First_ProcID);
+	proc2: SNARK(LeftHat, RightHat, AllNodes, Second_ProcID);
+	proc3: SNARK(LeftHat, RightHat, AllNodes, Third_ProcID);
+
+	GlobalQueue: Queue(LeftHat, RightHat, AllNodes, proc1, proc2, proc3);
+
+	ASSIGN
+
+		init(First_ProcID) 	:= 1;
+		init(Second_ProcID) := 2;
+		init(Third_ProcID) := 3;
+		next(First_ProcID)	:= First_ProcID;
+		next(Second_ProcID)	:= Second_ProcID;
+		next(Third_ProcID)	:= Third_ProcID;
+
+	--  NODE ID: DUMMY=0 x=1, y=2, z=3
+
+		-- EMPTY QUEUE --
+		-- init(RightHat) := 0;
+		-- init(LeftHat) := 0;
+		-- init(AllNodes[0][0]) := 0;
+		-- init(AllNodes[0][1]) := 0; -- X
+		-- init(AllNodes[1][0]) := 1;
+		-- init(AllNodes[1][1]) := 1; -- Y
+		-- init(AllNodes[2][0]) := 2;
+		-- init(AllNodes[2][1]) := 2; -- Z
+
+		-- -- if [DUMMY ---  X --- DUMMY]
+		-- init(RightHat) := 1;
+		-- init(LeftHat) := 1;
+		-- init(AllNodes[0][0]) := 0;
+		-- init(AllNodes[0][1]) := 0; -- DUMMY
+		-- init(AllNodes[1][0]) := 0;
+		-- init(AllNodes[1][1]) := 0; -- X
+		-- init(AllNodes[2][0]) := 2;
+		-- init(AllNodes[2][1]) := 2; -- Y
+
+
+		-- -- if [DUMMY ---  X -- Y --- DUMMY] (BUG2)
+		init(RightHat) := 2;
+		init(LeftHat) := 1;
+		init(AllNodes[0][0]) := 0;
+		init(AllNodes[0][1]) := 0; -- DUMMY
+		init(AllNodes[1][0]) := 0;
+		init(AllNodes[1][1]) := 2; -- X
+		init(AllNodes[2][0]) := 1;
+		init(AllNodes[2][1]) := 0; -- Y
+		init(AllNodes[3][0]) := 1;
+		init(AllNodes[3][1]) := 0; -- Y
+
+
+		MODULE Queue(LeftHat, RightHat, AllNodes, proc1, proc2, proc3)
+		-- CHANGING GLOBAL VARIABLEs
+
+		VAR
+			newnode : 0..3; -- for push right
+			popRightFAIL: boolean;
+			temp_popRightFAIL:  boolean;
+
+
+		ASSIGN
+			init(newnode) := 3;
+			next(newnode) := newnode;
+
+			-- for delaying return
+			init(temp_popRightFAIL) := FALSE;
+			next(temp_popRightFAIL) :=
+				case
+					((proc1.line=1) & (RightHat = 0)) : TRUE;
+					((proc2.line=1) & (RightHat = 0)) : TRUE;
+					((proc3.line=1) & (RightHat = 0)) : TRUE;
+					TRUE: temp_popRightFAIL;
+				esac;
+
+
+			-- to cehck, use GlobalQueue-popRightFAIL[tid]
+			init(popRightFAIL) := FALSE;
+			next(popRightFAIL) :=
+				case
+					((proc1.line=3) & (temp_popRightFAIL)) : TRUE;
+					((proc2.line=3) & (temp_popRightFAIL)) : TRUE;
+					((proc3.line=3) & (temp_popRightFAIL)) : TRUE;
+					TRUE: popRightFAIL;
+				esac;
+
+			next(RightHat) :=
+				case
+					BOTH_MODIFYING : RightHat;
+					-- popRight
+					((proc1.line=1) & (RightHat = 2)) : 1;
+					((proc1.line=1) & (RightHat = 1)) : 0;
+					-- pushRight
+					(proc1.line=4) : 2;
+					-- popLeft
+					((proc1.line=7) & (RightHat = 1)) : 0;
+					((proc1.line=7) & (RightHat = 2)) : 1;
+
+					-- popRight
+					((proc2.line=1) & (RightHat = 2)) : 1;
+					((proc2.line=1) & (RightHat = 1)) : 0;
+					-- pushRight
+					(proc2.line=4) : 2;
+					-- popLeft
+					((proc2.line=7) & (RightHat = 1)) : 0;
+					((proc2.line=7) & (RightHat = 2)) : 1;
+
+					-- popRight
+					((proc3.line=1) & (RightHat = 2)) : 1;
+					((proc3.line=1) & (RightHat = 1)) : 0;
+					-- pushRight
+					(proc3.line=4) : 2;
+					-- popLeft
+					((proc3.line=7) & (RightHat = 1)) : 0;
+					((proc3.line=7) & (RightHat = 2)) : 1;
+					TRUE: RightHat;
+				esac;
+
+			next(LeftHat) :=
+				case
+					BOTH_MODIFYING : LeftHat;
+					-- popRight
+					((proc1.line=1) & (LeftHat = 1)) : 0;
+					-- pushRight
+					-- popLeft
+					((proc1.line=7) & (RightHat = 1)) : 2;
+
+
+					-- popRight
+					((proc2.line=1) & (LeftHat = 1)) : 0;
+					-- pushRight
+					-- popLeft
+					((proc2.line=7) & (RightHat = 1)) : 2;
+
+					-- popRight
+					((proc3.line=1) & (LeftHat = 1)) : 0;
+					-- pushRight
+					-- popLeft
+					((proc3.line=7) & (RightHat = 1)) : 2;
+					TRUE: LeftHat;
+				esac;
+
+				--- GLOBAL variables for double-ended queue
+				next(AllNodes[0][0]) := AllNodes[0][0]; -- DUMMY
+				next(AllNodes[0][1]) := AllNodes[0][1]; -- DUMMY
+
+				-- X -> L
+				next(AllNodes[1][0]) :=
+					case
+						TRUE: AllNodes[1][0];
+					esac;
+
+				-- X -> R
+				next(AllNodes[1][1]) :=
+					case
+						BOTH_MODIFYING : AllNodes[1][1];
+						((proc1.line=1) & (RightHat=1)): 1;
+						((proc1.line=4) & (RightHat=1)): 2; -- push y
+						((proc1.line=7) & (LeftHat=1)): 1;
+
+						((proc2.line=1) & (RightHat=1)): 1;
+						((proc2.line=4) & (RightHat=1)): 2; -- push y
+						((proc2.line=7) & (LeftHat=1)): 1;
+
+						((proc3.line=1) & (RightHat=1)): 1;
+						((proc3.line=4) & (RightHat=1)): 2; -- push y
+						((proc3.line=7) & (LeftHat=1)): 1;
+						TRUE: AllNodes[1][1];
+					esac;
+
+				-- Y -> L
+				next(AllNodes[2][0]) :=
+					case
+						BOTH_MODIFYING : AllNodes[2][0];
+						((proc1.line=1) & (RightHat=2)): 2;
+						((proc1.line=4) & (RightHat=1)): 1;
+						((proc1.line=7) & (LeftHat=1)) : 0;
+
+						((proc2.line=1) & (RightHat=2)): 2;
+						((proc2.line=4) & (RightHat=1)): 1;
+						((proc2.line=7) & (LeftHat=1)) : 0;
+
+						((proc3.line=1) & (RightHat=2)): 2;
+						((proc3.line=4) & (RightHat=1)): 1;
+						((proc3.line=7) & (LeftHat=1)) : 0;
+						TRUE: AllNodes[2][0];
+					esac;
+
+				-- Y -> R
+				next(AllNodes[2][1]) :=
+					case
+						BOTH_MODIFYING : AllNodes[2][1];
+					 	((proc1.line=4) & (RightHat=1)): 0;
+						((proc2.line=4) & (RightHat=1)): 0;
+						((proc3.line=4) & (RightHat=1)): 0;
+						TRUE: AllNodes[2][1];
+					esac;
+
+
+				next(AllNodes[3][0]) := AllNodes[3][0]; -- ZL
+				next(AllNodes[3][1]) := AllNodes[3][1]; -- ZR
+
+				DEFINE
+					BOTH_MODIFYING := (proc1.modifying & proc2.modifying); --?
+
+
+
+
+MODULE SNARK(LeftHat, RightHat, AllNodes, ProcID)
+VAR
+	line: 0..9;
+
+ASSIGN
+	init(line) := 0;
+
+	-- FUNCTIONS
+	next(line) :=
+		case
+			(line=0 & ProcID=1)  : {1}; 		-- STAND BY: could go to line:1/ line:4/ line:7
+			(line=0 & ProcID=2)  : {4}; 		-- STAND BY: could go to line:1/ line:4/ line:7
+			(line=1)  : {2}; -- popRight() starts, changing nodes
+			(line=2 & LeftHat=1 & RightHat=1)  : {2,3}; -- wait
+			(line=2 & LeftHat=1 & RightHat=2)  : {2,3}; -- wait
+			-- (line=2)  : {2,3}; -- wait -- this is super slow
+			(line=3)  : {0}; -- popRight() Return, End
+			(line=4)  : {5}; -- pushRight() starts, changing nodes
+			(line=5) 	: {5,7}; -- wait
+			-- (line=6)  : {0}; -- pushRight End
+			(line=7)  : {8}; -- popLeftt() starts, changing nodes
+			(line=8 & LeftHat=1 & RightHat=1) : {8,0};
+			(line=8 & LeftHat=2 & RightHat=2) : {8,0};
+			-- (line=8)  : {8,0}; -- wait -- this is super slow
+			-- (line=9)  : {0}; -- pushRight End
+			TRUE: line; -- default case
+		esac;
+
+DEFINE
+	popRightSTART 	:= line=1 | line=2 | line=3;
+	popRightEND 		:= line=0 ;
+	pushRightSTART	:= line=4 | line=5;
+	pushRightEND		:= line=0 ;
+	popLeftSTART		:= line=7 | line=8;
+	popLeftEND			:= line=0 ;
+	modifying				:= line=1 | line=4| line=7;

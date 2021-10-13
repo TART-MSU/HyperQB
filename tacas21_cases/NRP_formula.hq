@@ -1,0 +1,3 @@
+exists A. forall B. (F*line[A]=3* /\ F*line[A]=5* /\ F*line[A]=6* ) /\
+( (G(*sender_actions[A]=sender_actions[B]*)) -> ((F(*line[B]=5*))<-> (F(*line[B]=6*))) ) /\
+( (G(*receiver_actions[A]=receiver_actions[B]*)) -> ((F(*line[B]=5*))<-> (F(*line[B]=6*))) )
