@@ -34,7 +34,7 @@ To observe the tool outputs, all model checking with counter example will output
 
 
 
-### CASES SET from TACAS 2021 paper ###
+## Experiments from TACAS 2021 paper 
 (In directory tacas21_cases)
 
 Our evaluations include the following cases,<br/>
@@ -50,4 +50,10 @@ Outputs evaluations and BMC analysis can be found in section 6.
 
 To execute the experiments, execute corresponding run_<case_name>.sh script.
 
+
+## People
+Authors:
+- [Tzu-Han Hsu](https://tzuhancs.github.io/), Michigan State University. 
+- [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University.
+- [César Sánchez](https://software.imdea.org/~cesar/), IMDEA Software Institute.
 
