@@ -39,7 +39,7 @@ We provide two examples. To run, execute the following:
 - git clone https://github.com/TART-MSU/HyperQube.git
 - cd HyperQube 
 - ./hyperqube.sh bakery.smv symmetry 10 pes
-- ./hyperqube.sh SNARK_conc.smv  SNARK_seq.smv linearizability 10 pes 
+- ./hyperqube.sh SNARK_conc.smv  SNARK_seq.smv linearizability 18 pes 
 
 
 ### CASES SET from TACAS 2021 paper ###
