@@ -54,7 +54,7 @@ Our evaluations include the following cases,<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
  
 
-To execute the experiments, execute corresponding run_<case_name>.sh script.
+To execute the experiments, execute corresponding code blocks in tacas21_cases.sh script.
 
 
 ## People
