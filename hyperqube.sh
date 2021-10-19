@@ -386,11 +386,11 @@ fi
 
 echo "parsing into readable format..."
 # # echo "---Counterexample Mapping---"
-javac ${MAP}.java
-java ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+# javac ${MAP}.java
+java ${MAP}.java ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
 
-javac ${PARSE_BOOL}.java
-java ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
+# javac ${PARSE_BOOL}.java
+java ${PARSE_BOOL}.java ${MAP_OUT2} ${PARSE_OUT}
 # echo  "(under condtruction...)"
 # python3 ${PARSE_OUTPUT} ${MAP_OUT2} ${PARSE_OUT} ${k}
 # #by time
