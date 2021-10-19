@@ -42,17 +42,23 @@ We provide two examples. To run, execute the following:
 - ```./hyperqube.sh SNARK_conc.smv  SNARK_seq.smv linearizability 18 pes ```
 
 
-### CASES SET from TACAS 2021 paper ###
+## Experiments from TACAS 2021 paper 
 (In directory tacas21_cases)
 
 Our evaluations include the following cases,<br/>
-	Case #0.1-#1.4:	Symmetry in the Bakery Algorithm<br/>
-	Case #2.1-#2.2:	Linearizability in SNARK Algorithm<br/>
-	Case #3.1-#3.2:	Non-interference in Typed Multi-threaded Programs<br/>
-	Case #4.1-#4.2:	Fairness in Non-repudiation Protocols<br/>
-	Case #5.1-#5.2:	Privacy-Preserving Path Synthesis for Robots<br/>
-	Case #6.1:	Mutant Synthesis for Mutation Testing<br/>
+- Case #0.1-#1.4: Symmetry in the Bakery Algorithm<br/>
+- Case #2.1-#2.2: Linearizability in SNARK Algorithm<br/>
+- Case #3.1-#3.2: Non-interference in Typed Multi-threaded Programs<br/>
+- Case #4.1-#4.2: Fairness in Non-repudiation Protocols<br/>
+- Case #5.1-#5.2: Privacy-Preserving Path Synthesis for Robots<br/>
+- Case #6.1: Mutant Synthesis for Mutation Testing<br/>
+ 
 
-To execute the experiments, execute corresponding blocks in tacas21_cases.sh scripts.
+To execute the experiments, execute corresponding run_<case_name>.sh script.
 
 
+## People
+Authors:
+- [Tzu-Han Hsu](https://tzuhancs.github.io/), Michigan State University. 
+- [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University.
+- [César Sánchez](https://software.imdea.org/~cesar/), IMDEA Software Institute.
