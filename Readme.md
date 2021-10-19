@@ -23,10 +23,10 @@ We have our source code all compiled as executable files which are placed in fol
 To run HyperQube, execute hyperqube.sh with two scenarios:
 
    1. BMC with single model:<br/>
-	$ hyperqube.sh <model_file_name.smv> <formula_file_name.hq> <k> <br/>
+	$ ```hyperqube.sh <model_file_name.smv> <formula_file_name.hq> <k> ```
 
    2. BMC with multi-model:<br/>
-	$ hyperqube.sh <model_1_file_name.smv> <model_2_file_name.smv> <formula_file_name.hq> <k> <br/>
+	$ ```hyperqube.sh <model_1_file_name.smv> <model_2_file_name.smv> <formula_file_name.hq> <k>```
 
 Note that <k> is a natural number specifies the length of unrolling.
 
