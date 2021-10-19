@@ -6,11 +6,11 @@ HyperQube is a home-grown tool of Bounded Model Checking for Hyperproperties.
 Hyperproperty specifies and reasons about important requirements among multiple traces. 
 We implement our algorithm for Bounded Model Checking for Hyperproperty as a tool, HyperQube.
 
-HyperQube includes the following parts: <br/>
-	1. NuSMV model parsing and Boolean encoding of transition relation and specification,<br/>
-	2. HyperLTL formula translation, <br/>
-	2. QBF encoding of unfolding with bound k using specific semantics, <br/>
-	3. QBF solving with QBF solver QuAbs.  
+HyperQube includes three parts: 
+- NuSMV model parsing and Boolean encoding of transition relation and specification,
+- HyperLTL formula translation, 
+- QBF encoding of unfolding with bound k using specific semantics, 
+- QBF solving with QBF solver QuAbs.  
 	
 Our code is under MIT license as presented in License.tex, 
 while the existing tool, QuAbs, is under AGPL license.  
@@ -18,9 +18,9 @@ while the existing tool, QuAbs, is under AGPL license.
 
 
 ## HOW TO USE 
-We have our source code all compiled as executable files which are placed in folder exec/
+We have our source code all compiled as executable files.
 
-To run HyperQube, execute hyperqube.sh with two scenarios:
+To run HyperQube, execute ```hyperqube.sh``` with one of the following two scenarios:
 
    1. BMC with single model:<br/>
 	$ ```hyperqube.sh <model_file_name.smv> <formula_file_name.hq> <k> ```
