@@ -231,7 +231,7 @@ def binary_eq(var_l, var_r):
 def binary_assign(var, num):
 	num_bits = bitblasting_dict[var[0]]
 	if (num > (2**(num_bits))):
-		print("[ !!! HyperQube error: variable ", var[0], " is assigned a value that is out of the bound of its definition in the NuSMV model." ) 
+		print("[ !!! HyperQube error: variable ", var[0], " is assigned a value that is out of the bound of its definition in the NuSMV model." )
 		quit()
 	binary = format(num, '0'+str(num_bits)+'b').replace("0b", "")
 	result = []
@@ -314,13 +314,23 @@ print("\n[ success! SMV model accepted. ]")
 # print("FSM Model info:")
 print("\n============ Parse SMV Model ============")
 state_variables = list(enc.stateVars)
-print("All state variables: ", state_variables)
+
+print("All variables: ")
+print("state variables: ", state_variables)
+defined_variables = list(enc.definedVars)
+print("defined variables: ", defined_variables)
+
+valid_variables = state_variables + defined_variables
+# print(valid_varaibles)
+
+
 num_states = fsm.count_states(fsm.reachable_states)
 print("Total number of reachable states: ", num_states)
 # inputs = list(enc.inputsVars)
 # print("input variables", inputs)
 # atomics = list(enc.definedVars)
 # print("atomic propositions", atomics)
+
 
 
 
@@ -513,15 +523,14 @@ text = text.replace("!","~")
 
 
 ## checking if all are valid symbol
-# print("???????????????????????????????????????checking")
-all_vars = re.findall("[a-z0-9\w]+\[", text)
+all_vars = re.findall("[a-z0-9\w-]+\[", text)
 # print(all_vars)
 for var in all_vars:
 	var = var.replace("[","")
-	if(var not in state_variables):
+	if(var not in valid_variables ):
 		print("[ !!! HyperQube error: the variable: ", var, ", is not a valid variable. ]")
-		print("the valid varialbes are:")
-		print(state_variables)
+		print("All valid varialbes include state and defined vars are:")
+		print(valid_variables)
 		quit()
 
 
