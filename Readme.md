@@ -24,13 +24,14 @@ To run HyperQube, execute hyperqube.sh with two scenarios:
 
    1. BMC with single model:<br/>
 	$ hyperqube.sh <model_file_name.smv> <formula_file_name.hq> <k> <br/>
+
    2. BMC with multi-model:<br/>
 	$ hyperqube.sh <model_1_file_name.smv> <model_2_file_name.smv> <formula_file_name.hq> <k> <br/>
 
 Note that <k> is a natural number specifies the length of unrolling.
 
 
-To observe the tool outputs, all model checking with counter example will output as *_OUTPUT_formatted.cex files in the directory: HyperQube_output/. The parsed outputs have variables, time stamps, and values neatly presented.
+To observe the tool outputs, all model checking with counter example will output as *_OUTPUT_formatted.cex file. The parsed outputs have variables, time stamps, and values neatly presented.
 
 
 
@@ -45,9 +46,6 @@ Our evaluations include the following cases,<br/>
 	Case #5.1-#5.2:	Privacy-Preserving Path Synthesis for Robots<br/>
 	Case #6.1:	Mutant Synthesis for Mutation Testing<br/>
 
-In out paper, the detailed case studies decription can be found in section 5.
-Outputs evaluations and BMC analysis can be found in section 6. 
-
-To execute the experiments, execute corresponding run_<case_name>.sh script.
+To execute the experiments, execute corresponding blocks in tacas21_cases.sh scripts.
 
 
