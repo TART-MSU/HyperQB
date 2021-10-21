@@ -48,7 +48,7 @@ We provide two demo examples. To run, execute each of the followings:
 
 
 
-## Experiments from TACAS 2021 paper
+## Experiments
 (all models and formulas are in directory tacas21_cases)
 
 Our evaluations include the following cases,<br/>
