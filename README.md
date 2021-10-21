@@ -35,7 +35,7 @@ To observe the tool outputs, all model checking results with counterexample will
 ## GET STARTED
 You can start using HyperQube in 2 simple steps:		
 	
-1. First make sure DOCKER is installed: https://docs.docker.com/get-docker/
+1. First make sure DOCKER is installed from: https://docs.docker.com/get-docker/ . HyperQube will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies.
 2. Next, clone the repository and step into the repo:
 - ```git clone https://github.com/TART-MSU/HyperQube.git```
 - ```cd HyperQube```
