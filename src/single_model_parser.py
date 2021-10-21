@@ -348,7 +348,7 @@ for line in lines:
 		line = line.split("--", 1)[0].replace("\t","") #remove comments
 
 		if(not line.replace(" ","")):
-			print("")
+			print()
 		# print(line)
 		elif (line): # if it's not empty
 			key = re.findall(".*:", line)[0].replace(":","")
@@ -524,10 +524,10 @@ text = text.replace("!","~")
 
 ## checking if all are valid symbol
 all_vars = re.findall("[\.a-z0-9\w-]+\[", text)
-print(all_vars)
+# print(all_vars)
 for var in all_vars:
 	var = var.replace("[","")
-	print(var)
+	# print(var)
 	if(var not in valid_variables ):
 		print("[ !!! HyperQube error: the variable: ", var, ", is not a valid variable. ]")
 		print("All valid varialbes include state and defined vars are:")

@@ -1,0 +1,293 @@
+-- Each node [leftpointer, node, rightpointer]
+--
+-- 0: standby
+-- 1: local_popR() start (go to 2)
+-- 2. local_popR_rh = RightHat (go to 3)
+-- 3. local_popR_lh = LeftHat (go to 4)
+-- 4. if(node[local_popR_rh][2] = local_popR_rh) (goto 5, else goto 6.)
+-- 5.   Return empty (goto local_popR end.)
+-- 6. if(local_popR_rh = local_popR_lh) (goto 7, else goto 9)
+-- 7. If DCAS goto 8, else goto local_popR end
+-- 8. RightHat =  popped node local_popR end
+-- 9. local_popR_rhL =node[local_popR_rh][0] goto 10
+-- 10. If DCAS, then goto 11
+-- 11. node[RightHat][2] =Dummy goto 12
+-- 12  return popped node. Go to local_popR end
+-- 13. local_popRend , goto 0.
+--
+-- 16. pushRight() start (go to 17)
+-- 17. pushRight_newnode = newnode
+-- 18. If FULL (goto 31), (else, goto 19)
+-- 19. node[newnode][2]=Dummy(goto 20)
+-- 20. node[newnode][1]=newnode (goto 21)
+-- 21. pushRight_rh =RightHat (goto 22)
+-- 22. pushRight_rhR= node[rh][2] (goto 23)
+-- 23. if (pushRight_rh = pushRight_rhR) (goto 24)(go to 28)
+-- 24. node[nd][0] = Dummy (go to 25)
+-- 25. pushRight_lh = LeftHat (go to 26)
+-- 26. If DCAS (go to 27)
+-- 27. Return push right success (go to 31)
+-- 28. node[nd][0] = pushRight_rh
+-- 29. If DCAS (goto 30)
+-- 30. Return success (GOTO 31)
+-- 31. pushRightEnd
+
+---  NODE ID: x=1, y=2, z=3
+
+MODULE main
+VAR
+	RightHat: array 0..2 of 0..2;
+	LeftHat:  array 0..2 of 0..2;
+	node_data: array 0..2 of array 0..2 of 0..2; -- store X,Y,Z and their pointers
+
+	proc1: process SNARK(RightHat, LeftHat, node_data);
+	proc2: process SNARK(RightHat, LeftHat, node_data);
+
+	ASSIGN
+		init(node_data[0][0]) := 0;
+		init(node_data[0][1]) := 0;
+		init(node_data[0][2]) := 0; -- DUMMY
+		init(node_data[1][0]) := 1;
+		init(node_data[1][1]) := 1;
+		init(node_data[1][2]) := 1; -- X
+		init(node_data[2][0]) := 2;
+		init(node_data[2][1]) := 2;
+		init(node_data[2][2]) := 2; -- Y
+		-- init(node_data[3][0]) := 3;
+		-- init(node_data[3][1]) := 3;
+		-- init(node_data[3][2]) := 3; -- Z
+
+		--- GLOBAL variables for double-ended queue
+		next(node_data[0][0]) := node_data[0][0];
+		next(node_data[0][1]) := node_data[0][1];
+		next(node_data[0][2]) := node_data[0][2];
+
+		next(node_data[1][0]) := node_data[1][0];
+		next(node_data[1][1]) := node_data[1][1];
+		next(node_data[1][2]) := node_data[1][2];
+
+		next(node_data[2][0]) := node_data[2][0];
+		next(node_data[2][1]) := node_data[2][1];
+		next(node_data[2][2]) := node_data[2][2];
+
+		-- next(node_data[3][0]) := node_data[3][0];
+		-- next(node_data[3][1]) := node_data[3][1];
+		-- next(node_data[3][2]) := node_data[3][2];
+
+		init(RightHat[0]) := 0;
+		init(RightHat[1]) := 0;
+		init(RightHat[2]) := 0;
+		init(LeftHat[0]) := 0;
+		init(LeftHat[1]) := 0;
+		init(LeftHat[2]) := 0;
+
+		next(RightHat[0]) :=
+			case
+				TRUE : RightHat[0];	-- default case
+			esac;
+		next(RightHat[1]) :=
+			case
+				TRUE : RightHat[1];	-- default case
+			esac;
+		next(RightHat[2]) :=
+			case
+				TRUE : RightHat[2];	-- default case
+			esac;
+		next(LeftHat[0]) :=
+			case
+				TRUE : LeftHat[0];	-- default case
+			esac;
+		next(LeftHat[1]) :=
+			case
+				TRUE : LeftHat[1];	-- default case
+			esac;
+		next(LeftHat[2]) :=
+			case
+				TRUE : LeftHat[2];	-- default case
+			esac;
+
+
+MODULE SNARK(LeftHat, RightHat, node_data)
+VAR
+	line: 0..30;
+	-- popRight local variables
+	local_popR_RH: 0..2;
+	local_popR_LH: 0..2;
+	local_popR_RHL: 0..2;
+	local_popR_return_empty: boolean;
+
+	-- pushRight local variables
+	local_pushR_newnode: array 0..2 of 0..2;
+	local_pushR_RH: 0..2;
+	local_pushR_RHR: 0..2;
+	local_pushR_LH: 0..2;
+
+
+
+ASSIGN
+
+	init(line) := 0;
+
+	-- popRight local
+	init(local_popR_RH) := 0;
+	init(local_popR_LH) := 0;
+	init(local_popR_RHL) := 0;
+	init(local_popR_return_empty):= FALSE;
+
+	--pushRight local
+	init(local_pushR_newnode[0]) := 0;
+	init(local_pushR_newnode[1]) := 0;
+	init(local_pushR_newnode[2]) := 0;
+	init(local_pushR_LH):= 0;
+	init(local_pushR_RH) := 0;
+	init(local_pushR_RHR) := 0;
+
+
+
+
+	next(RightHat[0]) :=
+		case
+			TRUE : RightHat[0];	-- default case
+		esac;
+	next(RightHat[1]) :=
+		case
+			(line=7) : 0; -- set to Dummy
+			(line=10) : local_popR_RHL; -- set to rhL
+			(line=25) : local_pushR_newnode[1];
+			TRUE : RightHat[1];	-- default case
+		esac;
+	next(RightHat[2]) :=
+		case
+			(line=11) : 0; -- dummy
+			TRUE : RightHat[2];	-- default case
+		esac;
+
+	next(LeftHat[0]) := LeftHat[0];
+	next(LeftHat[1]) :=
+		case
+			(line=25) : local_pushR_newnode[1];
+			TRUE : LeftHat[1];
+		esac;
+	next(LeftHat[2]) := LeftHat[2];
+
+
+	-- FUNTIONS
+	next(line) :=
+		case
+			-- popRIGHT()
+			(line=0)  : {1,16}; -- choose to popRight or pushRight
+			(line=1)  : {2}; -- flag to START
+			(line=2)  : {3};
+			(line=3)  : {4};
+			(line=4 & (node_data[local_popR_RH][2] = local_popR_RH))  : {5};
+			(line=5) 	: {13}; -- return empty, END
+			(line=4 & !(node_data[local_popR_RH][2] = local_popR_RH))  : {6};
+			(line=6 & (local_popR_RH = local_popR_LH))  : {7};
+			(line=7)  : {8};  -- DCAS &RightHat, &LeftHat, rh, lh, Dummy, Dummy
+			(line=8)  : {13}; -- return popRight_rh, END
+			(line=9)  : {10}; -- RHL = node[popRight_rh][0]
+			(line=10) : {11}; -- DCAS (&RightHat, &rh->L, rh, rhL, rhL, rh)
+			(line=11) : {12}; -- node[RightHat][2] =Dummy --???
+			(line=12) : {13}; -- return popRight_rh, END
+			(line=13) : {0};
+			-- pushRIGHT
+			(line=16)  : {17}; -- pushRIght start
+			(line=17)  : {18}; --
+			(line=18)  : {19}; -- if FULL(todo)
+			(line=19)  : {20}; -- new->R is dummy
+			(line=20)  : {21}; -- rh = RightHat
+			(line=21)  : {22}; -- rhr = node[rh][2]
+			(line=22 & (local_pushR_RH = local_pushR_RHR))  : {23};
+			(line=23)  : {24}; -- node[new][0] = 0
+			(line=24)  : {25}; -- lh = LeftHat
+			(line=25)  : {26}; -- DCAS (&RightHat, &LeftHat, rh, lh, nd, nd))
+			(line=26)  : {30}; -- success, END
+			(line=22 & (local_pushR_RH = local_pushR_RHR))  : {27};
+			(line=27)  : {28}; -- node[nd][0] = rh
+			(line=28)  : {29}; -- DCAS  (DCAS(&RightHat, &rh->R, rh, rhR, nd, nd))
+			(line=29)  : {30}; -- SUCCESS
+			(line=30)  : {0};
+			TRUE: line; -- default case
+		esac;
+
+		-- local_popR local variables
+		next(local_popR_RH) :=
+			case
+				(line=2) : RightHat[1];
+				TRUE : local_popR_RH;	-- default case
+			esac;
+
+		next(local_popR_LH) :=
+			case
+				(line=3) : LeftHat[1];
+				TRUE : local_popR_LH;	-- default case
+			esac;
+
+		next(local_popR_RHL) :=
+			case
+				(line=9) : node_data[local_popR_RH][0];
+				TRUE : local_popR_RHL;	-- default case
+			esac;
+
+		next(local_popR_return_empty) :=
+			case
+				(line=5) : TRUE;
+				TRUE : FALSE;	-- default case
+			esac;
+
+
+		-- FUNTION: pushRIGHT()
+		-- next(line) :=
+		-- 	case
+		-- 		(line=16)  : {17}; -- pushRIght start
+		-- 		(line=17)  : {18}; --
+		-- 		(line=18)  : {19}; -- if FULL(todo)
+		-- 		(line=19)  : {20}; -- new->R is dummy
+		-- 		(line=20)  : {21}; -- rh = RightHat
+		-- 		(line=21)  : {22}; -- rhr = node[rh][2]
+		-- 		(line=22 & (local_pushR_RH = local_pushR_RHR))  : {23};
+		-- 		(line=23)  : {24}; -- node[new][0] = 0
+		-- 		(line=24)  : {25}; -- lh - LeftHat
+		-- 		(line=25)  : {26}; -- DCAS
+		-- 		(line=26)  : {30}; -- success, END
+		-- 		(line=22 & (local_pushR_RH = local_pushR_RHR))  : {27};
+		-- 		(line=27)  : {28}; -- node[nd][0] = rh
+		-- 		(line=28)  : {29}; -- DCAS
+		-- 		(line=29)  : {30}; -- SUCCESS
+		-- 		(line=30) : {0};
+		-- 		TRUE: line; -- default case
+		-- 	esac;
+
+			next(local_pushR_RH) :=
+				case
+					(line=20): RightHat[1];
+					TRUE: local_pushR_RH;
+				esac;
+			next(local_pushR_LH) :=
+				case
+					(line=24): LeftHat[1];
+					TRUE: local_pushR_LH;
+				esac;
+			next(local_pushR_RHR) :=
+				case
+					(line=21): node_data[local_pushR_RH][2];
+					TRUE: local_pushR_RHR;
+				esac;
+
+
+			next(local_pushR_newnode[0]) :=
+				case
+					(line=23): 0;
+					(line=27): local_pushR_RH;
+					TRUE : local_pushR_newnode[1];	-- default case
+				esac;
+			next(local_pushR_newnode[1]) :=
+				case
+					(line=17): 1; -- insert Y for now
+					TRUE : local_pushR_newnode[1];	-- default case
+				esac;
+			next(local_pushR_newnode[2]) :=
+				case
+					(line=17): 0;
+					TRUE : local_pushR_newnode[2];	-- default case
+				esac;

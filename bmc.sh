@@ -23,8 +23,8 @@ fi
 # SINGLE MODEL BMC
 if [ "$#" -eq 4 ]; then
     MODE=single
-    echo "received 4 arguments, perform single model BMC"
-    echo "\n============ Parse SMV Model and HyperLTL Formula ============"
+    # echo "received 4 arguments, perform single model BMC"
+    # echo "\n============ Parse SMV Model and HyperLTL Formula ============"
     NUSMVFILE=$1
     FORMULA=$2
     k=$3
@@ -72,9 +72,9 @@ if [ "$#" -eq 5 ] ; then
     if  [ "$FLAG" = "-bughunt" ]; then
             MODE=single
             # echo "DEBBBBUUUUUUUUUUUUUUUUUG"
-            echo "received 5 arguments with a -debug flag, doing single-model BMC in bughuntingmode."
-            echo "(input formula is negated.)"
-            echo "\n============ Parse SMV Model and HyperLTL Formula ============"
+            # echo "received 5 arguments with a -debug flag, doing single-model BMC in bughuntingmode."
+            # echo "(input formula is negated.)"
+            # echo "\n============ Parse SMV Model and HyperLTL Formula ============"
             NUSMVFILE=$1
             FORMULA=$2
             k=$3
@@ -106,9 +106,9 @@ if [ "$#" -eq 5 ] ; then
     elif  [ "$FLAG" = "-find" ]; then
             MODE=single
             # echo "DEBBBBUUUUUUUUUUUUUUUUUG"
-            echo "received 5 arguments with a -find flag, doing single-model BMC in find mode."
-            echo "(input formula is negated.)"
-            echo "\n============ Parse SMV Model and HyperLTL Formula ============"
+            # echo "received 5 arguments with a -find flag, doing single-model BMC in find mode."
+            # echo "(input formula is negated.)"
+            # echo "\n============ Parse SMV Model and HyperLTL Formula ============"
             NUSMVFILE=$1
             FORMULA=$2
             k=$3
@@ -138,8 +138,8 @@ if [ "$#" -eq 5 ] ; then
             # echo $QS
     else
       # MULTI-MODEL BMC
-          echo "received 5 arguments, doing multi-model BMC"
-          echo "\n============ Parse SMV Model and HyperLTL Formula ============"
+          # echo "received 5 arguments, doing multi-model BMC"
+          # echo "\n============ Parse SMV Model and HyperLTL Formula ============"
           M1_NUSMVFILE=$1
           M2_NUSMVFILE=$2
           FORMULA=$3
@@ -186,8 +186,8 @@ if [ "$#" -eq 6 ] ; then
     # echo $FLAG
     if  [ "$FLAG" = "-bughunt" ]; then
             MODE=multi
-            echo "received 6 arguments, doing multi-model BMC"
-            echo "\n============ Parse SMV Model and HyperLTL Formula ============"
+            # echo "received 6 arguments, doing multi-model BMC"
+            # echo "\n============ Parse SMV Model and HyperLTL Formula ============"
             M1_NUSMVFILE=$1
             M2_NUSMVFILE=$2
             FORMULA=$3
@@ -224,8 +224,8 @@ if [ "$#" -eq 6 ] ; then
             # echo $QS
     elif  [ "$FLAG" = "-find" ]; then
             MODE=multi
-            echo "received 6 arguments, doing multi-model BMC"
-            echo "\n============ Parse SMV Model and HyperLTL Formula ============"
+            # echo "received 6 arguments, doing multi-model BMC"
+            # echo "\n============ Parse SMV Model and HyperLTL Formula ============"
             M1_NUSMVFILE=$1
             M2_NUSMVFILE=$2
             FORMULA=$3
@@ -297,16 +297,16 @@ source QS.bool
 # Syntax check SEMANTICS
 if [ "$SEMANTICS" = "pes" ]; then
   SEM="PES"
-  echo $SEM
+  # echo $SEM
 elif [ "$SEMANTICS" = "opt" ]; then
   SEM="OPT"
-  echo $SEM
+  # echo $SEM
 elif [ "$SEMANTICS" = "hpes" ]; then
   SEM="TER_PES"
-  echo $SEM
+  # echo $SEM
 elif [ "$SEMANTICS" = "hopt" ]; then
   SEM="TER_OPT"
-  echo $SEM
+  # echo $SEM
 else
   echo "HyperQube error: incorrect semantic input. "
   echo " use { pes | opt | hpes | hopt } semantics of the unrolling from one of the follows:"

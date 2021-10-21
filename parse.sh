@@ -59,10 +59,10 @@ if [ "$#" -eq 4 ]; then
     P=P.bool
      python3 ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P}
     # read QS from formula translation
-    if [ ! -f "QS.bool" ]; then
-        exit 1
-    fi
-    source QS.bool
+    # if [ ! -f "QS.bool" ]; then
+    #     exit 1
+    # fi
+    # source QS.bool
     # echo $QS
 fi
 
@@ -101,10 +101,10 @@ if [ "$#" -eq 5 ] ; then
             P=P.bool
              python3 ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} $FLAG
             # read QS from formula translation
-            if [ ! -f "QS.bool" ]; then
-                exit 1
-            fi
-            source QS.bool
+            # if [ ! -f "QS.bool" ]; then
+            #     exit 1
+            # fi
+            # source QS.bool
             # echo $QS
     elif  [ "$FLAG" = "-find" ]; then
             MODE=single
@@ -134,10 +134,10 @@ if [ "$#" -eq 5 ] ; then
             P=P.bool
              python3 ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} $FLAG
             # read QS from formula translation
-            if [ ! -f "QS.bool" ]; then
-                exit 1
-            fi
-            source QS.bool
+            # if [ ! -f "QS.bool" ]; then
+            #     exit 1
+            # fi
+            # source QS.bool
             # echo $QS
     else
       # MULTI-MODEL BMC
@@ -171,10 +171,10 @@ if [ "$#" -eq 5 ] ; then
           P=P.bool
            python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA}  ${P}
           # read QS from formula translation
-          if [ ! -f "QS.bool" ]; then
-              exit 1
-          fi
-          source QS.bool
+          # if [ ! -f "QS.bool" ]; then
+          #     exit 1
+          # fi
+          # source QS.bool
           # echo $QS
     fi
 fi
@@ -219,10 +219,10 @@ if [ "$#" -eq 6 ] ; then
             P=P.bool
              python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA}  ${P} ${FLAG}
             # read QS from formula translation
-            if [ ! -f "QS.bool" ]; then
-                exit 1
-            fi
-            source QS.bool
+            # if [ ! -f "QS.bool" ]; then
+            #     exit 1
+            # fi
+            # source QS.bool
             # echo $QS
             # echo $QS
     elif  [ "$FLAG" = "-find" ]; then
@@ -257,10 +257,10 @@ if [ "$#" -eq 6 ] ; then
             P=P.bool
              python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA}  ${P} ${FLAG}
             # read QS from formula translation
-            if [ ! -f "QS.bool" ]; then
-                exit 1
-            fi
-            source QS.bool
+            # if [ ! -f "QS.bool" ]; then
+            #     exit 1
+            # fi
+            # source QS.bool
             # echo $QS
     fi
 fi
@@ -287,4 +287,3 @@ fi
 #     source QS.bool
 #     # echo $QS
 # fi
-

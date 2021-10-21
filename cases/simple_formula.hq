@@ -1,0 +1,1 @@
+exists x. exists y. G ~((state[x] <-> ready[y])  /\  (state[x] <-> busy[y]))

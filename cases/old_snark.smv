@@ -1,0 +1,333 @@
+--
+-- // SNARK structure (with some accelerations):
+-- // 0   ------- STAND BY: could go to line:1/ line:10/ line:19
+-- // 	  popRight() starts:
+-- // 1   - getRightHat as rh
+-- // 2		- getLeftHat as lh
+-- // 3		- if (rh is self-pointing) return assign popRight_FAIL
+-- // 4 	- else if (rh equals lh)
+-- // 5			DCAS (RightHat, LeftHat, rh, lh, Dummy, Dummy)
+-- // 6			assign pop_result as rh->V
+-- // 7		- else  assign rhl as rh->L
+-- // 8				DCAS (RightHat, rh->L, rh, rhL, rhL, rh)
+-- // 9				assign popRight_result as rh->V, assign rh->R as DUMMY
+-- //     pushRight() starts:
+-- // 10    - assing nd as Y --> if null, return pushRight_FAIL
+-- // 11		- assign nd->R as Dummy,assign nd-> V as something (zero for now)
+-- // 12		- assign rh as RightHat, assign rhR as rh->R
+-- // 13		if (rh == rhR), assign nd -> L = Dummy, assign lh = LeftHat
+-- // 14			 DCAS (RightHat, LeftHat, rh, lh, nd, nd)
+-- // 15			 return pushRight_SUCCESS
+-- // 16		else   assign nd->L as rh
+-- // 17			   DCAS(RightHat, rh->R, rh, rhR, nd, nd)
+-- // 18			   return pushRight_SUCCESS
+-- //  	  popLeft() starts:
+-- // 19		- assign lh as LeftHat, assign rh as RightHat
+-- // 20		- if (lh is self-pointing), return assign popLeft_FAIL
+-- // 21		- else if (lh == rh)
+-- // 22				DCAS (LeftHat, RightHat, lh, rh, Dummy, Dummy)
+-- // 23				assign popLeft_result as lh -> V
+-- // 24		- else  assign lhR as lh->R
+-- // 25				DCAS (LeftHat, lh->R, lh, lhR, lfR, lh)
+-- // 26				assign popLeft_result as lh->V, assign lh_L as DDUMMY
+
+
+--  NODE ID: DUMMY=0 x=1, y=2, z=3
+--  Each node has three data:[leftpointer, value, rightpointer]
+
+MODULE main
+VAR
+	-- RightHat: array 0..1 of 0..2;
+	-- LeftHat:  array 0..1 of 0..2;
+	RightHat: 0..2; -- could be DUNNY, x, y, or z
+	LeftHat: 0..2; -- could be DUMMY, x, y, or z
+	AllNodes: array 0..2 of array 0..1 of 0..2; -- store X,Y,Z and their pointers, ignore DUMMY
+
+	First_ID: 0..1;
+	Second_ID: 0..1;
+
+	--- ('process' is problmatic)
+	-- proc1: process SNARK(RightHat, LeftHat, AllNodes);
+	-- proc2: process SNARK(RightHat, LeftHat, AllNodes);
+	proc1: SNARK(RightHat, LeftHat, AllNodes, First_ID);
+	proc2: SNARK(RightHat, LeftHat, AllNodes, Second_ID);
+
+	ASSIGN
+
+		init(First_ID) := 0;
+		init(Second_ID):= 1;
+
+		next(First_ID) := First_ID;
+		next(Second_ID):= Second_ID;
+	--  NODE ID: DUMMY=0 x=1, y=2, z=3
+
+		-- init(RightHat) := 0;
+		-- init(LeftHat) := 0;
+		-- init(AllNodes[0][0]) := 0;
+		-- init(AllNodes[0][1]) := 0; -- X
+		-- init(AllNodes[1][0]) := 1;
+		-- init(AllNodes[1][1]) := 1; -- Y
+		-- init(AllNodes[2][0]) := 2;
+		-- init(AllNodes[2][1]) := 2; -- Z
+
+		-- if [DUMMY ---  X --- DUMMY]
+		init(RightHat) := 1;
+		init(LeftHat) := 1;
+		init(AllNodes[0][0]) := 0;
+		init(AllNodes[0][1]) := 0; -- DUMMY
+		init(AllNodes[1][0]) := 0;
+		init(AllNodes[1][1]) := 0; -- X
+		init(AllNodes[2][0]) := 2;
+		init(AllNodes[2][1]) := 2; -- Y
+
+
+
+
+MODULE SNARK(LeftHat, RightHat, AllNodes, ProcessID)
+VAR
+	line: 0..26;
+	-- popRight local variables
+	local_popR_RH: 0..2; -- could be DUMMY, x,or y
+	local_popR_LH: 0..2; -- could be DUMMY, x,or y
+	local_popR_RHL: 0..2; -- could be DUMMY, x,or y
+	local_popR_return_empty: boolean;
+
+	-- popLeft local variables
+	local_popL_RH: 0..2; -- could be DUMMY, x,or y
+	local_popL_LH: 0..2; -- could be DUMMY, x,or y
+	local_popL_LHR: 0..2; -- could be DUMMY, x,or y
+
+	-- pushRight local variables
+	-- local_pushR_newnode: array 0..2 of 0..2;
+	local_pushR_newnode: 0..2;
+	local_pushR_RH: 0..2; -- could be DUMMY, x,or y
+	local_pushR_RHR: 0..2; -- could be DUMMY, x,or y
+	local_pushR_LH: 0..2; -- could be DUMMY, x,or y
+
+
+
+ASSIGN
+
+	init(line) := 0;
+
+	-- popRight local, all default to DUMMY
+	init(local_popR_RH) := 0;
+	init(local_popR_LH) := 0;
+	init(local_popR_RHL) := 0;
+	init(local_popR_return_empty):= FALSE;
+
+	-- popLeft local, all default to DUMMY
+	init(local_popL_RH) := 0;
+	init(local_popL_LH) := 0;
+	init(local_popL_LHR) := 0;
+
+
+	--pushRight local, all default to DUMMY
+	-- init(local_pushR_newnode[0]) := 0;
+	-- init(local_pushR_newnode[1]) := 2; -- new node is Y
+	-- init(local_pushR_newnode[2]) := 0;
+	init(local_pushR_newnode) := 2; -- new node is Y
+	init(local_pushR_LH):= 0;
+	init(local_pushR_RH) := 0;
+	init(local_pushR_RHR) := 0;
+
+
+	-- CHANGING GLOBAL VARIABLEs
+  next(RightHat) :=
+		case
+			(line=5) : 0; -- set to DUMMY
+			(line=8) : local_popR_RHL; -- set to RH->L
+			(line=14) : local_pushR_newnode; -- set to newnode
+			(line=17) : local_pushR_newnode; -- set to new node
+			TRUE: RightHat;
+		esac;
+
+	next(LeftHat) :=
+		case
+			(line=5) : 0; -- set toDUMMY
+			(line=14) : local_pushR_newnode; --set to newnode
+			TRUE: LeftHat;
+		esac;
+
+	-- next(RightHat[0]) :=
+	-- 	case
+	-- 		TRUE : RightHat[0];	-- default case
+	-- 	esac;
+	-- next(RightHat[1]) :=
+	-- 	case
+	-- 		(line=7) : 0; -- set to Dummy
+	-- 		(line=10) : local_popR_RHL; -- set to rhL
+	-- 		(line=25) : local_pushR_newnode[1];
+	-- 		TRUE : RightHat[1];	-- default case
+	-- 	esac;
+	-- next(RightHat[2]) :=
+	-- 	case
+	-- 		(line=11) : 0; -- dummy
+	-- 		TRUE : RightHat[2];	-- default case
+	-- 	esac;
+	--
+	-- next(LeftHat[0]) := LeftHat[0];
+	-- next(LeftHat[1]) :=
+	-- 	case
+	-- 		(line=25) : local_pushR_newnode[1];
+	-- 		TRUE : LeftHat[1];
+	-- 	esac;
+	-- next(LeftHat[2]) := LeftHat[2];
+
+
+	-- FUNTIONS
+	next(line) :=
+		case
+			-- STNAD BY
+			(line=0)  : {0}; 		-- STAND BY: could go to line:1/ line:10/ line:19
+			-- popRIGHT() start
+			(line=1)  : {2}; -- popRight() starts, getRightHat as rh
+			(line=2)  : {3}; -- getLeftHat as lh
+			(line=3 & (AllNodes[local_popR_RH][1] = local_popR_RH)) : {0}; -- if (rh is self-pointing) return assign popRight_FAIL
+			(line=3 & !(AllNodes[local_popR_RH][1] = local_popR_RH))  : {4}; -- if !(rh is self-pointing), go to 4
+			(line=4 & (local_popR_RH = local_popR_LH))  : {5}; -- if (rh equals lh)
+			(line=5) 	: {6}; -- DCAS (RightHat, LeftHat, rh, lh, Dummy, Dummy)
+			(line=6)  : {0}; -- assign pop_result as rh->V, END
+			(line=4 & !(local_popR_RH = local_popR_LH))  : {7}; -- if !(rh equals lh)
+			(line=7)  : {8};  --assign rhl as rh->L
+			(line=8)  : {9}; -- DCAS (RightHat, rh->L, rh, rhL, rhL, rh)
+			(line=9)  : {0}; -- assign popRight_result as rh->V, assign rh->R as DUMMY
+			-- pushRIGHT
+			(line=10)  : {11}; -- pushRight() starts assing nd as Y --> if null, return pushRight_FAIL
+			(line=11)  : {12}; -- assign nd->R as Dummy,assign nd-> V as something (zero for now)
+			(line=12)  : {13}; -- assign rh as RightHat, assign rhR as rh->R
+			(line=13 & (local_pushR_RH = local_pushR_RHR))  : {14}; -- if (rh == rhR), assign nd -> L = Dummy, assign lh = LeftHat
+			(line=14)  : {15}; -- DCAS (RightHat, LeftHat, rh, lh, nd, nd)
+			(line=15)  : {16}; -- return pushRight_SUCCESS
+			(line=13 & !(local_pushR_RH = local_pushR_RHR))  : {16}; -- if !(rh == rhR)   assign nd->L as rh
+			(line=16)  : {17}; -- assign nd->L as rh
+			(line=17)  : {18}; -- DCAS(RightHat, rh->R, rh, rhR, nd, nd)
+			(line=18)  : {0}; -- return pushRight_SUCCESS
+			-- popLeft
+			(line=19)  : {20}; --- popLeft() starts, assign lh as LeftHat, assign rh as RightHat
+			(line=20)  : {0} ; --if (lh is self-pointing), return assign popLeft_FAIL
+			(line=20)  : {21}; -- if(!lh is self-pointing)
+			(line=21 & (local_popL_LH =local_popL_RH))  : {22}; -- if(lh == rh)
+			(line=22)  : {23}; -- DCAS (LeftHat, RightHat, lh, rh, Dummy, Dummy)
+			(line=23) : {0}; -- assign popLeft_result as lh -> V, END
+			(line=21 & !(local_popL_LH =local_popL_RH)) : {24}; -- if!(lh == rh)
+			(line=24) : {25}; -- assign lhR as lh->R
+			(line=25) : {26}; -- DCAS (LeftHat, lh->R, lh, lhR, lfR, lh)
+			(line=26) : {0}; -- assign popLeft_result as lh->V, assign lh_L as DDUMMY
+			-- TRUE: line; -- default case
+		esac;
+
+
+		-- let's define those start-point and end point
+		-- DEFINE
+		-- 	 p := state = 0 | state = 1 | state = 2 | state = 3;
+		-- 	 q := state = 4;
+		-- 	 halt := state = 3 | state = 4 ;
+
+
+		--- GLOBAL variables for double-ended queue
+		next(AllNodes[0][0]) := AllNodes[0][0];
+		next(AllNodes[0][1]) := AllNodes[0][1]; -- DUMMY
+
+		next(AllNodes[1][0]) :=
+			case
+				TRUE: AllNodes[1][0]; -- X->L
+			esac;
+
+		next(AllNodes[1][1]) :=
+			case
+				(line=17 & local_pushR_RH=1): local_pushR_newnode;
+				TRUE: AllNodes[1][1]; -- X->R
+			esac;
+
+		next(AllNodes[2][0]) :=
+			case
+				(line=16 & local_pushR_newnode=2): local_pushR_RH;
+				TRUE: AllNodes[2][0]; -- Y->L
+			esac;
+
+		next(AllNodes[2][1]) :=
+			case
+				(line=11 & local_pushR_newnode=2): 0;
+				TRUE: AllNodes[2][1]; -- Y->R
+			esac;
+
+
+		-- local_popR local variables
+		next(local_popR_RH) :=
+			case
+				(line=1) : RightHat;
+				TRUE : local_popR_RH;	-- default case
+			esac;
+
+		next(local_popR_LH) :=
+			case
+				(line=2) : LeftHat;
+				TRUE : local_popR_LH;	-- default case
+			esac;
+
+		next(local_popR_RHL) :=
+			case
+				(line=7) : AllNodes[local_popR_RH][0];
+				TRUE : local_popR_RHL;	-- default case
+			esac;
+
+		next(local_popR_return_empty) :=
+			case
+				(line=3 & (AllNodes[local_popR_RH][1] = local_popR_RH)) : TRUE;
+				TRUE : FALSE;	-- default case
+			esac;
+
+
+			-- local_popL local variables
+			next(local_popL_RH) :=
+				case
+					(line=19) : RightHat;
+					TRUE : local_popL_RH;	-- default case
+				esac;
+
+			next(local_popL_LH) :=
+				case
+					(line=19) : LeftHat;
+					TRUE : local_popL_LH;	-- default case
+				esac;
+
+			next(local_popL_LHR) :=
+				case
+					(line=24) : AllNodes[local_popR_LH][1];
+					TRUE : local_popL_LHR;	-- default case
+				esac;
+
+
+			-- local_pushR local variables
+			next(local_pushR_RH) :=
+				case
+					(line=12): RightHat;
+					TRUE: local_pushR_RH;
+				esac;
+			next(local_pushR_LH) :=
+				case
+					(line=13& (local_pushR_RH = local_pushR_RHR)): LeftHat;
+					TRUE: local_pushR_LH;
+				esac;
+			next(local_pushR_RHR) :=
+				case
+					(line=12): AllNodes[local_pushR_RH][1];
+					TRUE: local_pushR_RHR;
+				esac;
+
+			next(local_pushR_newnode) := local_pushR_newnode;
+
+
+			-- next(local_pushR_newnode[0]) :=
+			-- 	case
+			-- 		(line=13 & (local_pushR_RH = local_pushR_RHR)): 0;
+			-- 		(line=16): local_pushR_RH;
+			-- 		TRUE : local_pushR_newnode[0];	-- default case
+			-- 	esac;
+			-- next(local_pushR_newnode[1]) := 	local_pushR_newnode[1]; --stay
+			-- next(local_pushR_newnode[2]) :=
+			-- 	case
+			-- 		(line=11): 0; -- newnode -> R is DUMMY
+			-- 		TRUE : local_pushR_newnode[2];	-- default case
+			-- 	esac;

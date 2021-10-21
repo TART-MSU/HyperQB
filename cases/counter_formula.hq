@@ -1,0 +1,1 @@
+exists x. exists y. F(~bit2-value[x] /\ bit1-value[y])
