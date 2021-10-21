@@ -61,20 +61,21 @@ k=5		# bound of traces
 
 
 
+# ### NRP_incorrect
+# NUSMVFILE="./tacas21_cases/NRP_incorrect.smv"
+# FORMULA="./tacas21_cases/NRP_formula.hq"
+# QS=EA 	# quantifier selections
+# k=15		# bound of traces
+# ## SAT
 
 ### NRP_correct
 # NUSMVFILE="./tacas21_cases/NRP_correct.smv"
 # FORMULA="./tacas21_cases/NRP_formula.hq"
 # QS=EA 	# quantifier selections
 # k=15		# bound of traces
-## SAT
+## UNSAT
 
-# ### NRP_incorrect
-# NUSMVFILE="./tacas21_cases/NRP_incorrect.smv"
-# FORMULA="./tacas21_cases/NRP_formula.hq"
-# QS=EA 	# quantifier selections
-# k=15		# bound of traces
-# ## UNSAT
+
 
 # ### NI_incorrect
 # NUSMVFILE="./tacas21_cases/NI_incorrect.smv"

@@ -1,7 +1,8 @@
 This file provide the command lines to run specific experiments we provided in the demo folder.
 
 
-*Requirements: Before running, make sure Docker is installed. (https://docs.docker.com/get-docker/)
+* Requirements:
+  Before running, please make sure Docker is installed: (https://docs.docker.com/get-docker/)
 
 
 
@@ -34,4 +35,63 @@ Experiments in the tool paper:
   ./hyperqube.sh cases/bakery_5procs.smv cases/bakery_formula_sym1_5proc.hq 10 pes
 
 -- 1.4 BAKERY 5PROC SYM2 --
-  ./hyperqube.sh cases/bakery_5procs.smv cases/bakery_formula_sym2_5proc.hq 10 pes 
+  ./hyperqube.sh cases/bakery_5procs.smv cases/bakery_formula_sym2_5proc.hq 10 pes
+
+
+
+[SNARK]
+
+
+[3-thread]
+-- 3.1 3-thread incorrect --
+  ./hyperqube.sh cases/NI_incorrect.smv cases/NI_formula.hq 50 hpes
+
+-- 3.2 3-thread correct --
+  ./hyperqube.sh cases/NI_correct.smv cases/NI_formula.hq 50 hopt
+
+[Non-repudiation Protocol]
+
+-- 4.1 NRP incorrect
+  ./hyperqube.sh cases/NRP_incorrect.smv cases/NRP_formula.hq 15 hpes
+
+-- 4.2 NRP_correct --
+  ./hyperqube.sh cases/NRP_correct.smv cases/NRP_formula.hq 15 hopt
+
+
+
+
+
+[Shortest Path]
+-- Shortest Path 10x10 --
+  ./hyperqube.sh cases/robotic_sp_100.smv  cases/robotic_sp_formula.hq 20 hpes -find
+
+-- Shortest Path 20x20 --
+  ./hyperqube.sh cases/robotic_sp_400.smv cases/robotic_sp_formula.hq 40 hpes -find
+
+-- Shortest Path 40x40 --
+  ./hyperqube.sh cases/robotic_sp_1600.smv cases/robotic_sp_formula.hq 80 hpes -find
+
+-- Shortest Path 60x60 --
+  ./hyperqube.sh cases/robotic_sp_3600.smv cases/robotic_sp_formula.hq 120 hpes -find
+
+
+
+[Initial State Robustness]
+
+-- Robustness 10x10 --
+  ./hyperqube.sh cases/robotic_robustness_100.smv cases/robotic_robustness_formula.hq 20 hpes -find
+
+-- Robustness 20x20 --
+  ./hyperqube.sh cases/robotic_robustness_400.smv cases/robotic_robustness_formula.hq 40 hpes -find
+
+-- Robustness 40x40 --
+  ./hyperqube.sh cases/robotic_robustness_1600.smv cases/robotic_robustness_formula.hq 80 hpes -find
+
+-- Robustness 60x60 --
+  ./hyperqube.sh cases/robotic_robustness_3600.smv cases/robotic_robustness_formula.hq 120 hpes -find
+
+
+
+[Mutation Testing]
+
+  ./hyperqube.sh cases/mutation_testing.smv cases/mutation_testing.hq 10 hpes -find

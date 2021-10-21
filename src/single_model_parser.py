@@ -523,16 +523,16 @@ text = text.replace("!","~")
 
 
 ## checking if all are valid symbol
-all_vars = re.findall("[\.a-z0-9\w-]+\[", text)
+# all_vars = re.findall("[\.a-z0-9\w-]+\[", text)
 # print(all_vars)
-for var in all_vars:
-	var = var.replace("[","")
-	# print(var)
-	if(var not in valid_variables ):
-		print("[ !!! HyperQube error: the variable: ", var, ", is not a valid variable. ]")
-		print("All valid varialbes include state and defined vars are:")
-		print(valid_variables)
-		quit()
+# for var in all_vars:
+# 	var = var.replace("[","")
+# 	print(var)
+# 	if(var not in valid_variables ):
+# 		print("[ !!! HyperQube error: the variable: ", var, ", is not a valid variable. ]")
+# 		print("All valid varialbes include state and defined vars are:")
+# 		print(valid_variables)
+# 		quit()
 
 
 binary_ops = re.findall("\(.*?\)", text)
