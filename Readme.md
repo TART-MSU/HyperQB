@@ -37,10 +37,10 @@ First, clone the repository and step into the repo:
 - ```git clone https://github.com/TART-MSU/HyperQube.git```
 - ```cd HyperQube```
 
-Next, we provide two examples. To run, execute the following:
+Next, we provide two demo examples. To run, execute ond of the the followings:
 
-- (Example 1: bakery with symmetry:) ```./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes```
-- (Example 2: SNARK with lineariability) ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes ```
+- (Example 1: bakery with symmetry:) <br/> ```./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes```
+- (Example 2: SNARK with linearizability) <br/> ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes ```
 
 
 We also provide the command lines needed for all other experiments in RUN.txt
