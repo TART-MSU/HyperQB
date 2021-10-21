@@ -18,3 +18,6 @@ Examples in the tool paper:
 
 
 
+Experiments in the tool paper:
+[run simple_krip with simple_krip_formula]
+  ./hyperqube.sh tacas21_cases/simple_krip.smv  tacas21_cases/simple_krip_formula.hq 5 pes
