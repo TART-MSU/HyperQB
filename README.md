@@ -33,17 +33,21 @@ To observe the tool outputs, all model checking with counter example will output
 
 
 ## GET STARTED
-First, clone the repository and step into the repo:
+First make sure DOCKER is installed: https://docs.docker.com/get-docker/
+
+Next, clone the repository and step into the repo:
 - ```git clone https://github.com/TART-MSU/HyperQube.git```
 - ```cd HyperQube```
 
-Next, we provide two demo examples. To run, execute each of the followings:
+You are now ready to run HyperQube!
+
+We provide two demo examples. To run, execute each of the followings:
 
 - (Example 1: bakery with symmetry:) <br/> ```./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes```
 - (Example 2: SNARK with linearizability) <br/> ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes ```
 
 
-We also provide the command lines needed for all other experiments in RUN.txt
+We also provide the command lines needed for all other experiments in the document RUN.txt
 
 
 ## Experiments from TACAS 2021 paper
