@@ -1,0 +1,20 @@
+This file provide the command lines to run specific experiments we provided in the demo folder.
+
+
+*Requirements: Before running, make sure Docker is installed. (https://docs.docker.com/get-docker/)
+
+
+
+
+Examples in the tool paper:
+
+[run bakery algorithm with symmetry property]
+  ./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes
+
+
+[run SNARK algorithm with linearizability propoerty]
+  ./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes
+
+
+
+

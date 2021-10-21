@@ -18,8 +18,6 @@ while the existing tool, QuAbs, is under AGPL license.
 
 
 ## HOW TO USE 
-We have our source code all compiled as executable files.
-
 To run HyperQube, execute ```hyperqube.sh``` with one of the following two scenarios:
 
    1. BMC with single model:<br/>
@@ -38,8 +36,11 @@ To observe the tool outputs, all model checking with counter example will output
 We provide two examples. To run, execute the following: 
 - ```git clone https://github.com/TART-MSU/HyperQube.git```
 - ```cd HyperQube``` 
-- ```./hyperqube.sh bakery.smv symmetry 10 pes```
-- ```./hyperqube.sh SNARK_conc.smv  SNARK_seq.smv linearizability 18 pes ```
+- ```./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes```
+- ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes ```
+
+
+We also provide the command lines needed for all other experiments in RUN.txt
 
 
 ## Experiments from TACAS 2021 paper 
@@ -54,7 +55,6 @@ Our evaluations include the following cases,<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
  
 
-To execute the experiments, execute corresponding code blocks in tacas21_cases.sh script.
 
 
 ## People
