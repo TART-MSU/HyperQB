@@ -21,10 +21,10 @@ while the existing tool, QuAbs, is under AGPL license.
 To run HyperQube, execute ```hyperqube.sh``` with one of the following two scenarios:
 
    1. BMC with single model:<br/>
-	$ ```hyperqube.sh <model_file_name.smv> <formula_file_name.hq> <k> ```
+	```./hyperqube.sh <model_file_name.smv> <formula_file_name.hq> <k> ```
 
    2. BMC with multi-model:<br/>
-	$ ```hyperqube.sh <model_1_file_name.smv> <model_2_file_name.smv> <formula_file_name.hq> <k>```
+	```./hyperqube.sh <model_1_file_name.smv> <model_2_file_name.smv> <formula_file_name.hq> <k>```
 
 Note that <k> is a natural number specifies the length of unrolling.
 
