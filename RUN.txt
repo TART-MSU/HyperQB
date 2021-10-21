@@ -24,5 +24,14 @@ Experiments in the tool paper:
 
 
 [BAKERY]
-[BAKERY 3PROC S1]
-  ./hyperqube.sh cases/bakery_3procs.smv cases/bakery_formula_S1_3proc.hq 10 pes
+-- 1.1 BAKERY 3PROC SYM1 --
+  ./hyperqube.sh cases/bakery_3procs.smv cases/bakery_formula_sym1_3proc.hq 10 pes
+
+-- 1.2 BAKERY 3PROC SYM2  --
+  ./hyperqube.sh cases/bakery_3procs.smv cases/bakery_formula_sym2_3proc.hq 10 pes
+
+-- 1.3 BAKERY 5PROC SYM1 --
+  ./hyperqube.sh cases/bakery_5procs.smv cases/bakery_formula_sym1_5proc.hq 10 pes
+
+-- 1.4 BAKERY 5PROC SYM2 --
+  ./hyperqube.sh cases/bakery_5procs.smv cases/bakery_formula_sym2_5proc.hq 10 pes 

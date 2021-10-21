@@ -348,7 +348,7 @@ for line in lines:
 		line = line.split("--", 1)[0].replace("\t","") #remove comments
 
 		if(not line.replace(" ","")):
-			print()
+			pass
 		# print(line)
 		elif (line): # if it's not empty
 			key = re.findall(".*:", line)[0].replace(":","")

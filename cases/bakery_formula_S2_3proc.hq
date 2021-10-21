@@ -1,4 +1,4 @@
-exists A. exists B.
+forall A. exists B.
 G((*p1_line[A]=0* <-> *p2_line[B]=0*)
 /\ (*p2_line[A]=0* <-> *p1_line[B]=0*)
 /\ (*p1_line[A]=1* <-> *p2_line[B]=1*)
