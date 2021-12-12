@@ -18,7 +18,7 @@ while the existing tool, QuAbs, is under AGPL license.
 
 
 ## HOW TO USE
-To run HyperQube, execute ```hyperqube.sh``` with one of the following two scenarios:
+To run HyperQube, install [docker](https://docs.docker.com/get-docker/) then execute ```hyperqube.sh``` with one of the following two scenarios:
 
    1. BMC with single model:<br/>
 	```./hyperqube.sh <model_file_name.smv> <formula_file_name.hq> <k> ```
