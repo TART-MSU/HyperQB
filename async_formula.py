@@ -23,7 +23,8 @@ open_QCIR = open("HQ.qcir", "r")
 QCIR=open_QCIR.read()
 vars = re.findall('#\s.*', QCIR)
 # print(re.findall('#\s.*', QCIR))
-
+####### NEW THING ADDED to QCIR
+NEW_QCIR = []
 
 #### containing all variables with their numerical representation
 #### format: NAME: NUMBER
@@ -142,7 +143,7 @@ for i in range(diameter_proc1):
 traj_vars_tau1 =[]
 traj_vars_tau2 =[]
 # find the longest trajectory
-for i in range(len_longest_trajectory+1):
+for i in range(len_longest_trajectory):
     tau1_v1 = "tau1_t1["+str(i)+"]"
     tau1_v2 = "tau1_t2["+str(i)+"]"
     tau1_bits = []
@@ -185,7 +186,9 @@ var_index = nums[-1]+1
 # new_vars_dict={}
 for v in new_vars:
     var_dict[v] = var_index
-    var_index = var_index+1
+    # NEW_QCIR.append("# "+ str(var_index) + " : " + v)
+    var_index+=1
+
 
 
 # print(traj_vars_tau1)
@@ -205,12 +208,12 @@ def build_traj_advances(layer, t1, t2):
     ## move to the next unrolling
     next_layer=layer+1
 
-    if (t1>diameter_proc1 or t2>diameter_proc2):
+    if (t1==diameter_proc1-1 or t2==diameter_proc2-1):
         # next_0 = [layer, t1, t2, "00", next_layer, t1, t2]
         # traj_relations.append(next_0)
         # print("STOP at;", layer, t1, t2)
         return
-    elif (layer==len_longest_trajectory):
+    elif (layer==len_longest_trajectory-1):
         # print("STOP at", layer,  t1, t2)
         return
     else:
@@ -219,7 +222,6 @@ def build_traj_advances(layer, t1, t2):
         next_t1_1=t1
         next_t2_1=t2
         # print("00, to", next_layer,":", next_t1_1,  next_t2_1, "\n")
-        m = "t1"
         next_1 = [layer, t1, t2, "00", next_layer, next_t1_1, next_t2_1]
         traj_relations.append(next_1)
 
@@ -227,7 +229,7 @@ def build_traj_advances(layer, t1, t2):
 
         ## 01 situation _2
         next_t1_2=t1
-        if (t2<=diameter_proc2):
+        if (t2<diameter_proc2-1):
             next_t2_2=t2+1
         else: next_t2_2=t2
         # print("from", curr)
@@ -237,7 +239,7 @@ def build_traj_advances(layer, t1, t2):
 
 
         ## 10 situation _3
-        if (t1<=diameter_proc1):
+        if (t1<diameter_proc1-1):
             next_t1_3=t1+1
         else: next_t1_3=t1
         next_t2_3=t2
@@ -248,10 +250,10 @@ def build_traj_advances(layer, t1, t2):
 
 
         ## 11 situation _4
-        if (t1<=diameter_proc1):
+        if (t1<diameter_proc1-1):
             next_t1_4=t1+1
         else: next_t1_4=t1
-        if (t2<=diameter_proc2):
+        if (t2<diameter_proc2-1):
             next_t2_4=t2+1
         else: next_t2_4=t2
         # print("from", curr)
@@ -275,7 +277,7 @@ for i in traj_relations:
 traj_relations = res
 traj_relations.sort()
 # print(len(traj_relations))
-# print(*traj_relations,sep="\n")
+print(*traj_relations,sep="\n")
 
 
 def build_expressions(tau, final_formulas):
@@ -323,10 +325,6 @@ def build_expressions(tau, final_formulas):
 
 
 
-####### NEW THING ADDED to QCIR
-NEW_QCIR = []
-
-
 ### build QCIR gates:
 def build_AND2(a, b):
     global var_index
@@ -350,7 +348,7 @@ def build_AND4(a, b, c, d):
     var_index+=1
     # print(s)
     NEW_QCIR.append(s)
-    
+
 
 def build_OR2(a,b):
     global var_index
@@ -359,7 +357,7 @@ def build_OR2(a,b):
     # print(s)
     NEW_QCIR.append(s)
     # return s
-    # var_index+=1
+
 
 def build_OR4(a,b,c,d):
     global var_index
@@ -367,7 +365,7 @@ def build_OR4(a,b,c,d):
     var_index+=1
     NEW_QCIR.append(s)
     # print(s)
-    # var_index+=1
+
 
 def build_IFF(a,b):
     global var_index
@@ -386,102 +384,123 @@ def build_IFF(a,b):
 
 tau1_exp=[]
 build_expressions("tau1_", tau1_exp)
-print(tau1_exp[0])
+# print(tau1_exp)
+### convert all expressions in tau1
+for e in tau1_exp:
+    # exp=tau1_exp[0]
+    # print(var_dict[exp[0]])
+    exp=e
+    print(exp)
+
+    formula_prefix = var_dict[exp[0]]
+    formula_suffix = []
+
+    ## relational constraints
+    # print(tau1_formulas[exp[1]])
+
+    RC = tau1_formulas[exp[1]]
+    all_c = []
+    for j in range(num_observables):
+        c = (RC[j].split(' IFF '))
+        # build_IFF(c[0], c[1])
+        a = c[0]
+        b = c[1]
+
+        not_a = "-"+a
+        not_b = "-"+b
+        index1=var_index
+        LR=build_OR2(not_a, b)
+        index2=var_index
+        RL=build_OR2(not_b, a)
+        s = (str(var_index) + " = and(" + str(index1) +"," + str(index2) +")")
+        # print(s)
+        NEW_QCIR.append(s)
+        all_c.append(var_index)
+        var_index+=1
+
+    formula_suffix.append(var_index)
+
+    #### NEED to be more flexible
+    build_AND4(all_c[0], all_c[1], all_c[2], all_c[3])
+    # print(var_dict)
 
 
 
-exp=tau1_exp[0]
-print(var_dict[exp[0]])
+    OR_together = []
+    for i in range(2,6):
+        e = exp[i]
+        # print(e)
+        ###  extract t1
+        if ("-" in e[0]):
+            temp = e[0].replace("-","")
+            temp = "-"+str(var_dict[temp])
+            # print(temp)
+            a = temp
+        else:
+            # print(var_dict[e[0]])
+            a = var_dict[e[0]]
 
-formula_prefix = var_dict[exp[0]]
-formula_suffix = []
+        ###  extract t2
+        if ("-" in e[1]):
+            temp2 = e[1].replace("-","")
+            temp2 = "-"+str(var_dict[temp2])
+            # print(temp2)
+            b = temp2
+        else:
+            # print(var_dict[e[1]])
+            b = var_dict[e[1]]
 
-## relational constraints
-# print(tau1_formulas[exp[1]])
+        ###  extract next phi
+        # print(var_dict[e[2]])
+        c = var_dict[e[2]]
+        build_AND3(a, b, c)
+        OR_together.append(var_index)
+        # var_index+=1
+    formula_suffix.append(var_index)
+    build_OR4(OR_together[0], OR_together[1],OR_together[2], OR_together[3])
 
-RC = tau1_formulas[exp[1]]
-all_c = []
-for j in range(num_observables):
-    c = (RC[j].split(' IFF '))
-    # build_IFF(c[0], c[1])
-    a = c[0]
-    b = c[1]
-
-    not_a = "-"+a
-    not_b = "-"+b
-    index1=var_index
-    LR=build_OR2(not_a, b)
-    index2=var_index
-    RL=build_OR2(not_b, a)
-    s = (str(var_index) + " = and(" + str(index1) +"," + str(index2) +")")
-    # print(s)
-    NEW_QCIR.append(s)
-    all_c.append(var_index)
-    var_index+=1
-
-formula_suffix.append(var_index)
-
-#### NEED to be more flexible
-build_AND4(all_c[0], all_c[1], all_c[2], all_c[3])
-# print(var_dict)
+    # print(formula_suffix)
+    ## final build
+    build_AND2(formula_suffix[0], formula_suffix[1])
+    build_IFF(str(formula_prefix), str(var_index))
 
 
-
-OR_together = []
-for i in range(2,6):
-    e = exp[i]
-    # print(e)
-    ###  extract t1
-    if ("-" in e[0]):
-        temp = e[0].replace("-","")
-        temp = "-"+str(var_dict[temp])
-        # print(temp)
-        a = temp
-    else:
-        # print(var_dict[e[0]])
-        a = var_dict[e[0]]
-
-    ###  extract t2
-    if ("-" in e[1]):
-        temp2 = e[1].replace("-","")
-        temp2 = "-"+str(var_dict[temp2])
-        # print(temp2)
-        b = temp2
-    else:
-        # print(var_dict[e[1]])
-        b = var_dict[e[1]]
-
-    ###  extract next phi
-    # print(var_dict[e[2]])
-    c = var_dict[e[2]]
-    build_AND3(a, b, c)
-    OR_together.append(var_index)
-    # var_index+=1
-formula_suffix.append(var_index)
-build_OR4(OR_together[0], OR_together[1],OR_together[2], OR_together[3])
-
-# print(formula_suffix)
-## final build
-build_AND2(formula_suffix[0], formula_suffix[1])
-build_IFF(str(formula_prefix), str(var_index))
-
-### build logical formulas
-# ###
-# print(final_formulas[0])
-# f = final_formulas[0]
-#
-#
-# print(f[0])
-#
-# ## relational constraints
-# print(f[1])
-#
-# ## next move
-# for i in range(2,6):
-#     print(f[i])
 
 print("-------------(TO ADD)------------")
-print(*NEW_QCIR, sep="\n")
+quant_forall=[]
+for tau1_v in traj_vars_tau1:
+    quant_forall.extend(tau1_v)
+
+print("FORALL: ", quant_forall)
+
+quant_exists=[]
+for tau2_v in traj_vars_tau2:
+    quant_exists.extend(tau2_v)
+
+print("EXISTS: ", quant_exists)
+
+
+FORALL = "forall("
+for v in quant_forall:
+    FORALL += str(var_dict[v]) + ","
+FORALL = FORALL[:-1] ## remove last ','
+FORALL += ")"
+print(FORALL)
+
+EXISTS = "exists("
+for v in quant_exists:
+    EXISTS += str(var_dict[v]) + ","
+EXISTS = EXISTS[:-1] ## remove last ','
+EXISTS += ")"
+print(EXISTS)
+
+
+
+for v in new_vars:
+    NEW_QCIR.append("# "+ str(var_dict[v]) + " : " + v)
+
+# print(*NEW_QCIR, sep="\n")
+
 
 
 
