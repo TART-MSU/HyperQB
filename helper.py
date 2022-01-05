@@ -1,16 +1,23 @@
 import re
 
-open_QCIR = open("OUTPUT_byName.cex", "r")
+# open_QCIR = open("OUTPUT_byName.cex", "r")
+open_QCIR = open("OUTPUT_byTime.cex", "r")
+# print("???")
 # print(f.read())
 QCIR=open_QCIR.read()
 vars = re.findall('tau.*', QCIR)
+
+# print(vars)
 
 phi = []
 for v in vars:
     if ("phi" in v):
         phi.append(v)
-    else:
-        print(v)
+    # else:
+    #     # if ("tau1" in v):
+    #     if("tau2_t1[0]" in v):
+    #         print()
+    #     print(v)
 
 
 def atoi(text):
@@ -29,7 +36,27 @@ def natural_keys(text):
 
 
 phi.sort(key=natural_keys)
+print("[ tau1 trajectories ]")
+for v in vars:
+    if ("tau1_t" in v):
+        print(v)
+    if ("t2" in v):
+        print()
+
+print()
 for p in phi:
-    if ("= 1" in p):
-        print(p)
+    if ("tau1" in p):
+        # print(p)
+        if ("= 1" in p):
+            print(p)
+# print("[ tau2 trajectories ]")
+for v in vars:
+    if ("tau2_t" in v):
+        print(v)
+print()
+for p in phi:
+    if ("tau2" in p):
+        # print(p)
+        if ("= 1" in p):
+            print(p)
 # print(phi)

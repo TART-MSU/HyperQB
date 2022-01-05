@@ -1,0 +1,164 @@
+------ Path -------
+ ID_one_0_A[0] = 0
+ ID_two_0_A[0] = 1
+ LOCKED_A[0] = 0
+ TRUE_A[0] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_A[0] = 1
+ proc1-printA_A[0] = 0
+ proc1-printB_A[0] = 0
+ proc1-printC_A[0] = 0
+ proc1-printD_A[0] = 0
+>>>>>>>>>>>>>>>> proc2-line_0_A[0] = 4
+ proc2-printA_A[0] = 0
+ proc2-printB_A[0] = 0
+ proc2-printC_A[0] = 0
+ proc2-printD_A[0] = 0
+
+  ++++++ TIME @ [1] ++++++
+
+ ID_one_0_A[1] = 0
+ ID_two_0_A[1] = 1
+ LOCKED_A[1] = 0
+ TRUE_A[1] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_A[1] = 2
+ proc1-printA_A[1] = 1
+ proc1-printB_A[1] = 1
+ proc1-printC_A[1] = 1
+ proc1-printD_A[1] = 1
+>>>>>>>>>>>>>>>> proc2-line_0_A[1] = 5
+ proc2-printA_A[1] = 0
+ proc2-printB_A[1] = 0
+ proc2-printC_A[1] = 0
+ proc2-printD_A[1] = 0
+
+  ++++++ TIME @ [2] ++++++
+
+ ID_one_0_A[2] = 0
+ ID_two_0_A[2] = 1
+ LOCKED_A[2] = 0
+ TRUE_A[2] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_A[2] = 3
+ proc1-printA_A[2] = 0
+ proc1-printB_A[2] = 0
+ proc1-printC_A[2] = 0
+ proc1-printD_A[2] = 0
+>>>>>>>>>>>>>>>> proc2-line_0_A[2] = 6
+ proc2-printA_A[2] = 1
+ proc2-printB_A[2] = 1
+ proc2-printC_A[2] = 1
+ proc2-printD_A[2] = 1
+
+  ++++++ TIME @ [3] ++++++
+
+ ID_one_0_A[3] = 0
+ ID_two_0_A[3] = 1
+ LOCKED_A[3] = 0
+ TRUE_A[3] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_A[3] = 3
+ proc1-printA_A[3] = 0
+ proc1-printB_A[3] = 0
+ proc1-printC_A[3] = 0
+ proc1-printD_A[3] = 0
+>>>>>>>>>>>>>>>> proc2-line_0_A[3] = 7
+ proc2-printA_A[3] = 0
+ proc2-printB_A[3] = 0
+ proc2-printC_A[3] = 0
+ proc2-printD_A[3] = 0
+
+  ++++++ TIME @ [4] ++++++
+
+ ID_one_0_A[4] = 0
+ ID_two_0_A[4] = 1
+ LOCKED_A[4] = 0
+>>>>>>>>>>>>>>>> proc1-line_0_A[4] = 3
+ proc1-printA_A[4] = 0
+ proc1-printB_A[4] = 0
+ proc1-printC_A[4] = 0
+ proc1-printD_A[4] = 0
+>>>>>>>>>>>>>>>> proc2-line_0_A[4] = 7
+ proc2-printA_A[4] = 0
+
+---END---
+
+------ Path -------
+ ID_one_0_B[0] = 0
+ ID_two_0_B[0] = 1
+ LOCKED_B[0] = 1
+ TRUE_B[0] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_B[0] = 1
+ proc1-printA_B[0] = 0
+ proc1-printB_B[0] = 0
+ proc1-printC_B[0] = 0
+ proc1-printD_B[0] = 0
+>>>>>>>>>>>>>>>> proc2-line_0_B[0] = 4
+ proc2-printA_B[0] = 0
+ proc2-printB_B[0] = 0
+ proc2-printC_B[0] = 0
+ proc2-printD_B[0] = 0
+
+  ++++++ TIME @ [1] ++++++
+
+ ID_one_0_B[1] = 0
+ ID_two_0_B[1] = 1
+ LOCKED_B[1] = 1
+ TRUE_B[1] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_B[1] = 2
+ proc1-printA_B[1] = 1
+ proc1-printB_B[1] = 1
+ proc1-printC_B[1] = 1
+ proc1-printD_B[1] = 1
+>>>>>>>>>>>>>>>> proc2-line_0_B[1] = 4
+ proc2-printA_B[1] = 0
+ proc2-printB_B[1] = 0
+ proc2-printC_B[1] = 0
+ proc2-printD_B[1] = 0
+
+  ++++++ TIME @ [2] ++++++
+
+ ID_one_0_B[2] = 0
+ ID_two_0_B[2] = 1
+ LOCKED_B[2] = 1
+ TRUE_B[2] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_B[2] = 3
+ proc1-printA_B[2] = 0
+ proc1-printB_B[2] = 0
+ proc1-printC_B[2] = 0
+ proc1-printD_B[2] = 0
+>>>>>>>>>>>>>>>> proc2-line_0_B[2] = 4
+ proc2-printA_B[2] = 0
+ proc2-printB_B[2] = 0
+ proc2-printC_B[2] = 0
+ proc2-printD_B[2] = 0
+
+  ++++++ TIME @ [3] ++++++
+
+ ID_one_0_B[3] = 0
+ ID_two_0_B[3] = 1
+ LOCKED_B[3] = 1
+ TRUE_B[3] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_B[3] = 3
+ proc1-printA_B[3] = 0
+ proc1-printB_B[3] = 0
+ proc1-printC_B[3] = 0
+ proc1-printD_B[3] = 0
+>>>>>>>>>>>>>>>> proc2-line_0_B[3] = 4
+ proc2-printA_B[3] = 0
+ proc2-printB_B[3] = 0
+ proc2-printC_B[3] = 0
+ proc2-printD_B[3] = 0
+
+  ++++++ TIME @ [4] ++++++
+
+ ID_one_0_B[4] = 0
+ ID_two_0_B[4] = 1
+ LOCKED_B[4] = 1
+>>>>>>>>>>>>>>>> proc1-line_0_B[4] = 3
+ proc1-printA_B[4] = 0
+ proc1-printB_B[4] = 0
+ proc1-printC_B[4] = 0
+ proc1-printD_B[4] = 0
+>>>>>>>>>>>>>>>> proc2-line_0_B[4] = 4
+ proc2-printA_B[4] = 0
+
+---END---
+
