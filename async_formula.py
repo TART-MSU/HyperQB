@@ -14,9 +14,16 @@ M2 = "_B"
 num_observables = 4
 num_procs = 2
 
-diameter_proc1 = 4
-diameter_proc2 = 5
+# print(sys.argv)
+
+diameter_proc1 = int(sys.argv[1])
+diameter_proc2 = int(sys.argv[2])
 len_longest_trajectory = diameter_proc1 + diameter_proc2
+
+print("diameter_proc1: ", diameter_proc1)
+print("diameter_proc2: ", diameter_proc2)
+print("len_longest_trajectory: ", len_longest_trajectory)
+
 
 ### ALL HELPER METHODS ###
 
@@ -442,16 +449,32 @@ def build_expressions(tau, final_formulas):
             final_formulas.append(pre)
 
 
+### check the halting conditions
+# halt_M1_t1 = var_dict["proc1-t1_halt_A[0]"]
+# halt_M1_t2 = var_dict["proc1-t2_halt_A[0]"]
+# halt_M2_t1 = var_dict["proc1-t1_halt_B[0]"]
+# halt_M2_t2 = var_dict["proc1-t2_halt_B[0]"]
+
+halt_t1 = "proc1-halt"
+halt_t2 = "proc2-halt"
+
+
 ### QCIR build
 ### convert all expressions into QCIR format
 To_find = [] # the trajectory constraint options to be find
-formula_cond = []
-dict_choices_eachlayer={}
-def convert_to_qcir(tau, expressions):
+# formula_cond = []
+# dict_choices_eachlayer={}
+def convert_to_qcir(tau, expressions, ext, formula_cond, dict_choices_eachlayer):
     counter=0
     layer_choices=set()
 
     for e in expressions:
+        time_t1 = e[0][3]
+        # print(time_t1)
+
+        time_t2 = e[0][4]
+        # print(time_t2)
+
         exp=e
         name = tau+exp[0]
         To_find.append(name)
@@ -525,11 +548,34 @@ def convert_to_qcir(tau, expressions):
             choice_3 = build_AND_multi(choices[2]) #10
             choice_4 = build_AND_multi(choices[3]) #11
 
+            selection = []
             choices = [choice_1, choice_2, choice_3, choice_4]
-            selection = build_OR_multi(choices)
-            index = build_IMPLIES(formula_antecedent, selection)
-            # index = build_IFF(formula_antecedent, selection)
-            formula_cond.append(index)
+            free_choices = build_OR_multi(choices)
+            selection.append(free_choices)
+
+            # ## if t1 halts
+            t1_terminated = halt_t1+ext+timestamp(time_t1)
+            t1_has_halted = build_IMPLIES(var_dict[t1_terminated], choice_2)
+            selection.append(t1_has_halted)
+
+
+            ## if t2 halts
+            t2_terminated = halt_t2+ext+timestamp(time_t2)
+            t2_has_halted = build_IMPLIES(var_dict[t2_terminated], choice_3)
+            selection.append(t2_has_halted)
+
+
+            ## if both halt
+            both_terminated = build_AND2(var_dict[t1_terminated], var_dict[t2_terminated])
+            both_halted = build_IMPLIES(both_terminated, choice_4)
+            selection.append(both_halted)
+
+            selections = build_AND_multi(selection)
+            formula = build_IMPLIES(formula_antecedent, selections)
+
+            # formula = build_IMPLIES(formula_antecedent, free_choices)
+            # index = build_IFF(formula_antecedent, selection) ## this is wrong
+            formula_cond.append(formula)
 
 
 
@@ -591,7 +637,6 @@ for i in range(len_longest_trajectory):
                     gates_dict[a+IFF+b]=num
                 all_observable_pairs.append(num)
 
-
                 a = proc_2[0]
                 b = proc_2[1]
                 if ((a+IFF+b) in gates_dict):
@@ -601,28 +646,23 @@ for i in range(len_longest_trajectory):
                     gates_dict[a+IFF+b]=num
                 all_observable_pairs.append(num)
 
-
             RS = build_AND_multi(all_observable_pairs)
             var_pair_formula = build_IMPLIES(key_index, RS)
             all_formula_pairs.append(var_pair_formula)
 
 
-final_observable_formulas = build_AND_multi(all_formula_pairs)
-
-
+global_observable_formulas = build_AND_multi(all_formula_pairs)
 print("finished observable formulas")
 
 #### MAIN FUNCTION CALL ###
 # tau1_groups=[]
 tau1_exp=[]
-# tau1_ending_group=set()
-# try_group=[]
+tau1_dict_choices_eachlayer={}
+tau1_formula_cond = []
 build_expressions("tau1_", tau1_exp)
-# print(tau1_exp)
-# print(*tau1_exp,sep="\n")
-# calc_exclusive_constraints("tau1_", tau1_exp, tau1_groups)
-# print(tau1_groups)
-convert_to_qcir("tau1_", tau1_exp)
+tau1_formula_cond = []
+convert_to_qcir("tau1_", tau1_exp, "_A", tau1_formula_cond, tau1_dict_choices_eachlayer)
+tau1_all_formulas = build_AND_multi(tau1_formula_cond)
 print("finished building tau1")
 # print(tau1_ending_group)
 # lst = list(tau1_ending_group)
@@ -634,50 +674,76 @@ print("finished building tau1")
 
 # tau2_groups=[]
 tau2_exp=[]
-# tau2_ending_group=set()
+tau2_dict_choices_eachlayer={}
+tau2_formula_cond = []
 build_expressions("tau2_", tau2_exp)
-# calc_exclusive_constraints("tau2_", tau2_exp, tau2_groups)
-convert_to_qcir("tau2_", tau2_exp)
+convert_to_qcir("tau2_", tau2_exp, "_B", tau2_formula_cond, tau2_dict_choices_eachlayer)
+tau2_all_formulas = build_AND_multi(tau2_formula_cond)
+print("finished building tau2")
 # print(tau2_ending_group)
 # lst = list(tau2_ending_group)
 # tau2_groups.append(lst)
 # print(tau1_groups)
-print("finished building tau2")
+
+
+
+# global_all_formulas = build_AND2(tau1_all_formulas, tau2_all_formulas)
 
 
 # for key, value in dict_choices_eachlayer.items():
     # print(key, "  ", value)
+NEW_QCIR.append("# tau1 layer constraints:")
+tau1_exclusive = []
+tau1_exclusive.append(str(var_dict["tau1_phi00[0]"]))
+for key, value in tau1_dict_choices_eachlayer.items():
+    index = build_exclusive_OR(value)
+    tau1_exclusive.append(index)
 
-NEW_QCIR.append("# layer constraints:")
-exclusive_constraints = []
-# exclusive_constraints.append(var_dict[tau1_groups[0]])
-# exclusive_constraints.append(var_dict[tau2_groups[0]])
-# for tau1 in tau1_groups:
-#     if (isinstance(tau1, list)):
-#         index = build_exclusive_OR(tau1)
-#         exclusive_constraints.append(index)
-# for tau2 in tau2_groups:
-#     if (isinstance(tau2, list)):
-#         index = build_exclusive_OR(tau2)
-#         exclusive_constraints.append(index)
-exclusive_constraints.append(str(var_dict["tau1_phi00[0]"]))
-exclusive_constraints.append(str(var_dict["tau2_phi00[0]"]))
-for key, value in dict_choices_eachlayer.items():
+tau1_exclusive_constraints = build_AND_multi(tau1_exclusive)
+
+
+NEW_QCIR.append("# tau2 layer constraints:")
+tau2_exclusive = []
+tau2_exclusive.append(str(var_dict["tau2_phi00[0]"]))
+for key, value in tau2_dict_choices_eachlayer.items():
     # print(key, "  ", value)
     index = build_exclusive_OR(value)
-    exclusive_constraints.append(index)
+    tau2_exclusive.append(index)
+
+tau2_exclusive_constraints = build_AND_multi(tau2_exclusive)
 
 
-phi_formulas_constraints=build_AND_multi(exclusive_constraints)
+# print(traj_vars_tau1)
+#### NEW: correctness of trajs
+# all_moving_constraints = []
+## 1. at least one traj moves on each step
+tau1_moving = []
+for traj1 in traj_vars_tau1:
+    index = build_OR2(var_dict[traj1[0]], var_dict[traj1[1]])
+    tau1_moving.append(index)
+    # all_moving_constraints.append(index)
+# print(tau1_moving_constraints)
+tau1_moving_constraints = build_AND_multi(tau1_moving)
 
-all_formulas = build_AND_multi(formula_cond)
+
+tau2_moving = []
+for traj2 in traj_vars_tau2:
+    index = build_OR2(var_dict[traj2[0]], var_dict[traj2[1]])
+    tau2_moving.append(index)
+    # all_moving_constraints.append(index)
+tau2_moving_constraints = build_AND_multi(tau2_moving)
 
 
-# print("to find:")
-# print(all_formulas)
-# print(To_find)
+### finally, build everything w.r.t. the quantifiers
+# antecedent = build_AND3(tau1_all_formulas,  tau1_moving_constraints, tau1_exclusive_constraints)
+consequence = build_AND3(tau2_moving_constraints, tau2_all_formulas, tau2_exclusive_constraints)
 
-
+# FINAL_FORMULA = build_IMPLIES(antecedent, consequence)
+# FINAL_FORMULA = antecedent
+FINAL_FORMULA = consequence
+# FINAL_FORMULA = build_AND2(antecedent, consequence)
+# FINAL_FORMULA = build_AND4(global_all_formulas, global_moving_constraint, global_exclusive_constraints, global_observable_formulas)
+# FINAL_FORMULA = build_AND3(global_all_formulas, global_exclusive_constraints, global_observable_formulas)
 
 
 print("-------------(TO ADD)------------")
@@ -693,13 +759,9 @@ OLD_logics = re.findall('.*=.*', QCIR)
 OLD_vars = re.findall('#\s.*', QCIR)
 OLD_output = re.findall('output.*', QCIR)
 
-# a_file.writelines(list_of_lines)
-
 write_QCIR = open("HQ_async.qcir", "w")
 write_QCIR.write(OLD_header[0]+ '\n')
 
-
-debug_QCIR = open("debug.qcir", "w")
 quant_forall=[]
 quant_exists=[]
 
@@ -717,25 +779,11 @@ for v in new_vars:
             if ((v in To_find)):
                 quant_exists.append(v)
 
-#### DEBUG
-# write_QCIR.write(OLD_forall[0].replace("forall", "exists")+ '\n')
-
-# print("to find")
-# print(quant_forall)
-# print(quant_exists)
-
-# DEBUG = "exists("
-# for v in quant_forall:
-#     DEBUG += str(var_dict[v]) + ","
-# for v in quant_exists:
-#     DEBUG += str(var_dict[v]) + ","
-# DEBUG = DEBUG[:-1] ## remove last ','
-# DEBUG += ")"
-# write_QCIR.write(DEBUG+ '\n')
-
 #### ADD Headers
+OLD_forall[0].replace("exists", "forall")
 write_QCIR.write(OLD_forall[0]+ '\n')
-FORALL = "forall("
+
+FORALL = "exists("
 for v in quant_forall:
     FORALL += str(var_dict[v]) + ","
 FORALL = FORALL[:-1] ## remove last ','
@@ -758,11 +806,9 @@ write_QCIR.write(EXISTS+ '\n')
 # print(var_dict["tau2_phi00[0]"])
 output = OLD_output[0].replace("output(", "")
 output = output.replace(")", "")
-out = str(var_index)
+out = str(var_index) # last index used in the above construction
 NEW_output_gate = "output("+out+")"
 # NEW_output_formula = out + " = and(" + str(6581) +")"
-
-
 write_QCIR.write(NEW_output_gate + '\n')
 
 
@@ -777,30 +823,40 @@ for l in OLD_logics:
 for n in NEW_QCIR:
     write_QCIR.write(n + '\n')
 
-# for new in new_vars:
-#     print(new,  ": ", var_dict[new])
-
-
-
+#### DEBUG
+# write_QCIR.write(OLD_forall[0].replace("forall", "exists")+ '\n')
+# print("to find")
+# print(quant_forall)
+# print(quant_exists)
+# DEBUG = "exists("
+# for v in quant_forall:
+#     DEBUG += str(var_dict[v]) + ","
+# for v in quant_exists:
+#     DEBUG += str(var_dict[v]) + ","
+# DEBUG = DEBUG[:-1] ## remove last ','
+# DEBUG += ")"
+# write_QCIR.write(DEBUG+ '\n')
 
 
 # print(*new_vars, sep="\n")
 ### plave the last formula
 outputs = str(var_index) + " = and("
 outputs += str(output) +  ","
-outputs += str(phi_formulas_constraints) + ","
-outputs += str(all_formulas) + ","
-outputs += str(final_observable_formulas) + ","
+outputs += str(FINAL_FORMULA) +  ","
+# outputs += str(phi_formulas_constraints) + ","
+# outputs += str(all_formulas) + ","
+# outputs += str(final_observable_formulas) + ","
 outputs = outputs[:-1]
 outputs += ")"
 write_QCIR.write(outputs + '\n')
+
 # NEW_output_formula = str(var_index) + " = and(" + str(output)  + "," + str(var_dict["tau1_phi00[0]"]) + "," + str(var_dict["tau2_phi00[0]"]) + "," + str(final_observable_formulas) + ")"
 # NEW_output_formula = str(var_index) + " = and(" + str(output)  + "," + str(var_dict["tau1_phi00[0]"]) + "," + str(var_dict["tau2_phi00[0]"]) + "," + str(var_dict["tau2_phi12[2]"]) + ")"
 # write_QCIR.write(NEW_output_formula + '\n')
 
 ### merge both mappings
 for v in OLD_vars:
-    write_QCIR.write(v  + '\n')
+    write_QCIR.write(v + '\n')
 
 for v in new_vars:
     if ( ("t1" in v) | ("t2" in v) | (v in To_find)):
@@ -809,14 +865,37 @@ for v in new_vars:
     # debug_QCIR.write("# "+ str(var_dict[v]) + " : " + v+ '\n')
 
 
-# print(*NEW_QCIR, sep="\n")
+#
+# for new in new_vars:
+#     print(new,  ": ", var_dict[new])
+#
+# debug_QCIR = open("debug.qcir", "w")
+# # print(*NEW_QCIR, sep="\n")
+# print("total num of new gates: ", len(NEW_QCIR))
+# for n in NEW_QCIR:
+#     debug_QCIR.write(n+ '\n')
 
-print("total num of new gates: ", len(NEW_QCIR))
-for n in NEW_QCIR:
-    debug_QCIR.write(n+ '\n')
 
 
 
+#====================================================================================
+#====================================================================================
+#====================================================================================
+#====================================================================================
+#====================================================================================
+
+
+# exclusive_constraints = []
+# exclusive_constraints.append(var_dict[tau1_groups[0]])
+# exclusive_constraints.append(var_dict[tau2_groups[0]])
+# for tau1 in tau1_groups:
+#     if (isinstance(tau1, list)):
+#         index = build_exclusive_OR(tau1)
+#         exclusive_constraints.append(index)
+# for tau2 in tau2_groups:
+#     if (isinstance(tau2, list)):
+#         index = build_exclusive_OR(tau2)
+#         exclusive_constraints.append(index)
 
 
 ###  build observable matching formulas:
