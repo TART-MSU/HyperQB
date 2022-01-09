@@ -40,8 +40,6 @@ print("[ tau1 trajectories ]")
 for v in vars:
     if ("tau1_t" in v):
         print(v)
-    if ("t2" in v):
-        print()
 
 print()
 for p in phi:
@@ -49,6 +47,7 @@ for p in phi:
         # print(p)
         if ("= 1" in p):
             print(p)
+print()
 # print("[ tau2 trajectories ]")
 for v in vars:
     if ("tau2_t" in v):
