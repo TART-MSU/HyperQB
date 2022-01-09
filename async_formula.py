@@ -829,8 +829,6 @@ forall = build_AND3(tau1_moving_constraints, tau1_all_formulas, tau1_exclusive_c
 exists = build_AND2(tau2_all_formulas, tau2_exclusive_constraints)
 # exists = build_AND3(tau2_moving_constraints, tau2_all_formulas, tau2_exclusive_constraints)
 
-
-
 # FORMULA = global_observable_formulas
 
 # antecedent = build_AND2(forall, output)
