@@ -18,8 +18,8 @@ MODULE main
 		init(LOCKED):= FALSE;
 		next(LOCKED) :=
 			case
-				(proc1.line=2 | proc1.line=3 | proc1.line=4 | proc2.line=2 | proc2.line=3 | proc2.line=4 ) : TRUE;
-				(proc1.line=9 | proc2.line=9) : TRUE;
+				(proc1.line=2 | proc1.line=3 | proc1.line=4 ) : TRUE;
+				(proc2.line=9) : TRUE;
 				TRUE: FALSE;
 			esac;
 		init(HIGH):= TRUE;
@@ -47,7 +47,7 @@ MODULE programs(ID, SCHEDULE, LOCKED, HIGH, initline)
 				-- program2
 				(line=6) : {7}; -- print C
 				(line=7 & HIGH) : {8}; -- if HIGH, proceed
-				(line=7 & !HIGH) : {11}; -- if !HIGH, skip to end
+				(line=7 & !HIGH) : {10}; -- if !HIGH, skip to end
 				(line=8 & LOCKED) : {8}; -- wait if LOCKED
 				(line=8 & !LOCKED) : {9}; -- else, proceed
 				(line=9) : {10}; -- LOCK
@@ -61,3 +61,4 @@ MODULE programs(ID, SCHEDULE, LOCKED, HIGH, initline)
 		printB := (line=4);
 		printC := (line=7);
 		printD := (line=11);
+		halt := (line=5) | (line=11);

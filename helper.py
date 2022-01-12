@@ -31,6 +31,7 @@ def natural_keys(text):
     '''
     pre=(re.findall('tau.*\[', text))
     text = text.replace(pre[0], "")
+    text = text.replace("]", "")
     return [ text ]
 
 

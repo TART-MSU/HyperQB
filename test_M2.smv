@@ -4,24 +4,24 @@ MODULE main
 		-- HIGH: boolean; -- high-value
 
 		-- SCHEDULE: 0..2; -- 0:p1 moves, 1:p2 moves, 2: both moves
-		ID_one: 0..1;
-		ID_two: 0..1;
+		-- ID_one: 0..1;
+		-- ID_two: 0..1;
 
-		proc1: programs(ID_one, LOCKED, 1);
-		proc2: programs(ID_two, LOCKED, 4);
+		proc1: programs(LOCKED, 1);
+		proc2: programs(LOCKED, 4);
 
 	ASSIGN
-		init(ID_one) := 0;
-		next(ID_one) := 0;
-		init(ID_two) := 1;
-		next(ID_two) := 1;
+		-- init(ID_one) := 0;
+		-- next(ID_one) := 0;
+		-- init(ID_two) := 1;
+		-- next(ID_two) := 1;
 		init(LOCKED):= TRUE;
 		next(LOCKED) := TRUE;
 		-- init(HIGH):= FALSE;
 		-- next(HIGH):= HIGH;
 
 
-MODULE programs(ID, LOCKED, initline)
+MODULE programs(LOCKED, initline)
 	VAR
 		line: 1..7;
 
@@ -36,8 +36,8 @@ MODULE programs(ID, LOCKED, initline)
 				(line=1) : {2}; -- wait if LOCKED
 				(line=2) : {3}; -- LOCK it
 				-- program2
-				(line=4 & LOCKED) : {4}; -- print C
 				(line=4 & !LOCKED) : {5}; -- print C
+				(line=4 & LOCKED) : {4}; -- print C
 				(line=5) : {6}; -- print C
 				(line=6) : {7}; -- print C
 
@@ -68,7 +68,8 @@ MODULE programs(ID, LOCKED, initline)
 		-- printB := (line=2);
 		-- printC := (line=6);
 		-- printD := (line=6);
-		printA := (line=2) | (line=6);
-		printB := (line=2) | (line=6);
-		printC := (line=2) | (line=6);
-		printD := (line=2) | (line=6);
+		printA := (line=2);
+		printB := (line=3);
+		printC := (line=2);
+		printD := (line=7);
+		halt := (line=3) | (line=7);
