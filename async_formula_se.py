@@ -892,7 +892,7 @@ FORALL = FORALL[:-1] ## remove last ','
 FORALL += ")"
 # print(FORALL)
 
-EXISTS = "forall("
+EXISTS = "exists("
 for v in quant_exists:
     EXISTS += str(var_dict[v]) + ","
 EXISTS = EXISTS[:-1] ## remove last ','
@@ -911,12 +911,12 @@ output = output.replace(")", "")
 
 ### finally, build everything w.r.t. the quantifiers
 # forall = build_AND2(tau1_all_formulas, tau1_exclusive_constraints)
-forall = build_AND3(tau1_moving_constraints, tau1_all_formulas, tau1_exclusive_constraints)
+M1 = build_AND3(tau1_moving_constraints, tau1_all_formulas, tau1_exclusive_constraints)
 
 
 # exists = (tau2_all_formulas)
 # exists = build_AND2(tau2_all_formulas, tau2_exclusive_constraints)
-exists = build_AND3(tau2_moving_constraints, tau2_all_formulas, tau2_exclusive_constraints)
+M2 = build_AND3(tau2_moving_constraints, tau2_all_formulas, tau2_exclusive_constraints)
 
 # FINAL_FORMULA =  build_AND3(output, forall, exists)
 # FINAL_FORMULA =  build_AND3(forall, exists, global_observable_formulas)
@@ -945,7 +945,7 @@ exists = build_AND3(tau2_moving_constraints, tau2_all_formulas, tau2_exclusive_c
 
 
 ### global formula speculative execution v3, EEEA
-FINAL_FORMULA = build_AND3(output, forall, build_IMPLIES(exists, NOT+str(global_observable_formulas)))
+FINAL_FORMULA = build_AND3(output, M1, build_AND2(M2, NOT+str(global_observable_formulas)))
 
 
 # FINAL_FORMULA =  build_AND2(output, build_AND2(forall, exists))

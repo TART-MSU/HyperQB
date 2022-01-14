@@ -1,7 +1,7 @@
 MODULE main
 	VAR
 		offset: 0..2;
-		var_Y: 0..4;
+		var_Y: 0..7;
 		var_size: 0..4;
 
 		-- LOCKED: boolean; -- semaphore
@@ -9,10 +9,12 @@ MODULE main
 		proc2: program(3, var_Y, var_size, offset);
 	ASSIGN
 		-- init(offset):= (0| 1 | 2);
-		-- init(offset):= 2;
+		-- init(offset):= 0..2;
 		next(offset):= offset;
-		init(var_Y):= 2;
+		-- init(var_Y):= 2;
+		-- init(var_Y) := 0..4;
 		next(var_Y):= var_Y;
+		-- init(var_size) := 4;
 		init(var_size) := 4;
 		next(var_size):= var_size;
 
