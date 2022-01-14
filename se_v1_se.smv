@@ -9,7 +9,7 @@ MODULE main
 		proc2: program(3, var_Y, var_size, offset);
 	ASSIGN
 		-- init(offset):= (0| 1 | 2);
-		-- init(offset):= 2;
+		-- init(offset):= 1;
 		next(offset):= offset;
 		init(var_Y):= 2;
 		next(var_Y):= var_Y;
@@ -62,19 +62,22 @@ MODULE program(initline, var_Y, var_size, offset)
 		next(line) :=
 		case
 			-- program1
-			(line=0 & (var_Y >= var_size)) : {2}; -- if index out of bound, terminate
-			(line=0 & (var_Y <  var_size)) : {1}; -- if index out of bound, terminate
+			(line=0) : {1}; -- speculative always proceed
+			-- (line=0 & (var_Y >= var_size)) : {2}; -- if index out of bound, terminate
+			-- (line=0 & (var_Y <  var_size)) : {1}; -- if index out of bound, terminate
 			(line=1) : {2}; --
-			(line=2) : {2}; --
+			-- (line=2) : {2}; --
+			(line=2) : {0}; --
 			-- program 2
 			(line=3) : {4}; --
-			-- (line=4) : {5}; -- speculative execution always proceed
-			(line=4 & (!var_X)) : {8}; -- if index out of bound, terminate
-			(line=4 & (var_X)) : {5};
+			(line=4) : {5}; -- speculative execution always proceed
+			-- (line=4 & (!var_X)) : {8}; -- if index out of bound, terminate
+			-- (line=4 & (var_X)) : {5};
 			(line=5) : {6}; -- load z (v1)
 			(line=6) : {7}; -- shift pointer
 			(line=7) : {8}; -- load w (v2)
-			(line=8) : {8};
+			-- (line=8) : {8};
+			(line=8) : {3};
 			-- program1
 			TRUE: line;
 		esac;
