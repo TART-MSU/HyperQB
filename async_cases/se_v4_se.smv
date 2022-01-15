@@ -1,0 +1,189 @@
+MODULE main
+	VAR
+		offset: 0..2;
+		var_Y: 0..7;
+		var_size: 0..4;
+		k: 0..4;
+
+		-- LOCKED: boolean; -- semaphore
+		proc1: program(0, var_Y, var_size, offset, k);
+		proc2: program(3, var_Y, var_size, offset, k);
+	ASSIGN
+		-- init(offset):= (0| 1 | 2);
+		-- init(offset):= 2;
+		next(offset):= offset;
+		-- init(var_Y):= 2;
+		-- init(var_Y) := 0..4;
+		next(var_Y):= var_Y;
+		-- init(var_size) := 4;
+		init(var_size) := 4;
+		next(var_size):= var_size;
+
+		init(k) := 3;
+		next(k) := k;
+
+MODULE program(initline, var_Y, var_size, offset, k)
+	VAR
+		line: 0..8;
+
+		arrA_pos0: 0..4;
+		arrA_pos1: 0..4;
+		arrA_pos2: 0..4;
+		arrA_pos3: 0..4;
+		arrA_pos4: 0..4;
+
+		arrB_pos0: 0..4;
+		arrB_pos1: 0..4;
+		arrB_pos2: 0..4;
+		arrB_pos3: 0..4;
+		arrB_pos4: 0..4;
+
+		-- proc 1 vars
+		var_temp_proc1: 0..4;
+		check_Ay_lt_k: boolean;
+
+
+
+		-- proc 2 variables
+		var_X: boolean;
+		-- var_Y: 0..4;
+		var_Z: 0..4;
+		var_W: 0..4;
+		var_temp_proc2: 0..4;
+		mask: 0..1;
+
+
+
+	ASSIGN
+	-- new check
+		init(check_Ay_lt_k) := (var_Y=0 & (k=1|k=2|k=3|k=4)) | (var_Y=1 & (k=2|k=3|k=4)) | (var_Y=2 & (k=3|k=4));
+		next(check_Ay_lt_k) := check_Ay_lt_k;
+
+
+
+		init(mask) := 0;
+		next(mask) :=
+		case
+			((line=2) & !(var_X)) : 0;
+			((line=2) & (var_X)) : 1;
+			TRUE: mask;
+		esac;
+
+
+		-- process 1 vars
+		init(var_temp_proc1) := 0;
+		next(var_temp_proc1) :=
+		case
+			(line=1 & ((var_Y+offset)=0)): {arrB_pos0};
+			(line=1 & ((var_Y+offset)=1)): {arrB_pos1};
+			(line=1 & ((var_Y+offset)=2)): {arrB_pos2};
+			(line=1 & ((var_Y+offset)=3)): {arrB_pos3};
+			(line=1 & ((var_Y+offset)=4)): {arrB_pos4};
+			TRUE: var_temp_proc1;
+		esac;
+
+		init(line) := initline;
+		next(line) :=
+		case
+			-- program1
+			(line=0) : {1}; -- speculative always proceed
+			-- (line=0 & (var_Y >= var_size)) : {2}; -- if index out of bound, terminate
+			-- (line=0 & (var_Y <  var_size)) : {1}; -- if index out of bound, terminate
+			(line=1) : {2}; --
+			-- (line=2) : {2}; --
+			(line=2) : {0}; --
+			-- program 2
+			(line=3) : {4}; --
+			(line=4) : {5}; -- speculative execution always proceed
+			-- (line=4 & (!var_X)) : {8}; -- if index out of bound, terminate
+			-- (line=4 & (var_X)) : {5};
+			(line=5) : {6}; -- load z (v1)
+			(line=6) : {7}; -- shift pointer
+			(line=7) : {8}; -- load w (v2)
+			-- (line=8) : {8};
+			(line=8) : {3};
+			-- program1
+			TRUE: line;
+		esac;
+
+
+
+
+		-- process 2 vars
+		init(var_X) := FALSE;
+		next(var_X) :=
+		case
+			(line=3) : (var_Y < var_size);
+			TRUE: var_X;
+		esac;
+
+		init(var_Z) := 0;
+		next(var_Z) :=
+		case
+			-- load z
+			((line=5) & (var_Y=0)) : {arrA_pos0};
+			((line=5) & (var_Y=1)) : {arrA_pos1};
+			((line=5) & (var_Y=2)) : {arrA_pos2};
+			((line=5) & (var_Y=3)) : {arrA_pos3};
+			((line=5) & (var_Y=4)) : {arrA_pos4};
+			-- shift pointer
+			((line=6) & (var_Z<3) & (offset=0)) : {var_Z+0};
+			((line=6) & (var_Z<3) & (offset=1)) : {var_Z+1};
+			((line=6) & (var_Z<3) & (offset=2)) : {var_Z+2};
+			((line=6) & (var_Z>=3)) : {4};
+			-- instead of shift pointer directly, we mask it with the original value
+			-- ((line=6) & (mask=0)) : {0};
+			TRUE: var_Z;
+		esac;
+
+		init(var_W) := 0;
+		next(var_W) :=
+		case
+			((line=7) & (var_Z=0)) : {arrB_pos0};
+			((line=7) & (var_Z=1)) : {arrB_pos1};
+			((line=7) & (var_Z=2)) : {arrB_pos2};
+			((line=7) & (var_Z=3)) : {arrB_pos3};
+			((line=7) & (var_Z=4)) : {arrB_pos4};
+			TRUE: var_W;
+		esac;
+
+		init(var_temp_proc2) := 0;
+		next(var_temp_proc2) :=
+		case
+			(line=8): {var_W};
+			TRUE: var_temp_proc2;
+		esac;
+
+
+
+
+		-- static VARs
+		init(arrA_pos0) := 0;
+		next(arrA_pos0) := arrA_pos0;
+		init(arrA_pos1) := 1;
+		next(arrA_pos1) := arrA_pos1;
+		init(arrA_pos2) := 2;
+		next(arrA_pos2) := arrA_pos2;
+		init(arrA_pos3) := 3;
+		next(arrA_pos3) := arrA_pos3;
+		init(arrA_pos4) := 4;
+		next(arrA_pos4) := arrA_pos4;
+
+		init(arrB_pos0) := 0;
+		next(arrB_pos0) := arrB_pos0;
+		init(arrB_pos1) := 1;
+		next(arrB_pos1) := arrB_pos1;
+		init(arrB_pos2) := 2;
+		next(arrB_pos2) := arrB_pos2;
+		init(arrB_pos3) := 3;
+		next(arrB_pos3) := arrB_pos3;
+		init(arrB_pos4) := 4;
+		next(arrB_pos4) := arrB_pos4;
+
+
+
+	DEFINE
+		halt := (line=2) | (line=8);
+		-- start := (line=2);
+		-- rollback := (line=5);
+		-- load := (line=2 | line=4);
