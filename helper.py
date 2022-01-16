@@ -37,6 +37,18 @@ def natural_keys(text):
 
 
 phi.sort(key=natural_keys)
+print("[ tau trajectories ]")
+for v in vars:
+    if ("tau_t" in v):
+        print(v)
+
+print()
+for p in phi:
+    if ("tau" in p):
+        # print(p)
+        if ("= 1" in p):
+            print(p)
+
 print("[ tau1 trajectories ]")
 for v in vars:
     if ("tau1_t" in v):
