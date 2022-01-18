@@ -2,12 +2,8 @@
  MODULE main
  VAR
     -- a 5x5 grid
-    x_axis: 0..4;
-    y_axis: 0..4;
-
-    x_axis_neighbor: 0..4;
-    y_axis_neighbor: 0..4;
-
+    x_axis: 0..6;
+    y_axis: 0..6;
 
     DIR_TOKEN: 0..1;
 
@@ -20,30 +16,24 @@
     next(DIR_TOKEN) := {0,1};
 
 
-    init(x_axis_neighbor) := 4;
-    next(x_axis_neighbor) := x_axis;
-
     -- 3:left, 4:right
-    init(x_axis) := 4;
+    init(x_axis) := 0;
     next(x_axis) :=
       case
         (DIR_TOKEN=1): x_axis;
-        (y_axis!=4): x_axis;
+        (y_axis!=6): x_axis;
         -- (act=0):  x_axis;
         -- (act=1 | act=2):  x_axis;
         (x_axis=0) : {0, 1};
-        (x_axis=4) : {4, 3};
-        ((x_axis!=0) & (x_axis!=4)) : {(x_axis - 1), (x_axis + 1)};
+        (x_axis=6) : {6, 5};
+        ((x_axis!=0) & (x_axis!=6)) : {(x_axis - 1), (x_axis + 1)};
         -- ((x_axis!=4) & act=4) : {x_axis + 1};
         TRUE: x_axis;
       esac;
 
 
-    init(y_axis_neighbor) := 4;
-    next(y_axis_neighbor) := y_axis;
-
     -- 1:up, 2:down
-    init(y_axis) := 4;
+    init(y_axis) := 0;
     next(y_axis) :=
       case
         (DIR_TOKEN=0): y_axis;
@@ -51,8 +41,8 @@
         -- (act=0):  y_axis;
         -- (act=3 | act=4):  y_axis;
         (y_axis=0) : {0, 1};
-        (y_axis=4) : {4, 3};
-        ((y_axis!=0) & (y_axis!=4)) : {(y_axis - 1), (y_axis + 1)};
+        (y_axis=6) : {6, 5};
+        ((y_axis!=0) & (y_axis!=6)) : {(y_axis - 1), (y_axis + 1)};
         -- ((y_axis!=4) & act=1) : {y_axis + 1};
         -- ((y_axis!=0) & act=2) : {y_axis - 1};
         TRUE: y_axis;
@@ -60,9 +50,9 @@
 
 
     DEFINE
-       BEGIN := ((x_axis=4 & y_axis=4));
+       BEGIN := ((x_axis=0 & y_axis=0));
        -- OBSTACLE := (x_axis=1)| state = 1 | state = 2 | state = 3;
        -- q := state = 4;
        -- GOAL :=  ((x_axis=0 & y_axis=4));
-       halt :=  ((x_axis=0 & y_axis=0));
+       halt :=  ((x_axis=0 & y_axis=4));
     -- LTLSPEC (p U q)

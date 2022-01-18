@@ -18,7 +18,7 @@
 
     -- 3:left, 4:right
     init(x_axis) := 0;
-    next(x_axis) := 
+    next(x_axis) :=
       case
         (DIR_TOKEN=1): x_axis;
         (y_axis!=4): x_axis;
@@ -54,5 +54,5 @@
        -- OBSTACLE := (x_axis=1)| state = 1 | state = 2 | state = 3;
        -- q := state = 4;
        -- GOAL :=  ((x_axis=0 & y_axis=4));
-       halt :=  ((x_axis=0 & y_axis=0));
+       halt :=  ((x_axis=0 & y_axis=2));
     -- LTLSPEC (p U q)
