@@ -226,7 +226,7 @@ def binary_eq(var_l, var_r,  num_bits):
 		left = var_l[0] + "_"+str(i) +"_"+var_l[1]
 		right = var_r[0] + "_"+str(i) +"_"+var_r[1]
 		# print(left + " <-> " + right)
-		result.append(left + IFF + right)
+		result.append("("+left + IFF + right+")")
 	return conjunct(result)
 
 def binary_assign(var, num, bitblasting_dict):
