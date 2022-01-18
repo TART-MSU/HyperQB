@@ -12,16 +12,16 @@
     ASSIGN
 
     -- action: 0:stay, 1:up, 2:down, 3:left, 4:right
-    init(act):= 0;
-    next(act):=
-      case
-        (x_axis=0 & y_axis=0): {1};
-        (x_axis=0 & y_axis=4): {2,4};
-        (x_axis=0): {1,2};
-        (x_axis=4 & y_axis=4): {3};
-        (y_axis=4): {3,4};
-        TRUE: {1,2,3,4};
-      esac;
+    init(act):= 1;
+    next(act):= 1;
+      -- case
+      --   (x_axis=0 & y_axis=0): {1};
+      --   (x_axis=0 & y_axis=4): {2,4};
+      --   (x_axis=0): {1,2};
+      --   (x_axis=4 & y_axis=4): {3};
+      --   (y_axis=4): {3,4};
+      --   TRUE: {1,2,3,4};
+      -- esac;
 
 
     -- 3:left, 4:right
@@ -58,6 +58,6 @@
        BEGIN := ((x_axis=0 & y_axis=0));
        -- OBSTACLE := (x_axis=1)| state = 1 | state = 2 | state = 3;
        -- q := state = 4;
-       GOAL :=  ((x_axis=0 & y_axis=4));
+       -- GOAL :=  ((x_axis=0 & y_axis=4));
        halt :=  ((x_axis=4 & y_axis=4));
     -- LTLSPEC (p U q)

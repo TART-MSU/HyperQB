@@ -1,0 +1,79 @@
+
+ MODULE main
+ VAR
+    -- a 5x5 grid
+    x_axis_ONE: 0..4;
+    y_axis_ONE: 0..4;
+
+    x_axis_TWO: 0..4;
+    y_axis_TWO: 0..4;
+
+    -- STAY/UP/DOWN/LEFT/RIGHT
+    act_ONE: 0..4;
+    act_TWO: 0..4;
+    -- ROBOT1: ROBOT(R1_x_axis_ONE, R1_y_axis_ONE, R1_act);
+    -- ROBOT2: ROBOT(R2_x_axis_ONE, R2_y_axis_ONE, R2_act);
+    ASSIGN
+
+    -- action: 0:stay, 1:up, 2:down, 3:left, 4:right
+    init(act_ONE):= 0;
+    next(act_ONE):=
+      case
+        (x_axis_ONE=0 & y_axis_ONE=0): {1};
+        (x_axis_ONE=0 & y_axis_ONE=4): {2,4};
+        (x_axis_ONE=0): {1,2};
+        (x_axis_ONE=4 & y_axis_ONE=4): {3};
+        (y_axis_ONE=4): {3,4};
+        TRUE: {1,2,3,4};
+      esac;
+
+
+    -- 3:left, 4:right
+    init(x_axis_ONE) := 4;
+    next(x_axis_ONE) :=
+      case
+        (act_ONE=0):  x_axis_ONE;
+        (act_ONE=1 | act_ONE=2):  x_axis_ONE;
+        (x_axis_ONE = 0 & act_ONE=3) : {0};
+        (x_axis_ONE = 4 & act_ONE=4) : {4};
+        ((x_axis_ONE!=0) & act_ONE=3) : {x_axis_ONE - 1};
+        ((x_axis_ONE!=4) & act_ONE=4) : {x_axis_ONE + 1};
+        TRUE: x_axis_ONE;
+      esac;
+
+
+    -- 1:up, 2:down
+    init(y_axis_ONE) := 4;
+    next(y_axis_ONE) :=
+      case
+        (act_ONE=0):  y_axis_ONE;
+        (act_ONE=3 | act_ONE=4):  y_axis_ONE;
+        (y_axis_ONE = 0 & act_ONE=2) : {0};
+        (y_axis_ONE = 4 & act_ONE=1) : {4};
+        ((y_axis_ONE!=4) & act_ONE=1) : {y_axis_ONE + 1};
+        ((y_axis_ONE!=0) & act_ONE=2) : {y_axis_ONE - 1};
+        TRUE: y_axis_ONE;
+      esac;
+
+
+    init(act_TWO):= act_ONE;
+    next(act_TWO):= act_ONE;
+
+    -- 3:left, 4:right
+    init(x_axis_TWO) := x_axis_ONE;
+    next(x_axis_TWO) := x_axis_ONE;
+
+    -- 1:up, 2:down
+    init(y_axis_TWO) := y_axis_ONE;
+    next(y_axis_TWO) := y_axis_ONE;
+
+
+
+
+    DEFINE
+       BEGIN := ((x_axis_ONE=0 & y_axis_ONE=0));
+       -- OBSTACLE := (x_axis_ONE=1)| state = 1 | state = 2 | state = 3;
+       -- q := state = 4;
+       -- GOAL :=  ((x_axis_ONE=0 & y_axis_ONE=4));
+       halt :=  ((x_axis_ONE=4 & y_axis_ONE=4));
+    -- LTLSPEC (p U q)

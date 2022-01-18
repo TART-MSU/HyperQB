@@ -1,0 +1,35 @@
+MODULE main
+VAR
+
+state: 0..2;
+h: 0..1;
+low: 0..1;
+
+ASSIGN
+init(h) := {0,1};
+next(h) := h;
+  -- case
+    -- (state=0 | state=1 | state=2): h;
+    -- TRUE: h;
+  -- esac;
+
+init(low) := {1};
+next(low) := h;
+  -- case
+    -- (state=0 | state=1 | state=2): h;
+    -- TRUE: h;
+  -- esac;
+
+init(state) := 0;
+next(state) :=
+  case
+    (state=0): 1;
+    (state=1): 2;
+    (state=2): 2;
+    -- TRUE: state+1;
+  esac;
+
+DEFINE
+   BEGIN := (state=0);
+   halt := (state=2);
+   -- a := (state=0) | (state=1);

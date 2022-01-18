@@ -14,11 +14,24 @@ M2 = "_B"
 ### parameters setup
 # temp_obs_vars_proc1 = ["proc1-var_temp_proc1_0", "proc1-var_temp_proc1_1", "proc1-var_temp_proc1_2"]
 # temp_obs_vars_proc2 = ["proc2-var_temp_proc2_0", "proc2-var_temp_proc2_1", "proc2-var_temp_proc2_2"]
-# temp_obs_vars = ["GOAL"]
 temp_obs_vars = ["y_axis_0","y_axis_1","y_axis_2","x_axis_0","x_axis_1","x_axis_2"]
+# temp_obs_vars = []
+# temp_obs_vars = ["low_0"]
+termination_flag = "halt"
+num_observables = 6
+
+
+# temp_obs_vars_ONE = ["y_axis_ONE_0","y_axis_ONE_1","y_axis_ONE_2","x_axis_ONE_0","x_axis_ONE_1","x_axis_ONE_2"]
+# temp_obs_vars_TWO = ["y_axis_TWO_0","y_axis_TWO_1","y_axis_TWO_2","x_axis_TWO_0","x_axis_TWO_1","x_axis_TWO_2"]
+
+# temp_obs_vars_TWO = ["y_axis_TWO_0","y_axis_TWO_1","y_axis_TWO_2","x_axis_TWO_0","x_axis_TWO_1","x_axis_TWO_2"]
+
+# obs_vars_M1_ONE =["y_axis_ONE_0","y_axis_ONE_1","y_axis_ONE_2","x_axis_ONE_0","x_axis_ONE_1","x_axis_ONE_2"]
+# obs_vars_M1_TWO =["y_axis_TWO_0","y_axis_TWO_1","y_axis_TWO_2","x_axis_TWO_0","x_axis_TWO_1","x_axis_TWO_2"]
+# obs_vars_M2 = ["y_axis_0","y_axis_1","y_axis_2","x_axis_0","x_axis_1","x_axis_2"]
 # num_observables = 3
-num_observables = len(temp_obs_vars)
-num_procs = 2
+# num_observables = 6
+# num_procs = 2
 
 # halt_t1 = "proc1-halt"
 # halt_t2 = "proc2-halt"
@@ -208,6 +221,7 @@ QCIR=open_QCIR.read()
 vars = re.findall('#\s.*', QCIR)
 ### NEW GATES ADDED to NEW QCIR
 NEW_QCIR = []
+
 
 
 #### var_dict is a dictionary containing all variables with their numerical representation
@@ -638,28 +652,26 @@ def convert_to_qcir(tau, expressions, t1_ext, t2_ext, formula_cond, dict_choices
             selection.append(free_choices)
 
 
-            t1_halt = var_dict[(halt_t1+t1_ext+timestamp(time_t1))]
-            t2_halt = var_dict[(halt_t2+t2_ext+timestamp(time_t2))]
-            # ## if t1 halts
-            only_t1_terminated = build_AND2(t1_halt, NOT+t2_halt)
-            only_t1_has_halted = build_IMPLIES(only_t1_terminated, NOT+str(choice_3))
-            selection.append(only_t1_has_halted)
+            # ## Only with existential quantifier needed this!!
+            # t1_halt = var_dict[(halt_t1+t1_ext+timestamp(time_t1))]
+            # t2_halt = var_dict[(halt_t2+t2_ext+timestamp(time_t2))]
+            # # ## if t1 halts
+            # only_t1_terminated = build_AND2(t1_halt, NOT+str(t2_halt))
+            # only_t1_has_halted = build_IMPLIES(only_t1_terminated, NOT+str(choice_3))
+            # selection.append(only_t1_has_halted)
+            # ## if t2 halts
+            # only_t2_terminated = build_AND2(NOT+str(t1_halt), t2_halt)
+            # only_t2_has_halted = build_IMPLIES(only_t2_terminated, NOT+str(choice_2))
+            # selection.append(only_t2_has_halted)
+            # ## if both halt
+            # both_terminated = build_AND2(t1_halt, t2_halt)
+            # both_halted = build_IMPLIES(both_terminated, choice_4)
+            # selection.append(both_halted)
 
 
-            ## if t2 halts
-            only_t2_terminated = build_AND2(NOT+t1_halt, t2_halt)
-            only_t2_has_halted = build_IMPLIES(only_t2_terminated, NOT+str(choice_2))
-            selection.append(only_t2_has_halted)
-
-
-            ## if both halt
-            both_terminated = build_AND2(t1_halt, t2_halt)
-            both_halted = build_IMPLIES(both_terminated, choice_4)
-            selection.append(both_halted)
 
             selections = build_AND_multi(selection)
             formula = build_IMPLIES(formula_antecedent, selections)
-
             # formula = build_IMPLIES(formula_antecedent, free_choices)
             # index = build_IFF(formula_antecedent, selection) ## this is wrong
             formula_cond.append(formula)
@@ -712,59 +724,85 @@ def build_realtional_conditions():
             NEW_QCIR.append("# value")
             # print(A, AND, B)
             # print(curr)
-            all_observable_pairs = []
-            for k in range(num_observables):
-                ### relational predicates among multiple trakectories
-                # proc_1 = [temp_obs_vars_proc1[k]+M1+timestamp(A[0]), temp_obs_vars_proc1[k]+M2+timestamp(B[0])]
-                # proc_2 = [temp_obs_vars_proc2[k]+M1+timestamp(A[1]), temp_obs_vars_proc2[k]+M2+timestamp(B[1])]
+            if (len(temp_obs_vars) != 0):
+                all_observable_pairs = []
+                for k in range(num_observables):
+                    ### relational predicates among one trajectories
+                    proc = [temp_obs_vars[k]+M1+timestamp(curr[0]), temp_obs_vars[k]+M2+timestamp(curr[1])]
+                    # print(proc)
+                    a = proc[0]
+                    b = proc[1]
+                    if ((a+IFF+b) in gates_dict):
+                        num=gates_dict[a+IFF+b]
+                    else:
+                        num = build_IFF(var_dict[a], var_dict[b])
+                        gates_dict[a+IFF+b]=num
+                    all_observable_pairs.append(num)
 
-                ### relational predicates among one trajectories
-                proc = [temp_obs_vars[k]+M1+timestamp(curr[0]), temp_obs_vars[k]+M2+timestamp(curr[1])]
-                # print(tau_name, proc)
-                # proc_2 = [temp_obs_vars_proc1[k]+M2+timestamp(B[0]), temp_obs_vars_proc2[k]+M2+timestamp(B[1])]
+                RS = build_AND_multi(all_observable_pairs)
+                # print(tau_name)
                 # print(proc)
-                #
-                # NEW_QCIR.append(proc_1[0])
-                # NEW_QCIR.append(proc_1[1])
-                # NEW_QCIR.append(proc_2[0])
-                # NEW_QCIR.append(proc_2[1])
+                eventually_formulas[tau_name] = RS
 
-                a = proc[0]
-                b = proc[1]
-                if ((a+IFF+b) in gates_dict):
-                    num=gates_dict[a+IFF+b]
-                else:
-                    num = build_IFF(var_dict[a], var_dict[b])
-                    gates_dict[a+IFF+b]=num
-                all_observable_pairs.append(num)
-                # a = proc[0]
-                # b = proc[1]
-                # if ((a+IFF+b) in gates_dict):
-                #     num=gates_dict[a+IFF+b]
-                # else:
-                #     num = build_IFF(var_dict[a], var_dict[b])
-                #     gates_dict[a+IFF+b]=num
-                # all_observable_pairs.append(num)
-
-                # a = proc_2[0]
-                # b = proc_2[1]
-                # if ((a+IFF+b) in gates_dict):
-                #     num=gates_dict[a+IFF+b]
-                # else:
-                #     num = build_IFF(var_dict[a], var_dict[b])
-                #     gates_dict[a+IFF+b]=num
-                # all_observable_pairs.append(num)
+            else:
+                all_observable_pairs_ONE = []
+                all_observable_pairs_TWO = []
+                for k in range(num_observables):
+                    ### relational predicates among one trajectories
+                    proc1 = [obs_vars_M1_ONE[k]+M1+timestamp(curr[0]), obs_vars_M2[k]+M2+timestamp(curr[1])]
+                    proc2 = [obs_vars_M1_TWO[k]+M1+timestamp(curr[0]), obs_vars_M2[k]+M2+timestamp(curr[1])]
 
 
-            RS = build_AND_multi(all_observable_pairs)
-            # var_pair_formula = build_IMPLIES(key_index, RS)
-            # all_formula_pairs.append(var_pair_formula)
-            # print(RS)
+                    a = proc1[0]
+                    b = proc1[1]
+                    if ((a+IFF+b) in gates_dict):
+                        num=gates_dict[a+IFF+b]
+                    else:
+                        num = build_IFF(var_dict[a], var_dict[b])
+                        gates_dict[a+IFF+b]=num
+                    all_observable_pairs_ONE.append(num)
 
-            # var_pair_formula = build_IMPLIES(key_index, RS)
-            # print(var_pair_formula)
-            # print(all_formula_pairs)
-            eventually_formulas[tau_name] = RS
+                    a = proc2[0]
+                    b = proc2[1]
+                    if ((a+IFF+b) in gates_dict):
+                        num=gates_dict[a+IFF+b]
+                    else:
+                        num = build_IFF(var_dict[a], var_dict[b])
+                        gates_dict[a+IFF+b]=num
+                    all_observable_pairs_TWO.append(num)
+
+                # print(all_observable_pairs_ONE)
+
+                RS = build_OR2(build_AND_multi(all_observable_pairs_ONE), build_AND_multi(all_observable_pairs_TWO))
+                eventually_formulas[tau_name] = RS
+
+
+
+
+
+eventually_halt={}
+def build_terminating_traj():
+    # global observable_vars_formulas
+    global eventaully_halt
+    # gates_dict = {}
+    for i in range(len_longest_trajectory+1):
+        curr_time_step_tau = tau_valid_traj_options[str(i)]
+        # print(curr_time_step_tau)
+        for curr in curr_time_step_tau:
+        # for B in curr_time_step_tau2:
+            tau_name = "tau_phi"+str(curr[0])+str(curr[1])+"["+str(i)+"]"
+            # NEW_QCIR.append("# key:"+tau_name)
+            # print(tau_name)
+            key_index = (var_dict[tau_name])
+            # print(key_index)
+            NEW_QCIR.append("# value")
+
+            # both_terminated = [termination_flag+M1+timestamp(curr[0]), termination_flag+M2+timestamp(curr[1])]
+            M1_term = termination_flag+M1+timestamp(curr[0])
+            M2_term = termination_flag+M2+timestamp(curr[1])
+
+            both_term = build_AND2(var_dict[M1_term], var_dict[M2_term])
+            eventually_halt[tau_name] = both_term
 
 
 
@@ -901,29 +939,54 @@ print("time elapsed: ", round((elapsed - start), 3), 's')
 # for key, value in tau_dict_choices_eachlayer.items():
 #     print(key, "  ", value)
 build_realtional_conditions()
+build_terminating_traj()
 
 eventually_formulas_constraints = []
+eventually_halt_constraints = []
+tau_exclusive = []
+
 print("building exclusive constraints...")
 NEW_QCIR.append("# tau layer constraints:")
-tau_exclusive = []
+## the initial case
 tau_exclusive.append(str(var_dict["tau_phi00[0]"]))
+index = build_AND2(str(var_dict["tau_phi00[0]"]), eventually_formulas["tau_phi00[0]"])
+eventually_formulas_constraints.append(index)
+
+
+
+
+
 for key, value in tau_dict_choices_eachlayer.items():
     index = build_exclusive_OR(value)
     tau_exclusive.append(index)
     one_of_them_is_true=[]
+    one_of_them_terminated=[]
     # print(key)
+    # print(value)
     for v in value:
         # print(v, eventually_formulas[v])
-        index = build_AND2(str(var_dict[v]), eventually_formulas[v])
-        one_of_them_is_true.append(index)
-    index=build_OR_multi(one_of_them_is_true)
-    eventually_formulas_constraints.append(index)
+        # index = build_AND2(str(var_dict[v]), eventually_formulas[v])
+        one_of_them_is_true.append(build_AND2(str(var_dict[v]), eventually_formulas[v]))
+        # index = build_AND2(str(var_dict[v]), eventually_halt[v])
+        one_of_them_terminated.append(build_AND2(str(var_dict[v]), eventually_halt[v]))
+
+    # index=build_OR_multi(one_of_them_is_true)
+    eventually_formulas_constraints.append(build_OR_multi(one_of_them_is_true))
+    eventually_halt_constraints.append(build_OR_multi(one_of_them_terminated))
+
 tau_exclusive_constraints = build_AND_multi(tau_exclusive)
 elapsed = time.time()
 print("time elapsed: ", round((elapsed - start), 3), 's')
 
+
 print("building formula (eventually) relational constraints.")
 global_eventually_formula= build_OR_multi(eventually_formulas_constraints)
+elapsed = time.time()
+print("time elapsed: ", round((elapsed - start), 3), 's')
+
+
+print("building terminating constraints.")
+tau_eventually_terminated= build_OR_multi(eventually_halt_constraints)
 elapsed = time.time()
 print("time elapsed: ", round((elapsed - start), 3), 's')
 
@@ -995,14 +1058,21 @@ OLD_forall = re.findall('forall.*', QCIR)
 OLD_logics = re.findall('.*=.*', QCIR)
 OLD_vars = re.findall('#\s.*', QCIR)
 OLD_output = re.findall('output.*', QCIR)
-output = OLD_output[0].replace("output(", "")
-output = output.replace(")", "")
+
+
+
+
 
 write_QCIR = open("HQ_async.qcir", "w")
-write_QCIR.write(OLD_header[0]+ '\n')
 
-write_QCIR.write(OLD_exists[0]+ '\n')
-write_QCIR.write(OLD_forall[0]+ '\n')
+
+### construct header
+# write_QCIR.write(OLD_header[0]+ '\n')
+
+# if(len(OLD_exists)!=0):
+    # write_QCIR.write(OLD_exists[0]+ '\n')
+# if(len(OLD_forall)!=0):
+    # write_QCIR.write(OLD_forall[0]+ '\n')
 
 
 ### setup new added things
@@ -1014,29 +1084,143 @@ for v in To_find:
     quant_exists.append(v)
 
 #### global formula for drone test
-exists = build_AND3(tau_all_formulas, tau_exclusive_constraints, tau_moving_constraints)
-consequence = build_IMPLIES(exists, NOT+str(global_eventually_formula))
+# trace = tau_moving_constraints
+# trace = build_AND3(tau_all_formulas, tau_moving_constraints, tau_exclusive_constraints)
+# traj= build_AND2(tau_all_formulas, tau_exclusive_constraints)
+
+
+###########################################  FORMULA ###########################################
+# valid = build_IMPLIES(tau_moving_constraints, tau_eventually_terminated)
+
+# good_traj = build_AND2(tau_all_formulas, tau_exclusive_constraints)
+
+# valid = build_AND4(tau_moving_constraints, tau_eventually_terminated, tau_exclusive_constraints, tau_all_formulas)
+valid = build_AND3(tau_moving_constraints, tau_exclusive_constraints, tau_all_formulas)
+# valid = build_AND3(tau_moving_constraints, tau_exclusive_constraints, tau_all_formulas)
+
+# output = OLD_output[0].replace("output(", "")
+# output = output.replace(")", "")
+# print(var_dict)
+
+vars_A=[]
+vars_B=[]
+for key, value in var_dict.items():
+    if("_A" in key):
+        # print(key)
+        vars_A.append(var_dict[key])
+    if("_B" in key):
+        # print(key)
+        vars_B.append(var_dict[key])
+# print(vars_B)
+
+header_M1="exists("
+for a in vars_A:
+    header_M1 = header_M1 + a + ","
+header_M1 = header_M1[:-1] ## remove last ','
+header_M1 += ")"
+write_QCIR.write(header_M1 + '\n')
+
+header_M2="forall("
+for b in vars_B:
+    header_M2 = header_M2 + b + ","
+header_M2 = header_M2[:-1] ## remove last ','
+header_M2 += ")"
+write_QCIR.write(header_M2 + '\n')
+
+
+# print(OLD_logics[-1])
+# print(OLD_logics[-2])
+
+
+### fetch the model outputs
+M1 = OLD_logics[-1]
+M1 = M1.split("(")
+M1 = (M1[1].split(","))[0]
+print(M1)
+
+M2 = OLD_logics[-2]
+M2 = M2.split("(")
+M2 = (M2[1].split(","))[0]
+print(M2)
+
+# M1="200"
+# M2="6221"
+
+EVENTUALLY = str(global_eventually_formula)
+
+# exists = build_AND3(tau_all_formulas, tau_exclusive_constraints, tau_moving_constraints)
+# exists = build_AND2(tau_exclusive_constraints, tau_moving_constraints)
+# exists = tau_moving_constraints
+### GOOD GOOD
+Q_tau="exists"
+FINAL_FORMULA = build_AND2(M1, build_IMPLIES(M2, build_AND2(valid, EVENTUALLY)))
+
+
+# Q_tau="forall"
+# FINAL_FORMULA = build_AND2(M1, build_IMPLIES(M2, build_AND2(valid, EVENTUALLY)))
+
+
+# FINAL_FORMULA = build_AND2(output, tau_eventually_terminated)
+# FINAL_FORMULA = build_IMPLIES(output, global_eventually_formula)
+# FINAL_FORMULA = build_IMPLIES(output, tau_moving_constraints)
+# FINAL_FORMULA = output
+# FINAL_FORMULA = build_AND3(M1, M2, build_AND2(valid, NOT+EVENTUALLY))
+
+# FINAL_FORMULA = build_AND2(output, str(valid))
+# FINAL_FORMULA = build_AND2(output, build_AND2(valid, NOT+EVENTUALLY))
+# FINAL_FORMULA = build_IMPLIES(output, build_IMPLIES(valid, EVENTUALLY))
+## exists
+# FINAL_FORMULA = build_AND2(output, build_AND2(valid, build_AND2(good_traj, EVENTUALLY)))
+
+# FINAL_FORMULA = build_AND2(output, build_IMPLIES(valid, NOT+EVENTUALLY))
+# FINAL_FORMULA = build_AND2(output, valid)
+
+
+
+# FINAL_FORMULA = build_IMPLIES(output, build_IMPLIES(valid, NOT+EVENTUALLY))
+# FINAL_FORMULA = build_IMPLIES(output, valid)
+# FINAL_FORMULA = build_AND2(output, build_IMPLIES(valid, build_AND2(good_traj, EVENTUALLY)))
+# FINAL_FORMULA = output
+
+
+# print(To_find)
+
+
+### good!
+# Q_tau="forall"
+# # consequence = build_IMPLIES(trace, var_dict["TRUE_A[0]"])
+# # consequence = build_IMPLIES(trace, build_AND2(tau_exclusive_constraints, var_dict["TRUE_A[0]"]))
+# # consequence = build_IMPLIES(trace, build_AND2(tau_all_formulas, global_eventually_formula))
+# # consequence = build_IMPLIES(trace, NOT+str(global_eventually_formula))
+# consequence = build_IMPLIES(trace, str(global_eventually_formula))
+# # consequence = build_IMPLIES(exists,  str(global_eventually_formula))
+
+# consequence = build_IMPLIES(tau_moving_constraints, str(global_eventually_formula))
 # FINAL_FORMULA=build_AND2(output,consequence)
-FINAL_FORMULA = build_AND2(output, consequence)
+
+
+
 
 
 
 #### ADD Headers
-FORALL = "forall("
+FORALL = Q_tau+"("
 for v in quant_forall:
+    FORALL += str(var_dict[v]) + ","
+for v in quant_exists:
     FORALL += str(var_dict[v]) + ","
 FORALL = FORALL[:-1] ## remove last ','
 FORALL += ")"
 # print(FORALL)
 
-EXISTS = "exists("
-for v in quant_exists:
-    EXISTS += str(var_dict[v]) + ","
-EXISTS = EXISTS[:-1] ## remove last ','
-EXISTS += ")"
+# EXISTS = Q_tau+"("
+# for v in quant_exists:
+#     EXISTS += str(var_dict[v]) + ","
+# EXISTS = EXISTS[:-1] ## remove last ','
+# EXISTS += ")"
 # print(EXISTS)
 write_QCIR.write(FORALL+ '\n')
-write_QCIR.write(EXISTS+ '\n')
+# write_QCIR.write(EXISTS+ '\n')
 
 
 
@@ -1046,6 +1230,10 @@ NEW_out = str(var_index) # last index used in the above FINAL_FORMULAconstructio
 NEW_output_gate = "output("+str(var_index)+")"
 write_QCIR.write(NEW_output_gate + '\n')
 
+
+### try
+# OLD_logics.pop()
+# OLD_logics.pop()
 
 ### merge and write both logics to QCIR
 for l in OLD_logics:
