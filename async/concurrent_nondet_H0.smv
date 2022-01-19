@@ -37,14 +37,14 @@ MODULE programs(ID, SCHEDULE, LOCKED, HIGH, initline)
 		next(line) :=
 			case
 				(!(SCHEDULE=ID | SCHEDULE=2)) : line;
-				-- program1
+				-- program1,diameter=4
 				(line=1 & LOCKED) : {1}; -- wait if LOCKED
 				(line=1 & !LOCKED) : {2}; -- else go to 2
 				(line=2) : {3}; -- LOCK it
 				(line=3) : {4}; -- print A
 				(line=4) : {5}; -- print B
 				(line=5) : {5}; -- UNLOCK, END
-				-- program2
+				-- program2,diameter==5
 				(line=6) : {7}; -- print C
 				(line=7 & HIGH) : {8}; -- if HIGH, proceed
 				(line=7 & !HIGH) : {11}; -- if !HIGH, skip to end
@@ -61,3 +61,4 @@ MODULE programs(ID, SCHEDULE, LOCKED, HIGH, initline)
 		printB := (line=4);
 		printC := (line=6);
 		printD := (line=11);
+		halt := (line=11);

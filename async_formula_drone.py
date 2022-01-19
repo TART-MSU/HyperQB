@@ -1064,10 +1064,6 @@ OLD_logics = re.findall('.*=.*', QCIR)
 OLD_vars = re.findall('#\s.*', QCIR)
 OLD_output = re.findall('output.*', QCIR)
 
-
-
-
-
 write_QCIR = open("HQ_async.qcir", "w")
 
 

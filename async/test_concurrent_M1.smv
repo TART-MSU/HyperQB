@@ -41,25 +41,6 @@ MODULE programs(LOCKED, initline)
 				(line=5) : {6}; -- print C
 				(line=6) : {7}; -- print C
 
-				-- -- program1
-				-- (line=1) : {2}; -- wait if LOCKED
-				-- -- (line=2) : {3}; -- LOCK it
-				-- -- program2
-				-- -- (line=4 & LOCKED) : {4}; -- print C
-				-- -- (line=4 & !LOCKED) : {5}; -- print C
-				-- (line=3) : {4}; -- print C
-				-- (line=4) : {5}; -- print C
-
-				--
-				-- -- (!(SCHEDULE=ID | SCHEDULE=2)) : line;
-				-- -- program1
-				-- (line=1) : {2}; -- wait if LOCKED
-				-- (line=2) : {3}; -- LOCK it
-				-- (line=3) : {3}; -- LOCK it
-				-- -- program2
-				-- (line=4) : {5}; -- print C
-				-- (line=5) : {6}; -- print C
-				-- (line=6) : {6}; -- print C
 				TRUE: line;
 			esac;
 
