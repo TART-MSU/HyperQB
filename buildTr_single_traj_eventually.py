@@ -935,7 +935,7 @@ tau_moving = []
 for traj in traj_vars_tau:
     index = build_OR2(var_dict[traj[0]], var_dict[traj[1]])
     tau_moving.append(index)
-tau_moving_constraints = build_AND_multi(tau_moving)
+always_move = build_AND_multi(tau_moving)
 elapsed = time.time()
 print("time elapsed: ", round((elapsed - start), 3), 's')
 
@@ -1051,6 +1051,11 @@ print(M2)
 INITIAL_CONDITION = str(var_dict[tau_name+get_phi(0, 0, 0)]) ##
 FORMULA = str(global_eventually_formula)
 
+# INITIAL_CONDITION: inital phi00[0] is always true
+# tau_all_formulas: all formulas should be true (phi00[0] -> (....))
+# tau_exclusive_constraints: each layer can only have one formula as true, exclusive
+# tau_moving_constraints: exclude all 00 movements for t1 and t2
+
 # exists = build_AND3(tau_all_formulas, tau_exclusive_constraints, tau_moving_constraints)
 # exists = build_AND2(tau_exclusive_constraints, tau_moving_constraints)
 # exists = tau_moving_constraints
@@ -1060,12 +1065,13 @@ FORMULA = str(global_eventually_formula)
 
 
 ### GOOD GOOD
-Q_tau="exists"
-# valid = build_AND5(INITIAL_CONDITION, tau_moving_constraints, tau_eventually_terminated, tau_exclusive_constraints, tau_all_formulas)
-valid = INITIAL_CONDITION
-FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND2(valid, FORMULA)))
+Q_tau="forall"
+VALID = build_AND3(INITIAL_CONDITION, tau_all_formulas, tau_exclusive_constraints)
 
-print(quant_forall)
+FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_IMPLIES(always_move, build_AND2(VALID, FORMULA))))
+
+
+# print(quant_forall)
 #### ADD Headers
 FORALL = Q_tau+"("
 for v in quant_forall:
@@ -1076,7 +1082,6 @@ FORALL = FORALL[:-1] ## remove last ','
 FORALL += ")"
 # print(FORALL)
 write_QCIR.write(FORALL+ '\n')
-
 EXISTS = "exists("
 for v in quant_exists:
     EXISTS += str(var_dict[v]) + ","
