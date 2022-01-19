@@ -1,4 +1,5 @@
 import re
+import sys
 
 # open_QCIR = open("OUTPUT_byName.cex", "r")
 open_QCIR = open("OUTPUT_byTime.cex", "r")
@@ -8,6 +9,8 @@ QCIR=open_QCIR.read()
 vars = re.findall('tau.*', QCIR)
 
 # print(vars)
+
+num_trajs =int(sys.argv[1])
 
 phi = []
 for v in vars:
@@ -39,38 +42,41 @@ def natural_keys(text):
 
 
 phi.sort(key=natural_keys)
-print("[ tau trajectories ]")
-for v in vars:
-    if ("tau_t" in v):
-        print(v)
 
-print()
-for p in phi:
-    if ("tau" in p):
-        # print(p)
-        if ("= 1" in p):
-            print(p)
+if (num_trajs==1):
+    print("[ tau trajectories ]")
+    for v in vars:
+        if ("tau_t" in v):
+            print(v)
 
-print("[ tau1 trajectories ]")
-for v in vars:
-    if ("tau1_t" in v):
-        print(v)
+    print()
+    for p in phi:
+        if ("tau" in p):
+            # print(p)
+            if ("= 1" in p):
+                print(p)
 
-print()
-for p in phi:
-    if ("tau1" in p):
-        # print(p)
-        if ("= 1" in p):
-            print(p)
-print()
-# print("[ tau2 trajectories ]")
-for v in vars:
-    if ("tau2_t" in v):
-        print(v)
-print()
-for p in phi:
-    if ("tau2" in p):
-        # print(p)
-        if ("= 1" in p):
-            print(p)
-# print(phi)
+if (num_trajs==2):
+    print("[ tau1 trajectories ]")
+    for v in vars:
+        if ("tau1_t" in v):
+            print(v)
+
+    print()
+    for p in phi:
+        if ("tau1" in p):
+            # print(p)
+            if ("= 1" in p):
+                print(p)
+    print()
+    print("[ tau2 trajectories ]")
+    for v in vars:
+        if ("tau2_t" in v):
+            print(v)
+    print()
+    for p in phi:
+        if ("tau2" in p):
+            # print(p)
+            if ("= 1" in p):
+                print(p)
+    # print(phi)

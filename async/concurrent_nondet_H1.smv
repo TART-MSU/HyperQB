@@ -22,13 +22,14 @@ MODULE main
 				(proc1.line=9 | proc2.line=9) : TRUE;
 				TRUE: FALSE;
 			esac;
-		init(HIGH):= TRUE;
+		-- init(HIGH):= TRUE;
 		next(HIGH):= HIGH;
 
 
 MODULE programs(ID, SCHEDULE, LOCKED, HIGH, initline)
 	VAR
 		line: 1..11;
+		halt: boolean;
 
 	ASSIGN
 
@@ -56,9 +57,15 @@ MODULE programs(ID, SCHEDULE, LOCKED, HIGH, initline)
 				TRUE: line;
 			esac;
 
+		init(halt):= FALSE;
+		next(halt):=
+			case
+			 (line=5 | line=11): TRUE;
+			 TRUE: FALSE;
+			esac;
+
 	DEFINE
 		printA := (line=3);
 		printB := (line=4);
 		printC := (line=6);
 		printD := (line=11);
-		halt := (line=11);

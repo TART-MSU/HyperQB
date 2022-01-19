@@ -24,6 +24,7 @@ MODULE main
 MODULE programs(LOCKED, initline)
 	VAR
 		line: 1..7;
+		halt: boolean
 
 	ASSIGN
 
@@ -43,6 +44,13 @@ MODULE programs(LOCKED, initline)
 
 				TRUE: line;
 			esac;
+
+			init(halt):= FALSE
+			next(halt):=
+				case
+				 (line=3 | line=7): TRUE
+				 TRUE: FALSE
+				esac
 
 	DEFINE
 		-- printA := (line=2);
