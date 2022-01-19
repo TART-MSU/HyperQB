@@ -1165,8 +1165,13 @@ FORMULA = str(global_eventually_formula)
 # exists = build_AND2(tau_exclusive_constraints, tau_moving_constraints)
 # exists = tau_moving_constraints
 ### GOOD GOOD
+# Q_tau="exists"
+# valid = build_AND3(tau_moving_constraints, tau_exclusive_constraints, tau_all_formulas)
+
+
+### GOOD GOOD
 Q_tau="exists"
-valid = build_AND3(tau_moving_constraints, tau_exclusive_constraints, tau_all_formulas)
+valid = build_AND4(tau_moving_constraints, tau_eventually_terminated, tau_exclusive_constraints, tau_all_formulas)
 FINAL_FORMULA = build_AND2(M1, build_IMPLIES(M2, build_AND2(valid, FORMULA)))
 
 
