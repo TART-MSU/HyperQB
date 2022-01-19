@@ -17,7 +17,8 @@ temp_obs_vars = ["BEGIN"]
 termination_flag = "halt"
 num_observables = 1
 
-
+allow_00=True
+# allow_00=False
 
 # temp_obs_vars_ONE = ["y_axis_ONE_0","y_axis_ONE_1","y_axis_ONE_2","x_axis_ONE_0","x_axis_ONE_1","x_axis_ONE_2"]
 # temp_obs_vars_TWO = ["y_axis_TWO_0","y_axis_TWO_1","y_axis_TWO_2","x_axis_TWO_0","x_axis_TWO_1","x_axis_TWO_2"]
@@ -446,7 +447,8 @@ def build_traj_advances(layer, t1, t2, diameter_proc1, diameter_proc2, valid_tra
         # traj_relations.append(next_1)
         # if (next_1 not in traj_relations):
             # traj_relations.append(next_1)
-        traj_relations.add((layer, t1, t2, "00", next_layer, t1_not_move, t2_not_move))
+        if(allow_00):
+            traj_relations.add((layer, t1, t2, "00", next_layer, t1_not_move, t2_not_move))
 
         ## 01 situation
         # next_2 = [layer, t1, t2, "01", next_layer, t1_not_move, t2_move]
@@ -467,11 +469,14 @@ def build_traj_advances(layer, t1, t2, diameter_proc1, diameter_proc2, valid_tra
         traj_relations.add((layer, t1, t2, "11", next_layer, t1_move, t2_move))
 
         ## recursivly try all four directions for the next time step
-        build_traj_advances(next_layer, t1_not_move, t2_not_move, diameter_proc1, diameter_proc2, valid_traj_options, traj_relations) ## banned 00 for efficiency purpose
+        if(allow_00):
+            build_traj_advances(next_layer, t1_not_move, t2_not_move, diameter_proc1, diameter_proc2, valid_traj_options, traj_relations) ## banned 00 for efficiency purpose
         build_traj_advances(next_layer, t1_not_move, t2_move, diameter_proc1, diameter_proc2, valid_traj_options, traj_relations) # 01
         build_traj_advances(next_layer, t1_move, t2_not_move, diameter_proc1, diameter_proc2, valid_traj_options, traj_relations) # 10
         build_traj_advances(next_layer, t1_move, t2_move, diameter_proc1, diameter_proc2, valid_traj_options, traj_relations) # 11
 
+        if(not allow_00):
+            traj_relations.add((layer, t1, t2, "00"))
 
 ### ---DEBUG---
 # print(final_formulas)
@@ -523,33 +528,43 @@ def build_expressions(tau, final_expressions, traj_relations):
             ## remove
             # post = [NOT, tau+"t1["+str(time)+"]", tau+"t2["+str(time)+"]"]
             # next_move.append(post)
+            if (allow_00):
+                for j in range(4):
+                    # next = traj_relations[i+j+1]
+                    next = traj_relations[i+j]
+                    # print(next)
+                    movement=next[3]
+                    next_time=next[4]
+                    next_formula_t1=next[5]
+                    next_formula_t2=next[6]
 
-            for j in range(4):
-                # next = traj_relations[i+j+1]
-                next = traj_relations[i+j]
-                # print(next)
-                movement=next[3]
-                next_time=next[4]
-                next_formula_t1=next[5]
-                next_formula_t2=next[6]
+                    t1 = get_trajvar_expr(tau, "t1", time, movement[0])
+                    t2 = get_trajvar_expr(tau, "t2", time, movement[1])
+                    # post = [t1, t2, "phi"+str(next_formula_t1)+str(next_formula_t2)+"["+ str(next_time)+"]"]
+                    post = [t1, t2, get_phi(next_formula_t1, next_formula_t2, next_time)]
+                    next_move.append(post)
 
-                t1 = get_trajvar_expr(tau, "t1", time, movement[0])
-                t2 = get_trajvar_expr(tau, "t2", time, movement[1])
-                # t1 = tau+"t1["+str(time)+"]"
-                # if (movement[0]=='0'):
-                #     t1="-"+t1
+                pre.extend(next_move)
+                final_expressions.append(pre)
 
-                # t2 = tau+"t2["+str(time)+"]"
-                # if (movement[1]=='0'):
-                #     t2="-"+t2
+            if (not allow_00):
+                for j in range(3):
+                    next = traj_relations[i+j+1]
+                    # next = traj_relations[i+j]
+                    # print(next)
+                    movement=next[3]
+                    next_time=next[4]
+                    next_formula_t1=next[5]
+                    next_formula_t2=next[6]
 
+                    t1 = get_trajvar_expr(tau, "t1", time, movement[0])
+                    t2 = get_trajvar_expr(tau, "t2", time, movement[1])
+                    # post = [t1, t2, "phi"+str(next_formula_t1)+str(next_formula_t2)+"["+ str(next_time)+"]"]
+                    post = [t1, t2, get_phi(next_formula_t1, next_formula_t2, next_time)]
+                    next_move.append(post)
 
-                # post = [t1, t2, "phi"+str(next_formula_t1)+str(next_formula_t2)+"["+ str(next_time)+"]"]
-                post = [t1, t2, get_phi(next_formula_t1, next_formula_t2, next_time)]
-                next_move.append(post)
-
-            pre.extend(next_move)
-            final_expressions.append(pre)
+                pre.extend(next_move)
+                final_expressions.append(pre)
 
 
 ### check the halting conditions
@@ -626,76 +641,75 @@ def convert_to_qcir(tau, expressions, t1_ext, t2_ext, formula_cond, dict_choices
             ### try
             # choices.append(["-"+str(var_dict[e[2][1]]), "-"+str(var_dict[e[2][2]]) ])
 
-            ## move 01, 10, 11
-            for i in range(2,6):
-                move = e[i]
-                # print(move)
+            if(allow_00):
+                ## move 00, 01, 10, 11
+                for i in range(2,6):
+                    move = e[i]
+                    ###  extract t1
+                    a = convert_trajvar_to_number(move[0])
+                    ###  extract t2
+                    b = convert_trajvar_to_number(move[1])
+                    # if (int(get_timestamp(exp[0]))s != (len_longest_trajectory-2)):
+                    c = str(var_dict[tau+move[2]])
+                    c_set.add(tau+move[2])
+                    # choices.append([a,b,c])
+                    choices.append([a,b,c])
+                    # else:s
+                        # choices.append([a,b])
+                    # build_AND3(a, b, c)
+                c_list = list(c_set)
+
+                choice_1 = build_AND_multi(choices[0]) #00
+                choice_2 = build_AND_multi(choices[1]) #01
+                choice_3 = build_AND_multi(choices[2]) #10
+                choice_4 = build_AND_multi(choices[3]) #11
+
+                selection = []
+                choices = [choice_1, choice_2, choice_3, choice_4]
+                free_choices = build_OR_multi(choices)
+                selection.append(free_choices)
 
 
-                ###  extract t1
-                a = convert_trajvar_to_number(move[0])
-                # if ("-" in move[0]):
-                #     temp = move[0].replace("-","")
-                #     temp = "-"+str(var_dict[temp])
-                #     a = temp
-                # else:
-                #     a = str(var_dict[move[0]])
+                selections = build_AND_multi(selection)
+                formula = build_IMPLIES(formula_antecedent, selections)
+                # formula = build_IMPLIES(formula_antecedent, free_choices)
+                # index = build_IFF(formula_antecedent, selection) ## this is wrong
+                formula_cond.append(formula)
 
-                ###  extract t2
-                b = convert_trajvar_to_number(move[1])
-                # if ("-" in move[1]):
-                #     temp2 = move[1].replace("-","")
-                #     temp2 = "-"+str(var_dict[temp2])
-                #     b = temp2
-                # else:
-                #     b = str(var_dict[move[1]])
+            if(not allow_00):
+                ## move 01, 10, 11
+                for i in range(2,5):
+                    move = e[i]
+                    ###  extract t1
+                    a = convert_trajvar_to_number(move[0])
+                    ###  extract t2
+                    b = convert_trajvar_to_number(move[1])
+                    # if (int(get_timestamp(exp[0]))s != (len_longest_trajectory-2)):
+                    c = str(var_dict[tau+move[2]])
+                    c_set.add(tau+move[2])
+                    # choices.append([a,b,c])
+                    choices.append([a,b,c])
+                    # else:s
+                        # choices.append([a,b])
+                    # build_AND3(a, b, c)
+                c_list = list(c_set)
+
+                choice_1 = build_AND_multi(choices[0]) #01
+                choice_2 = build_AND_multi(choices[1]) #10
+                choice_3 = build_AND_multi(choices[2]) #11
 
 
-                # if (int(get_timestamp(exp[0]))s != (len_longest_trajectory-2)):
-                c = str(var_dict[tau+move[2]])
-                c_set.add(tau+move[2])
-                # choices.append([a,b,c])
-                choices.append([a,b,c])
-                # else:s
-                    # choices.append([a,b])
-                # build_AND3(a, b, c)
-            # print(choices)
-            # c_set = { choices[1][2], choices[2][2], choices[3][2]}
-            c_list = list(c_set)
+                selection = []
+                choices = [choice_1, choice_2, choice_3]
+                free_choices = build_OR_multi(choices)
+                selection.append(free_choices)
 
-            choice_1 = build_AND_multi(choices[0]) #00
-            choice_2 = build_AND_multi(choices[1]) #01
-            choice_3 = build_AND_multi(choices[2]) #10
-            choice_4 = build_AND_multi(choices[3]) #11
 
-            selection = []
-            choices = [choice_1, choice_2, choice_3, choice_4]
-            free_choices = build_OR_multi(choices)
-            selection.append(free_choices)
-
-            ### TO BE DECIDED
-            # ## Only with existential quantifier needed this!!
-            # t1_halt = var_dict[(halt_t1+t1_ext+timestamp(time_t1))]
-            # t2_halt = var_dict[(halt_t2+t2_ext+timestamp(time_t2))]
-            # # ## if t1 halts
-            # only_t1_terminated = build_AND2(t1_halt, NOT+str(t2_halt))
-            # only_t1_has_halted = build_IMPLIES(only_t1_terminated, NOT+str(choice_3))
-            # selection.append(only_t1_has_halted)
-            # ## if t2 halts
-            # only_t2_terminated = build_AND2(NOT+str(t1_halt), t2_halt)
-            # only_t2_has_halted = build_IMPLIES(only_t2_terminated, NOT+str(choice_2))
-            # selection.append(only_t2_has_halted)
-            # ## if both halt
-            # both_terminated = build_AND2(t1_halt, t2_halt)
-            # both_halted = build_IMPLIES(both_terminated, choice_4)
-            # selection.append(both_halted)
-
-            selections = build_AND_multi(selection)
-            formula = build_IMPLIES(formula_antecedent, selections)
-            # formula = build_IMPLIES(formula_antecedent, free_choices)
-            # index = build_IFF(formula_antecedent, selection) ## this is wrong
-            formula_cond.append(formula)
-
+                selections = build_AND_multi(selection)
+                formula = build_IMPLIES(formula_antecedent, selections)
+                # formula = build_IMPLIES(formula_antecedent, free_choices)
+                # index = build_IFF(formula_antecedent, selection) ## this is wrong
+                formula_cond.append(formula)
 
 
 # valid_traj_options_tau1.sort()
@@ -857,6 +871,8 @@ tau_traj_relations=[]
 for r in tau_traj_relations_set:
     tau_traj_relations.append(list(r))
 tau_traj_relations.sort()
+for t in tau_traj_relations:
+    print(t)
 
 print("building tau expressions...")
 tau_exp=[]
@@ -1050,6 +1066,8 @@ print(M2)
 
 INITIAL_CONDITION = str(var_dict[tau_name+get_phi(0, 0, 0)]) ##
 FORMULA = str(global_eventually_formula)
+VALID = build_AND3(INITIAL_CONDITION, tau_all_formulas, tau_exclusive_constraints)
+TERM = tau_eventually_terminated
 
 # INITIAL_CONDITION: inital phi00[0] is always true
 # tau_all_formulas: all formulas should be true (phi00[0] -> (....))
@@ -1059,15 +1077,12 @@ FORMULA = str(global_eventually_formula)
 # exists = build_AND3(tau_all_formulas, tau_exclusive_constraints, tau_moving_constraints)
 # exists = build_AND2(tau_exclusive_constraints, tau_moving_constraints)
 # exists = tau_moving_constraints
-### GOOD GOOD
+## GOOD GOOD
 # Q_tau="exists"
-# valid = build_AND3(tau_moving_constraints, tau_exclusive_constraints, tau_all_formulas)
+# FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND3(VALID, TERM, FORMULA)))
 
-
-### GOOD GOOD
+# ### GOOD GOOD
 Q_tau="forall"
-VALID = build_AND3(INITIAL_CONDITION, tau_all_formulas, tau_exclusive_constraints)
-
 FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_IMPLIES(always_move, build_AND2(VALID, FORMULA))))
 
 
@@ -1185,7 +1200,22 @@ for v in new_vars:
 #====================================================================================
 
 
-
+### TO BE DECIDED whether convert_to_qcir need this....
+## Only with existential quantifier needed this!!
+# t1_halt = var_dict[(halt_t1+t1_ext+timestamp(time_t1))]
+# t2_halt = var_dict[(halt_t2+t2_ext+timestamp(time_t2))]
+# # ## if t1 halts
+# only_t1_terminated = build_AND2(t1_halt, NOT+str(t2_halt))
+# only_t1_has_halted = build_IMPLIES(only_t1_terminated, NOT+str(choice_3))
+# selection.append(only_t1_has_halted)
+# ## if t2 halts
+# only_t2_terminated = build_AND2(NOT+str(t1_halt), t2_halt)
+# only_t2_has_halted = build_IMPLIES(only_t2_terminated, NOT+str(choice_2))
+# selection.append(only_t2_has_halted)
+# ## if both halt
+# both_terminated = build_AND2(t1_halt, t2_halt)
+# both_halted = build_IMPLIES(both_terminated, choice_4)
+# selection.append(both_halted)
 
 
 ### finally, build everything w.r.t. the quantifiers
