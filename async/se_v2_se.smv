@@ -47,9 +47,16 @@ MODULE program(initline, var_Y, var_size, offset)
 		var_temp_proc2: 0..4;
 		mask: 0..1;
 
-
+		halt: boolean;
 
 	ASSIGN
+		init(halt):= FALSE;
+		next(halt):=
+		case
+		 (line=2 | line=8): TRUE;
+		 TRUE: FALSE;
+		esac;
+
 	-- new check
 		init(k) := 4;
 		next(k) := k;
@@ -172,7 +179,7 @@ MODULE program(initline, var_Y, var_size, offset)
 
 
 	DEFINE
-		halt := (line=2) | (line=8);
+		-- halt := (line=2) | (line=8);
 		-- start := (line=2);
 		-- rollback := (line=5);
 		-- load := (line=2 | line=4);

@@ -28,6 +28,7 @@ obs_vars_proc1 = ["proc1-var_temp_proc1_0", "proc1-var_temp_proc1_1", "proc1-var
 obs_vars_proc2 = ["proc2-var_temp_proc2_0", "proc2-var_temp_proc2_1", "proc2-var_temp_proc2_2"]
 num_observables = 3
 
+
 # allow_00=True
 allow_00=False
 # halt_t1 = "halt"

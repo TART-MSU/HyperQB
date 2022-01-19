@@ -51,10 +51,17 @@ MODULE program(initline, var_Y, var_size, offset, k)
 		var_W: 0..4;
 		var_temp_proc2: 0..4;
 		mask: 0..1;
-
+		halt: boolean;
 
 
 	ASSIGN
+			init(halt):= FALSE;
+			next(halt):=
+			case
+			 (line=2 | line=8): TRUE;
+			 TRUE: FALSE;
+			esac;
+
 	-- new check
 		init(check_Ay_eq_k) := (var_Y=0 & k=0) | (var_Y=1 & k=1) | (var_Y=2 & k=2) | (var_Y=3 & k=3) | (var_Y=4 & k=4)| (var_Y=5 & k=5)| (var_Y=6 & k=6)| (var_Y=7 & k=7);
 		next(check_Ay_eq_k) := check_Ay_eq_k;
@@ -183,7 +190,7 @@ MODULE program(initline, var_Y, var_size, offset, k)
 
 
 	DEFINE
-		halt := (line=2) | (line=8);
+		-- halt := (line=2) | (line=8);
 		-- start := (line=2);
 		-- rollback := (line=5);
 		-- load := (line=2 | line=4);
