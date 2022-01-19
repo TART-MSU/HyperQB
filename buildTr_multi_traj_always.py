@@ -51,7 +51,6 @@ halt_t2 = "halt"
 # tau2_proc1_diameter =int(sys.argv[3])
 # tau2_proc2_diameter =int(sys.argv[4])
 
-
 tau_proc1_diameter = int(sys.argv[1])
 tau_proc2_diameter = int(sys.argv[2])
 
