@@ -713,10 +713,10 @@ def build_realtional_conditions():
 
 
 
-policies = ["var_Y_0", "var_Y_1", "var_Y_2", "var_size_0", "var_size_1", "var_size_2"]
-num_policies = len(policies)
+# policies = ["var_Y_0", "var_Y_1", "var_Y_2", "var_size_0", "var_size_1", "var_size_2"]
+# num_policies = len(policies)
 # policies_formulas = {}
-all_policies_pairs = []
+# all_policies_pairs = []
 def build_policies_conditions():
     # global policies_formulas
     global all_policies_pairs

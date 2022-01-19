@@ -3,6 +3,7 @@ MODULE main
 		offset: 0..2;
 		var_Y: 0..7;
 		var_size: 0..4;
+		-- halt: boolean;
 
 		-- LOCKED: boolean; -- semaphore
 		proc1: program(0, var_Y, var_size, offset);
@@ -17,6 +18,13 @@ MODULE main
 		-- init(var_size) := 4;
 		init(var_size) := 4;
 		next(var_size):= var_size;
+
+		-- init(halt):= FALSE;
+		-- next(halt):=
+			-- case
+				-- (proc1.line=2 | proc2.line=8): TRUE;
+				-- TRUE: FALSE;
+			-- esac;
 
 MODULE program(initline, var_Y, var_size, offset)
 	VAR
@@ -45,9 +53,18 @@ MODULE program(initline, var_Y, var_size, offset)
 		var_W: 0..4;
 		var_temp_proc2: 0..4;
 
+		halt: boolean;
+
 
 
 	ASSIGN
+		init(halt):= FALSE;
+		next(halt):=
+		case
+		 (line=2 | line=8): TRUE;
+		 TRUE: FALSE;
+		esac;
+
 		-- process 1 vars
 		init(var_temp_proc1) := 0;
 		next(var_temp_proc1) :=
@@ -156,7 +173,7 @@ MODULE program(initline, var_Y, var_size, offset)
 
 
 	DEFINE
-		halt := (line=2) | (line=8);
+		-- halt := (line=2) | (line=8);
 		-- start := (line=2);
 		-- rollback := (line=5);
 		-- load := (line=2 | line=4);

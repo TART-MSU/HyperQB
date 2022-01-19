@@ -20,6 +20,9 @@ num_observables = 1
 # allow_00=True
 allow_00=False
 
+temp_obs_vars_proc1 = ["proc1-var_temp_proc1_0", "proc1-var_temp_proc1_1", "proc1-var_temp_proc1_2"]
+temp_obs_vars_proc2 = ["proc2-var_temp_proc2_0", "proc2-var_temp_proc2_1", "proc2-var_temp_proc2_2"]
+
 # temp_obs_vars_ONE = ["y_axis_ONE_0","y_axis_ONE_1","y_axis_ONE_2","x_axis_ONE_0","x_axis_ONE_1","x_axis_ONE_2"]
 # temp_obs_vars_TWO = ["y_axis_TWO_0","y_axis_TWO_1","y_axis_TWO_2","x_axis_TWO_0","x_axis_TWO_1","x_axis_TWO_2"]
 
