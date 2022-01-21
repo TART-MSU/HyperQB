@@ -6,7 +6,7 @@
 
     DIR_TOKEN: 0..1;
 
-    counter: 0..2;
+    counter: 0..3;
 
     ASSIGN
 
@@ -15,7 +15,9 @@
       case
         (counter=0): 1;
         (counter=1): 2;
-        (counter=2): 0;
+        (counter=2): 3;
+        (counter=3): 0;
+        TRUE: counter;
       esac;
 
     init(DIR_TOKEN) := {0,1};
@@ -26,7 +28,7 @@
     init(x_axis) := 0;
     next(x_axis) :=
       case
-        (counter=1 | counter=2): x_axis;
+        (counter!=0): x_axis;
         (DIR_TOKEN=1): x_axis;
         -- (y_axis!=4): x_axis;
         (x_axis=0) : {0, 1};
@@ -40,7 +42,7 @@
     init(y_axis) := 0;
     next(y_axis) :=
       case
-        (counter=1 | counter=2): y_axis;
+        (counter!=0): y_axis;
         (DIR_TOKEN=0): y_axis;
         -- (x_axis!=0): y_axis;
         (y_axis=0) : {0, 1};
@@ -52,4 +54,4 @@
 
     DEFINE
        BEGIN := ((x_axis=0 & y_axis=0));
-       halt :=  ((x_axis=0 & y_axis=2));
+       halt :=  ((x_axis=0 & y_axis=0));

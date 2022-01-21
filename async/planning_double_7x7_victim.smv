@@ -1,9 +1,9 @@
 
  MODULE main
  VAR
-    -- a 5x5 grid
-    x_axis: 0..4;
-    y_axis: 0..4;
+
+    x_axis: 0..6;
+    y_axis: 0..6;
 
     DIR_TOKEN: 0..1;
 
@@ -18,10 +18,10 @@
     next(x_axis) :=
       case
         (DIR_TOKEN=1): x_axis;
-        (y_axis!=3 | y_axis!=4): x_axis;
+        (y_axis!=4): x_axis;
         (x_axis=0) : {0, 1};
-        (x_axis=4) : {4, 3};
-        ((x_axis!=0) & (x_axis!=4)) : {(x_axis - 1), (x_axis + 1)};
+        (x_axis=6) : {6, 5};
+        ((x_axis!=0) & (x_axis!=6)) : {(x_axis - 1), (x_axis + 1)};
         TRUE: x_axis;
       esac;
 
@@ -33,12 +33,12 @@
         (DIR_TOKEN=0): y_axis;
         (x_axis!=0): y_axis;
         (y_axis=0) : {0, 1};
-        (y_axis=3) : {3, 2};
-        ((y_axis!=0) & (y_axis!=4)) : {(y_axis - 1), (y_axis + 1)};
+        (y_axis=6) : {6, 5};
+        ((y_axis!=0) & (y_axis!=6)) : {(y_axis - 1), (y_axis + 1)};
         TRUE: y_axis;
       esac;
 
 
     DEFINE
        BEGIN := ((x_axis=0 & y_axis=0));
-       halt :=  ((x_axis=0 & y_axis=2));
+       halt :=  ((x_axis=0 & y_axis=3));

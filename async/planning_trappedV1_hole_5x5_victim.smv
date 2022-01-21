@@ -7,7 +7,7 @@
 
     DIR_TOKEN: 0..1;
 
-    counter: 0..3;
+    counter: 0..1;
 
     halt: boolean;
 
@@ -26,7 +26,7 @@
     init(counter)  := 0;
     next(counter)  :=
       case
-        (counter=3): 0;
+        (counter=1): 0;
         TRUE: counter+1;
       esac;
 
@@ -34,7 +34,7 @@
     init(x_axis) := 0;
     next(x_axis) :=
       case
-        -- (counter!=0): x_axis;
+        (counter!=0): x_axis;
         (DIR_TOKEN=1): x_axis;
         -- (y_axis!=4): x_axis;
         -- (x_axis=1 & y_axis=0) : {1, 0};
@@ -56,7 +56,7 @@
     init(y_axis) := 0;
     next(y_axis) :=
       case
-        -- (counter!=0): y_axis;
+        (counter!=0): y_axis;
         (DIR_TOKEN=0): y_axis;
         -- (x_axis!=0): y_axis;
         (x_axis=1 & y_axis=1) : {1, 0};
