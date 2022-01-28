@@ -394,20 +394,16 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	for line in Lines:
 		if ("#" not in line):
 			text += line
-	print("user input formula: \n"+text)
-
-
+	print("user input formula: "+text)
 
 
 	## detect the optional flag
 	if (FLAG == "-bughunt"):
-		print("(** detect -bughunt flag, formula negated.)\n")
+		print("(detect -bughunt flag, formula negated.)")
 	elif  (FLAG == "-find"):
-		print("(** detect -find flag, use original formula.)\n")
+		print("(detect -find flag, use original formula.)")
 	else:
-		print("(** no optional flag detected, perform BMC with negated formula.\n")
-
-
+		print("(no optional flag detected, perform BMC with negated formula.")
 
 
 
@@ -526,7 +522,7 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 		text= "~("+ text + ")"
 
 	### finally
-	print("formula translated into Boolean representation: \n" + text)
+	print("parsed formula: " + text)
 
 	# def gen_P():
 	##  write to R_bool file
@@ -534,7 +530,7 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	P_bool.write(text)
 	P_bool.close()
 	# gen_P()
-	print("[ success! input formula translated into Boolean Expressions: " + translated_formula_file_name + "]")
+	# print("[ success! input formula translated into Boolean Expressions: " + translated_formula_file_name + "]")
 
 
 

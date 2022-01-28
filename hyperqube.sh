@@ -11,15 +11,8 @@ PARSE_BOOL=exec/util_parsebools
 # output files
 QCIR_OUT=HQ.qcir
 QUABS_OUT=HQ.quabs
-# simple mapping of variable names and values
-# TODO: do it in python
-# MAP=util/util_mapvars.java
-# MAP=util_mapvars
 MAP_OUT1=OUTPUT_byName.cex
 MAP_OUT2=OUTPUT_byTime.cex
-# simple parser for convering binaries to digits
-# PARSE_BOOL=util/util_parsebools.java
-# PARSE_BOOL=util_parsebools
 PARSE_OUT=OUTPUT_formatted.cex
 
 
@@ -68,7 +61,7 @@ fi
 if echo $* | grep -e "-single" -q
 then
   echo "[ Running with single model mode ]"
-  MODE=SINGLE
+  MODE=single
   echo "perform single model BMC"
   NUSMVFILE=$1
   FORMULA=$2
@@ -94,7 +87,7 @@ then
 elif echo $* | grep -e "-multi" -q
 then
   echo "[ Running with multi model mode ]"
-  MODE=MULTI
+  MODE=multi
   M1_NUSMVFILE=$1
   M2_NUSMVFILE=$2
   FORMULA=$3
