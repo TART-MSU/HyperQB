@@ -3,10 +3,10 @@
 #coding:utf-8
 
 # HyperQube subTools
-GENQBF=src/genqbf
-QUABS=src/quabs
-MAP=src/util_mapvars
-PARSE_BOOL=src/util_parsebools
+GENQBF=exec/genqbf
+QUABS=exec/quabs
+MAP=exec/util_mapvars
+PARSE_BOOL=exec/util_parsebools
 
 
 
@@ -41,26 +41,16 @@ if [ "$#" -eq 4 ]; then
         exit 1
     fi
 
-    # if [  -f "${NUSMVFILE}" ]; then
-    #   echo ${NUSMVFILE}
-    #   echo "File " ${NUSMVFILE} "not found, please check the name of the file."
-    #   exit 1
-    # fi
 
-
-    # PARSER_AND_TRANSLATOR=dist/parser/parser
     I=I.bool
     R=R.bool
     J=I.bool
     S=R.bool
     P=P.bool
-     # python3 ${PARSER_AND_TRANSLATOR} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P}
-    # read QS from formula translation
     if [ ! -f "QS.bool" ]; then
         exit 1
     fi
     source QS.bool
-    # echo $QS
 fi
 
 

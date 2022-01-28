@@ -1,4 +1,3 @@
-
 # HyperQube subTools
 GENQBF=src/genqbf
 QUABS=src/quabs

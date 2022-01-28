@@ -5,8 +5,8 @@
 echo "\n------( HyperQube START! )------\n"
 
 
-SINGLE_PARSER=src/single_model_parser.py
-MULTI_PARSER=src/multi_model_parser.py
+SINGLE_PARSER=exec/single_model_parser.py
+MULTI_PARSER=exec/multi_model_parser.py
 
 
 ## clean up previous generated
