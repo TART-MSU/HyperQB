@@ -311,7 +311,7 @@ def main_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed
 					if(key.replace(" ", "") in var):
 						M1_bitblasting_dict[var] = int(num_bits.replace("\n","").replace(";",""))
 
-	print("Dictionary for bit-blasting variables (number of bits needed for each): ")
+	print("Dictionary for bit-blasting: ")
 	print(bitblasting_dict)
 
 
@@ -326,7 +326,7 @@ def main_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed
 	for state in fsm.pick_all_states(fsm.init):
 		init_conditions = []
 		dictionary = state.get_str_values()
-		print(dictionary)
+		# print(dictionary)
 		for ap in dictionary:
 			value = dictionary[ap]
 			# print(value)
@@ -387,7 +387,7 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	##################################
 	#  HyperLTL Formula Construction #
 	##################################
-	print("\n============ Translate HyperLTL Formula ============")
+	# print("\n============ Translate HyperLTL Formula ============")
 	text = ""
 	file = open(fomula_file_name, 'r')
 	Lines = file.readlines()
@@ -545,6 +545,7 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 #########################
 #      Get Arguments    #
 #########################
+# print('???????????????')
 M1_smv_file_name = sys.argv[1]
 M1_parsed_madel_file_I_name = sys.argv[2]
 M1_parsed_madel_file_R_name = sys.argv[3]
@@ -566,6 +567,7 @@ To_Negate_formula=(FLAG=="" or FLAG=="-bughunt")
 #########################
 #      Main Driver	    #
 #########################
+print("\n============ Translate NuSMV Model(s) ============")
 pynusmv.init.init_nusmv()
 M1_bitblasting_dict = {}
 main_parse(M1_smv_file_name, M1_bitblasting_dict, M1_parsed_madel_file_I_name, M1_parsed_madel_file_R_name)
@@ -576,6 +578,7 @@ M2_bitblasting_dict = {}
 main_parse(M2_smv_file_name, M2_bitblasting_dict, M2_parsed_madel_file_I_name, M2_parsed_madel_file_R_name)
 
 
+print("\n============ Translate HyperLTL Formula ============")
 main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, translated_formula_file_name)
 
 
