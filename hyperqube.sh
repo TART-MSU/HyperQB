@@ -31,8 +31,13 @@ ALLARG=$@
 
 
 ## clean up previous generated
-echo "(clean up previous generated files)"
-make clean
+echo "(clean up previous generated files..)\n"
+find . -name "*.bool"   -delete
+find . -name "*.cex"    -delete
+find . -name "*.quabs"  -delete
+find . -name "*.qcir"   -delete
+find . -name "*.cex"    -delete
+# make clean
 
 # if wrong number of arguments
 if [ "$#" -ne 4 ] && [ "$#" -ne 5 ] && [ "$#" -ne 6 ] && [ "$#" -ne 7 ]; then

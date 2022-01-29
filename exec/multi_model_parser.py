@@ -266,7 +266,7 @@ def main_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed
 	state_variables = list(enc.stateVars)
 	print("All state variables: ", state_variables)
 	num_states = fsm.count_states(fsm.reachable_states)
-	print("Total number of reachable states: ", num_states)
+	# print("Total number of reachable states: ", num_states)
 	# inputs = list(enc.inputsVars)
 	# print("input variables", inputs)
 	# atomics = list(enc.definedVars)

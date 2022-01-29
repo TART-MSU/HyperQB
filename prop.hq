@@ -1,1 +1,1 @@
-exists A. exists B. F(*PC[A] = PC[B]*)
+forall A. forall B. (F(halt[A] /\ halt[B])) -> ( (G(*secret_in[A]=secret_in[B]*)) -> (G(*public_out[A]=public_out[B]*)))
