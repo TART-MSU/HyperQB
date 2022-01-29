@@ -32,22 +32,22 @@ allow_00=False
 # halt_t1 = "halt"
 # halt_t2 = "halt"
 
-tau1_proc1_diameter =int(sys.argv[1])
-tau1_proc2_diameter =int(sys.argv[2])
-tau2_proc1_diameter =int(sys.argv[3])
-tau2_proc2_diameter =int(sys.argv[4])
-len_longest_trajectory = int(sys.argv[5])
+# tau1_proc1_diameter =int(sys.argv[1])
+# tau1_proc2_diameter =int(sys.argv[2])
+# tau2_proc1_diameter =int(sys.argv[3])
+# tau2_proc2_diameter =int(sys.argv[4])
+# len_longest_trajectory = int(sys.argv[5])
 # len_longest_trajectory = tau_proc1_diameter + tau_proc2_diameter
 # len_longest_trajectory = int(sys.argv[3])
+#
+# print("diameter_tau1_proc1: ", tau1_proc1_diameter)
+# print("diameter_tau1_proc2: ", tau1_proc2_diameter)
+# print("diameter_tau2_proc1: ", tau2_proc1_diameter)
+# print("diameter_tau2_proc2: ", tau2_proc2_diameter)
 
-print("diameter_tau1_proc1: ", tau1_proc1_diameter)
-print("diameter_tau1_proc2: ", tau1_proc2_diameter)
-print("diameter_tau2_proc1: ", tau2_proc1_diameter)
-print("diameter_tau2_proc2: ", tau2_proc2_diameter)
 
-
-print("len_longest_trajectory: ", len_longest_trajectory)
-start = time.time()
+# print("len_longest_trajectory: ", len_longest_trajectory)
+# start = time.time()
 
 ### ALL HELPER METHODS ###
 
@@ -207,6 +207,22 @@ vars = re.findall('#\s.*', QCIR)
 NEW_QCIR = []
 
 
+def build_var_dict():
+    global var_dict
+    for var in vars:
+        var = (var.split(" "))
+        var_dict[var[3]] = var[1];
+
+
+def set_varindex():
+    nums = re.findall(r'\d+', QCIR)
+    nums = list(map(int, nums))
+    nums.sort()
+    # print(nums)
+    # 2. get the starting index of the extra variables
+    global var_index
+    var_index = nums[-1]+1
+
 ## a little helper
 def get_phi(t1, t2, time):
     # return "phi"+str(t1)+str(t2)+"["+str(time)+"]"
@@ -326,13 +342,13 @@ def variable_setup(tau1, tau2):
 
     ### Finally, assign new numbers for each variable to encode as QCIR format
     # 1. get the index of gates and variables
-    nums = re.findall(r'\d+', QCIR)
-    nums = list(map(int, nums))
-    nums.sort()
-    # print(nums)
-    # 2. get the starting index of the extra variables
-    global var_index
-    var_index = nums[-1]+1
+    # nums = re.findall(r'\d+', QCIR)
+    # nums = list(map(int, nums))
+    # nums.sort()
+    # # print(nums)
+    # # 2. get the starting index of the extra variables
+    # global var_index
+    # var_index = nums[-1]+1
 
     # print(nums)
     # print("DEBUG")
@@ -858,6 +874,207 @@ def build_terminating_traj(tau, eventually_halt, ext):
 
 
 
+############ try new encodings ##############
+
+new_vars_dict={}
+
+def name_tvars(pi_name, i):
+    return str("t_"+pi_name+"_"+str(i))
+
+def name_pos(pi_name, i, j):
+    return str("pos_"+pi_name+"_"+str(i)+"_"+str(j))
+
+def name_halt(pi_ext, i):
+    return str("halt"+pi_ext+timestamp(i))
+
+## let's not use set
+def join_arr(arr, elmt):
+    if (elmt not in arr):
+        arr.append(elmt)
+
+def create_tvars(pi_name, pi_diameter, tr_diameter):
+    tvars = []
+    for i in range(0, (pi_diameter*2)):
+        new = (name_tvars(pi_name, i))
+        tvars.append(new)
+        new_vars_dict[new] = new ## add name for now
+    return tvars
+
+def create_pos(pi_name, pi_diameter, tr_diameter):
+    pos = []
+    for i in range(0, (pi_diameter)):
+        for j in range(0, (pi_diameter*2)):
+            new = (name_pos(pi_name, i, j))
+            pos.append(new)
+            new_vars_dict[new] = new ## add name for now
+    return pos
+
+def assign_numbers(new_vars):
+    global var_index
+    for v in new_vars:
+        var_dict[v] = str(var_index)
+        var_index+=1
+
+### for debug
+def assign_names(new_vars):
+    global var_index
+    for v in new_vars:
+        var_dict[v] = str(v)
+        var_index+=1
+
+
+def build_step(pi_name, pi_ext, pi_diameter, pi_tvars, tr_diameter, setpos_dict, i, j, trans_dict):
+    # print(pi_name, pi_ext, pi_diameter, pi_tvars, tr_diameter, setpos_dict, i, j)
+    # for j in range (0, tr_diameter-1):
+        # for i in range (0, pi_diameter):
+            # print("pos_", i, j, "and", "halts,", "move to ", "t", str(i), str(j+1))
+
+    if (j == tr_diameter-1):
+        return;
+    curr_pos    = name_pos(pi_name, i, j)
+    curr_tvar   = name_tvars(pi_name, i)
+    curr_halt   = name_halt(pi_ext, i)
+    pointer_move = name_pos(pi_name, i+1, j+1)
+    pointer_stay = name_pos(pi_name, i, j+1)
+    if (curr_pos not in trans_dict.keys()):
+        trans_dict[curr_pos] = []
+
+
+    ## if not move
+    if (j+1 not in setpos_dict.keys()):
+        setpos_dict[j+1] = [name_pos(pi_name, i, j+1)]
+    else:
+        join_arr(setpos_dict[j+1], pointer_stay)
+    # print(curr_pos, AND, NOT, curr_tvar, pointer_stay)
+    # trans_dict[curr_pos].append([AND, NOT, curr_tvar, pointer_stay])
+    trans_dict[curr_pos].append(build_IMPLIES(build_AND2(var_dict[curr_pos], NOT+var_dict[curr_tvar]), var_dict[pointer_stay]))
+
+    ## if move
+    # trans_dict[curr_pos].append([AND, curr_tvar, AND, curr_halt, pointer_stay])
+    # trans_dict[curr_pos].append([AND, curr_tvar, AND, NOT, curr_halt, pointer_move])
+    if (i == pi_diameter-1):
+        # print(curr_pos, AND, curr_tvar, AND, curr_halt, name_pos(pi_name, i, j+1))
+        trans_dict[curr_pos].append(build_IMPLIES(build_AND2(var_dict[curr_pos], var_dict[curr_tvar]), var_dict[pointer_stay]))
+        join_arr(setpos_dict[j+1], pointer_stay)
+    else:
+        # print(curr_pos, AND, curr_tvar, AND, NOT, curr_halt, name_pos(pi_name, i+1, j+1))
+        trans_dict[curr_pos].append(build_IMPLIES(build_AND3(var_dict[curr_pos], var_dict[curr_tvar], NOT+var_dict[curr_halt]), var_dict[pointer_move]))
+        build_step(pi_name, pi_ext, pi_diameter, pi_tvars, tr_diameter, setpos_dict, i+1, j+1, trans_dict)
+        join_arr(setpos_dict[j+1], pointer_move)
+
+    build_step(pi_name, pi_ext, pi_diameter, pi_tvars, tr_diameter, setpos_dict, i, j+1, trans_dict)
+
+
+
+############################### MAIN CALL #######################################
+pi_name="piA"
+pi_ext="_A"
+pi_diameter=2 # 0, 1
+tr_diameter=pi_diameter*2
+
+var_dict={}
+var_index = 0
+build_var_dict() ## build mapping for original vars
+set_varindex() ## get the last number in original QCIR script
+print("starting index: ", var_index)
+
+open_QCIR = open("HQ.qcir", "r")
+QCIR = open_QCIR.read()
+
+## fetching old logics
+OLD_header = re.findall('#QCIR.*', QCIR)
+OLD_exists = re.findall('exists.*', QCIR)
+OLD_forall = re.findall('forall.*', QCIR)
+OLD_logics = re.findall('.*=.*', QCIR)
+OLD_vars = re.findall('#\s.*', QCIR)
+OLD_output = re.findall('output.*', QCIR)
+write_QCIR = open("HQ_async.qcir", "w")
+
+## create new vars
+pi_tvars = create_tvars(pi_name, pi_diameter, tr_diameter)
+print(pi_tvars)
+
+pi_pos = create_pos(pi_name, pi_diameter,tr_diameter)
+print(pi_pos)
+
+assign_names(pi_tvars)
+assign_names(pi_pos)
+
+# assign_numbers(pi_tvars)
+# assign_numbers(pi_pos)
+
+
+
+print()
+pi_setpos_dict={}
+pi_trans_dict={}
+build_step(pi_name, pi_ext, pi_diameter, pi_tvars, tr_diameter, pi_setpos_dict,0, 0, pi_trans_dict)
+print("")
+
+for key, value in pi_setpos_dict.items():
+    print(key)
+    print(value)
+
+for key, value in pi_trans_dict.items():
+    curr = []
+
+    print(key)
+    print(value)
+
+
+
+
+
+add_trans_dict(pi_trans_dict)
+
+
+def add_original_header(quant, ext, var_dict):
+    vars=[]
+    for key, value in var_dict.items():
+        if(ext in key):
+            # print(key)
+            vars.append(var_dict[key])
+    header=quant+"("
+    for a in vars:
+        header = header + a + ","
+    header = header[:-1] ## remove last ','
+    header += ")"
+    write_QCIR.write(header + '\n')
+    # return header
+
+def add_original_logics():
+    global OLD_logics
+    for l in OLD_logics:
+        write_QCIR.write(l + '\n')
+
+def get_origial_models_logics():
+    global OLD_logics
+    M1 = OLD_logics[-1]
+    M1 = M1.split("(")
+    M1 = (M1[1].split(","))[0]
+
+    M2 = OLD_logics[-2]
+    M2 = M2.split("(")
+    M2 = M2[1].split(",")
+    old_phi = M2[1].replace(")","")
+    M2 = M2[0]
+    return [M1, M2]
+
+
+def add_new_logics():
+    global NEW_QCIR
+    for n in NEW_QCIR:
+        write_QCIR.write(n + '\n')
+
+
+add_original_header("exists", "_A", var_dict)
+add_original_header("exists", "_B", var_dict)
+add_original_logics()
+print(get_origial_models_logics())
+
+
+write_QCIR.write('# new logics:' + '\n')
+add_new_logics()
 
 
 
@@ -865,20 +1082,6 @@ def build_terminating_traj(tau, eventually_halt, ext):
 
 
 
-#
-# #### MAIN FUNCTION CALL ###
-# tau1_name = "tau1_"
-# tau2_name = "tau2_"
-#
-# ## funtion call: build all variables needed
-# traj_vars_tau1=[]
-# traj_vars_tau2=[]
-# new_vars = []
-# var_index = 0
-# variable_setup(tau1_name, tau2_name)
-# # print("variable setup...")
-# elapsed = time.time()
-# print("time elapsed: ", round((elapsed - start), 3), 's (variable setup...)')
 #
 #
 # ## funtion call: recursively build valid transitions

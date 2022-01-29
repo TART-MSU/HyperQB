@@ -1118,7 +1118,6 @@ M1 = OLD_logics[-1]
 M1 = M1.split("(")
 M1 = (M1[1].split(","))[0]
 
-
 M2 = OLD_logics[-2]
 M2 = M2.split("(")
 M2 = M2[1].split(",")

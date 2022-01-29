@@ -39,7 +39,8 @@ MODULE main
         TRUE: PC;
       esac;
 
--- DEFINE
+DEFINE
+      halt := (PC=2);
 --   s0 := ((!low) & (!high) & (!halt) & (PC=1));
 --   s1 := ((!low) & (!high) & (!halt) & (PC=2));
 --   s2 := ((!low) & (!high) & ( halt) & (PC=3));
