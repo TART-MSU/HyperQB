@@ -8,6 +8,9 @@
     x_axis_TWO: 0..4;
     y_axis_TWO: 0..4;
 
+    x_axis_THREE: 0..4;
+    y_axis_THREE: 0..4;
+
     DIR_TOKEN: 0..1;
 
     -- STAY/UP/DOWN/LEFT/RIGHT
@@ -70,7 +73,7 @@
 
 
       -- 1:up, 2:down
-      init(y_axis_TWO) := 4;
+      init(y_axis_TWO) := 3;
       next(y_axis_TWO) :=
         case
           (DIR_TOKEN=0): y_axis_TWO;
@@ -86,6 +89,37 @@
         esac;
 
 
+      -- 3:left, 4:right
+      init(x_axis_THREE) := 4;
+      next(x_axis_THREE) :=
+        case
+          (DIR_TOKEN=1): x_axis_THREE;
+          (y_axis_THREE!=4): x_axis_THREE;
+          -- (act=0):  x_axis;
+          -- (act=1 | act=2):  x_axis;
+          (x_axis_THREE=0) : {0, 1};
+          (x_axis_THREE=4) : {4, 3};
+          ((x_axis_THREE!=0) & (x_axis_THREE!=4)) : {(x_axis_THREE - 1), (x_axis_THREE + 1)};
+          -- ((x_axis!=4) & act=4) : {x_axis + 1};
+          TRUE: x_axis_THREE;
+        esac;
+
+
+      -- 1:up, 2:down
+      init(y_axis_THREE) := 4;
+      next(y_axis_THREE) :=
+        case
+          (DIR_TOKEN=0): y_axis_THREE;
+          (x_axis_THREE!=0): y_axis_THREE;
+          -- (act=0):  y_axis;
+          -- (act=3 | act=4):  y_axis;
+          (y_axis_THREE=0) : {0, 1};
+          (y_axis_THREE=4) : {4, 3};
+          ((y_axis_THREE!=0) & (y_axis_THREE!=4)) : {(y_axis_THREE - 1), (y_axis_THREE + 1)};
+          -- ((y_axis!=4) & act=1) : {y_axis + 1};
+          -- ((y_axis!=0) & act=2) : {y_axis - 1};
+          TRUE: y_axis_THREE;
+        esac;
 
     DEFINE
        BEGIN := ((x_axis_ONE=0 & y_axis_ONE=4));
