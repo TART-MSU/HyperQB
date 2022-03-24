@@ -1,0 +1,129 @@
+
+ MODULE main
+ VAR
+    step: 0..15;
+    int_x: 0..9;
+    int_k: 0..3;
+    secret_in: 0..3;
+    public_out: 0..3;
+    move: boolean;
+    temp0: 0..7;
+    temp1: 0..11;
+    temp2: 0..5;
+    temp3: 0..5;
+
+  ASSIGN
+    -- (diameter: 25)
+    -- L0:
+    -- L0: x = 0
+    -- L0: k = 0
+    -- L0: if (k == 0)
+    -- L1: {x := secret_input();}
+    -- L2: else {x := x + x;}
+    -- L3: k := k + 1;
+    -- L4: public_output = (x % k);
+    -- L5: while (k < 8) {
+    -- L6: if (k == 0) {
+    -- L7:  x := secret_input();}
+    -- L8: else {x := x + x;}
+    -- L9: k := k + 1;
+    -- L10: temp0 = (x-4);
+    -- L11: temp1 = (4+temp0);
+    -- L12: temp2 = (k-k);
+    -- L13: temp3 = (temp2-3);
+    -- L14: public_out=temp1 % temp3; }
+    -- L15: END
+  init(step):= 0;
+  next(step):=
+    case
+      (!move): {step};
+      ((step=0) & (int_k=0)): {1};
+      ((step=0) & !(int_k=0)): {2};
+      (step=1): {3};
+      (step=2): {3};
+      (step=3): {4};
+      (step=4): {5};
+      ((step=5) & (int_k<3)): {6};
+      ((step=5) & !(int_k<3)): {15};
+      ((step=6) & (int_k=0)): {7};
+      ((step=6) & !(int_k=0)): {8};
+      (step=7): {9};
+      (step=8): {9};
+      (step=9): {10};
+      (step=10): {11};
+      (step=11): {12};
+      (step=12): {13};
+      (step=13): {14};
+      (step=14): {5};
+      (step=15): {15};
+      TRUE: step;
+    esac;
+
+  init(temp0) := 0;
+  next(temp0) :=
+    case
+      ((step=10) & (int_x>4)): (int_x - 4);
+      ((step=10) & (int_x<=4)): 0;
+      TRUE: temp0;
+    esac;
+
+  init(temp1) := 0;
+  next(temp1) :=
+    case
+      (step=11): (4+temp0);
+      TRUE: temp1;
+    esac;
+
+  init(temp2) := 0;
+  next(temp2) :=
+    case
+      (step=12): (int_k - int_k);
+      TRUE: temp2;
+    esac;
+
+  init(temp3) := 0;
+  next(temp3) :=
+    case
+      ((step=13) & (temp2>3)): (temp2 - 3);
+      ((step=13) & (temp2<=3)): 0;
+      TRUE: temp3;
+    esac;
+
+  init(int_x) := 0;
+  next(int_x) :=
+    case
+      (!move): {int_x};
+      ((int_x+int_x)>9): 9;
+      (step=1) : secret_in;
+      (step=2) : int_x+int_x;
+      (step=7) : secret_in;
+      (step=8) : int_x+int_x;
+      TRUE: int_x;
+    esac;
+
+  init(int_k) := 0;
+  next(int_k) :=
+    case
+      (!move): {int_k};
+      (int_k=3): 3;
+      (step=3) : int_k+1;
+      (step=9) : int_k+1;
+      TRUE: int_k;
+    esac;
+
+  init(public_out) := 0;
+  next(public_out) :=
+    case
+      (!move): {public_out};
+      ((step=4)& !(int_k=0)): int_x mod int_k;
+      ((step=10)& !(int_k=0)): int_x mod int_k;
+      TRUE: public_out;
+    esac;
+
+  init(secret_in) := 1;
+  next(secret_in) := secret_in;
+
+
+  DEFINE
+  BEGIN := (step=0);
+  halt := (step=15);
