@@ -1,8 +1,8 @@
 # HyperQube subTools
-GENQBF=src/genqbf
-QUABS=src/quabs
-MAP=src/util_mapvars
-PARSE_BOOL=src/util_parsebools
+GENQBF=exec/genqbf
+QUABS=exec/quabs
+MAP=exec/util_mapvars
+PARSE_BOOL=exec/util_parsebools
 
 # output files
 QCIR_OUT=HQ_async.qcir
