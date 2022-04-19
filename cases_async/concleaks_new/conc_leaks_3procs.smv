@@ -22,13 +22,7 @@ MODULE main
 		next(ID_two) := 1;
 		init(ID_three) := 2;
 		next(ID_three) := 2;
-		-- init(LOCKED):= FALSE;
-		-- next(LOCKED) :=
-		-- 	case
-		-- 		(proc1.line=2 | proc1.line=3 | proc1.line=4 | proc2.line=2 | proc2.line=3 | proc2.line=4 ) : TRUE;
-		-- 		(proc1.line=9 | proc2.line=9) : TRUE;
-		-- 		TRUE: FALSE;
-		-- 	esac;
+
 		init(HIGH):= FALSE;
 		next(HIGH):=
 			case
@@ -55,16 +49,17 @@ MODULE main
 		next(var_Y):=
 			case
 				(proc1.line=0): {FALSE};
-				(proc1.line=3 | proc1.line=3): {TRUE};
+				(proc1.line=3 | proc1.line=4): {TRUE};
 				TRUE: var_Y;
 			esac;
 
 	DEFINE
 		-- the observables
-		output_X_is_zero := ((proc2.line=7) & (HIGH=FALSE));
-		output_X_is_one := ((proc2.line=7) & (HIGH=TRUE));
-		output_Y_is_zero := ((proc2.line=8) & (HIGH=FALSE));
-		output_Y_is_one := ((proc2.line=8) & (HIGH=TRUE));
+		obs_X_is_zero := ((proc2.line=7) & (var_X=FALSE));
+		obs_X_is_one := ((proc2.line=7) & (var_X=TRUE));
+		obs_Y_is_zero := ((proc2.line=8) & (var_Y=FALSE));
+		obs_Y_is_one := ((proc2.line=8) & (var_Y=TRUE));
+		halt := ((proc1.line=5) & (proc2.line=8) & (proc3.line=11));
 
 MODULE programs(ID, SCHEDULE, LOW, HIGH, var_X, var_Y, initline)
 	VAR

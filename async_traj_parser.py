@@ -37,11 +37,6 @@ def natural_keys(text):
     return [ text ]
 
 
-# r = re.compile(r'\((\[\d+\])\)')
-
-# phi.sort(key=natural_keys)
-# vars.sort(key=natural_keys)
-
 
 print("[ tau1 trajectories ]")
 for v in vars:

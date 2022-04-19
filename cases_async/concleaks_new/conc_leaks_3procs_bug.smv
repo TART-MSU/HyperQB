@@ -1,0 +1,114 @@
+MODULE main
+	VAR
+		-- LOCKED: boolean; -- semaphore
+		HIGH: boolean; -- high-value
+		LOW: boolean; -- low-value
+		var_X: boolean; -- X
+		var_Y: boolean; -- Y
+
+		SCHEDULE: 0..2; -- 0:p1 moves, 1:p2 moves, 2:p3 moves
+		ID_one: 0..2;
+		ID_two: 0..2;
+		ID_three: 0..2;
+
+		proc1: programs(ID_one, SCHEDULE, LOW, HIGH, var_X, var_Y, 1);
+		proc2: programs(ID_two, SCHEDULE, LOW, HIGH, var_X, var_Y, 6);
+		proc3: programs(ID_three, SCHEDULE, LOW, HIGH,  var_X, var_Y, 9);
+
+	ASSIGN
+		init(ID_one) := 0;
+		next(ID_one) := 0;
+		init(ID_two) := 1;
+		next(ID_two) := 1;
+		init(ID_three) := 2;
+		next(ID_three) := 2;
+
+		init(HIGH):= FALSE;
+		next(HIGH):=
+			case
+				(proc3.line=10): {TRUE, FALSE};
+				TRUE: HIGH;
+			esac;
+
+		init(LOW):= FALSE;
+		next(LOW):=
+			case
+				(proc3.line=11): {TRUE}; -- sequence of LOW: 0, 1
+				TRUE: LOW;
+			esac;
+
+		init(var_X) := FALSE;
+		next(var_X):=
+			case
+				(proc1.line=0): {FALSE};
+				(proc1.line=2 | proc1.line=5): {TRUE};
+				TRUE: var_X;
+			esac;
+
+		init(var_Y) := FALSE;
+		next(var_Y):=
+			case
+				(proc1.line=0): {FALSE};
+				(proc1.line=3 | proc1.line=4): {TRUE};
+				TRUE: var_Y;
+			esac;
+
+	DEFINE
+		-- the observables
+		obs_X_is_zero := ((proc2.line=7) & (var_X=FALSE));
+		obs_X_is_one := ((proc2.line=7) & (var_X=TRUE));
+		obs_Y_is_zero := ((proc2.line=8) & (var_Y=FALSE));
+		obs_Y_is_one := ((proc2.line=8) & (var_Y=TRUE));
+		halt := ((proc1.line=5) & (proc2.line=8) & (proc3.line=11));
+
+MODULE programs(ID, SCHEDULE, LOW, HIGH, var_X, var_Y, initline)
+	VAR
+		line: 0..12;
+		-- halt: boolean;
+
+	ASSIGN
+
+		init(line) := initline;
+		next(line) :=
+			case
+				(!(SCHEDULE=ID)) : line;
+
+					-- program1
+				(line=0): {1}; -- x=0, y=0
+				(line=1 & HIGH=LOW) : {2}; -- if (h == l)
+				(line=2) : {3}; -- x=1
+				(line=3) : {0}; -- y=1
+				(line=1 & !(HIGH=LOW)) : {4};
+				(line=4) : {5}; -- y=1
+				(line=5) : {0}; -- x=1
+
+				-- program2
+				(line=6) : {7}; --
+				(line=7) : {8}; -- output x
+				(line=8) : {6}; -- output y
+				-- non-det
+				-- (line=7) : {8}; -- output x or 0
+				-- (line=8) : {10}; -- output(x)
+				-- (line=9) : {10}; -- output(0)
+				-- (line=10) : {11}; -- output y or 0
+				-- (line=11) : {6}; -- output(y)
+				-- (line=12) : {6}; -- output(0)
+
+
+				--  program3,
+				(line=9) : {10}; --
+				(line=10) : {11}; -- HIGH = 0 or 1
+				(line=11) : {9}; -- LOW =0 or 1
+
+				TRUE: line;
+			esac;
+
+		-- init(halt):= FALSE;
+		-- next(halt):=
+		-- 	case
+		-- 	 (line=5 | line=11): TRUE;
+		-- 	 TRUE: FALSE;
+		-- 	esac;
+
+	-- DEFINE
+	-- 	start := (line=0);

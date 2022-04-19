@@ -1,0 +1,36 @@
+MODULE main
+	VAR
+		LOCKED: boolean; -- semaphore
+		HIGH: boolean; -- high-value
+		line: 1..5;
+	ASSIGN
+
+	-- init(line) := 1;
+	init(line) := 1;
+	next(line) :=
+		case
+			-- program1,diameter=4
+			(line=1 & LOCKED) : {1}; -- wait if LOCKED
+			(line=1 & !LOCKED) : {2}; -- else go to 2
+			(line=2) : {3}; -- LOCK it
+			(line=3) : {4}; -- print A
+			(line=4) : {5}; -- print B
+			(line=5) : {5}; -- UNLOCK, END
+			TRUE: line;
+		esac;
+
+		init(LOCKED):= FALSE;
+		next(LOCKED) :=
+			case
+				(line=1): {TRUE, FALSE};
+				(line=5): FALSE;
+				TRUE: LOCKED;
+			esac;
+
+		init(HIGH) := {TRUE, FALSE};
+		next(HIGH):= HIGH;
+
+	DEFINE
+		halt := (line=5);
+		obs_printA := (line=3);
+		obs_printB := (line=4);

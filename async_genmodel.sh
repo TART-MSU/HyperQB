@@ -18,7 +18,7 @@ PARSE_OUT=OUTPUT_formatted.cex
 
 
 ## updated Jan.28:merge parse and bmc
-echo "\n------( HyperQube START! )------\n"
+echo "\n------( async_genmodel starts )------\n"
 ## get current location
 PWD=$(pwd)
 # echo "$PWD"
@@ -158,8 +158,8 @@ source QS.bool
 
 
 
-echo "\n--------------- Summary of Model Checking Info ---------------"
-echo "|  Quantifiers:" ${QS}
+echo "\n--------------- Summary of Model(s) Info ---------------"
+# echo "|  Quantifiers:" ${QS}
 echo "|  Bound k:    " ${k}
 echo "|  Semantics:  " ${SEMANTICS}
 if [ "$MODE" = "single" ]; then
@@ -167,39 +167,15 @@ if [ "$MODE" = "single" ]; then
 elif [ "$MODE" = "multi" ]; then
   echo "|  Models:     " ${M1_NUSMVFILE} ", " ${M2_NUSMVFILE}
 fi
-echo "|  HyperLTL formula: " ${FORMULA}
+# echo "|  HyperLTL formula: " ${FORMULA}
 echo "-------------------------------------------------------------- \n\n"
 
 
-echo "\n============ Unrolling with genQBF + Solving with QuAbS ============"
+echo "\n============ Unrolling with genQBF ============"
 echo "generating QBF BMC..."
-${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+ ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
 
 
-echo "solving QBF..."
-${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
-#  ${QUABS} --statistics --preprocessing 0 --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 
 
-# echo "---Parse All Binary Numbers---"
-echo "\n============ Get Nice-formatted Output if Output is avaialbe ============"
-
-if [ ! -f "$QCIR_OUT" ]; then
-    echo "$QCIR_OUT not exists"
-    exit 1
-fi
-
-echo "parsing into readable format..."
-# # echo "---Counterexample Mapping---"
-# javac ${MAP}.java
-# java ${MAP}.java ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-
-# javac ${PARSE_BOOL}.java
-# java ${PARSE_BOOL}.java ${MAP_OUT2} ${PARSE_OUT}
-${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
-# echo  "(under condtruction...)"
-# python3 ${PARSE_OUTPUT} ${MAP_OUT2} ${PARSE_OUT} ${k}
-# #by time
-
-echo "\n------(END HyperQube)------\n"
+echo "\n------(END async_genmodel)------\n"

@@ -1,1 +1,0 @@
-exists A. exists B. F(halt[A])
