@@ -11,7 +11,7 @@ vars = re.findall('tau.*', QCIR)
 
 phi = []
 for v in vars:
-    if ("phi" in v):
+    if ("pos" in v):
         phi.append(v)
     # else:
     #     # if ("tau1" in v):
@@ -29,19 +29,29 @@ def natural_keys(text):
     http://nedbatchelder.com/blog/200712/human_sorting.html
     (See Toothy's implementation in the comments)
     '''
-    # pre=(re.findall('tau.*\[', text))
-    # text = text.replace(pre[0], "")
-    # text = text.replace("]", "")
+    pre=(re.findall('tau.*\[', text))
+    text = text.replace(pre[0], "")
+    text = text.replace("]", "")
     # text = re.compile('\((\[\d+\])\)')
     print(text)
     return [ text ]
 
 
 
-print("[ tau1 trajectories ]")
+
 for v in vars:
-    if ("tau1_t" in v):
+    if ("tau_t1" in v):
         print(v)
+
+for v in vars:
+    if ("tau_t2" in v):
+        print(v)
+
+
+for v in vars:
+    if (("pos" in v) and ("= 1" in v)):
+        print(v)
+
 
 print()
 for p in phi:

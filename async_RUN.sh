@@ -5,6 +5,7 @@ HYPERQUBE=./hyperqube.sh
 GENMODEL=./async_genmodel.sh
 SOLVEQBF=./async_solveqbf.sh
 DUMMYPROP=cases_async/dummy_prop.hq
+PARSETRAJ=async_traj_parser.py
 
 # Example 1
 # For checking and debugging
@@ -44,16 +45,16 @@ DUMMYPROP=cases_async/dummy_prop.hq
 
 ### generate model, build trajectories, then solve QBF
 ### uncomment to run example 1
-M=8
-TRAJ=16
-MODEL1=cases_async/concleaks_new/conc_leaks_3procs.smv
-MODEL2=cases_async/concleaks_new/conc_leaks_3procs.smv
-BUILDTRAJ=cases_async/concleaks_new/build_conc_leaks_2trajs.py
-time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-time python3 ${BUILDTRAJ} ${M} ${M} ${M} ${M} ${TRAJ}
-time ${SOLVEQBF}
-## parse the trajectory counterexample
-python3 traj_parser.py
+# M=8
+# TRAJ=16
+# MODEL1=cases_async/concleaks_new/conc_leaks_3procs.smv
+# MODEL2=cases_async/concleaks_new/conc_leaks_3procs.smv
+# BUILDTRAJ=cases_async/concleaks_new/build_conc_leaks_2trajs.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${M} ${M} ${M} ${M} ${TRAJ}
+# time ${SOLVEQBF}
+# ## parse the trajectory counterexample
+# python3 traj_parser.py
 
 
 
@@ -71,3 +72,15 @@ python3 traj_parser.py
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # # time ${SOLVEQBF}
+
+# ### generate model, build trajectories, then solve QBF
+# ### uncomment to run DBE Original
+M=3
+TRAJ=6
+MODEL1=cases_async/optimization/cav21/opt_DBE_source.smv
+MODEL2=cases_async/optimization/cav21/opt_DBE_target.smv
+BUILDTRAJ=cases_async/optimization/cav21/buildtraj_opt.py
+time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+time ${SOLVEQBF}
+# python3 ${PARSETRAJ}

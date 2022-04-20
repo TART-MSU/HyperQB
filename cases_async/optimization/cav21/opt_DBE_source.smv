@@ -1,0 +1,46 @@
+
+ MODULE main
+ VAR
+    PC: 0..4;
+    secret_in: 0..1;
+    secret_out: 0..1;
+    public_out: 0..1;
+
+  ASSIGN
+
+    -- L0: x := secret_input()
+    -- L1: if (0):
+    -- L2: public_output(x)
+    -- L3: else: secret_output(x)
+    -- L4: END
+  init(PC):= 0;
+  next(PC):=
+    case
+      (PC=0): {1};
+      ((PC=1) & (FALSE)): {2};
+      ((PC=1) & (!(FALSE))): {3};
+      (PC=2): {4};
+      (PC=3): {4};
+      TRUE: PC;
+    esac;
+
+
+  init(public_out) := 0;
+  next(public_out) :=
+    case
+      (PC=2): secret_in;
+      TRUE: public_out;
+    esac;
+
+  init(secret_out) := 0;
+  next(secret_out) :=
+    case
+      (PC=3): secret_in;
+      TRUE: secret_out;
+    esac;
+
+  init(secret_in) := {0, 1};
+  next(secret_in) := secret_in;
+
+  DEFINE
+  halt := (PC=4);
