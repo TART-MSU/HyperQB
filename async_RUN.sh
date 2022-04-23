@@ -75,12 +75,89 @@ PARSETRAJ=async_traj_parser.py
 
 # ### generate model, build trajectories, then solve QBF
 # ### uncomment to run DBE Original
-M=3
-TRAJ=6
-MODEL1=cases_async/optimization/cav21/opt_DBE_source.smv
-MODEL2=cases_async/optimization/cav21/opt_DBE_target.smv
-BUILDTRAJ=cases_async/optimization/cav21/buildtraj_opt.py
+# M=3
+# TRAJ=6
+# MODEL1=cases_async/optimization/cav21/opt_DBE_source.smv
+# MODEL2=cases_async/optimization/cav21/opt_DBE_target.smv
+# BUILDTRAJ=cases_async/optimization/cav21/buildtraj_opt.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+# time ${SOLVEQBF}
+# # python3 ${PARSETRAJ}
+
+# M=7
+# TRAJ=14
+# MODEL1=cases_async/optimization/cav21/opt_DBE_source_new.smv
+# MODEL2=cases_async/optimization/cav21/opt_DBE_target_new.smv
+# BUILDTRAJ=cases_async/optimization/cav21/buildtraj_opt.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+# time ${SOLVEQBF}
+
+# M=7
+# TRAJ=14
+# MODEL1=cases_async/optimization/cav21/opt_DBE_source_new.smv
+# MODEL2=cases_async/optimization/cav21/opt_DBE_target_wrong_new.smv
+# BUILDTRAJ=cases_async/optimization/cav21/buildtraj_opt.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+# time ${SOLVEQBF}
+
+
+
+### OPTIMIZATION NEW
+# ### generate model, build trajectories, then solve QBF
+# ### uncomment to run DBE new correct
+M=8
+D1=8
+D2=8
+TRAJ=16
+MODEL1=cases_async/optimization/with_ndet/opt_DBE_source_ndet.smv
+MODEL2=cases_async/optimization/with_ndet/opt_DBE_target_ndet.smv
+BUILDTRAJ=cases_async/optimization/with_ndet/buildtraj_opt_ndet.py
 time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
 time ${SOLVEQBF}
+# python3 ${PARSETRAJ}
+# # ### uncomment to run DBE new wrong
+# M=8
+# D1=8
+# D2=8
+# TRAJ=16
+# MODEL1=cases_async/optimization/with_ndet/opt_DBE_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet/opt_DBE_target_wrong_ndet.smv
+# BUILDTRAJ=cases_async/optimization/with_ndet/buildtraj_opt_ndet.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# python3 ${PARSETRAJ}
+
+
+### OPTIMIZATION NEW with DELAY
+# # ### generate model, build trajectories, then solve QBF
+# # ### uncomment to run TEST DBE new correct
+# M=10
+# D1=8
+# D2=5
+# TRAJ=13
+# MODEL1=cases_async/optimization/with_delay/opt_smallDBE_source_delay.smv
+# MODEL2=cases_async/optimization/with_delay/opt_smallDBE_target_delay.smv
+# BUILDTRAJ=cases_async/optimization/with_delay/buildtraj_opt_delay.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# python3 ${PARSETRAJ}
+
+# ### generate model, build trajectories, then solve QBF
+# ### uncomment to run TEST DBE new incorrect
+# M=10
+# D1=8
+# D2=5
+# TRAJ=13
+# MODEL1=cases_async/optimization/with_delay/opt_smallDBE_source_delay.smv
+# MODEL2=cases_async/optimization/with_delay/opt_smallDBE_target_wrong_delay.smv
+# BUILDTRAJ=cases_async/optimization/with_delay/buildtraj_opt_delay.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
 # python3 ${PARSETRAJ}

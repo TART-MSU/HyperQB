@@ -47,27 +47,35 @@ for v in vars:
     if ("tau_t2" in v):
         print(v)
 
-
-for v in vars:
-    if (("pos" in v) and ("= 1" in v)):
-        print(v)
-
-
 print()
-for p in phi:
-    if ("tau1" in p):
-        # print(p)
-        if ("= 1" in p):
-            print(p)
-print()
-# print("[ tau2 trajectories ]")
 for v in vars:
-    if ("tau2_t" in v):
+    if (("tau" in v) and ("= 1" in v) and ("_t" not in v) and ("tau1" not in v) and ("tau2" not in v)):
         print(v)
 print()
-for p in phi:
-    if ("tau2" in p):
-        # print(p)
-        if ("= 1" in p):
-            print(p)
-# print(phi)
+for v in vars:
+    if (("tau1" in v) and ("= 1" in v) and ("_t" not in v)):
+        print(v)
+print()
+for v in vars:
+    if (("tau2" in v) and ("= 1" in v) and ("_t" not in v)):
+        print(v)
+
+#
+# print()
+# for p in phi:
+#     if ("tau1" in p):
+#         # print(p)
+#         if ("= 1" in p):
+#             print(p)
+# print()
+# # print("[ tau2 trajectories ]")
+# for v in vars:
+#     if ("tau2_t" in v):
+#         print(v)
+# print()
+# for p in phi:
+#     if ("tau2" in p):
+#         # print(p)
+#         if ("= 1" in p):
+#             print(p)
+# # print(phi)
