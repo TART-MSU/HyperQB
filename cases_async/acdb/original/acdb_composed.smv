@@ -1,15 +1,15 @@
 MODULE main
 	VAR
 		LOCKED: boolean; -- semaphore
-		HIGH: boolean; -- high-value
+		in_HIGH: boolean; -- in_HIGH-value
 
 		-- use two modules to perform async-composition
 		SCHEDULE: 0..1; -- 0:p1 moves, 1:p2 moves
 		ID_one: 0..1;
 		ID_two: 0..1;
 
-		proc1: programs(ID_one, SCHEDULE, LOCKED, HIGH, 1);
-		proc2: programs(ID_two, SCHEDULE, LOCKED, HIGH, 6);
+		proc1: programs(ID_one, SCHEDULE, LOCKED, in_HIGH, 1);
+		proc2: programs(ID_two, SCHEDULE, LOCKED, in_HIGH, 6);
 
 	ASSIGN
 		init(ID_one) := 0;
@@ -31,8 +31,8 @@ MODULE main
 				TRUE: {0,1};
 			esac;
 
-		init(HIGH):= {TRUE, FALSE};
-		next(HIGH):= HIGH;
+		init(in_HIGH):= {TRUE, FALSE};
+		next(in_HIGH):= in_HIGH;
 
 	DEFINE
 		-- halting condition
@@ -43,7 +43,7 @@ MODULE main
 		obs_printD := (proc2.line=11);
 
 
-MODULE programs(ID, SCHEDULE, LOCKED, HIGH, initline)
+MODULE programs(ID, SCHEDULE, LOCKED, in_HIGH, initline)
 	VAR
 		line: 1..11;
 
@@ -61,8 +61,8 @@ MODULE programs(ID, SCHEDULE, LOCKED, HIGH, initline)
 				(line=5) : {5}; -- UNLOCK, END
 				-- program2,diameter==5
 				(line=6) : {7}; -- print C
-				(line=7 & HIGH) : {8}; -- if HIGH, proceed
-				(line=7 & !HIGH) : {11}; -- if !HIGH, skip to end
+				(line=7 & in_HIGH) : {8}; -- if in_HIGH, proceed
+				(line=7 & !in_HIGH) : {11}; -- if !in_HIGH, skip to end
 				(line=8 & LOCKED) : {8}; -- wait if LOCKED
 				(line=8 & !LOCKED) : {9}; -- else, proceed
 				(line=9) : {10}; -- LOCK

@@ -7,22 +7,25 @@ SOLVEQBF=./async_solveqbf.sh
 DUMMYPROP=cases_async/dummy_prop.hq
 PARSETRAJ=async_traj_parser.py
 
-# Example 1
-# For checking and debugging
-# python3 traj_parser.py
 
 ### generate model, build trajectories, then solve QBF
-### uncomment to run example 1
+
+#####################
+#    ACBD example   #
+#####################
+
+### uncomment to run ACDB original examle
 # M=6
 # TRAJ=12
-# MODEL1=cases_async/acdb/acdb_composed.smv
-# MODEL2=cases_async/acdb/acdb_composed.smv
-# BUILDTRAJ=cases_async/acdb/build_acdb_1traj.py
+# MODEL1=cases_async/acdb/original/acdb_composed.smv
+# MODEL2=cases_async/acdb/original/acdb_composed.smv
+# BUILDTRAJ=cases_async/acdb/original/buildtraj_acdb_original.py
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
 
 
+### uncomment to run ACDB examle with non-determinsm
 M=8
 TRAJ=16
 MODEL1=cases_async/acdb/with_ndet/acdb_composed.smv
