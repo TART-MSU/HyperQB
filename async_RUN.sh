@@ -23,6 +23,17 @@ PARSETRAJ=async_traj_parser.py
 # time ${SOLVEQBF}
 
 
+M=8
+TRAJ=16
+MODEL1=cases_async/acdb/with_ndet/acdb_composed.smv
+MODEL2=cases_async/acdb/with_ndet/acdb_composed.smv
+BUILDTRAJ=cases_async/acdb/with_ndet/buildtraj_acdb_ndet.py
+time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+time ${SOLVEQBF}
+python3 ${PARSETRAJ}
+
+
 # # Example 2
 # # For checking and debugging
 # # python3 traj_parser.py
@@ -108,16 +119,16 @@ PARSETRAJ=async_traj_parser.py
 ### OPTIMIZATION NEW
 # ### generate model, build trajectories, then solve QBF
 # ### uncomment to run DBE new correct
-M=8
-D1=8
-D2=8
-TRAJ=16
-MODEL1=cases_async/optimization/with_ndet/opt_DBE_source_ndet.smv
-MODEL2=cases_async/optimization/with_ndet/opt_DBE_target_ndet.smv
-BUILDTRAJ=cases_async/optimization/with_ndet/buildtraj_opt_ndet.py
-time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
-time ${SOLVEQBF}
+# M=8
+# D1=8
+# D2=8
+# TRAJ=16
+# MODEL1=cases_async/optimization/with_ndet/opt_DBE_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet/opt_DBE_target_ndet.smv
+# BUILDTRAJ=cases_async/optimization/with_ndet/buildtraj_opt_ndet.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
 # python3 ${PARSETRAJ}
 # # ### uncomment to run DBE new wrong
 # M=8
