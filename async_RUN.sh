@@ -15,39 +15,38 @@ PARSETRAJ=async_traj_parser.py
 #####################
 
 ### uncomment to run ACDB original examle
-# M=6
-# TRAJ=12
-# MODEL1=cases_async/acdb/original/acdb_composed.smv
-# MODEL2=cases_async/acdb/original/acdb_composed.smv
-# BUILDTRAJ=cases_async/acdb/original/buildtraj_acdb_original.py
-# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
-# time ${SOLVEQBF}
-
-
-### uncomment to run ACDB examle with non-determinsm
-M=8
-TRAJ=16
-MODEL1=cases_async/acdb/with_ndet/acdb_composed.smv
-MODEL2=cases_async/acdb/with_ndet/acdb_composed.smv
-BUILDTRAJ=cases_async/acdb/with_ndet/buildtraj_acdb_ndet.py
+M=6
+TRAJ=12
+MODEL1=cases_async/acdb/original/acdb_composed.smv
+MODEL2=cases_async/acdb/original/acdb_composed.smv
+BUILDTRAJ=cases_async/buildtraj_v1.py
 time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 time ${SOLVEQBF}
-python3 ${PARSETRAJ}
 
 
-# # Example 2
-# # For checking and debugging
-# # python3 traj_parser.py
-#
-# ### generate model, build trajectories, then solve QBF
-# ### uncomment to run example 1
+### uncomment to run ACDB examle with non-determinsm
+# M=8
+# TRAJ=16
+# MODEL1=cases_async/acdb/with_ndet/acdb_composed.smv
+# MODEL2=cases_async/acdb/with_ndet/acdb_composed.smv
+# BUILDTRAJ=cases_async/buildtraj_v2.py
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+# time ${SOLVEQBF}
+# python3 ${PARSETRAJ}
+
+
+########################
+#   concurrent leaks   #
+########################
+
+### uncomment to run conc_leak original
 # M=6
 # TRAJ=12
-# MODEL1=cases_async/concleaks_original/conc_leaks_2procs.smv
-# MODEL2=cases_async/concleaks_original/conc_leaks_2procs.smv
-# BUILDTRAJ=cases_async/concleaks_original/build_conc_leaks_1traj.py
+# MODEL1=cases_async/concleaks/original/conc_leaks_2procs.smv
+# MODEL2=cases_async/concleaks/original/conc_leaks_2procs.smv
+# BUILDTRAJ=cases_async/concleaks/original/buildtraj_v2.py
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}

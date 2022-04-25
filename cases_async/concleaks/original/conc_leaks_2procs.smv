@@ -1,7 +1,7 @@
 MODULE main
 	VAR
 		-- LOCKED: boolean; -- semaphore
-		HIGH: boolean; -- high-value
+		in_HIGH: boolean; -- in_HIGH-value
 		LOW: boolean; -- low-value
 		var_X: boolean; -- X
 		var_Y: boolean; -- Y
@@ -11,9 +11,9 @@ MODULE main
 		ID_two: 0..2;
 		ID_three: 0..2;
 
-		proc1: programs(ID_one, SCHEDULE, LOW, HIGH, var_X, var_Y, 1);
-		proc2: programs(ID_two, SCHEDULE, LOW, HIGH, var_X, var_Y, 6);
-		-- proc3: programs(ID_three, SCHEDULE, LOW, HIGH,  var_X, var_Y, 9);
+		proc1: programs(ID_one, SCHEDULE, LOW, in_HIGH, var_X, var_Y, 1);
+		proc2: programs(ID_two, SCHEDULE, LOW, in_HIGH, var_X, var_Y, 6);
+		-- proc3: programs(ID_three, SCHEDULE, LOW, in_HIGH,  var_X, var_Y, 9);
 
 	ASSIGN
 		init(ID_one) := 0;
@@ -24,11 +24,11 @@ MODULE main
 		-- next(ID_three) := 2;
 
 
-		init(HIGH):= {TRUE, FALSE};
-		next(HIGH):=
+		init(in_HIGH):= {TRUE, FALSE};
+		next(in_HIGH):=
 			case
 				-- (proc3.line=10): {TRUE, FALSE};
-				TRUE: HIGH;
+				TRUE: in_HIGH;
 			esac;
 
 		init(LOW):= FALSE;
@@ -56,13 +56,13 @@ MODULE main
 
 	DEFINE
 		-- the observables
-		obs_X_is_zero := ((proc2.line=7) & (HIGH=FALSE));
-		obs_X_is_one := ((proc2.line=7) & (HIGH=TRUE));
-		obs_Y_is_zero := ((proc2.line=8) & (HIGH=FALSE));
-		obs_Y_is_one := ((proc2.line=8) & (HIGH=TRUE));
+		obs_X_is_zero := ((proc2.line=7) & (in_HIGH=FALSE));
+		obs_X_is_one := ((proc2.line=7) & (in_HIGH=TRUE));
+		obs_Y_is_zero := ((proc2.line=8) & (in_HIGH=FALSE));
+		obs_Y_is_one := ((proc2.line=8) & (in_HIGH=TRUE));
 		halt := ((proc1.line=5) & (proc2.line=8));
 
-MODULE programs(ID, SCHEDULE, LOW, HIGH, var_X, var_Y, initline)
+MODULE programs(ID, SCHEDULE, LOW, in_HIGH, var_X, var_Y, initline)
 	VAR
 		line: 0..8;
 		-- halt: boolean;
@@ -76,10 +76,10 @@ MODULE programs(ID, SCHEDULE, LOW, HIGH, var_X, var_Y, initline)
 
 					-- program1
 				(line=0): {1}; -- x=0, y=0
-				(line=1 & HIGH=LOW) : {2}; -- if (h == l)
+				(line=1 & in_HIGH=LOW) : {2}; -- if (h == l)
 				(line=2) : {3}; -- x=1
 				(line=3) : {0}; -- y=1
-				(line=1 & !(HIGH=LOW)) : {4};
+				(line=1 & !(in_HIGH=LOW)) : {4};
 				(line=4) : {5}; -- y=1
 				(line=5) : {0}; -- x=1
 
@@ -98,7 +98,7 @@ MODULE programs(ID, SCHEDULE, LOW, HIGH, var_X, var_Y, initline)
 
 				--  program3,
 				-- (line=9) : {10}; --
-				-- (line=10) : {11}; -- HIGH = 0 or 1
+				-- (line=10) : {11}; -- in_HIGH = 0 or 1
 				-- (line=11) : {9}; -- LOW =0 or 1
 
 				TRUE: line;

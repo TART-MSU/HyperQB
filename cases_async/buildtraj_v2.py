@@ -1,17 +1,14 @@
 import re
 import sys
 import time
+
 #####################################################################
 #        This script build the follwing form of trajectories
 #
-#        forall pi. forall pi'. E tau'.
-#              GG((out_{pi, tau'} = out_{pi', tau'}))
+#        forall pi. forall pi'. A tau E tau'.
+#              G((in_{pi, tau} = in_{pi', tau}))
+#                       ==> G((out_{pi, tau'} = out_{pi', tau'}))
 #####################################################################
-inputs_vars_path1 = ["in_HIGH", "in_HIGH"]
-inputs_vars_path2 = ["in_HIGH", "in_HIGH"]
-
-outputs_vars_path1 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
-outputs_vars_path2 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
 
 
 ### logical operators
@@ -912,6 +909,8 @@ def build_terminating_traj(tau, ext1, ext2):
 ########################## MAIN FUNCTION CALL ##########################
 ########################################################################
 tau_name = "tau_"
+tau1_name = "tau1_"
+tau2_name = "tau2_"
 
 
 print_elapsed("start main function call.")
@@ -932,37 +931,51 @@ tau_traj_relations.sort()
 ###################### SETUP VARIABLES ######################
 ## funtion call: build all variables needed
 new_vars = []
-traj_vars_tau=[]
-variable_setup(tau_name, tau_valid_traj_options, traj_vars_tau)
+traj_vars_tau1=[]
+traj_vars_tau2=[]
+variable_setup(tau1_name, tau_valid_traj_options, traj_vars_tau1)
+variable_setup(tau2_name, tau_valid_traj_options, traj_vars_tau2)
+
+# variable_setup_2trajs(tau1_name, tau2_name, tau_valid_traj_options, traj_vars_tau1, traj_vars_tau2)
 print_elapsed('(variable setup...)')
+# print(*new_vars, sep="\n")
 
 
 ###################### BUILD EXPRESSIONS ######################
-tau_exp=[]
-build_expressions(tau_name, tau_exp, tau_traj_relations)
+tau1_exp=[]
+build_expressions(tau1_name, tau1_exp, tau_traj_relations)
+tau2_exp=[]
+build_expressions(tau2_name, tau2_exp, tau_traj_relations)
 print_elapsed('(building tau expressions...)')
 
 ###################### BUILD QCIR ######################
-tau_formula_cond = []
-tau_dict_choices_eachlayer={}
-convert_to_qcir(tau_name, tau_exp, "_A", "_B", tau_formula_cond, tau_dict_choices_eachlayer)
-tau_all_formulas = build_AND_multi(tau_formula_cond)
+tau1_formula_cond = []
+tau1_dict_choices_eachlayer={}
+convert_to_qcir(tau1_name, tau1_exp, "_A", "_B", tau1_formula_cond, tau1_dict_choices_eachlayer)
+tau1_all_formulas = build_AND_multi(tau1_formula_cond)
 
+tau2_formula_cond = []
+tau2_dict_choices_eachlayer={}
+convert_to_qcir(tau2_name, tau2_exp, "_A", "_B", tau2_formula_cond, tau2_dict_choices_eachlayer)
+tau2_all_formulas = build_AND_multi(tau2_formula_cond)
 print_elapsed('(building tau QCIR...)')
 
 # print(*tau_dict_choices_eachlayer, sep="\n")
 
 ###################### EXCLUSIVE, MOVING, and TERMINATING CONSTRAINT ######################
-tau_exclusive_constraints=build_exclusive_constraints(tau_dict_choices_eachlayer)
+# build_exclusive(tau_dict_choices_eachlayer, tau_exclusive, eventually_tau_halt, tau_halting_constraints)
+tau1_exclusive_constraints=build_exclusive_constraints(tau1_dict_choices_eachlayer)
+tau2_exclusive_constraints=build_exclusive_constraints(tau2_dict_choices_eachlayer)
 print_elapsed('(building tau exclusive constraints...)')
 
 
-
-tau_moving_constraints = build_moving_constraints(traj_vars_tau)
+tau1_moving_constraints = build_moving_constraints(traj_vars_tau1)
+tau2_moving_constraints = build_moving_constraints(traj_vars_tau2)
 print_elapsed('(building tau moving constraints...)')
 
 
-tau_eventually_terminated = build_terminating_traj(tau_name, "_A", "_B")
+tau1_eventually_terminated = build_terminating_traj(tau1_name, "_A", "_B")
+tau2_eventually_terminated = build_terminating_traj(tau2_name, "_A", "_B")
 print_elapsed('(building tau terminating constraints.)')
 
 
@@ -988,13 +1001,20 @@ write_QCIR = open("HQ_async.qcir", "w")
 
 
 ### setup new added variables
-vars_tau=[]
-for tau_v in traj_vars_tau:
-    vars_tau.extend(tau_v)
+vars_tau1=[]
+for tau_v in traj_vars_tau1:
+    vars_tau1.extend(tau_v)
 for v in To_find:
-    if(tau_name in v):
-        vars_tau.append(v)
+    if(tau1_name in v):
+        vars_tau1.append(v)
 
+
+vars_tau2=[]
+for tau_v in traj_vars_tau2:
+    vars_tau2.extend(tau_v)
+for v in To_find:
+    if(tau2_name in v):
+        vars_tau2.append(v)
 
 
 vars_A=[]
@@ -1024,25 +1044,67 @@ print("gate old varphi:", old_phi)
 
 
 ###########################################  FORMULA ###########################################
-INITIAL_CONDITION_tau = str(var_dict[tau_name+get_phi(0, 0, 0)]) ##
-VALID_tau = build_AND_multi([INITIAL_CONDITION_tau, tau_eventually_terminated, tau_all_formulas, tau_exclusive_constraints])
+INITIAL_CONDITION_tau1 = str(var_dict[tau1_name+get_phi(0, 0, 0)]) ##
+VALID_tau1 = build_AND_multi([INITIAL_CONDITION_tau1, tau1_eventually_terminated, tau1_all_formulas, tau1_exclusive_constraints])
 
+INITIAL_CONDITION_tau2 = str(var_dict[tau2_name+get_phi(0, 0, 0)]) ##
+VALID_tau2 = build_AND_multi([INITIAL_CONDITION_tau2, tau2_eventually_terminated, tau2_all_formulas, tau2_exclusive_constraints])
 
 # VALID_tau = build_AND4(INITIAL_CONDITION_tau, tau_eventually_terminated, tau_all_formulas, tau_exclusive_constraints)
 
 ###################### BUILD FORMULAS for PROPERTY ######################
-# tau_obs_formula_pairs = []
-# build_obs_always_match(tau_name, tau_obs_formula_pairs)
-length_input = len(inputs_vars_path1)
-length_output = len(outputs_vars_path1)
 
-# tau1_input_always_match = build_always_iff(tau1_name, inputs_vars_path1, inputs_vars_path2, length_input)
+in_keyword = "in_"
+inputs_vars_path1 = []
+for key, value in var_dict.items():
+    if(('_A' in key) and ('[0]' in key) and (in_keyword in key)):
+        input = key.replace('_A','')
+        input = input.replace('[0]','')
+        inputs_vars_path1.append(input)
+
+inputs_vars_path2 = []
+for key, value in var_dict.items():
+    if(('_B' in key) and ('[0]' in key) and (in_keyword in key)):
+        input = key.replace('_B','')
+        input = input.replace('[0]','')
+        inputs_vars_path2.append(input)
+
+
+out_keyword = "obs_"
+outputs_vars_path1 = []
+for key, value in var_dict.items():
+    if(('_A' in key) and ('[0]' in key) and (out_keyword in key)):
+        output = key.replace('_A','')
+        output = output.replace('[0]','')
+        outputs_vars_path1.append(output)
+
+outputs_vars_path2 = []
+for key, value in var_dict.items():
+    if(('_B' in key) and ('[0]' in key) and (out_keyword in key)):
+        output = key.replace('_B','')
+        output = output.replace('[0]','')
+        outputs_vars_path2.append(output)
+
+
+
+# print(inputs_vars_path1)
+# print(inputs_vars_path2)
+# print(outputs_vars_path1)
+# print(outputs_vars_path2)
+#
+#
+# inputs_vars_path1 = ["in_HIGH", "in_HIGH"]
+# inputs_vars_path2 = ["in_HIGH", "in_HIGH"]
+# outputs_vars_path1 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
+# outputs_vars_path2 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
+
+length_input = len(inputs_vars_path1)
+length_output = len(outputs_vars_path2)
+tau1_input_always_match = build_always_iff(tau1_name, inputs_vars_path1, inputs_vars_path2, length_input)
 # tau1_outputs_always_match = build_always_iff(tau1_name, outputs_vars_path1, outputs_vars_path2, 2)
 
 # tau1_input_always_match = build_always_iff(tau1_name, inputs_vars_path1, inputs_vars_path2, 1)
-# tau2_outputs_always_match = build_always_iff(tau2_name, outputs_vars_path1, outputs_vars_path2, length_output)
-
-tau_outputs_always_match = build_always_iff(tau_name, outputs_vars_path, outputs_vars_path, length_output)
+tau2_outputs_always_match = build_always_iff(tau2_name, outputs_vars_path1, outputs_vars_path2, length_output)
 
 # tau_low_formula_pairs = []
 # build_low_always_match(tau_name, tau_low_formula_pairs)
@@ -1050,22 +1112,24 @@ tau_outputs_always_match = build_always_iff(tau_name, outputs_vars_path, outputs
 print_elapsed('(building property formuslas...)')
 
 
-## EEE
+##EE
 ## check termination diameter
-HLTL_formula = tau_outputs_always_match
-Q_pi1="exists"
-Q_pi2="exists"
-Q_tau="exists"
-FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau, HLTL_formula])))
-
+# HLTL_formula = build_AND2(tau1_input_always_match, tau2_outputs_always_match)
+# Q_pi1="exists"
+# Q_pi2="exists"
+# Q_tau1="exists"
+# Q_tau2="exists"
+# FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau1, VALID_tau2, HLTL_formula])))
+# FINAL_FORMULA = build_AND2(M1, M2)
 
 
 # ## AAE
-HLTL_formula = tau_outputs_always_match
+HLTL_formula = build_IMPLIES(tau1_input_always_match, tau2_outputs_always_match)
 Q_pi1="forall"
 Q_pi2="forall"
-Q_tau="exists"
-FINAL_FORMULA = build_IMPLIES(M1, build_IMPLIES(M2, build_AND2(VALID_tau, HLTL_formula)))
+Q_tau1="forall"
+Q_tau2="exists"
+FINAL_FORMULA = build_IMPLIES(M1, build_IMPLIES(M2, build_IMPLIES(VALID_tau1, build_AND2(VALID_tau2, HLTL_formula))))
 
 def build_header(Quant, vars):
     header = Quant+'('
@@ -1080,17 +1144,25 @@ def build_header(Quant, vars):
 header_M1 = build_header(Q_pi1, vars_A)
 header_M2 = build_header(Q_pi2, vars_B)
 
-header_tau = Q_tau+"("
-for v in vars_tau:
+header_tau1 = Q_tau1+"("
+for v in vars_tau1:
     # print(v)
-    header_tau += str(var_dict[v]) + ","
-header_tau = header_tau[:-1] ## remove last ','
-header_tau += ")"
+    header_tau1 += str(var_dict[v]) + ","
+header_tau1 = header_tau1[:-1] ## remove last ','
+header_tau1 += ")"
+
+header_tau2 = Q_tau2+"("
+for v in vars_tau2:
+    # print(v)
+    header_tau2 += str(var_dict[v]) + ","
+header_tau2 = header_tau2[:-1] ## remove last ','
+header_tau2 += ")"
 
 # header_tau = build_header(Q_tau, vars_tau)
 write_QCIR.write(header_M1 + '\n')
 write_QCIR.write(header_M2 + '\n')
-write_QCIR.write(header_tau+ '\n')
+write_QCIR.write(header_tau1+ '\n')
+write_QCIR.write(header_tau2+ '\n')
 
 
 #### create a new output gate

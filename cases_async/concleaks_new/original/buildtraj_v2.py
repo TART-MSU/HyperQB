@@ -7,11 +7,11 @@ import time
 #        forall pi. forall pi'. E tau'.
 #              GG((out_{pi, tau'} = out_{pi', tau'}))
 #####################################################################
-# inputs_vars_path1 = ["in_HIGH", "in_HIGH"]
-# inputs_vars_path2 = ["in_HIGH", "in_HIGH"]
-#
-# outputs_vars_path1 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
-# outputs_vars_path2 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
+inputs_vars_path1 = ["in_HIGH", "in_HIGH"]
+inputs_vars_path2 = ["in_HIGH", "in_HIGH"]
+
+outputs_vars_path1 = ["obs_X_is_zero", "obs_X_is_one", "obs_Y_is_zero", "obs_Y_is_one"]
+outputs_vars_path2 = ["obs_X_is_zero", "obs_X_is_one", "obs_Y_is_zero", "obs_Y_is_one"]
 
 
 ### logical operators
@@ -1033,24 +1033,7 @@ VALID_tau = build_AND_multi([INITIAL_CONDITION_tau, tau_eventually_terminated, t
 ###################### BUILD FORMULAS for PROPERTY ######################
 # tau_obs_formula_pairs = []
 # build_obs_always_match(tau_name, tau_obs_formula_pairs)
-
-out_keyword = "obs_"
-outputs_vars_path1 = []
-for key, value in var_dict.items():
-    if(('_A' in key) and ('[0]' in key) and (out_keyword in key)):
-        output = key.replace('_A','')
-        output = output.replace('[0]','')
-        outputs_vars_path1.append(output)
-
-outputs_vars_path2 = []
-for key, value in var_dict.items():
-    if(('_B' in key) and ('[0]' in key) and (out_keyword in key)):
-        output = key.replace('_B','')
-        output = output.replace('[0]','')
-        outputs_vars_path2.append(output)
-
-
-# length_input = len(inputs_vars_path1)
+length_input = len(inputs_vars_path1)
 length_output = len(outputs_vars_path1)
 
 # tau1_input_always_match = build_always_iff(tau1_name, inputs_vars_path1, inputs_vars_path2, length_input)
@@ -1059,7 +1042,7 @@ length_output = len(outputs_vars_path1)
 # tau1_input_always_match = build_always_iff(tau1_name, inputs_vars_path1, inputs_vars_path2, 1)
 # tau2_outputs_always_match = build_always_iff(tau2_name, outputs_vars_path1, outputs_vars_path2, length_output)
 
-tau_outputs_always_match = build_always_iff(tau_name, outputs_vars_path1, outputs_vars_path2, length_output)
+tau_outputs_always_match = build_always_iff(tau_name, outputs_vars_path, outputs_vars_path, length_output)
 
 # tau_low_formula_pairs = []
 # build_low_always_match(tau_name, tau_low_formula_pairs)
