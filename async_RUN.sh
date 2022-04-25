@@ -6,6 +6,8 @@ GENMODEL=./async_genmodel.sh
 SOLVEQBF=./async_solveqbf.sh
 DUMMYPROP=cases_async/dummy_prop.hq
 PARSETRAJ=async_traj_parser.py
+BUILD_V1=cases_async/buildtraj_v1.py # AAE
+BUILD_V2=cases_async/buildtraj_v2.py # AAAE
 
 
 ### generate model, build trajectories, then solve QBF
@@ -15,22 +17,21 @@ PARSETRAJ=async_traj_parser.py
 #####################
 
 ### uncomment to run ACDB original examle
-M=6
-TRAJ=12
-MODEL1=cases_async/acdb/original/acdb_composed.smv
-MODEL2=cases_async/acdb/original/acdb_composed.smv
-BUILDTRAJ=cases_async/buildtraj_v1.py
-time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
-time ${SOLVEQBF}
-
+# M=6
+# TRAJ=12
+# MODEL1=cases_async/acdb/original/acdb_composed.smv
+# MODEL2=cases_async/acdb/original/acdb_composed.smv
+# BUILDTRAJ=${BUILD_V1}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+# time ${SOLVEQBF}
 
 ### uncomment to run ACDB examle with non-determinsm
 # M=8
 # TRAJ=16
 # MODEL1=cases_async/acdb/with_ndet/acdb_composed.smv
 # MODEL2=cases_async/acdb/with_ndet/acdb_composed.smv
-# BUILDTRAJ=cases_async/buildtraj_v2.py
+# BUILDTRAJ=${BUILD_V2}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
