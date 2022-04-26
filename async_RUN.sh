@@ -9,9 +9,9 @@ BUILD_V1=cases_async/buildtraj_v1.py # AAE
 BUILD_V2=cases_async/buildtraj_v2.py # AAAE
 BUILD_V3=cases_async/buildtraj_v3.py # AAE
 
-TIMEFORMAT='***Total: '%R' sec***'
+TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 
-rm time.txt
+# rm time.txt
 
 ### generate model, build trajectories, then solve QBF
 
@@ -76,14 +76,14 @@ rm time.txt
 #   Original: DBE      #
 ########################
 ### uncomment to run example original optimization _ DBE
-M=4
-TRAJ=8
-MODEL1=cases_async/optimization/original/dbe/DBE_source.smv
-MODEL2=cases_async/optimization/original/dbe/DBE_target.smv
-BUILDTRAJ=${BUILD_V3}
-time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi;
-time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ};
-time ${SOLVEQBF}
+# M=4
+# TRAJ=8
+# MODEL1=cases_async/optimization/original/dbe/DBE_source.smv
+# MODEL2=cases_async/optimization/original/dbe/DBE_target.smv
+# BUILDTRAJ=${BUILD_V3}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi;
+# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ};
+# time ${SOLVEQBF}
 
 # Check for termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
@@ -122,29 +122,30 @@ time ${SOLVEQBF}
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
 
-###################
-#   New: DBE      #
-###################
+######################
+#   with_ndet: DBE   #
+######################
 ### OPTIMIZATION NEW
 # ### generate model, build trajectories, then solve QBF
 # ### uncomment to run DBE new correct
-# M=8
-# D1=8
-# D2=8
-# TRAJ=16
-# MODEL1=cases_async/optimization/with_ndet/dbe/DBE_source_ndet.smv
-# MODEL2=cases_async/optimization/with_ndet/dbe/DBE_target_ndet.smv
-# BUILDTRAJ=${BUILD_V2}
-# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
-# time ${SOLVEQBF}
-# python3 ${PARSETRAJ}
+M=13
+D1=13
+D2=13
+TRAJ=26
+MODEL1=cases_async/optimization/with_ndet/dbe/DBE_source_ndet.smv
+MODEL2=cases_async/optimization/with_ndet/dbe/DBE_target_ndet.smv
+BUILDTRAJ=${BUILD_V2}
+time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+time ${SOLVEQBF}
+# ## Check program termination
+# # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
 # # ### uncomment to run DBE new wrong
-# M=8
-# D1=8
-# D2=8
-# TRAJ=16
+# M=13
+# D1=13
+# D2=13
+# TRAJ=26
 # MODEL1=cases_async/optimization/with_ndet/dbe/DBE_source_ndet.smv
 # MODEL2=cases_async/optimization/with_ndet/dbe/DBE_target_wrong_ndet.smv
 # BUILDTRAJ=${BUILD_V2}
@@ -152,3 +153,5 @@ time ${SOLVEQBF}
 # time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
 # time ${SOLVEQBF}
 # python3 ${PARSETRAJ}
+## Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi

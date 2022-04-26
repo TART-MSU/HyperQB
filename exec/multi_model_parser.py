@@ -311,8 +311,8 @@ def main_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed
 					if(key.replace(" ", "") in var):
 						M1_bitblasting_dict[var] = int(num_bits.replace("\n","").replace(";",""))
 
-	print("Dictionary for bit-blasting: ")
-	print(bitblasting_dict)
+	# print("Dictionary for bit-blasting: ")
+	# print(bitblasting_dict)
 
 
 

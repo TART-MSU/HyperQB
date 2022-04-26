@@ -2,7 +2,7 @@
  MODULE main
  VAR
     PC: 0..6;
-    loop_count: 0..2;
+    loop_count: 0..3;
     -- secret_in: 0..1;
     -- ndet_in: 0..1;
     in_var_x: 0..1;
@@ -11,6 +11,7 @@
 
 
   ASSIGN
+    -- for i in rnage(3) -- loop 3 times
     -- L0: x := secret_input()
     -- L0: y := ndet_input()
     -- L1: if (x == y):
@@ -30,15 +31,15 @@
       (PC=3): {6};
       (PC=4): {6};
       (PC=5): {6};
-      ((PC=6) & (loop_count<2)): {0}; -- loop back
-      ((PC=6) & (loop_count=2)): {6}; -- terminate
+      ((PC=6) & (loop_count<3)): {0}; -- loop back
+      ((PC=6) & (loop_count=3)): {6}; -- terminate
       TRUE: PC;
     esac;
 
   init(loop_count) := 0;
   next(loop_count) :=
     case
-      (loop_count=2): loop_count;
+      (loop_count=3): loop_count;
       (PC=0): loop_count+1;
       TRUE: loop_count;
     esac;
@@ -46,18 +47,18 @@
   init(obs_out) := 0;
   next(obs_out) :=
     case
-      ((PC=6) & (loop_count=2)): 2;
+      ((PC=6) & (loop_count=3)): obs_out;
       (PC=3): in_var_x;
       (PC=4): in_var_x;
-      ((PC=5)&(in_var_x=0)): 1;
-      ((PC=5)&(in_var_x=1)): 0;
-      TRUE: 2;
+      ((PC=5) & (in_var_x=0)): 1;
+      ((PC=5) & (in_var_x=1)): 0;
+      TRUE: obs_out;
     esac;
 
   init(in_var_x) := {0, 1};
   next(in_var_x) :=
     case
-      ((PC=6) & (loop_count=2)) : in_var_x; -- terminate
+      ((PC=6) & (loop_count=3)) : in_var_x; -- terminate
       (PC=6) : {0, 1}; --re-fetch input
       TRUE: in_var_x;
     esac;
@@ -65,10 +66,10 @@
   init(in_var_y) := {0, 1};
   next(in_var_y) :=
     case
-      ((PC=6) & (loop_count=2)) : in_var_y; -- terminate
+      ((PC=6) & (loop_count=3)) : in_var_y; -- terminate
       (PC=6) : {0, 1}; --re-fetch input
       TRUE: in_var_y;
     esac;
 
   DEFINE
-  halt := ((PC=6) & (loop_count=2));
+  halt := ((PC=6) & (loop_count=3));

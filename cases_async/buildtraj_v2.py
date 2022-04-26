@@ -1026,21 +1026,19 @@ for key, value in var_dict.items():
         vars_B.append(var_dict[key])
 
 
-### fetch the model outputs
+### fetch the model outputs: EE
 M1 = OLD_logics[-1]
 M1 = M1.split("(")
 M1 = (M1[1].split(","))[0]
-
-
 M2 = OLD_logics[-2]
 M2 = M2.split("(")
 M2 = M2[1].split(",")
 old_phi = M2[1].replace(")","")
 M2 = M2[0]
-
 print("gate M1:", M1)
 print("gate M2:", M2)
 print("gate old varphi:", old_phi)
+
 
 
 ###########################################  FORMULA ###########################################
@@ -1091,8 +1089,6 @@ for key, value in var_dict.items():
 # print(inputs_vars_path2)
 # print(outputs_vars_path1)
 # print(outputs_vars_path2)
-#
-#
 # inputs_vars_path1 = ["in_HIGH", "in_HIGH"]
 # inputs_vars_path2 = ["in_HIGH", "in_HIGH"]
 # outputs_vars_path1 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
@@ -1119,17 +1115,21 @@ print_elapsed('(building property formuslas...)')
 # Q_pi2="exists"
 # Q_tau1="exists"
 # Q_tau2="exists"
+# FINAL_FORMULA = build_AND_multi([NOT+M1, M2, old_phi])
+# FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau1, VALID_tau2])))
 # FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau1, VALID_tau2, HLTL_formula])))
 
 
 
-# ## AAE
+# ## AAAE
 HLTL_formula = build_IMPLIES(tau1_input_always_match, tau2_outputs_always_match)
 Q_pi1="forall"
 Q_pi2="forall"
 Q_tau1="forall"
 Q_tau2="exists"
+
 FINAL_FORMULA = build_IMPLIES(M1, build_IMPLIES(M2, build_IMPLIES(VALID_tau1, build_AND2(VALID_tau2, HLTL_formula))))
+# FINAL_FORMULA = build_IMPLIES(M1, build_IMPLIES(M2, build_IMPLIES(build_AND2(VALID_tau1, tau1_input_always_match), build_AND2(VALID_tau2, tau2_outputs_always_match))))
 
 def build_header(Quant, vars):
     header = Quant+'('
@@ -1138,7 +1138,6 @@ def build_header(Quant, vars):
     header = header[:-1]
     header += ')'
     return header
-
 
 # #### ADD Headers for trajectory variables
 header_M1 = build_header(Q_pi1, vars_A)

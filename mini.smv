@@ -1,0 +1,28 @@
+MODULE main
+ VAR
+    pc: 0..3;
+    high: 0..1;
+    low: 0..1;
+
+ ASSIGN
+    init(pc) := 0;
+    init(high) := {0, 1};
+    init(low) := 0;
+
+    next(pc) :=
+      case
+        (pc<3): pc+1;
+        TRUE: pc;
+      esac;
+    next(high) := high;
+    next(low) :=
+      case
+        (pc=1) : 0;
+        ((pc=2)&(high=1)) : 1;
+        ((pc=2)&(high=0)) : low;
+        TRUE: low;
+      esac;
+
+DEFINE
+  h_is_one := (high=2);
+  halt := (pc=3);
