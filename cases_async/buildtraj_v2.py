@@ -1108,27 +1108,32 @@ tau2_outputs_always_match = build_always_iff(tau2_name, outputs_vars_path1, outp
 print_elapsed('(building property formuslas...)')
 
 
-##EE
+##EEEE
 ## check termination diameter
 # HLTL_formula = build_AND2(tau1_input_always_match, tau2_outputs_always_match)
 # Q_pi1="exists"
 # Q_pi2="exists"
 # Q_tau1="exists"
 # Q_tau2="exists"
-# FINAL_FORMULA = build_AND_multi([NOT+M1, M2, old_phi])
-# FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau1, VALID_tau2])))
 # FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau1, VALID_tau2, HLTL_formula])))
 
+# FINAL_FORMULA = build_AND_multi([NOT+M1, M2, old_phi])
+# FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau1, VALID_tau2])))
 
 
+#####################################################################
+#        forall pi. forall pi'. A tau E tau'.
+#              G((in_{pi, tau} = in_{pi', tau}))
+#                       ==> G((out_{pi, tau'} = out_{pi', tau'}))
+#####################################################################
 # ## AAAE
 HLTL_formula = build_IMPLIES(tau1_input_always_match, tau2_outputs_always_match)
 Q_pi1="forall"
 Q_pi2="forall"
 Q_tau1="forall"
 Q_tau2="exists"
-
 FINAL_FORMULA = build_IMPLIES(M1, build_IMPLIES(M2, build_IMPLIES(VALID_tau1, build_AND2(VALID_tau2, HLTL_formula))))
+
 # FINAL_FORMULA = build_IMPLIES(M1, build_IMPLIES(M2, build_IMPLIES(build_AND2(VALID_tau1, tau1_input_always_match), build_AND2(VALID_tau2, tau2_outputs_always_match))))
 
 def build_header(Quant, vars):

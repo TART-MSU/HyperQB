@@ -3,6 +3,7 @@
 HYPERQUBE=./hyperqube.sh
 GENMODEL=./async_genmodel.sh
 SOLVEQBF=./async_solveqbf.sh
+PARSEOUTPUT=./async_parseoutputs.sh
 DUMMYPROP=cases_async/dummy_prop.hq
 PARSETRAJ=async_traj_parser.py
 BUILD_V1=cases_async/buildtraj_v1.py # AAE
@@ -128,16 +129,16 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 ### OPTIMIZATION NEW
 # ### generate model, build trajectories, then solve QBF
 # ### uncomment to run DBE new correct
-M=13
-D1=13
-D2=13
-TRAJ=26
-MODEL1=cases_async/optimization/with_ndet/dbe/DBE_source_ndet.smv
-MODEL2=cases_async/optimization/with_ndet/dbe/DBE_target_ndet.smv
-BUILDTRAJ=${BUILD_V2}
-time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
-time ${SOLVEQBF}
+# M=13
+# D1=13
+# D2=13
+# TRAJ=26
+# MODEL1=cases_async/optimization/with_ndet/dbe/DBE_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet/dbe/DBE_target_ndet.smv
+# BUILDTRAJ=${BUILD_V2}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
 # ## Check program termination
 # # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
@@ -152,6 +153,47 @@ time ${SOLVEQBF}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
 # time ${SOLVEQBF}
+# python3 ${PARSETRAJ}
+## Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+
+
+
+
+
+######################
+#   with_ndet: LP   #
+######################
+### OPTIMIZATION NEW
+# ### uncomment to run LP new correct
+# M=17
+# D1=17
+# D2=17
+# TRAJ=34
+# MODEL1=cases_async/optimization/with_ndet/lp/LP_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet/lp/LP_target_ndet.smv
+# BUILDTRAJ=${BUILD_V2}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
+# python3 ${PARSETRAJ}
+## Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+# ### uncomment to run LP new incorrect
+# M=17
+# D1=17
+# D2=17
+# TRAJ=34
+# MODEL1=cases_async/optimization/with_ndet/lp/LP_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet/lp/LP_target_wrong_ndet.smv
+# BUILDTRAJ=${BUILD_V2}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
 # python3 ${PARSETRAJ}
 ## Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi

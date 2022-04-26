@@ -22,23 +22,3 @@ PARSE_OUT=OUTPUT_formatted.cex
 echo "solving QBF..."
   ${QUABS}  --statistics --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 #  ${QUABS} --statistics --preprocessing 0 --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
-
-
-
-# echo "---Parse All Binary Numbers---"
-echo "\n============ Get Nice-formatted Output if Output is avaialbe ============"
-
-if [ ! -f "$QCIR_OUT" ]; then
-    echo "$QCIR_OUT not exists"
-    exit 1
-fi
-
-echo "parsing into readable format..."
-# # echo "---Counterexample Mapping---"
-# javac ${MAP}.java
-# java ${MAP}.java ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-
-# javac ${PARSE_BOOL}.java
-# java ${PARSE_BOOL}.java ${MAP_OUT2} ${PARSE_OUT}
-${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
