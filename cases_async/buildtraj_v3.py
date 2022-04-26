@@ -4,14 +4,9 @@ import time
 #####################################################################
 #        This script build the follwing form of trajectories
 #
-#        forall pi. forall pi'. E tau'.
-#              GG((out_{pi, tau'} = out_{pi', tau'}))
+#        forall pi. forall pi'. E tau.
+#              ((in_{pi, tau} = in_{pi', tau})) ==> G((out_{pi, tau} = out_{pi', tau}))
 #####################################################################
-inputs_vars_path1 = ["in_HIGH", "in_HIGH"]
-inputs_vars_path2 = ["in_HIGH", "in_HIGH"]
-
-outputs_vars_path1 = ["obs_X_is_zero", "obs_X_is_one", "obs_Y_is_zero", "obs_Y_is_one"]
-outputs_vars_path2 = ["obs_X_is_zero", "obs_X_is_one", "obs_Y_is_zero", "obs_Y_is_one"]
 
 
 ### logical operators
@@ -1033,16 +1028,45 @@ VALID_tau = build_AND_multi([INITIAL_CONDITION_tau, tau_eventually_terminated, t
 ###################### BUILD FORMULAS for PROPERTY ######################
 # tau_obs_formula_pairs = []
 # build_obs_always_match(tau_name, tau_obs_formula_pairs)
+
+in_keyword = "in_"
+inputs_vars_path1 = []
+for key, value in var_dict.items():
+    if(('_A' in key) and ('[0]' in key) and (in_keyword in key)):
+        input = key.replace('_A','')
+        input = input.replace('[0]','')
+        inputs_vars_path1.append(input)
+
+inputs_vars_path2 = []
+for key, value in var_dict.items():
+    if(('_B' in key) and ('[0]' in key) and (in_keyword in key)):
+        input = key.replace('_B','')
+        input = input.replace('[0]','')
+        inputs_vars_path2.append(input)
+
+
+out_keyword = "out_"
+outputs_vars_path1 = []
+for key, value in var_dict.items():
+    if(('_A' in key) and ('[0]' in key) and (out_keyword in key)):
+        output = key.replace('_A','')
+        output = output.replace('[0]','')
+        outputs_vars_path1.append(output)
+
+outputs_vars_path2 = []
+for key, value in var_dict.items():
+    if(('_B' in key) and ('[0]' in key) and (out_keyword in key)):
+        output = key.replace('_B','')
+        output = output.replace('[0]','')
+        outputs_vars_path2.append(output)
+
+
 length_input = len(inputs_vars_path1)
 length_output = len(outputs_vars_path1)
 
-# tau1_input_always_match = build_always_iff(tau1_name, inputs_vars_path1, inputs_vars_path2, length_input)
-# tau1_outputs_always_match = build_always_iff(tau1_name, outputs_vars_path1, outputs_vars_path2, 2)
 
-# tau1_input_always_match = build_always_iff(tau1_name, inputs_vars_path1, inputs_vars_path2, 1)
-# tau2_outputs_always_match = build_always_iff(tau2_name, outputs_vars_path1, outputs_vars_path2, length_output)
-
-tau_outputs_always_match = build_always_iff(tau_name, outputs_vars_path, outputs_vars_path, length_output)
+tau_inputs_always_match = build_always_iff(tau_name, inputs_vars_path1, inputs_vars_path2, length_input)
+tau_outputs_always_match = build_always_iff(tau_name, outputs_vars_path1, outputs_vars_path2, length_output)
 
 # tau_low_formula_pairs = []
 # build_low_always_match(tau_name, tau_low_formula_pairs)
@@ -1061,11 +1085,11 @@ FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau, HLTL_f
 
 
 # ## AAE
-HLTL_formula = tau_outputs_always_match
-Q_pi1="forall"
-Q_pi2="forall"
-Q_tau="exists"
-FINAL_FORMULA = build_IMPLIES(M1, build_IMPLIES(M2, build_AND2(VALID_tau, HLTL_formula)))
+# HLTL_formula = build_IMPLIES(tau_inputs_always_match, tau_outputs_always_match)
+# Q_pi1="forall"
+# Q_pi2="forall"
+# Q_tau="exists"
+# FINAL_FORMULA = build_IMPLIES(M1, build_IMPLIES(M2, build_AND2(VALID_tau, HLTL_formula)))
 
 def build_header(Quant, vars):
     header = Quant+'('

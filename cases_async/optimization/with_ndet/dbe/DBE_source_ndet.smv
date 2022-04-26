@@ -5,8 +5,8 @@
     loop_count: 0..2;
     -- secret_in: 0..1;
     -- ndet_in: 0..1;
-    var_x: 0..1;
-    var_y: 0..1;
+    in_var_x: 0..1;
+    in_var_y: 0..1;
     obs_out: 0..2;
 
 
@@ -23,8 +23,8 @@
   next(PC):=
     case
       (PC=0): {1};
-      ((PC=1) & (var_x=var_y)): {2};
-      ((PC=1) & (!(var_x=var_y))): {5};
+      ((PC=1) & (in_var_x=in_var_y)): {2};
+      ((PC=1) & (!(in_var_x=in_var_y))): {5};
       ((PC=2) & (FALSE)): {3};
       ((PC=2) & (!(FALSE))): {4};
       (PC=3): {6};
@@ -47,27 +47,27 @@
   next(obs_out) :=
     case
       ((PC=6) & (loop_count=2)): 2;
-      (PC=3): var_x;
-      (PC=4): var_x;
-      ((PC=5)&(var_x=0)): 1;
-      ((PC=5)&(var_x=1)): 0;
+      (PC=3): in_var_x;
+      (PC=4): in_var_x;
+      ((PC=5)&(in_var_x=0)): 1;
+      ((PC=5)&(in_var_x=1)): 0;
       TRUE: 2;
     esac;
 
-  init(var_x) := {0, 1};
-  next(var_x) :=
+  init(in_var_x) := {0, 1};
+  next(in_var_x) :=
     case
-      ((PC=6) & (loop_count=2)) : var_x; -- terminate
+      ((PC=6) & (loop_count=2)) : in_var_x; -- terminate
       (PC=6) : {0, 1}; --re-fetch input
-      TRUE: var_x;
+      TRUE: in_var_x;
     esac;
 
-  init(var_y) := {0, 1};
-  next(var_y) :=
+  init(in_var_y) := {0, 1};
+  next(in_var_y) :=
     case
-      ((PC=6) & (loop_count=2)) : var_y; -- terminate
+      ((PC=6) & (loop_count=2)) : in_var_y; -- terminate
       (PC=6) : {0, 1}; --re-fetch input
-      TRUE: var_y;
+      TRUE: in_var_y;
     esac;
 
   DEFINE

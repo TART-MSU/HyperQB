@@ -17,7 +17,7 @@
     -- L2: else {x := x + x;}
     -- L3: k := k + 1;
     -- L4: public_output = (x % k);
-    -- L5: while (k < 8) {
+    -- L5: while (k < 3) {
     -- L6: if (k == 0) {
     -- L7:  x := secret_input();}
     -- L8: else {x := x + x;}

@@ -4,40 +4,45 @@
     step: 0..6;
     int_x: 0..9;
     int_k: 0..3;
-    secret_in: 0..3;
-    public_out: 0..3;
+    in_secret: 0..3;
+    out_public: 0..3;
+    move: boolean;
 
   ASSIGN
 
+    -- (diameter: 18)
     -- L0:
     -- L0: x = 0
     -- L0: k = 0
-    -- L0: while (k < 8) {
+    -- L0: while (k < 3) {
     -- L1: if (k == 0) {
-    -- L2:  x := secret_input();}
+    -- L2:  x := in_secretput();}
     -- L3: else {x := x + x;}
     -- L4: k := k + 1;
-    -- L5: public_output(x % k);
+    -- L5: out_public = (4 + (x - 4)) % (( k - k ) + 3) }
     -- L6: END
   init(step):= 0;
   next(step):=
     case
+      (!move): {step};
       ((step=0) & (int_k<3)): {1};
-      ((step=0) & !(int_k<3)): {6};
+      ((step=0) & (!(int_k<3))): {6};
       ((step=1) & (int_k=0)): {2};
-      ((step=1) & !(int_k=0)): {3};
+      ((step=1) & (!(int_k=0))): {3};
       (step=2): {4};
       (step=3): {4};
       (step=4): {5};
       (step=5): {0};
+      (step=6): {6};
       TRUE: step;
     esac;
 
   init(int_x) := 0;
   next(int_x) :=
     case
+      (!move): {int_x};
       ((int_x+int_x)>9): 9;
-      (step=2) : secret_in;
+      (step=2) : in_secret;
       (step=3) : int_x+int_x;
       TRUE: int_x;
     esac;
@@ -45,21 +50,23 @@
   init(int_k) := 0;
   next(int_k) :=
     case
+      (!move): {int_k};
       (int_k=3): 3;
       (step=4) : int_k+1;
       TRUE: int_k;
     esac;
 
-  init(public_out) := 0;
-  next(public_out) :=
+  -- changed to out_public = (4 + (x - 4)) % (( k - k ) + 3)
+  init(out_public) := 0;
+  next(out_public) :=
     case
-
-      ((step=5)& !(int_k=0)): int_x mod int_k;
-      TRUE: public_out;
+      (!move): {out_public};
+      ((step=5)& !(int_k=0)): (4 + (int_x - 4) ) mod ((int_k - int_k) + 3);
+      TRUE: out_public;
     esac;
 
-  init(secret_in) := 1;
-  next(secret_in) := secret_in;
+  init(in_secret) := 1;
+  next(in_secret) := in_secret;
 
   DEFINE
   BEGIN := (step=0);

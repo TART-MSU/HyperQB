@@ -1120,7 +1120,7 @@ print_elapsed('(building property formuslas...)')
 # Q_tau1="exists"
 # Q_tau2="exists"
 # FINAL_FORMULA = build_AND2(M1, build_AND2(M2, build_AND_multi([VALID_tau1, VALID_tau2, HLTL_formula])))
-# FINAL_FORMULA = build_AND2(M1, M2)
+
 
 
 # ## AAE

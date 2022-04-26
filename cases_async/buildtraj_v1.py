@@ -5,7 +5,7 @@ import time
 #        This script build the follwing form of trajectories
 #
 #        forall pi. forall pi'. E tau'.
-#              GG((out_{pi, tau'} = out_{pi', tau'}))
+#              G((out_{pi, tau'} = out_{pi', tau'}))
 #####################################################################
 # inputs_vars_path1 = ["in_HIGH", "in_HIGH"]
 # inputs_vars_path2 = ["in_HIGH", "in_HIGH"]
