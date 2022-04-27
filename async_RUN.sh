@@ -71,8 +71,6 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #   optimiazation      #
 ########################
 
-
-
 ########################
 #   Original: DBE      #
 ########################
@@ -127,7 +125,6 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #   with_ndet: DBE   #
 ######################
 ### OPTIMIZATION NEW
-# ### generate model, build trajectories, then solve QBF
 # ### uncomment to run DBE new correct
 # M=13
 # D1=13
@@ -156,9 +153,6 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # python3 ${PARSETRAJ}
 ## Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-
-
-
 
 
 
@@ -197,3 +191,9 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # python3 ${PARSETRAJ}
 ## Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+
+#######################
+#   with_ndet: EFLP   #
+#######################
+## \TODO
