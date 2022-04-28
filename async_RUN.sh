@@ -112,15 +112,15 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #   Original: EFLP      #
 ########################
 ### uncomment to run example original optimization _ LP
-M=32
-TRAJ=64
-MODEL1=cases_async/optimization/original/eflp/EFLP_source.smv
-MODEL2=cases_async/optimization/original/eflp/EFLP_target.smv
-BUILDTRAJ=${BUILD_AAE2}
-time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
-time ${SOLVEQBF}
-${PARSEOUTPUT}
+# M=32
+# TRAJ=64
+# MODEL1=cases_async/optimization/original/eflp/EFLP_source.smv
+# MODEL2=cases_async/optimization/original/eflp/EFLP_target.smv
+# BUILDTRAJ=${BUILD_AAE2}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
 ## Check for termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
@@ -219,4 +219,43 @@ ${PARSEOUTPUT}
 # ${PARSEOUTPUT}
 # python3 ${PARSETRAJ}
 # Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+
+
+
+############################
+#   with_ndet: LP-2loops   #
+############################
+### OPTIMIZATION NEW
+# ### uncomment to run LP new correct
+M=35
+D1=33
+D2=35
+TRAJ=68
+MODEL1=cases_async/optimization/with_ndet_2loops/lp/LP_source_ndet.smv
+MODEL2=cases_async/optimization/with_ndet_2loops/lp/LP_target_ndet.smv
+BUILDTRAJ=${BUILD_AAAE}
+time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+time ${SOLVEQBF}
+${PARSEOUTPUT}
+# python3 ${PARSETRAJ}
+# Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+# ### uncomment to run LP new incorrect
+# M=17
+# D1=17
+# D2=17
+# TRAJ=34
+# MODEL1=cases_async/optimization/with_ndet/lp/LP_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet/lp/LP_target_wrong_ndet.smv
+# BUILDTRAJ=${BUILD_AAAE}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
+# python3 ${PARSETRAJ}
+## Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
