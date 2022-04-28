@@ -60,18 +60,19 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
 ### uncomment to run conc_leak new
-M=14
-TRAJ=20
+M=18
+TRAJ=36
 MODEL1=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
 MODEL2=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
 BUILDTRAJ=${BUILD_V2}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
-# time ${SOLVEQBF}
-# python3 ${PARSETRAJ}
+${PARSEOUTPUT}
+time ${SOLVEQBF}
+python3 ${PARSETRAJ}
 
 # ## Check program termination
-${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
 
 ########################
