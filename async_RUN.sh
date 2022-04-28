@@ -47,24 +47,31 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 ########################
 
 ### uncomment to run conc_leak original
-# M=6
-# TRAJ=12
+# M=11
+# TRAJ=22
 # MODEL1=cases_async/concleaks/original/conc_leaks_2procs.smv
 # MODEL2=cases_async/concleaks/original/conc_leaks_2procs.smv
 # BUILDTRAJ=${BUILD_V1}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
+# ${PARSEOUTPUT}
+# Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
 ### uncomment to run conc_leak new
-# M=6
-# TRAJ=12
-# MODEL1=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
-# MODEL2=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
-# BUILDTRAJ=${BUILD_V2}
+M=14
+TRAJ=20
+MODEL1=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
+MODEL2=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
+BUILDTRAJ=${BUILD_V2}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
+# python3 ${PARSETRAJ}
+
+# ## Check program termination
+${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
 
 ########################

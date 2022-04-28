@@ -46,11 +46,20 @@ MODULE main
 			esac;
 
 		init(var_Y) := FALSE;
-		next(var_Y):=
+		next(var_Y) :=
 			case
 				(proc1.line=0): {FALSE};
 				(proc1.line=3 | proc1.line=4): {TRUE};
 				TRUE: var_Y;
+			esac;
+
+		init(SCHEDULE) := {0,1,2};
+		next(SCHEDULE) :=
+			case
+				(proc1.loop_count=2): {1,2};
+				(proc2.loop_count=2): {0,2};
+				(proc3.loop_count=2): {0,1};
+				TRUE: SCHEDULE;
 			esac;
 
 	DEFINE
@@ -59,14 +68,26 @@ MODULE main
 		obs_X_is_one := ((proc2.line=7) & (var_X=TRUE));
 		obs_Y_is_zero := ((proc2.line=8) & (var_Y=FALSE));
 		obs_Y_is_one := ((proc2.line=8) & (var_Y=TRUE));
-		halt := ((proc1.line=5) & (proc2.line=8) & (proc3.line=11));
+		-- halt := (((proc1.line=3)|(proc1.line=5)) & (proc2.line=8) & (proc3.line=11));
+		halt := (proc1.loop_count=2 & proc2.loop_count=2 & proc3.loop_count=2);
+
 
 MODULE programs(ID, SCHEDULE, in_LOW, in_HIGH, var_X, var_Y, initline)
 	VAR
 		line: 0..12;
-		-- halt: boolean;
+		loop_count: 0..2;
 
 	ASSIGN
+
+		init(loop_count) := 0;
+		next(loop_count) :=
+			case
+				(loop_count=2): 2;
+				(ID=0 & line=0 & (SCHEDULE=ID)): loop_count+1;
+				(ID=1 & line=6 & (SCHEDULE=ID)): loop_count+1;
+				(ID=2 & line=9 & (SCHEDULE=ID)): loop_count+1;
+				TRUE: loop_count;
+			esac;
 
 		init(line) := initline;
 		next(line) :=
@@ -86,7 +107,7 @@ MODULE programs(ID, SCHEDULE, in_LOW, in_HIGH, var_X, var_Y, initline)
 				(line=6) : {7}; --
 				(line=7) : {8}; -- output x
 				(line=8) : {6}; -- output y
-				-- non-det
+				-- non-dets
 				-- (line=7) : {8}; -- output x or 0
 				-- (line=8) : {10}; -- output(x)
 				-- (line=9) : {10}; -- output(0)
