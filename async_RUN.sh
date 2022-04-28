@@ -180,7 +180,7 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # time ${SOLVEQBF}
 # ${PARSEOUTPUT}
 # python3 ${PARSETRAJ}
-## Check program termination
+# Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
 # ### uncomment to run LP new incorrect
@@ -203,4 +203,23 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #######################
 #   with_ndet: EFLP   #
 #######################
-## \TODO
+### OPTIMIZATION NEW
+# ### uncomment to run LP new correct
+# M=24
+# D1=17
+# D2=24
+# TRAJ=41
+M=22
+D1=18
+D2=22
+TRAJ=40
+MODEL1=cases_async/optimization/with_ndet/eflp/EFLP_source_ndet.smv
+MODEL2=cases_async/optimization/with_ndet/eflp/EFLP_target_ndet.smv
+BUILDTRAJ=${BUILD_AAAE}
+time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+time ${SOLVEQBF}
+${PARSEOUTPUT}
+# python3 ${PARSETRAJ}
+# Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
