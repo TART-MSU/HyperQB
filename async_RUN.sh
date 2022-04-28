@@ -6,9 +6,9 @@ SOLVEQBF=./async_solveqbf.sh
 PARSEOUTPUT=./async_parseoutputs.sh
 DUMMYPROP=cases_async/dummy_prop.hq
 PARSETRAJ=async_traj_parser.py
-BUILD_V1=cases_async/buildtraj_v1.py # AAE
-BUILD_V2=cases_async/buildtraj_v2.py # AAAE
-BUILD_V3=cases_async/buildtraj_v3.py # AAE
+BUILD_AAE=cases_async/buildtraj_AAE.py # AAE
+BUILD_AAAE=cases_async/buildtraj_AAAE.py # AAAE
+BUILD_AAE3=cases_async/buildtraj_AAE3.py # AAE
 
 TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 
@@ -25,7 +25,7 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # TRAJ=12
 # MODEL1=cases_async/acdb/original/acdb_composed.smv
 # MODEL2=cases_async/acdb/original/acdb_composed.smv
-# BUILDTRAJ=${BUILD_V1}
+# BUILDTRAJ=${BUILD_AAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
@@ -35,7 +35,7 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # TRAJ=16
 # MODEL1=cases_async/acdb/with_ndet/acdb_composed.smv
 # MODEL2=cases_async/acdb/with_ndet/acdb_composed.smv
-# BUILDTRAJ=${BUILD_V2}
+# BUILDTRAJ=${BUILD_AAAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
@@ -51,7 +51,7 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # TRAJ=22
 # MODEL1=cases_async/concleaks/original/conc_leaks_2procs.smv
 # MODEL2=cases_async/concleaks/original/conc_leaks_2procs.smv
-# BUILDTRAJ=${BUILD_V1}
+# BUILDTRAJ=${BUILD_AAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
@@ -60,16 +60,15 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
 ### uncomment to run conc_leak new
-M=18
-TRAJ=36
-MODEL1=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
-MODEL2=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
-BUILDTRAJ=${BUILD_V2}
-# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
-${PARSEOUTPUT}
-time ${SOLVEQBF}
-python3 ${PARSETRAJ}
+# M=18
+# TRAJ=36
+# MODEL1=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
+# MODEL2=cases_async/concleaks/with_ndet/conc_leaks_3procs.smv
+# BUILDTRAJ=${BUILD_AAAE}
+# # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+# ${PARSEOUTPUT}
+# python3 ${PARSETRAJ}
 
 # ## Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
@@ -87,7 +86,7 @@ python3 ${PARSETRAJ}
 # TRAJ=8
 # MODEL1=cases_async/optimization/original/dbe/DBE_source.smv
 # MODEL2=cases_async/optimization/original/dbe/DBE_target.smv
-# BUILDTRAJ=${BUILD_V3}
+# BUILDTRAJ=${BUILD_AAE3}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi;
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ};
 # time ${SOLVEQBF}
@@ -104,7 +103,7 @@ python3 ${PARSETRAJ}
 # TRAJ=34
 # MODEL1=cases_async/optimization/original/lp/LP_source.smv
 # MODEL2=cases_async/optimization/original/lp/LP_target.smv
-# BUILDTRAJ=${BUILD_V3}
+# BUILDTRAJ=${BUILD_AAE3}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
@@ -120,7 +119,7 @@ python3 ${PARSETRAJ}
 # TRAJ=30
 # MODEL1=cases_async/optimization/original/eflp/EFLP_source.smv
 # MODEL2=cases_async/optimization/original/eflp/EFLP_target.smv
-# BUILDTRAJ=${BUILD_V3}
+# BUILDTRAJ=${BUILD_AAE3}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
@@ -140,7 +139,7 @@ python3 ${PARSETRAJ}
 # TRAJ=26
 # MODEL1=cases_async/optimization/with_ndet/dbe/DBE_source_ndet.smv
 # MODEL2=cases_async/optimization/with_ndet/dbe/DBE_target_ndet.smv
-# BUILDTRAJ=${BUILD_V2}
+# BUILDTRAJ=${BUILD_AAAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
 # time ${SOLVEQBF}
@@ -154,7 +153,7 @@ python3 ${PARSETRAJ}
 # TRAJ=26
 # MODEL1=cases_async/optimization/with_ndet/dbe/DBE_source_ndet.smv
 # MODEL2=cases_async/optimization/with_ndet/dbe/DBE_target_wrong_ndet.smv
-# BUILDTRAJ=${BUILD_V2}
+# BUILDTRAJ=${BUILD_AAAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
 # time ${SOLVEQBF}
@@ -175,7 +174,7 @@ python3 ${PARSETRAJ}
 # TRAJ=34
 # MODEL1=cases_async/optimization/with_ndet/lp/LP_source_ndet.smv
 # MODEL2=cases_async/optimization/with_ndet/lp/LP_target_ndet.smv
-# BUILDTRAJ=${BUILD_V2}
+# BUILDTRAJ=${BUILD_AAAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
 # time ${SOLVEQBF}
@@ -191,7 +190,7 @@ python3 ${PARSETRAJ}
 # TRAJ=34
 # MODEL1=cases_async/optimization/with_ndet/lp/LP_source_ndet.smv
 # MODEL2=cases_async/optimization/with_ndet/lp/LP_target_wrong_ndet.smv
-# BUILDTRAJ=${BUILD_V2}
+# BUILDTRAJ=${BUILD_AAAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
 # time ${SOLVEQBF}
