@@ -6,9 +6,9 @@ SOLVEQBF=./async_solveqbf.sh
 PARSEOUTPUT=./async_parseoutputs.sh
 DUMMYPROP=cases_async/dummy_prop.hq
 PARSETRAJ=async_traj_parser.py
-BUILD_AAE=cases_async/buildtraj_AAE.py # AAE
+BUILD_AAE=cases_async/buildtraj_AAE.py # AAE: G((out_{pi, tau'} = out_{pi', tau'}))
+BUILD_AAE2=cases_async/buildtraj_AAE2.py # AAE2: ((in_{pi, tau} = in_{pi', tau})) ==> G((out_{pi, tau} = out_{pi', tau}))
 BUILD_AAAE=cases_async/buildtraj_AAAE.py # AAAE
-BUILD_AAE3=cases_async/buildtraj_AAE3.py # AAE
 
 TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 
@@ -19,7 +19,6 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #####################
 #    ACBD example   #
 #####################
-
 ### uncomment to run ACDB original examle
 # M=6
 # TRAJ=12
@@ -45,7 +44,6 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 ########################
 #   concurrent leaks   #
 ########################
-
 ### uncomment to run conc_leak original
 # M=11
 # TRAJ=22
@@ -86,11 +84,10 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # TRAJ=8
 # MODEL1=cases_async/optimization/original/dbe/DBE_source.smv
 # MODEL2=cases_async/optimization/original/dbe/DBE_target.smv
-# BUILDTRAJ=${BUILD_AAE3}
+# BUILDTRAJ=${BUILD_AAE2}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi;
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ};
 # time ${SOLVEQBF}
-
 # Check for termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
@@ -99,11 +96,11 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #   Original: LP      #
 ########################
 ### uncomment to run example original optimization _ LP
-# M=17
-# TRAJ=34
+# M=22
+# TRAJ=44
 # MODEL1=cases_async/optimization/original/lp/LP_source.smv
 # MODEL2=cases_async/optimization/original/lp/LP_target.smv
-# BUILDTRAJ=${BUILD_AAE3}
+# BUILDTRAJ=${BUILD_AAE2}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
 # time ${SOLVEQBF}
@@ -115,15 +112,15 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #   Original: EFLP      #
 ########################
 ### uncomment to run example original optimization _ LP
-# M=25
-# TRAJ=30
-# MODEL1=cases_async/optimization/original/eflp/EFLP_source.smv
-# MODEL2=cases_async/optimization/original/eflp/EFLP_target.smv
-# BUILDTRAJ=${BUILD_AAE3}
-# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-# time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
-# time ${SOLVEQBF}
-
+M=32
+TRAJ=64
+MODEL1=cases_async/optimization/original/eflp/EFLP_source.smv
+MODEL2=cases_async/optimization/original/eflp/EFLP_target.smv
+BUILDTRAJ=${BUILD_AAE2}
+time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+time python3 ${BUILDTRAJ} ${M} ${M} ${TRAJ}
+time ${SOLVEQBF}
+${PARSEOUTPUT}
 ## Check for termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 
@@ -209,17 +206,17 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # D1=17
 # D2=24
 # TRAJ=41
-M=22
-D1=18
-D2=22
-TRAJ=40
-MODEL1=cases_async/optimization/with_ndet/eflp/EFLP_source_ndet.smv
-MODEL2=cases_async/optimization/with_ndet/eflp/EFLP_target_ndet.smv
-BUILDTRAJ=${BUILD_AAAE}
-time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
-time ${SOLVEQBF}
-${PARSEOUTPUT}
+# M=22
+# D1=18
+# D2=22
+# TRAJ=40
+# MODEL1=cases_async/optimization/with_ndet/eflp/EFLP_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet/eflp/EFLP_target_ndet.smv
+# BUILDTRAJ=${BUILD_AAAE}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
 # python3 ${PARSETRAJ}
 # Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
