@@ -202,10 +202,6 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #######################
 ### OPTIMIZATION NEW
 # ### uncomment to run LP new correct
-# M=24
-# D1=17
-# D2=24
-# TRAJ=41
 # M=22
 # D1=18
 # D2=22
@@ -228,34 +224,40 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 #   with_ndet: LP-2loops   #
 ############################
 ### OPTIMIZATION NEW
-# ### uncomment to run LP new correct
-M=35
-D1=33
-D2=35
-TRAJ=68
-MODEL1=cases_async/optimization/with_ndet_2loops/lp/LP_source_ndet.smv
-MODEL2=cases_async/optimization/with_ndet_2loops/lp/LP_target_ndet.smv
-BUILDTRAJ=${BUILD_AAAE}
-time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
-time ${SOLVEQBF}
-${PARSEOUTPUT}
-# python3 ${PARSETRAJ}
-# Check program termination
-# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
-
-# ### uncomment to run LP new incorrect
-# M=17
-# D1=17
-# D2=17
-# TRAJ=34
-# MODEL1=cases_async/optimization/with_ndet/lp/LP_source_ndet.smv
-# MODEL2=cases_async/optimization/with_ndet/lp/LP_target_wrong_ndet.smv
+# ### uncomment to run LP new correct with 2 loops
+# M=35
+# D1=33
+# D2=35
+# TRAJ=68
+# MODEL1=cases_async/optimization/with_ndet_2loops/lp/LP_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet_2loops/lp/LP_target_ndet.smv
 # BUILDTRAJ=${BUILD_AAAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
 # time ${SOLVEQBF}
 # ${PARSEOUTPUT}
 # python3 ${PARSETRAJ}
-## Check program termination
+# Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+
+
+##############################
+#   with_ndet: EFLP-2loops   #
+##############################
+### OPTIMIZATION NEW
+# ### uncomment to run EFLP new correct with 2 loops
+# M=54
+# D1=37
+# D2=54
+# TRAJ=91
+# MODEL1=cases_async/optimization/with_ndet_2loops/eflp/EFLP_source_ndet.smv
+# MODEL2=cases_async/optimization/with_ndet_2loops/eflp/EFLP_target_ndet.smv
+# BUILDTRAJ=${BUILD_AAAE}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
+# python3 ${PARSETRAJ}
+# Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi

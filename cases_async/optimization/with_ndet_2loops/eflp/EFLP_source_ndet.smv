@@ -1,10 +1,10 @@
 
  MODULE main
  VAR
-    step: 0..6;
+    step: 0..7;
     in_int_x: 0..9;
     in_int_y: 0..3;
-    secret: 0..9;
+    in_secret: 0..2;
     int_k: 0..3;
     obs_public_out: 0..3;
     loop_count: 0..2;
@@ -16,10 +16,10 @@
     -- L0: y = input()
     -- L1: while (k < 3) {
     -- L2: if (k == 0 || k == y) {
-    -- L3:  x := secretput();}
+    -- L3:  x := in_secretput();}
     -- L4: else {x := x + x;}
     -- L5: k := k + 1;
-    -- L6: obs_public_output(x % k);
+    -- L6: obs_public = (4 + (x - 4)) % (( k - k ) + 3) }
     -- L7: END
   init(step):= 0;
   next(step):=
@@ -32,18 +32,25 @@
       ((step=2) & !((int_k=0) | (int_k=in_int_y))): {4};
       (step=3): {5};
       (step=4): {5};
-      (step=4): {5};
-      (step=5): {1};
-      (step=6): {7};
-      (step=6): {0};
+      (step=5): {6};
+      (step=6): {1};
+      (step=7): {0};
       TRUE: step;
+    esac;
+  init(loop_count) := 0;
+  next(loop_count) :=
+    case
+      (loop_count=2): loop_count;
+      (step=7): loop_count+1;
+      TRUE: loop_count;
     esac;
 
   init(in_int_x) := 0;
   next(in_int_x) :=
     case
+      (step=0) : 0;
       ((in_int_x+in_int_x)>9): 9;
-      (step=3) : secret;
+      (step=3) : in_secret;
       (step=4) : in_int_x+in_int_x;
       TRUE: in_int_x;
     esac;
@@ -51,23 +58,24 @@
   init(in_int_y) := 0;
   next(in_int_y) :=
     case
-      (step=1) : {1,2,3};
+      (step=0) : {1,2,3};
       TRUE: in_int_y;
     esac;
 
   init(int_k) := 0;
   next(int_k) :=
     case
+      (step=0) : 0;
       (int_k=3): 3;
       (step=5) : int_k+1;
       TRUE: int_k;
     esac;
 
-  init(secret) := 0;
-  next(secret) :=
+  init(in_secret) := 0;
+  next(in_secret) :=
     case
-      (step=1) : {0,1,2,3};
-      TRUE: secret;
+      (step=0) : {0,1};
+      TRUE: in_secret;
     esac;
   --  obs_public = (4 + (x - 4)) % (( k - k ) + 3) }
   init(obs_public_out) := 0;
@@ -80,4 +88,4 @@
 
 
   DEFINE
-  halt := (step=0 & step=7);
+  halt := (step=0 & loop_count=2);

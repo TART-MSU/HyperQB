@@ -5,7 +5,7 @@
     in_int_x: 0..9;
     in_int_y: 0..3;
     int_k: 0..3;
-    secret: 0..9;
+    in_secret: 0..2;
     obs_public_out: 0..3;
     temp0: 0..5;
     temp2: 0..1;
@@ -19,14 +19,14 @@
     -- L0: k = 0
     -- L0: y = input()
     -- L0: if (k == 0 || k == y)
-    -- L1: {x := in_secretput();}
+    -- L1: {x := in_in_secretput();}
     -- L2: else {x := x + x;}
     -- L3: k := k + 1;
     -- L4: obs_public_output = (x % k);
     -- L5: while (k < 3) {
     -- L6: y = input()
     -- L7: if (k == 0 ||  k == y) {
-    -- L8:  x := in_secretput();}
+    -- L8:  x := in_in_secretput();}
     -- L9: else {x := x + x;}
     -- L10: k := k + 1;
     -- L11: temp0 = x-4, temp1 = temp0+4
@@ -45,17 +45,18 @@
       (step=3): {4};
       (step=4): {5};
       ((step=5) & (int_k<3)): {6};
-      ((step=5) & !(int_k<3)): {11};
-      ((step=6) & ((int_k=0) | (int_k=in_int_y))): {7};
-      ((step=6) & !((int_k=0) | (int_k=in_int_y))): {8};
-      (step=7): {9};
-      (step=8): {9};
+      ((step=5) & !(int_k<3)): {14};
+      (step=6): {7};
+      ((step=7) & ((int_k=0) | (int_k=in_int_y))): {8};
+      ((step=7) & !((int_k=0) | (int_k=in_int_y))): {9};
+      (step=8): {10};
       (step=9): {10};
-      (step=10): {5};
+      (step=10): {11};
       (step=11): {12};
       (step=12): {13};
       (step=13): {14};
-      (step=14): {0};
+      (step=14): {5};
+      (step=15): {0};
       TRUE: step;
     esac;
 
@@ -63,26 +64,27 @@
   next(loop_count) :=
     case
       (loop_count=2): loop_count;
-      (step=14): loop_count+1;
+      (step=15): loop_count+1;
       TRUE: loop_count;
     esac;
 
   init(in_int_x) := 0;
   next(in_int_x) :=
     case
+      (step=0) : 0;
       ((in_int_x+in_int_x)>9): 9;
-      (step=1) : secret;
+      (step=1) : in_secret;
       (step=2) : in_int_x+in_int_x;
-      (step=7) : secret;
+      (step=7) : in_secret;
       (step=8) : in_int_x+in_int_x;
       TRUE: in_int_x;
     esac;
 
-  init(secret) := 0;
-  next(secret) :=
+  init(in_secret) := 0;
+  next(in_secret) :=
     case
-      (step=0 | step=7) : {0,1,2,3};
-      TRUE: secret;
+      (step=0 | step=7) : {0,1, 2};
+      TRUE: in_secret;
     esac;
 
   init(in_int_y) := 0;
@@ -96,9 +98,10 @@
   init(int_k) := 0;
   next(int_k) :=
     case
+      (step=0) : 0;
       (int_k=3): 3;
       (step=3) : int_k+1;
-      (step=9) : int_k+1;
+      (step=10) : int_k+1;
       TRUE: int_k;
     esac;
 
@@ -139,4 +142,4 @@
 
 
   DEFINE
-  halt := (step=0 & step=15);
+  halt := (step=0 & loop_count=2);
