@@ -9,7 +9,8 @@ import time
 #              G((in_{pi, tau} = in_{pi', tau}))
 #                       ==> G((out_{pi, tau'} = out_{pi', tau'}))
 #####################################################################
-
+in_keyword = "in_"
+out_keyword = "obs_"
 
 ### logical operators
 IFF = " IFF "
@@ -1052,7 +1053,7 @@ VALID_tau2 = build_AND_multi([INITIAL_CONDITION_tau2, tau2_eventually_terminated
 
 ###################### BUILD FORMULAS for PROPERTY ######################
 
-in_keyword = "in_"
+# in_keyword = "in_"
 inputs_vars_path1 = []
 for key, value in var_dict.items():
     if(('_A' in key) and ('[0]' in key) and (in_keyword in key)):
@@ -1068,7 +1069,7 @@ for key, value in var_dict.items():
         inputs_vars_path2.append(input)
 
 
-out_keyword = "obs_"
+# out_keyword = "obs_"
 outputs_vars_path1 = []
 for key, value in var_dict.items():
     if(('_A' in key) and ('[0]' in key) and (out_keyword in key)):

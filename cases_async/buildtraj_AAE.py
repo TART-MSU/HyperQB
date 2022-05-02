@@ -7,11 +7,8 @@ import time
 #        forall pi. forall pi'. E tau'.
 #              G((out_{pi, tau'} = out_{pi', tau'}))
 #####################################################################
-# inputs_vars_path1 = ["in_HIGH", "in_HIGH"]
-# inputs_vars_path2 = ["in_HIGH", "in_HIGH"]
-#
-# outputs_vars_path1 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
-# outputs_vars_path2 = ["obs_printA", "obs_printB", "obs_printC", "obs_printD"]
+out_keyword = "obs_"
+
 
 
 ### logical operators
@@ -1034,7 +1031,7 @@ VALID_tau = build_AND_multi([INITIAL_CONDITION_tau, tau_eventually_terminated, t
 # tau_obs_formula_pairs = []
 # build_obs_always_match(tau_name, tau_obs_formula_pairs)
 
-out_keyword = "obs_"
+
 outputs_vars_path1 = []
 for key, value in var_dict.items():
     if(('_A' in key) and ('[0]' in key) and (out_keyword in key)):

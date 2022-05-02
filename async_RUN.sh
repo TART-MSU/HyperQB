@@ -5,10 +5,12 @@ GENMODEL=./async_genmodel.sh
 SOLVEQBF=./async_solveqbf.sh
 PARSEOUTPUT=./async_parseoutputs.sh
 DUMMYPROP=cases_async/dummy_prop.hq
+SNIPROP=cases_async/speculative_execution/se_prop.hq
 PARSETRAJ=async_traj_parser.py
+BUILD_SNI=cases_async/buildtraj_SNI.py # AAE: G((out_{pi, tau'} = out_{pi', tau'}))
 BUILD_AAE=cases_async/buildtraj_AAE.py # AAE: G((out_{pi, tau'} = out_{pi', tau'}))
 BUILD_AAE2=cases_async/buildtraj_AAE2.py # AAE2: ((in_{pi, tau} = in_{pi', tau})) ==> G((out_{pi, tau} = out_{pi', tau}))
-BUILD_AAAE=cases_async/buildtraj_AAAE.py # AAAE
+BUILD_AAAE=cases_async/buildtraj_AAAE.py # AAAE: ((in_{pi, tau} = in_{pi', tau})) ==> G((out_{pi, tau'} = out_{pi', tau'}))
 
 TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 
@@ -70,6 +72,102 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 
 # ## Check program termination
 # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+
+
+
+##############################
+#   speculative executions   #
+##############################
+
+### V1
+# M=7
+# D1=3
+# D2=6
+# TRAJ=9
+# MODEL1=cases_async/speculative_execution/se_v1_nse.smv
+# MODEL2=cases_async/speculative_execution/se_v1_se.smv
+# BUILDTRAJ=${BUILD_SNI}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${SNIPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+
+
+### V2
+# M=7
+# D1=3
+# D2=6
+# TRAJ=9
+# MODEL1=cases_async/speculative_execution/se_v2_nse.smv
+# MODEL2=cases_async/speculative_execution/se_v2_se.smv
+# BUILDTRAJ=${BUILD_SNI}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${SNIPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+
+
+### v3
+# M=7
+# D1=3
+# D2=6
+# TRAJ=9
+# MODEL1=cases_async/speculative_execution/se_v3_nse.smv
+# MODEL2=cases_async/speculative_execution/se_v3_se.smv
+# BUILDTRAJ=${BUILD_SNI}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${SNIPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+
+
+
+### v4
+# M=7
+# D1=3
+# D2=6
+# TRAJ=9
+# MODEL1=cases_async/speculative_execution/se_v4_nse.smv
+# MODEL2=cases_async/speculative_execution/se_v4_se.smv
+# BUILDTRAJ=${BUILD_SNI}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${SNIPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+
+# ### v5
+# M=7
+# D1=3
+# D2=6
+# TRAJ=9
+# MODEL1=cases_async/speculative_execution/se_v5_nse.smv
+# MODEL2=cases_async/speculative_execution/se_v5_se.smv
+# BUILDTRAJ=${BUILD_SNI}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${SNIPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+
+
+### v6
+# M=7
+# D1=3
+# D2=7
+# TRAJ=10
+# MODEL1=cases_async/speculative_execution/se_v6_nse.smv
+# MODEL2=cases_async/speculative_execution/se_v6_se.smv
+# BUILDTRAJ=${BUILD_SNI}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${SNIPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+
+### v7
+# M=7
+# D1=3
+# D2=7
+# TRAJ=10
+# MODEL1=cases_async/speculative_execution/se_v7_nse.smv
+# MODEL2=cases_async/speculative_execution/se_v7_se.smv
+# BUILDTRAJ=${BUILD_SNI}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${SNIPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
 
 
 ########################
@@ -253,6 +351,68 @@ TIMEFORMAT='>>>>>>>>>>>>>>> Total: %R sec <<<<<<<<<<<<<<<'
 # TRAJ=91
 # MODEL1=cases_async/optimization/with_ndet_2loops/eflp/EFLP_source_ndet.smv
 # MODEL2=cases_async/optimization/with_ndet_2loops/eflp/EFLP_target_ndet.smv
+# BUILDTRAJ=${BUILD_AAAE}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
+# python3 ${PARSETRAJ}
+# Check program termination
+# ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+
+
+# ###########################
+# #   cache timing attack   #
+# ###########################
+# # ### uncomment to run cache-based timinig attack original
+# M=13
+# D1=13
+# D2=13
+# TRAJ=26
+# MODEL1=cases_async/cache_timing_attack/cache_attack.smv
+# MODEL2=cases_async/cache_timing_attack/cache_attack.smv
+# BUILDTRAJ=${BUILD_AAE}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
+# # python3 ${PARSETRAJ}
+# # Check program termination
+# # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+
+# ###################################
+# #   cache timing attack -- ndet   #
+# ###################################
+# # ### uncomment to run cache-based timinig attack with ndet
+# M=16
+# D1=16
+# D2=16
+# TRAJ=32
+# MODEL1=cases_async/cache_timing_attack/cache_attack_ndet.smv
+# MODEL2=cases_async/cache_timing_attack/cache_attack_ndet.smv
+# BUILDTRAJ=${BUILD_AAAE}
+# time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+# time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
+# time ${SOLVEQBF}
+# ${PARSEOUTPUT}
+# # python3 ${PARSETRAJ}
+# # Check program termination
+# # ${HYPERQUBE} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
+
+
+
+###########################################
+#   cache timing attack -- ndet - loops   #
+###########################################
+# ### uncomment to run cache-based timinig attack with ndet
+# M=35
+# D1=35
+# D2=35
+# TRAJ=70
+# MODEL1=cases_async/cache_timing_attack/cache_attack_ndet_loops.smv
+# MODEL2=cases_async/cache_timing_attack/cache_attack_ndet_loops.smv
 # BUILDTRAJ=${BUILD_AAAE}
 # time ${GENMODEL} ${MODEL1} ${MODEL2} ${DUMMYPROP} ${M} hpes -find -multi
 # time python3 ${BUILDTRAJ} ${D1} ${D2} ${TRAJ}
