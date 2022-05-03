@@ -1,1 +1,0 @@
-exists A. exists B. ( (proc1.p[A]) U (proc1.q[B]))

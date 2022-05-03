@@ -1,3 +1,0 @@
-forall pi. G(*high[pi]=low[pi]*)
-forall pi. G(*low[pi]=0*)
-forall pi. F(high=0)

@@ -1,4 +1,0 @@
-exists A. forall B.
-F(GOAL[A]) /\ G(~FAIL[A])
-/\
-((G(~FAIL[B]))->((~GOAL[B]) U (GOAL[A])))

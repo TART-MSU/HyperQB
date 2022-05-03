@@ -1,2 +1,0 @@
-exists A. forall B. 
-((*action[A] = action[B]*) U ( (*beverage[A] = beverage[B]*) \/ (*water[A] = water[B]*) \/ ~(NO_water[A] <-> NO_water[B]) \/ ~(NO_output[A] <-> NO_output[B])))

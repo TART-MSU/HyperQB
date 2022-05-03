@@ -1,1 +1,0 @@
-exists A. exists B. F(proc1-halt[A] /\ proc2-halt[A] /\ proc1-halt[B] /\ proc2-halt[B])
