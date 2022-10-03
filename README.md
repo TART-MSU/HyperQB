@@ -34,17 +34,17 @@ To observe the tool outputs, all model checking results with counterexample will
 
 ## GET STARTED
 You can start using HyperQube in 2 simple steps:		
-	
+
 1. First make sure DOCKER is installed from: https://docs.docker.com/get-docker/ . HyperQube will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies.
 2. Next, clone the repository and step into the repo:
 - ```git clone https://github.com/TART-MSU/HyperQube.git```
 - ```cd HyperQube```
-	
+
 You are now ready to run HyperQube!
 
 We provide two demo examples. To run, execute each of the followings:
-- (Example 1: bakery with symmetry:) <br/> ```./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes```
-- (Example 2: SNARK with linearizability) <br/> ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes ```
+- (Example 1: bakery with symmetry:) <br/> ```./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes -single```
+- (Example 2: SNARK with linearizability) <br/> ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes -multi```
 
 
 
@@ -59,8 +59,8 @@ Our evaluations include the following cases,<br/>
 - Case #5.1-#5.2: Privacy-Preserving Path Synthesis for Robots<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
 
-We also provide all the command lines needed for each experiment in the document *RUN.txt*	
-	
+We also provide all the command lines needed for each experiment in the document *RUN.txt*
+
 
 
 
