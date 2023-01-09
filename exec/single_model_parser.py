@@ -315,10 +315,10 @@ print("\n[ success! SMV model accepted. ]")
 print("\n============ Parse SMV Model ============")
 state_variables = list(enc.stateVars)
 
-print("All variables: ")
-print("state variables: ", state_variables)
+# print("All variables: ")
+# print("state variables: ", state_variables)
 defined_variables = list(enc.definedVars)
-print("defined variables: ", defined_variables)
+# print("defined variables: ", defined_variables)
 
 valid_variables = state_variables + defined_variables
 # print(valid_varaibles)
@@ -496,7 +496,7 @@ for line in Lines:
 	if ("#" not in line):
 		text += line
 
-print("user input formula: \n"+text)
+# print("user input formula: \n"+text)
 
 
 
