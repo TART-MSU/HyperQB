@@ -16,19 +16,16 @@ MAP_OUT2=OUTPUT_byTime.cex
 PARSE_OUT=OUTPUT_formatted.cex
 
 
-
 ## updated Jan.28:merge parse and bmc
 echo "\n------( HyperQube START! )------\n"
 ## get current location
 PWD=$(pwd)
-# echo "$PWD"
 ## get all arguments
 ALLARG=$@
 # echo ${ALLARG}
 
 ## execute python scripts on docker
-# docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
-
+docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
 
 ## clean up previous generated
 echo "(clean up previous generated files..)\n"
@@ -124,28 +121,25 @@ else
 fi
 
 
-
-
-
 ## run BMC
 # ./bmc.sh ${ALLARG}
 ## updated Jan.28
 # ./bmc_new.sh ${ALLARG}
-if echo $* | grep -e "pes" -q
+if echo $* | grep -e "-pes" -q
 then
   SEM="PES"
-elif echo $* | grep -e "opt" -q
+elif echo $* | grep -e "-opt" -q
 then
   SEM="OPT"
-elif echo $* | grep -e "hpes" -q
+elif echo $* | grep -e "-hpes" -q
 then
   SEM="TER_PES"
-elif echo $* | grep -e "hopt" -q
+elif echo $* | grep -e "-hopt" -q
 then
   SEM="TER_OPT"
 else
   echo "HyperQube error: incorrect semantic input. "
-  echo " use { pes | opt | hpes | hopt } semantics of the unrolling from one of the follows:"
+  echo " use { -pes | -opt | -hpes | -hopt } semantics of the unrolling from one of the follows:"
   echo "             (pessimistic / optimistic / halting-pessimistic / halting-optimistic)"
   exit 1
 fi
@@ -155,7 +149,6 @@ if [ ! -f "QS.bool" ]; then
     exit 1
 fi
 source QS.bool
-
 
 
 echo "\n--------------- Summary of Model Checking Info ---------------"
