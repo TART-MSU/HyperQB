@@ -1,0 +1,26 @@
+MODULE main
+ VAR
+    a: boolean;
+    PC: 1..3;
+ ASSIGN
+    -- Initial Conditions, here are dummy values.
+    init(a):= FALSE;
+    init(PC):= 1; -- but program counter starts at 1.
+
+    -- Transition Relations
+    next(a) :=
+      case
+        (PC=1): {FALSE};
+        (PC=2): {FALSE};
+        (PC=3): {TRUE, FALSE};
+        TRUE: a;
+      esac;
+
+    next(PC) :=
+      case
+        (PC=1): 2;
+        (PC=2): 3;
+        (PC=3): 3;
+        TRUE: PC;
+      esac;
+-- a Kripke structure with two traces: [ () -- () -- (a) ], [ () -- () -- () ]
