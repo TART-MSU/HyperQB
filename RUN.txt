@@ -5,8 +5,11 @@ This file provide the command lines to run specific experiments we provided in t
 
 Small demos in the tool paper:
 
+./hyperqube.sh demo/simple.smv demo/simple.hq 1 pes -single
+./hyperqube.sh demo/mini.smv demo/mini.hq 1 pes -single
+
 [run bakery algorithm with symmetry property]
-  ./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes -single
+  ./hyperqube.sh demo/bakery.smv demo/symmetry.hq 10 pes -single
 
 [run SNARK algorithm with linearizability propoerty]
   ./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes -multi

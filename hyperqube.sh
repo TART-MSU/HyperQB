@@ -122,9 +122,7 @@ fi
 
 
 ## run BMC
-# ./bmc.sh ${ALLARG}
 ## updated Jan.28
-# ./bmc_new.sh ${ALLARG}
 if echo $* | grep -e "-pes" -q
 then
   SEM="PES"
@@ -150,7 +148,6 @@ if [ ! -f "QS.bool" ]; then
 fi
 source QS.bool
 
-
 echo "\n--------------- Summary of Model Checking Info ---------------"
 echo "|  Quantifiers:" ${QS}
 echo "|  Bound k:    " ${k}
@@ -163,18 +160,15 @@ fi
 echo "|  HyperLTL formula: " ${FORMULA}
 echo "-------------------------------------------------------------- \n\n"
 
-
 echo "\n============ Unrolling with genQBF + Solving with QuAbS ============"
 echo "generating QBF BMC..."
 ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
-
 
 echo "solving QBF..."
 ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 #  ${QUABS} --statistics --preprocessing 0 --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 
 
-# echo "---Parse All Binary Numbers---"
 echo "\n============ Get Nice-formatted Output if Output is avaialbe ============"
 
 if [ ! -f "$QCIR_OUT" ]; then
