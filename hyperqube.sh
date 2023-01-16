@@ -41,18 +41,7 @@ echo "\n------( HyperQube START! )------\n"
 PWD=$(pwd)
 ## get all arguments
 ALLARG=$@
-# echo ${ALLARG}
-## execute python scripts on docker
-# docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
 
-## clean up previous generated
-# echo "(clean up previous generated files..)\n"
-# find . -name "*.bool"   -delete
-# find . -name "*.cex"    -delete
-# find . -name "*.quabs"  -delete
-# find . -name "*.qcir"   -delete
-# find . -name "*.cex"    -delete
-# make clean
 
 # if wrong number of arguments
 if [ "$#" -ne 4 ] && [ "$#" -ne 5 ] && [ "$#" -ne 6 ] && [ "$#" -ne 7 ]; then
@@ -98,7 +87,8 @@ then
   ### using local python build
   # python3 ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${FLAG}
   ### using docker
-  docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3  ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${QSFILE} ${FLAG}; "
+  # --platform linux/amd64
+  docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3  ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${QSFILE} ${FLAG}; "
 elif echo $* | grep -e "-multi" -q
 then
   echo "Running with multi model semantics (-multi)"
@@ -123,7 +113,7 @@ then
   ### using local python build
   # python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA}  ${P} ${FLAG}
   ### using docker
-  docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
+  docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
 else
   echo "HyperQube error: please specify mode: -single | -multi \n"
   exit 1
@@ -151,13 +141,14 @@ else
 fi
 
 
-cd ${OUTFOLDER}
-if [ ! -f "QS.bool" ]; then
+# cd ${OUTFOLDER}
+if [ ! -f "$QSFILE" ]; then
   echo "HyperQube error: no QS.bool exists."
   exit 1
 fi
-source "QS.bool"
-cd ..
+# source "QS.bool"
+source "$QSFILE"
+# cd ..
 # source QS.bool
 # cd ..
 
@@ -205,3 +196,17 @@ ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
 # #by time
 
 echo "\n------(END HyperQube)------\n"
+
+
+
+# echo ${ALLARG}
+## execute python scripts on docker
+# docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
+## clean up previous generated
+# echo "(clean up previous generated files..)\n"
+# find . -name "*.bool"   -delete
+# find . -name "*.cex"    -delete
+# find . -name "*.quabs"  -delete
+# find . -name "*.qcir"   -delete
+# find . -name "*.cex"    -delete
+# make clean

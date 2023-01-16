@@ -559,7 +559,7 @@ To_Negate_formula=(FLAG=="" or FLAG=="-bughunt")
 #########################
 #      Main Driver	    #
 #########################
-print("\n============ Translate NuSMV Model(s) ============")
+print("\ntranslating SMV model(s)...")
 pynusmv.init.init_nusmv()
 M1_bitblasting_dict = {}
 main_parse(M1_smv_file_name, M1_bitblasting_dict, M1_parsed_madel_file_I_name, M1_parsed_madel_file_R_name)
@@ -570,7 +570,7 @@ M2_bitblasting_dict = {}
 main_parse(M2_smv_file_name, M2_bitblasting_dict, M2_parsed_madel_file_I_name, M2_parsed_madel_file_R_name)
 
 
-print("\n============ Translate HyperLTL Formula ============")
+print("\ntranslating HyperLTL formula...")
 main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, translated_formula_file_name)
 
 
