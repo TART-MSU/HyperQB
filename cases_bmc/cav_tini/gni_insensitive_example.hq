@@ -1,0 +1,2 @@
+forall A. exists B.
+G((*low[A] = low[B]* /\ halt[A]) -> (!(halt[B]) \/ (halt[A] /\ halt[B] /\ (*low[A] = low[B]*) /\ (*x[A] = x[B]*))))

@@ -1,0 +1,44 @@
+MODULE main
+ VAR
+	location: 1..7;
+	x: 0..10;
+	nondet: boolean;
+
+ FROZENVAR
+	high: boolean;
+	low: 0..5;
+
+ ASSIGN
+	init(location) := 1 ;
+	init(nondet) := {TRUE, FALSE};
+	init(x) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	init(low) := {0, 1, 2, 3, 4, 5};
+	init(high) := {TRUE, FALSE};
+
+	next(location) := case
+		(location = 1 & high): 2;
+		(location = 1 & !high): 5; 
+		(location = 2 & x >= low) : 3;
+		(location = 2 & x < low) : 4;
+		(location = 5 & !nondet) : 3;
+		(location = 5 & nondet) : 6;
+		(location = 6 & !nondet) : 3;
+		(location = 6 & nondet & x < 10) : 6;
+		(location = 6 & nondet & x = 10) : 7;
+		TRUE: location ;
+	esac;
+
+	next(x) := case
+		(location = 5): low;
+		(location = 6 & x < 10): x + 1;
+		TRUE: x;
+	esac;
+
+	next(nondet) := case
+		(location = 5 | location = 6): {TRUE, FALSE};
+		TRUE: nondet;
+	esac;
+
+DEFINE
+	halt := location = 3 ;	    
+

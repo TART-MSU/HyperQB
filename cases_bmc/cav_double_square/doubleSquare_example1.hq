@@ -1,0 +1,2 @@
+forall A. forall B.
+G(*x[A] = x[B]* /\ halt[A] /\ halt[B]) -> G(*y[A] = y[B]*)

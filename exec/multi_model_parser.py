@@ -533,16 +533,10 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	# gen_P()
 	# print("[ success! input formula translated into Boolean Expressions: " + translated_formula_file_name + "]")
 
-
-
-
-
-
-
 #########################
 #      Get Arguments    #
 #########################
-# print('???????????????')
+
 M1_smv_file_name = sys.argv[1]
 M1_parsed_madel_file_I_name = sys.argv[2]
 M1_parsed_madel_file_R_name = sys.argv[3]
