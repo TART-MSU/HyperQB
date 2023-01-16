@@ -283,21 +283,20 @@ def format_trans(tr):
 #########################
 smv_file_name = sys.argv[1]
 fomula_file_name = sys.argv[2]
-
 parsed_model_file_I_name = sys.argv[3]
 parsed_model_file_R_name = sys.argv[4]
 translated_formula_file_name = sys.argv[5]
-
+QS_file_name = sys.argv[6]
 
 FLAG = ""
-if(len(sys.argv)==7):
-	FLAG = sys.argv[6]
+if(len(sys.argv)==8):
+	FLAG = sys.argv[7]
 
 To_Negate_formula=(FLAG=="" or FLAG=="-bughunt")
 
 
 
-print("\n============ Read SMV Model ============")
+print("\n=== Read SMV Model ===")
 #########################
 #  Model Initialization #
 #########################
@@ -310,9 +309,9 @@ enc = fsm.bddEnc
 print("\n[ success! SMV model accepted. ]")
 
 # ### DEBUG
-# print("====================================")
+# print("=========")
 # print("FSM Model info:")
-print("\n============ Parse SMV Model ============")
+print("\n=== Parse SMV Model ===")
 state_variables = list(enc.stateVars)
 
 # print("All variables: ")
@@ -483,12 +482,13 @@ def gen_R():
 # generating files for genQBF
 gen_I()
 gen_R()
-print("\n[ success! SMV model parsed into Boolean Expressions: " + parsed_model_file_I_name + parsed_model_file_R_name+"]")
+print("\n[ success! SMV model parsed into Boolean Expressions. ]")
+# print("\n[ success! SMV model parsed into Boolean Expressions. " + parsed_model_file_I_name + parsed_model_file_R_name+"]")
 
 ##################################
 #  HyperLTL Formula Construction #
 ##################################
-print("\n============ Translate HyperLTL Formula ============")
+print("\n=== Translate HyperLTL Formula ===")
 text = ""
 file = open(fomula_file_name, 'r')
 Lines = file.readlines()
@@ -502,9 +502,9 @@ for line in Lines:
 
 ## detect the optional flag
 if (FLAG == "-bughunt"):
-	print("(**detect -bughunt flag, formula negated.)\n")
+	print("(detect -bughunt flag, formula negated.)\n")
 elif  (FLAG == "-find"):
-	print("(**detect -find flag, use original formula.)\n")
+	print("(detect -find flag, use original formula.)\n")
 else:
 	print("(**no optional flag detected, perform BMC with negated formula.\n")
 
@@ -577,7 +577,6 @@ for op in arith_ops:
 		print("[ !!! HyperQube error: arithmetic comparison is not correctly constructed. Use '=' or '!=' to connect two numerical variables. ]")
 		quit()
 
-	# print(vars[0])
 	var_l = str(vars[0]).rsplit('_', 1)
 	var_r = str(vars[1]).rsplit('_', 1)
 
@@ -637,7 +636,7 @@ else:
 	print("[ error: invald format of quantifiers and path variables. ]")
 	print("correct format {exists, forall} {var1_name}. {exists, forall} {var2_name}. ")
 
-QS = open("QS.bool", "w")
+QS = open(QS_file_name, "w")
 QS.write(Quants)
 QS.close()
 # clea up quantifiers
@@ -656,7 +655,7 @@ if(To_Negate_formula):
 	text= "~("+ text + ")"
 
 ### finally
-print("formula translated into Boolean representation: \n" + Quants + ", " + text)
+# print("formula translated into Boolean representation: \n" + Quants + ", " + text)
 
 def gen_P():
 	##  write to R_bool file
@@ -665,4 +664,5 @@ def gen_P():
 	P_bool.close()
 
 gen_P()
-print("[ success! input formula translated into Boolean Expressions: test_P.bool ]")
+# print("[ success! input formula translated into Boolean Expressions: test_P.bool ]")
+print("[ success! input formula translated into Boolean Expressions.]")

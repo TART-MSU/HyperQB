@@ -394,7 +394,7 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	for line in Lines:
 		if ("#" not in line):
 			text += line
-	print("user input formula: "+text)
+	# print("user input formula: "+text)
 
 
 	## detect the optional flag
@@ -504,7 +504,7 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 		print("correct format {exists, forall} {var1_name}. {exists, forall} {var2_name}. ")
 
 
-	QS = open("QS.bool", "w")
+	QS = open(QS_file_name, "w")
 	QS.write(Quants)
 	QS.close()
 	# clea up quantifiers
@@ -522,7 +522,8 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 		text= "~("+ text + ")"
 
 	### finally
-	print("parsed formula: " + text)
+	# print("user input formula: "+text)
+	# print("parsed formula: " + text)
 
 	# def gen_P():
 	##  write to R_bool file
@@ -552,10 +553,11 @@ M2_parsed_madel_file_R_name = sys.argv[6]
 
 fomula_file_name = sys.argv[7]
 translated_formula_file_name = sys.argv[8]
+QS_file_name = sys.argv[9]
 
 FLAG = ""
-if(len(sys.argv)==10):
-	FLAG = sys.argv[9]
+if(len(sys.argv)==11):
+	FLAG = sys.argv[10]
 
 To_Negate_formula=(FLAG=="" or FLAG=="-bughunt")
 
