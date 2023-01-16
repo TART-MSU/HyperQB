@@ -25,7 +25,7 @@ ALLARG=$@
 # echo ${ALLARG}
 
 ## execute python scripts on docker
-docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
+# docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
 
 ## clean up previous generated
 echo "(clean up previous generated files..)\n"
@@ -59,6 +59,11 @@ else
   echo FLAG=""
 fi
 
+I=I.bool
+R=R.bool
+J=I.bool
+S=R.bool
+P=P.bool
 
 if echo $* | grep -e "-single" -q
 then
@@ -77,12 +82,7 @@ then
       echo "error: $FORMULA does not exist"
       exit 1
   fi
-  I=I.bool
-  R=R.bool
-  J=I.bool
-  S=R.bool
-  P=P.bool
-
+  ### using local python build
   # python3 ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${FLAG}
   ### using docker
   docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3  ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${FLAG}; "
@@ -107,11 +107,7 @@ then
       echo "error: $FORMULA does not exist"
       exit 1
   fi
-  I=I.bool
-  R=R.bool
-  J=J.bool
-  S=S.bool
-  P=P.bool
+  ### using local python build
   # python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA}  ${P} ${FLAG}
   ### using docker
   docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA}  ${P} ${FLAG}; "

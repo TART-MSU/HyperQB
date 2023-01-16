@@ -284,8 +284,8 @@ def format_trans(tr):
 smv_file_name = sys.argv[1]
 fomula_file_name = sys.argv[2]
 
-parsed_madel_file_I_name = sys.argv[3]
-parsed_madel_file_R_name = sys.argv[4]
+parsed_model_file_I_name = sys.argv[3]
+parsed_model_file_R_name = sys.argv[4]
 translated_formula_file_name = sys.argv[5]
 
 
@@ -423,7 +423,7 @@ def gen_I():
 				init_conditions.append(assignVal(ap, dictionary))
 		init_states.append(conjunct(init_conditions))
 	##  write to I_bool file
-	I_bool = open(parsed_madel_file_I_name, "w")
+	I_bool = open(parsed_model_file_I_name, "w")
 	I_bool.write(disjunct(init_states))
 	I_bool.close()
 
@@ -433,7 +433,7 @@ def gen_I():
 #####################################
 def gen_R():
 	all_transitions = []
-	R_bool = open(parsed_madel_file_R_name, "w")
+	R_bool = open(parsed_model_file_R_name, "w")
 	for state in fsm.pick_all_states(fsm.reachable_states):
 		transitions = []
 		curr = state.get_str_values()
@@ -483,7 +483,7 @@ def gen_R():
 # generating files for genQBF
 gen_I()
 gen_R()
-print("\n[ success! SMV model parsed into Boolean Expressions: " + parsed_madel_file_I_name + parsed_madel_file_R_name+"]")
+print("\n[ success! SMV model parsed into Boolean Expressions: " + parsed_model_file_I_name + parsed_model_file_R_name+"]")
 
 ##################################
 #  HyperLTL Formula Construction #
@@ -580,11 +580,6 @@ for op in arith_ops:
 	# print(vars[0])
 	var_l = str(vars[0]).rsplit('_', 1)
 	var_r = str(vars[1]).rsplit('_', 1)
-
-
-	# var_l_name= var_l[0]
-	# var_r_name= var_r[0]
-
 
 	try:
 		if (var_l[0].isdigit() and var_r[0].isdigit()):

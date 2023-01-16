@@ -6,18 +6,24 @@
 
 # HyperQube Tool Parameters
 HYPERQUBE=./hyperqube.sh
-PESSIMISTIC='pes' # default value
-OPTIMISTIC='opt'
-SINGLEMODEL='-single'
-MULTIMODEL='-multi'
+PES='-pes' # default value
+OPT='-opt'
+SINGLE='-single'
+MULTI='-multi'
 BUGHUNT="-bughunt" # default value
 FIND="-find"
 
+# M1 Mac use:
+# --platform linux/amd64
 
 # [DEMO 1: run bakery algorithm with symmetry property]
-# CASEFOLDER=demo/
-# ${HYPERQUBE} ${CASEFOLDER}bakery.smv ${CASEFOLDER}symmetry.hq 10 ${PESSIMISTIC} ${SINGLEMODEL} ${BUGHUNT}
+# ${HYPERQUBE} demo/bakery.smv demo/symmetry.hq 10 ${PES} ${SINGLE} ${BUGHUNT}
+${HYPERQUBE} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 ${PES} ${MULTI} ${BUGHUNT}
+
+# [DEMO 2: run SNARK1 with linearizabilty property]
+# ${HYPERQUBE} demo/snark_conc.smv demo/snark_seq.smv demo/linearizability.hq 10 ${PES} ${MULTI} ${BUGHUNT}
+
 
 # [Deniability]
-CASEFOLDER=cases_bmc/deniability/
-${HYPERQUBE} ${CASEFOLDER}electronic_wallet.smv dummy.hq 15 ${PESSIMISTIC} ${SINGLEMODEL} ${FIND}
+# CASEFOLDER=cases_bmc/deniability/
+# ${HYPERQUBE} ${CASEFOLDER}electronic_wallet.smv dummy.hq 15 ${PES} ${SINGLE} ${FIND}
