@@ -1,0 +1,2 @@
+forall A. exists B.
+G(!(h[A] <-> h[B]) /\ (*x[A] = x[B]*) /\ halt[A] /\ halt[B]) -> G(*y[A] = y[B]*)

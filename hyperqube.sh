@@ -11,6 +11,14 @@ MAP=exec/util_mapvars
 PARSE_BOOL=exec/util_parsebools
 
 # output files
+
+# \THH_TODO:
+while getopts "proj:" arg; do
+  case $arg in
+    n) PROJ=$OPTARG;;
+  esac
+done
+
 DATE=`date +"%Y-%m-%d@%T"`
 OUTFOLDER="build_"${DATE}"/"
 mkdir ${OUTFOLDER}
@@ -38,12 +46,12 @@ ALLARG=$@
 # docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
 
 ## clean up previous generated
-echo "(clean up previous generated files..)\n"
-find . -name "*.bool"   -delete
-find . -name "*.cex"    -delete
-find . -name "*.quabs"  -delete
-find . -name "*.qcir"   -delete
-find . -name "*.cex"    -delete
+# echo "(clean up previous generated files..)\n"
+# find . -name "*.bool"   -delete
+# find . -name "*.cex"    -delete
+# find . -name "*.quabs"  -delete
+# find . -name "*.qcir"   -delete
+# find . -name "*.cex"    -delete
 # make clean
 
 # if wrong number of arguments
