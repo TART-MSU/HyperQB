@@ -1,4 +1,5 @@
 #!/bin/sh
+# TIMEFORMAT=%R
 
 ### Parameters
 SINGLE_PARSER=exec/single_model_parser.py
@@ -11,16 +12,19 @@ MAP=exec/util_mapvars
 PARSE_BOOL=exec/util_parsebools
 
 # output files
-
-# \THH_TODO:
+# \THH_TODO: add this before submission
 while getopts "proj:" arg; do
   case $arg in
     n) PROJ=$OPTARG;;
   esac
 done
 
-DATE=`date +"%Y-%m-%d@%T"`
+# \THH_TODO: put this back before submission.
+# DATE=`date +"%Y-%m-%d@%T"`
+DATE="today"
 OUTFOLDER="build_"${DATE}"/"
+
+rm -f -R "build_today/"
 mkdir ${OUTFOLDER}
 
 QCIR_OUT=${OUTFOLDER}HQ.qcir
@@ -53,7 +57,6 @@ if [ "$#" -ne 4 ] && [ "$#" -ne 5 ] && [ "$#" -ne 6 ] && [ "$#" -ne 7 ]; then
 fi
 
 
-
 if echo $* | grep -e "-find" -q
 then
   echo "Running with find witness mode (-find)"
@@ -65,7 +68,6 @@ then
 else
   echo "error: please enter mode with: -bughunt | -find "
 fi
-
 
 
 if echo $* | grep -e "-single" -q
@@ -88,7 +90,7 @@ then
   # python3 ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${FLAG}
   ### using docker
   # --platform linux/amd64
-  docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3  ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${QSFILE} ${FLAG}; "
+  time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3  ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${QSFILE} ${FLAG}; "
 elif echo $* | grep -e "-multi" -q
 then
   echo "Running with multi model semantics (-multi)"
@@ -113,7 +115,16 @@ then
   ### using local python build
   # python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA}  ${P} ${FLAG}
   ### using docker
-  docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
+
+  echo "parsing models and formulas..."
+  time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
+
+
+
+
+
+
+
 else
   echo "HyperQube error: please specify mode: -single | -multi \n"
   exit 1
@@ -167,10 +178,10 @@ echo "-------------------------------------------------------------- \n\n"
 
 echo "\n=== Unrolling with genQBF + Solving with QuAbS ==="
 echo "generating QBF BMC..."
-${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
 
 echo "solving QBF..."
-${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
+time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 #  ${QUABS} --statistics --preprocessing 0 --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 
 

@@ -17,7 +17,7 @@ MODULE main
 
 	next(location) := case
 		(location = 1 & high): 2;
-		(location = 1 & !high): 5; 
+		(location = 1 & !high): 5;
 		(location = 2 & x >= low) : 3;
 		(location = 2 & x < low) : 4;
 		(location = 5 & !nondet) : 3;
@@ -40,5 +40,4 @@ MODULE main
 	esac;
 
 DEFINE
-	halt := location = 3 ;	    
-
+	halt := location = 3 ;
