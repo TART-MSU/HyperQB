@@ -1,1 +1,1 @@
-exists A. forall B. F(~halt[A])
+exists A. exists B. F(~halt[A])
