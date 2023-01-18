@@ -357,6 +357,9 @@ def main_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed
 	# print(fsm.pick_all_states(fsm.reachable_states))
 	R_bool = open(parsed_madel_file_R_name, "w")
 	for state in fsm.pick_all_states(fsm.reachable_states):
+		if (counter!=0):
+			R_bool.write(AND + "\n")
+
 		transitions = []
 		curr = state.get_str_values()
 		# print('from')
@@ -371,11 +374,13 @@ def main_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed
 		R_bool.write(trans(getDictAP(curr,  bitblasting_dict), disjunct(post_list)))
 		counter = counter+1
 		# R_bool.write(conjunct_trans(transitions))
-		R_bool.write(AND + "\n")
+
+	# R_bool.write("TRUE"); ##DUMMY
+	# R_bool.replace(AND + "\n" + TRUE, "")
+
 
 	##  write to R_bool file
 	# R_bool = open("test_R.bool", "w")
-	R_bool.write("TRUE"); ##DUMMY
 	# R_bool.write(conjunct_trans(all_transitions))
 	print("total number of states: " + str(counter))
 	R_bool.close()
@@ -527,6 +532,9 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	# def gen_P():
 	##  write to R_bool file
 	P_bool = open(translated_formula_file_name , "w")
+	text = text.replace(' ', '').replace('\t', '').replace('\n', '')
+
+
 	P_bool.write(text)
 	P_bool.close()
 	# gen_P()

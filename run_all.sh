@@ -21,7 +21,11 @@ DUMMY="cases_bmc/dummy.hq"
 
 # [DEMO 1: run bakery algorithm with symmetry property]
 # ${HYPERQUBE} demo/bakery.smv demo/symmetry.hq 10 ${PES} ${SINGLE} ${BUGHUNT}
-${HYPERQUBE} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 5 ${PES} ${MULTI} ${BUGHUNT}
+# ${HYPERQUBE} demo/bakery.smv demo/bakery.smv demo/test.hq 2 ${PES} ${MULTI} ${FIND}
+
+${HYPERQUBE} demo/mini.smv demo/mini.smv demo/mini_P.bool 100 ${PES} ${MULTI} ${FIND}
+
+# ${HYPERQUBE} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 2 ${PES} ${MULTI} ${FIND}
 
 # [DEMO 2: run SNARK1 with linearizabilty property]
 # ${HYPERQUBE} demo/snark_conc.smv demo/snark_seq.smv demo/linearizability.hq 3 ${PES} ${MULTI} ${BUGHUNT}
