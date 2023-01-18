@@ -8,7 +8,7 @@ MULTI_PARSER=exec/multi_model_parser.py
 # HyperQube subTools
 
 # GENQBF=exec/genqbf
-GENQBF=exec/new-genqbf
+# GENQBF=src/cplusplus/genqbf
 
 
 QUABS=exec/quabs
@@ -40,7 +40,7 @@ I=${OUTFOLDER}I.bool
 R=${OUTFOLDER}R.bool
 J=${OUTFOLDER}J.bool
 S=${OUTFOLDER}S.bool
-P=${OUTFOLDER}P.bool
+P=${OUTFOLDER}P.hq
 QSFILE=${OUTFOLDER}QS.bool
 
 ## updated Jan.28:merge parse and bmc
@@ -182,14 +182,40 @@ echo "-------------------------------------------------------------- \n\n"
 
 echo "\n=== Unrolling with genQBF + Solving with QuAbS ==="
 echo "generating QBF BMC..."
-time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
-
-echo "solving QBF..."
-time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
-#  ${QUABS} --statistics --preprocessing 0 --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 
 
-echo "\n=== Get Nice-formatted Output if Output is avaialbe ==="
+#old genqbf
+echo "\n(old genqbf)"
+GENQBF=exec/genqbf
+time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+echo "\nsolving QBF..."
+time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
+OUTCOME=$(grep "r " ${QUABS_OUT})
+echo "\nQuABs outcome: "${OUTCOME}
+
+# rm ${QUABS_OUT}
+
+#new_genqbf
+# echo "\n(new genqbf)"
+# GENQBF=src/cplusplus/genqbf
+# time ${GENQBF} ${k} ${I} ${R} ${J} ${S} ${SEM} demo/mini_P.hq
+# echo "\nsolving QBF..."
+#
+# time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
+# OUTCOME=$(grep "r " ${QUABS_OUT})
+# echo "\nQuABs outcome: "${OUTCOME}
+
+
+# echo "\nsolving QBF..."
+# # time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
+# time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
+#  # ${QUABS} --statistics --preprocessing 0 --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
+# OUTCOME=$(grep "r " ${QUABS_OUT})
+# echo "\nQuABs outcome: "${OUTCOME}
+
+
+
+echo "\n=== Get Nice-formatted Output if output is SAT ==="
 
 if [ ! -f "$QCIR_OUT" ]; then
     echo "$QCIR_OUT does not exists"

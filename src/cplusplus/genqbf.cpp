@@ -1922,7 +1922,6 @@ string formula_unroller(int k, string P_file, string status)
 
 
 // L&T
-
 void write_quantifiers (vector<char> const &quantifier, map<string, int> const &var_map, ofstream &my_file) {
     int len = quantifier.size();
     char letter = 'A';
@@ -2024,8 +2023,7 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
     ofstream my_file;
     stringstream ss;
 
-    my_file.open("QCIR.qcir");
-
+    my_file.open("build_today/HQ.qcir");
 
     string prefix;
     string variable;
@@ -2118,20 +2116,21 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
 
         s.pop();
     }
+		my_file << "#QCIR-G14" << endl;
     // quantifiers
     write_quantifiers (quantifier, var_map, my_file);
     // output and variables
-    my_file << "output" << prefix << '\n' << endl;
+    my_file << "output" << prefix << endl;
     // write formulas to file
-    my_file << ss.str() << endl;
+    my_file << ss.str();
     // new map so variables can be sorted by number in qcir file
     map<int, string> new_map;
     for (auto x: var_map) {
         new_map[x.second] = x.first;
     }
-    my_file << "# variables" << endl;
+    // my_file << "#  variables" << endl;
     for (auto x: new_map) {
-        my_file << "#  " << x.first << " " << x.second << endl;
+        my_file << "# " << x.first << " : " << x.second << endl;
     }
     my_file.close();
 }
@@ -2163,7 +2162,7 @@ int main(int argc, char **argv)
 		counter++;
 	}
 
-	outdata.open("output.txt");
+	// outdata.open("build_today/output.txt");
 
 	string infix_formulas;
 
@@ -2177,10 +2176,10 @@ int main(int argc, char **argv)
 		unrolled_R = iff_replacer(unrolled_R);
 		unrolled_R = if_replacer(unrolled_R);
 		unrolled_R = negation_remover(unrolled_R);
-		outdata << unrolled_I << endl;
-		outdata << "/\\" << endl;
-		outdata << unrolled_R << endl;
-		outdata << "/\\" << endl;
+		// outdata << unrolled_I << endl;
+		// outdata << "/\\" << endl;
+		// outdata << unrolled_R << endl;
+		// outdata << "/\\" << endl;
 
 		infix_formulas = infix_formulas + unrolled_I + "/\\" + unrolled_R + "/\\";
 	}
@@ -2194,19 +2193,20 @@ int main(int argc, char **argv)
 	unrolled_formula = if_replacer(unrolled_formula);
 	unrolled_formula = negation_remover(unrolled_formula);
 	unrolled_formula = "(" + unrolled_formula + ")";
-	outdata << unrolled_formula << endl;
-	outdata.close();
+	// outdata << unrolled_formula << endl;
+	// outdata.close();
 	// return 0;
 
 	infix_formulas = infix_formulas+unrolled_formula;
 
+	// cout << infix_formulas << endl;
 
 	map<string, int> var_map;
 	stack<string> stack;
 	string line, input_file;
 
 	//change this to change the quantifiers
-	vector<char> quantifier {'A','E'};
+	vector<char> quantifier {'E','E'};
 	// takes an input file
 	// cout << "Enter a file name: " << endl;
 	// cin >> input_file;
@@ -2214,7 +2214,8 @@ int main(int argc, char **argv)
 
 	// ifstream myfile (input_file);
 
-	cout << infix_formulas << endl;
+
+	// cout << "tiiiiiiiiiiiiiime" << endl;
 
 	// stringstream infix;
 
@@ -2240,7 +2241,8 @@ int main(int argc, char **argv)
 
 
 	InfixToQCIR(stack, infix_formulas, var_map, quantifier);
-	cout << "\nConversion complete\n" << endl;
+	// cout << "\nConversion complete\n" << endl;
+	// cout << "tiiiiiiiiiiiiiime" << endl;
 	return 0;
 
 
