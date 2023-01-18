@@ -25,7 +25,7 @@ void write_quantifiers (vector<char> const &quantifier, map<string, int> const &
             if (x.first.find(identifier) != string::npos){
                 ss << x.second << ",";
             }
-            
+
         }
         string string_ss = ss.str();
         my_file << string_ss.substr(0,string_ss.length()-1) << ")" << endl;
@@ -35,8 +35,8 @@ void write_quantifiers (vector<char> const &quantifier, map<string, int> const &
 }
 
 pair<int, int> find_last_vars(string formula) {
-    int index1 = formula.find_last_of("("); 
-    int index2 = formula.substr(0,index1-1).find_last_of("("); 
+    int index1 = formula.find_last_of("(");
+    int index2 = formula.substr(0,index1-1).find_last_of("(");
     pair<int, int> index_pair(index2, index1);
     return index_pair;
 }
@@ -51,12 +51,12 @@ string write_to_file (ofstream &my_file, int &count, stack<string> &s, string &p
     } else if (s.top() == "\\/") { // and operator
         //my_file << "and(";
         ss << "and(";
-    }       
+    }
     index_pair = find_last_vars(prefix);
 
-    //my_file << prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2)) 
+    //my_file << prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2))
     //<< "," << prefix.substr(index_pair.second+1, prefix.length()-(index_pair.second+2)) << ')' << endl;
-    ss << prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2)) 
+    ss << prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2))
     << "," << prefix.substr(index_pair.second+1, prefix.length()-(index_pair.second+2)) << ')' << endl;
     prefix = prefix.substr(0,index_pair.first) + '(' + to_string(count) + ')';
     count++;
@@ -133,7 +133,7 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
                 prefix.insert(pos2+1, "-");
             }
         // adding variable to prefix
-        } else if (infix[i] != '/' && infix[i] != '\\' && infix[i] != '~' && !isPar(infix.substr(i,1))){ 
+        } else if (infix[i] != '/' && infix[i] != '\\' && infix[i] != '~' && !isPar(infix.substr(i,1))){
             // assign numbers to variables here
             variable += infix[i];
             // end of variable due to operator or parentheses
@@ -147,7 +147,7 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
                 } else {
                     prefix = prefix +  "(" + to_string(var_map[variable]) + ')';
                 }
-                variable = ""; 
+                variable = "";
             }
         }
         else if (infix[i] == '(') {
@@ -191,7 +191,7 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
                     }
                     s.push(prec);
                 }
-            } 
+            }
         }
     }
     while (!s.empty()) {
@@ -223,15 +223,15 @@ int main() {
     map<string, int> var_map;
     stack<string> stack;
     string line, input_file;
-    
+
     //change this to change the quantifiers
-    vector<char> quantifier {'A','E','A'};
+    vector<char> quantifier {'A','E'};
     // takes an input file
     cout << "Enter a file name: " << endl;
     cin >> input_file;
     ifstream myfile (input_file);
     stringstream infix;
-    
+
     // removes any white space from file and puts into stringstream
     if (myfile.is_open())
     {

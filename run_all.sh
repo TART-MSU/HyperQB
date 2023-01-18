@@ -6,6 +6,7 @@
 
 # HyperQube Tool Parameters
 HYPERQUBE=./hyperqube.sh
+
 PES='-pes' # default value
 OPT='-opt'
 SINGLE='-single'
@@ -20,10 +21,10 @@ DUMMY="cases_bmc/dummy.hq"
 
 # [DEMO 1: run bakery algorithm with symmetry property]
 # ${HYPERQUBE} demo/bakery.smv demo/symmetry.hq 10 ${PES} ${SINGLE} ${BUGHUNT}
-# ${HYPERQUBE} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 ${PES} ${MULTI} ${BUGHUNT}
+${HYPERQUBE} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 5 ${PES} ${MULTI} ${BUGHUNT}
 
 # [DEMO 2: run SNARK1 with linearizabilty property]
-# ${HYPERQUBE} demo/snark_conc.smv demo/snark_seq.smv demo/linearizability.hq 10 ${PES} ${MULTI} ${BUGHUNT}
+# ${HYPERQUBE} demo/snark_conc.smv demo/snark_seq.smv demo/linearizability.hq 3 ${PES} ${MULTI} ${BUGHUNT}
 
 
 # [Deniability]
@@ -32,5 +33,5 @@ DUMMY="cases_bmc/dummy.hq"
 
 
 # [Coterm]
-${HYPERQUBE} cases_bmc/cav_coterm/coterm1.smv cases_bmc/cav_coterm/coterm1.smv cases_bmc/cav_coterm/coterm.hq 10 ${OPT} ${MULTI} ${BUGHUNT}
+# ${HYPERQUBE} cases_bmc/cav_coterm/coterm1.smv cases_bmc/cav_coterm/coterm1.smv cases_bmc/cav_coterm/coterm.hq 10 ${OPT} ${MULTI} ${BUGHUNT}
 # ${HYPERQUBE} cases_bmc/cav_coterm/coterm2.smv cases_bmc/cav_coterm/coterm2.smv cases_bmc/cav_coterm/coterm.hq 10 ${OPT} ${MULTI} ${BUGHUNT}
