@@ -23,7 +23,7 @@ DUMMY="cases_bmc/dummy.hq"
 # ${HYPERQUBE} demo/bakery.smv demo/symmetry.hq 10 ${PES} ${SINGLE} ${BUGHUNT}
 # ${HYPERQUBE} demo/bakery.smv demo/bakery.smv demo/test.hq 2 ${PES} ${MULTI} ${FIND}
 
-${HYPERQUBE} demo/mini.smv demo/mini.smv demo/mini_P.bool 100 ${PES} ${MULTI} ${FIND}
+${HYPERQUBE} demo/mini.smv demo/mini.smv demo/mini_P.bool 11 ${PES} ${MULTI} ${FIND}
 
 # ${HYPERQUBE} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 2 ${PES} ${MULTI} ${FIND}
 
