@@ -42,7 +42,7 @@ from pynusmv.sexp.fsm  		import *
 NOT = "~"
 AND = "/\\"
 OR = "\\/"
-IMPLIES = " -> "
+IMPLIES = "->"
 IFF = "<->"
 NEXT = "'"
 
