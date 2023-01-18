@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <map>
 #include <sstream>
+#include <regex>
+#include <stdio.h>
 using namespace std;
 
 //The function for finding indexes of a text
@@ -1318,73 +1320,101 @@ string R_unroller(int k, string R_file, string model_type)
 	while (!mini_R.eof())
 	{
 		string added;
-
 		mini_R >> added;
 		R += added;
 	}
+
+
+
+	std::ifstream file(R_file);
+	if (file.is_open()) {
+	    std::string line;
+	    while (std::getline(file, line)) {
+	        // using printf() in all tests for consistency
+	        // printf("%s", line.c_str());
+					for (int i = 0 ; i < line.length() ; i++){
+						cout << line[i];
+						cout << i << endl;
+					}
+	    }
+	    file.close();
+	}
+
+	string result = "";
+
+
+
+	// cout << str << endl;
+	// string res = std::regex_replace(str, std::regex("->"), "_A->");
+	// res = std::regex_replace(test, std::regex("/"), "_A/");
+	// res = std::regex_replace(test, std::regex(")"), "_A)");
+	// cout << res << endl;
+
+	// for (int i = 0; i < str.length(); i++) {
+	//
+	//       // Print current character
+	//       cout<< str[i]<< " ";
+	// }
+
+
+
+
+
 
 	char *R_str = &R[0];
 	string new_R = R_str;
 
 	vector<string> added_strs;
 
+	// THH: simplify this part.
 	string A;
 	A += "_";
 	A += model_type;
 	A += "_[]";
-
-	//	if (model_type == "R"){
-	//           A = "_A_[]";
-
-	//    } else if (model_type == "S") {
-	//          A = "_B_[]";
-
-	//     }
-
 	string new_A;
 
 	for (int i = 0; i < k + 1; i++)
 	{
 		string s = to_string(i);
-
 		new_A = A;
-
 		new_A.insert(4, s);
-
 		added_strs.push_back(new_A);
 	}
 
-	//	string new_R = R_str;
+
+	// for (string i: added_strs)
+	//     std::cout << i << ' ';
 
 	string final_R;
-
-	//	int len = new_I.length();
-
 	string sub_str;
 	vector<int> positions;
 	int counter;
 	int i;
 
 	sub_str = ")";
-
 	positions = substrPosition(new_R, sub_str);
-
 	counter = 0;
+
+
+
+
+
+
 
 	for (int t = 0; t < k - 1; t++)
 	{
+
+
 		int added_l = end(added_strs[t]) - begin(added_strs[t]);
 
+		// cout << added_l << endl;
+		// cout << counter << endl;
+
 		sub_str = "/\\";
-
 		positions = substrPosition(new_R, sub_str);
-
 		counter = 0;
-
 		for (int i = 0; i < positions.size(); i++)
 		{
-			//cout<<positions[i];
-
 			if (new_R[positions[i] + counter - 1] != ')')
 			{
 				if (new_R[positions[i] + counter - 1] == '\'')
@@ -1395,23 +1425,16 @@ string R_unroller(int k, string R_file, string model_type)
 				{
 					new_R.insert(positions[i] + counter, added_strs[t]);
 				}
-
 				counter += added_l;
 			}
 		}
 
-		//        cout<<positions.size()<<"\n";
 
 		sub_str = "\\/";
-
 		positions = substrPosition(new_R, sub_str);
-
 		counter = 0;
-
 		for (int i = 0; i < positions.size(); i++)
 		{
-			//cout<<positions[i];
-
 			if (new_R[positions[i] + counter - 1] != ')')
 			{
 				if (new_R[positions[i] + counter - 1] == '\'')
@@ -1427,14 +1450,9 @@ string R_unroller(int k, string R_file, string model_type)
 			}
 		}
 
-		//       cout<<positions.size()<<"\n";
-
 		sub_str = ")";
-
 		positions = substrPosition(new_R, sub_str);
-
 		counter = 0;
-
 		for (int i = 0; i < positions.size(); i++)
 		{
 			if (new_R[positions[i] + counter - 1] != ')')
@@ -1447,17 +1465,13 @@ string R_unroller(int k, string R_file, string model_type)
 				{
 					new_R.insert(positions[i] + counter, added_strs[t]);
 				}
-
 				counter += added_l;
 			}
 		}
 
 		sub_str = "<->";
-
 		positions = substrPosition(new_R, sub_str);
-
 		counter = 0;
-
 		for (int i = 0; i < positions.size(); i++)
 		{
 			if (new_R[positions[i] + counter - 1] != ')')
@@ -1470,7 +1484,25 @@ string R_unroller(int k, string R_file, string model_type)
 				{
 					new_R.insert(positions[i] + counter, added_strs[t]);
 				}
+				counter += added_l;
+			}
+		}
 
+		sub_str = "->";
+		positions = substrPosition(new_R, sub_str);
+		counter = 0;
+		for (int i = 0; i < positions.size(); i++)
+		{
+			if (new_R[positions[i] + counter - 1] != ')')
+			{
+				if (new_R[positions[i] + counter - 1] == '\'')
+				{
+					new_R.insert(positions[i] + counter, added_strs[t + 1]);
+				}
+				else
+				{
+					new_R.insert(positions[i] + counter, added_strs[t]);
+				}
 				counter += added_l;
 			}
 		}
@@ -1484,11 +1516,112 @@ string R_unroller(int k, string R_file, string model_type)
 		}
 	}
 
+	// cout<<"This is Unrolled R:\n"<<final_R;
+
+
+	// for (int i: positions)
+	//     std::cout << i << ' ';
+
+	// sub_str = ")";
+	// positions = substrPosition(new_R, sub_str);
+	// counter = 0;
+	// for (int t = 0; t < k - 1; t++)
+	// {
+	// 	cout << final_R << endl;
+	//
+	// 	int added_l = end(added_strs[t]) - begin(added_strs[t]);
+	// 	sub_str = "/\\";
+	// 	positions = substrPosition(new_R, sub_str);
+	// 	counter = 0;
+	// 	for (int i = 0; i < positions.size(); i++)
+	// 	{
+	// 		if (new_R[positions[i] + counter - 1] != ')')
+	// 		{
+	// 			if (new_R[positions[i] + counter - 1] == '\'')
+	// 			{
+	// 				new_R.insert(positions[i] + counter, added_strs[t + 1]);
+	// 			}
+	// 			else
+	// 			{
+	// 				new_R.insert(positions[i] + counter, added_strs[t]);
+	// 			}
+	// 			counter += added_l;
+	// 		}
+	// 	}
+	//
+	//
+	// 	sub_str = "\\/";
+	// 	positions = substrPosition(new_R, sub_str);
+	// 	counter = 0;
+	// 	for (int i = 0; i < positions.size(); i++)
+	// 	{
+	// 		if (new_R[positions[i] + counter - 1] != ')')
+	// 		{
+	// 			if (new_R[positions[i] + counter - 1] == '\'')
+	// 			{
+	// 				new_R.insert(positions[i] + counter, added_strs[t + 1]);
+	// 			}
+	// 			else
+	// 			{
+	// 				new_R.insert(positions[i] + counter, added_strs[t]);
+	// 			}
+	//
+	// 			counter += added_l;
+	// 		}
+	// 	}
+	//
+	// 	sub_str = ")";
+	// 	positions = substrPosition(new_R, sub_str);
+	// 	counter = 0;
+	// 	for (int i = 0; i < positions.size(); i++)
+	// 	{
+	// 		if (new_R[positions[i] + counter - 1] != ')')
+	// 		{
+	// 			if (new_R[positions[i] + counter - 1] == '\'')
+	// 			{
+	// 				new_R.insert(positions[i] + counter, added_strs[t + 1]);
+	// 			}
+	// 			else
+	// 			{
+	// 				new_R.insert(positions[i] + counter, added_strs[t]);
+	// 			}
+	// 			counter += added_l;
+	// 		}
+	// 	}
+	//
+	// 	sub_str = "<->";
+	// 	positions = substrPosition(new_R, sub_str);
+	// 	counter = 0;
+	// 	for (int i = 0; i < positions.size(); i++)
+	// 	{
+	// 		if (new_R[positions[i] + counter - 1] != ')')
+	// 		{
+	// 			if (new_R[positions[i] + counter - 1] == '\'')
+	// 			{
+	// 				new_R.insert(positions[i] + counter, added_strs[t + 1]);
+	// 			}
+	// 			else
+	// 			{
+	// 				new_R.insert(positions[i] + counter, added_strs[t]);
+	// 			}
+	// 			counter += added_l;
+	// 		}
+	// 	}
+	//
+	// 	final_R += new_R;
+	// 	new_R = R_str;
+	//
+	// 	if (t != k - 2)
+	// 	{
+	// 		final_R += "/\\";
+	// 	}
+	// }
+
 	//	ad_R += new_R;
 
-	final_R.erase(remove(final_R.begin(), final_R.end(), '\''), final_R.end());
+	// final_R.erase(remove(final_R.begin(), final_R.end(), '\''), final_R.end());
 
-	//   cout<<"This is Unrolled R:\n"<<final_R;
+	// cout<<"This is Unrolled R:\n"<<final_R;
 
 	return final_R;
 
@@ -2151,6 +2284,9 @@ int main(int argc, char **argv)
 	int counter = 2;
 	string model_types[26] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 
+
+
+
 	ofstream outdata;
 	while (final_check != "hq")
 	{
@@ -2162,7 +2298,7 @@ int main(int argc, char **argv)
 		counter++;
 	}
 
-	// outdata.open("build_today/output.txt");
+	outdata.open("build_today/output.txt");
 
 	string infix_formulas;
 
@@ -2176,25 +2312,27 @@ int main(int argc, char **argv)
 		unrolled_R = iff_replacer(unrolled_R);
 		unrolled_R = if_replacer(unrolled_R);
 		unrolled_R = negation_remover(unrolled_R);
+
 		// outdata << unrolled_I << endl;
 		// outdata << "/\\" << endl;
-		// outdata << unrolled_R << endl;
-		// outdata << "/\\" << endl;
+		// cout << unrolled_R << endl;
+		// cout << "/\\" << endl;
 
 		infix_formulas = infix_formulas + unrolled_I + "/\\" + unrolled_R + "/\\";
 	}
 	// cout << infix_formulas << endl;
 	// cout << "debug" << endl;
 
-
+	return 0;
 
 	string unrolled_formula = formula_unroller(k, inputs[inputs.size() - 1], inputs[inputs.size() - 2]);
 	unrolled_formula = iff_replacer(unrolled_formula);
 	unrolled_formula = if_replacer(unrolled_formula);
 	unrolled_formula = negation_remover(unrolled_formula);
 	unrolled_formula = "(" + unrolled_formula + ")";
-	// outdata << unrolled_formula << endl;
-	// outdata.close();
+
+	outdata << unrolled_formula << endl;
+	outdata.close();
 	// return 0;
 
 	infix_formulas = infix_formulas+unrolled_formula;

@@ -185,25 +185,25 @@ echo "generating QBF BMC..."
 
 
 #old genqbf
-echo "\n(old genqbf)"
-GENQBF=exec/genqbf
-time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+# echo "\n(old genqbf)"
+# GENQBF=exec/genqbf
+# time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+# echo "\nsolving QBF..."
+# time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
+# OUTCOME=$(grep "r " ${QUABS_OUT})
+# echo "\nQuABs outcome: "${OUTCOME}
+#
+# rm ${QCIR_OUT}
+# rm ${QUABS_OUT}
+
+#new_genqbf
+echo "\n(new genqbf)"
+GENQBF=src/cplusplus/genqbf
+time ${GENQBF} ${k} ${I} ${R} ${J} ${S} ${SEM} demo/mini_P.hq
 echo "\nsolving QBF..."
 time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
 OUTCOME=$(grep "r " ${QUABS_OUT})
 echo "\nQuABs outcome: "${OUTCOME}
-
-# rm ${QUABS_OUT}
-
-#new_genqbf
-# echo "\n(new genqbf)"
-# GENQBF=src/cplusplus/genqbf
-# time ${GENQBF} ${k} ${I} ${R} ${J} ${S} ${SEM} demo/mini_P.hq
-# echo "\nsolving QBF..."
-#
-# time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
-# OUTCOME=$(grep "r " ${QUABS_OUT})
-# echo "\nQuABs outcome: "${OUTCOME}
 
 
 # echo "\nsolving QBF..."
