@@ -6,7 +6,11 @@ SINGLE_PARSER=exec/single_model_parser.py
 MULTI_PARSER=exec/multi_model_parser.py
 
 # HyperQube subTools
-GENQBF=exec/genqbf
+
+# GENQBF=exec/genqbf
+GENQBF=exec/new-genqbf
+
+
 QUABS=exec/quabs
 MAP=exec/util_mapvars
 PARSE_BOOL=exec/util_parsebools

@@ -37,9 +37,9 @@ string negation_remover(string input)
 		if (x != string::npos)
 			input.erase(x, s.length());
 	}
-
 	return input;
 }
+
 
 //The function for replacing -> existing in the output by the equal logical relations
 string if_replacer(string input)
@@ -2023,7 +2023,10 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
     pair<int, int> index_pair;
     ofstream my_file;
     stringstream ss;
-    my_file.open("output1.qcir");
+
+    my_file.open("QCIR.qcir");
+
+
     string prefix;
     string variable;
     reverse(infix.begin(), infix.end());
@@ -2162,7 +2165,7 @@ int main(int argc, char **argv)
 
 	outdata.open("output.txt");
 
-	string prefix_formulas;
+	string infix_formulas;
 
 	for (int i = 0; i < inputs.size() - 3; i += 2)
 	{
@@ -2179,10 +2182,12 @@ int main(int argc, char **argv)
 		outdata << unrolled_R << endl;
 		outdata << "/\\" << endl;
 
-		prefix_formulas << unrolled_I + "\n/\\\n" + unrolled_R + "\n/\\\n" << endl
+		infix_formulas = infix_formulas + unrolled_I + "/\\" + unrolled_R + "/\\";
 	}
+	// cout << infix_formulas << endl;
+	// cout << "debug" << endl;
 
-	
+
 
 	string unrolled_formula = formula_unroller(k, inputs[inputs.size() - 1], inputs[inputs.size() - 2]);
 	unrolled_formula = iff_replacer(unrolled_formula);
@@ -2193,31 +2198,48 @@ int main(int argc, char **argv)
 	outdata.close();
 	// return 0;
 
+	infix_formulas = infix_formulas+unrolled_formula;
+
 
 	map<string, int> var_map;
 	stack<string> stack;
 	string line, input_file;
 
 	//change this to change the quantifiers
-	vector<char> quantifier {'A','E','A'};
+	vector<char> quantifier {'A','E'};
 	// takes an input file
-	cout << "Enter a file name: " << endl;
-	cin >> input_file;
-	ifstream myfile (input_file);
-	stringstream infix;
+	// cout << "Enter a file name: " << endl;
+	// cin >> input_file;
+
+
+	// ifstream myfile (input_file);
+
+	cout << infix_formulas << endl;
+
+	// stringstream infix;
+
+
+	// infix << infix_formulas;
+
+	// infix = infix_formulas;
 
 	// removes any white space from file and puts into stringstream
-	if (myfile.is_open())
-	{
-	while ( getline (myfile,line) )
-	{
-		line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
-		infix << line;
-	}
-	myfile.close();
-	}
-	else cout << "Unable to open file";
-	InfixToQCIR(stack, infix.str() , var_map, quantifier);
+	// if (myfile.is_open())
+	// {
+	// while ( getline (myfile,line) )
+	// {
+	// 	line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
+	// 	infix << line;
+	// }
+	// myfile.close();
+	// }
+	// else cout << "Unable to open file";
+
+
+	// InfixToQCIR(stack, infix.str() , var_map, quantifier);
+
+
+	InfixToQCIR(stack, infix_formulas, var_map, quantifier);
 	cout << "\nConversion complete\n" << endl;
 	return 0;
 
