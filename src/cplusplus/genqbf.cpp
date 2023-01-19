@@ -1014,7 +1014,6 @@ string G_unroller(int k, int position_G, string new_P, vector<string> added_strs
 }
 
 //The function for unrolling F
-
 string F_unroller(int k, int position_F, string new_P, vector<string> added_strs_A, vector<string> added_strs_B)
 {
 	string P_nextgen = "";
@@ -1169,7 +1168,6 @@ string F_unroller(int k, int position_F, string new_P, vector<string> added_strs
 }
 
 //The function for unrolling initial conditions
-
 string I_unroller(int k, string I_file, string model_type)
 {
 	bool isAP = false;
@@ -1234,7 +1232,6 @@ void ReplaceStringInPlace(std::string& subject, const std::string& search,
          pos += replace.length();
     }
 }
-
 
 // //THH updated
 string R_unroller(int k, string R_file, string model_type)
@@ -1745,8 +1742,6 @@ string formula_unroller(int k, string P_file, string status)
 	return final_P;
 }
 
-
-
 // Lilly & Tess
 void write_quantifiers (vector<char> const &quantifier, map<string, int> const &var_map, ofstream &my_file) {
     int len = quantifier.size();
@@ -1965,7 +1960,23 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
 
 
 
-//Our main function to run
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Min genqbf function to run
 int main(int argc, char **argv)
 {
 	int k;
@@ -2003,8 +2014,8 @@ int main(int argc, char **argv)
 		// unrolled_I = negation_remover(unrolled_I);
 		string unrolled_R = R_unroller(k, inputs[i + 1], model_types[i / 2]);
 		// unrolled_R = iff_replacer(unrolled_R);
-		unrolled_R = if_replacer(unrolled_R); // THH: to update
-		unrolled_R = negation_remover(unrolled_R); // THH: to update
+		// unrolled_R = if_replacer(unrolled_R); // THH: to update // THH: to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// unrolled_R = negation_remover(unrolled_R);
 		// outdata << unrolled_I << endl;
 		// outdata << "/\\" << endl;
 		// outdata << unrolled_R << endl;
