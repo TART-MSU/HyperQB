@@ -8,9 +8,6 @@
 #include <algorithm>
 #include <map>
 #include <sstream>
-#include <regex>
-#include <stdio.h>
-// #include <boost/algorithm/string/replace.hpp>
 using namespace std;
 
 //The function for finding indexes of a text
@@ -1311,100 +1308,191 @@ string I_unroller(int k, string I_file, string model_type)
 
 }
 
-void ReplaceStringInPlace(std::string& subject, const std::string& search,
-                          const std::string& replace) {
-    size_t pos = 0;
-    while ((pos = subject.find(search, pos)) != std::string::npos) {
-         subject.replace(pos, search.length(), replace);
-         pos += replace.length();
-    }
-}
-
-// //THH updated
+//The function for unrolling translation relations
 string R_unroller(int k, string R_file, string model_type)
 {
-	bool isAP = false;
-	string suffix = "_" + model_type + "_[0]";
-	// string post_suffix = "_" + model_type + "_[1]";
+	string ad_R = "";
+	string R = "";
+	fstream mini_R;
+	mini_R.open(R_file);
+	while (!mini_R.eof())
+	{
+		string added;
 
-	string trans;
-	std::ifstream file(R_file);
-	if (!file.eof()) {
-	    std::string line;
-	    while (std::getline(file, line)) {
-				for (int i = 0 ; i < line.length() ; i++){
-					// cout << endl;
-					// cout << line[i];
-					switch (line[i]) {
-						case '\'':
-							suffix = "_" + model_type + "_[1]";
-						break;
-
-						case '(':
-							trans += '(';
-						break;
-						case ')':
-							if(isAP){
-								trans += suffix+")";
-								isAP = false;
-							}
-							else{
-								trans += ')';
-							}
-						break;
-
-						case '/':
-							if (isAP){
-						  	trans += suffix+"/";
-								isAP = false;
-							}
-							else{
-								trans += "/";
-							}
-						break;
-
-						case '\\':
-							if (isAP){
-								trans += suffix+"\\";
-							}
-							else{
-								trans += "\\";
-							}
-						break;
-
-						default:
-							isAP = true;
-							suffix = "_" + model_type + "_[0]";
-							trans += line[i];
-						break;
-						}
-					}
-	    }
-	    file.close();
+		mini_R >> added;
+		R += added;
 	}
-	// cout << trans << endl;
-	trans = trans + "/\\";
-	string output = "";
-	output += trans;
 
-	string pre;
-	string curr;
-	string next;
-	for (int i = 0; i < k-1; i++){
+	char *R_str = &R[0];
+	string new_R = R_str;
 
-		pre = "["+to_string(i)+"]";
-		curr = "["+to_string(i+1)+"]";
-		next = "["+to_string(i+2)+"]";
+	vector<string> added_strs;
 
-		ReplaceStringInPlace(trans, curr, next);
-		ReplaceStringInPlace(trans, pre, curr);
-		// size_t pos = 0;
-		// cout << trans << endl;
-		output+=trans;
- 	}
-	return output;
+	string A;
+	A += "_";
+	A += model_type;
+	A += "_[]";
+
+	//	if (model_type == "R"){
+	//           A = "_A_[]";
+
+	//    } else if (model_type == "S") {
+	//          A = "_B_[]";
+
+	//     }
+
+	string new_A;
+
+	for (int i = 0; i < k + 1; i++)
+	{
+		string s = to_string(i);
+
+		new_A = A;
+
+		new_A.insert(4, s);
+
+		added_strs.push_back(new_A);
+	}
+
+	//	string new_R = R_str;
+
+	string final_R;
+
+	//	int len = new_I.length();
+
+	string sub_str;
+	vector<int> positions;
+	int counter;
+	int i;
+
+	sub_str = ")";
+
+	positions = substrPosition(new_R, sub_str);
+
+	counter = 0;
+
+	for (int t = 0; t < k - 1; t++)
+	{
+		int added_l = end(added_strs[t]) - begin(added_strs[t]);
+
+		sub_str = "/\\";
+
+		positions = substrPosition(new_R, sub_str);
+
+		counter = 0;
+
+		for (int i = 0; i < positions.size(); i++)
+		{
+			//cout<<positions[i];
+
+			if (new_R[positions[i] + counter - 1] != ')')
+			{
+				if (new_R[positions[i] + counter - 1] == '\'')
+				{
+					new_R.insert(positions[i] + counter, added_strs[t + 1]);
+				}
+				else
+				{
+					new_R.insert(positions[i] + counter, added_strs[t]);
+				}
+
+				counter += added_l;
+			}
+		}
+
+		//        cout<<positions.size()<<"\n";
+
+		sub_str = "\\/";
+
+		positions = substrPosition(new_R, sub_str);
+
+		counter = 0;
+
+		for (int i = 0; i < positions.size(); i++)
+		{
+			//cout<<positions[i];
+
+			if (new_R[positions[i] + counter - 1] != ')')
+			{
+				if (new_R[positions[i] + counter - 1] == '\'')
+				{
+					new_R.insert(positions[i] + counter, added_strs[t + 1]);
+				}
+				else
+				{
+					new_R.insert(positions[i] + counter, added_strs[t]);
+				}
+
+				counter += added_l;
+			}
+		}
+
+		//       cout<<positions.size()<<"\n";
+
+		sub_str = ")";
+
+		positions = substrPosition(new_R, sub_str);
+
+		counter = 0;
+
+		for (int i = 0; i < positions.size(); i++)
+		{
+			if (new_R[positions[i] + counter - 1] != ')')
+			{
+				if (new_R[positions[i] + counter - 1] == '\'')
+				{
+					new_R.insert(positions[i] + counter, added_strs[t + 1]);
+				}
+				else
+				{
+					new_R.insert(positions[i] + counter, added_strs[t]);
+				}
+
+				counter += added_l;
+			}
+		}
+
+		sub_str = "<->";
+
+		positions = substrPosition(new_R, sub_str);
+
+		counter = 0;
+
+		for (int i = 0; i < positions.size(); i++)
+		{
+			if (new_R[positions[i] + counter - 1] != ')')
+			{
+				if (new_R[positions[i] + counter - 1] == '\'')
+				{
+					new_R.insert(positions[i] + counter, added_strs[t + 1]);
+				}
+				else
+				{
+					new_R.insert(positions[i] + counter, added_strs[t]);
+				}
+
+				counter += added_l;
+			}
+		}
+
+		final_R += new_R;
+		new_R = R_str;
+
+		if (t != k - 2)
+		{
+			final_R += "/\\";
+		}
+	}
+
+	//	ad_R += new_R;
+
+	final_R.erase(remove(final_R.begin(), final_R.end(), '\''), final_R.end());
+
+	//   cout<<"This is Unrolled R:\n"<<final_R;
+
+	return final_R;
+
 }
-
 
 //This is the function for unrolling our formula
 string formula_unroller(int k, string P_file, string status)
@@ -1834,6 +1922,7 @@ string formula_unroller(int k, string P_file, string status)
 
 
 // L&T
+
 void write_quantifiers (vector<char> const &quantifier, map<string, int> const &var_map, ofstream &my_file) {
     int len = quantifier.size();
     char letter = 'A';
@@ -1935,7 +2024,8 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
     ofstream my_file;
     stringstream ss;
 
-    my_file.open("build_today/HQ.qcir");
+    my_file.open("build_today/QCIR.qcir");
+
 
     string prefix;
     string variable;
@@ -2028,21 +2118,20 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
 
         s.pop();
     }
-		my_file << "#QCIR-G14" << endl;
     // quantifiers
     write_quantifiers (quantifier, var_map, my_file);
     // output and variables
-    my_file << "output" << prefix << endl;
+    my_file << "output" << prefix << '\n' << endl;
     // write formulas to file
-    my_file << ss.str();
+    my_file << ss.str() << endl;
     // new map so variables can be sorted by number in qcir file
     map<int, string> new_map;
     for (auto x: var_map) {
         new_map[x.second] = x.first;
     }
-    // my_file << "#  variables" << endl;
+    my_file << "# variables" << endl;
     for (auto x: new_map) {
-        my_file << "# " << x.first << " : " << x.second << endl;
+        my_file << "#  " << x.first << " " << x.second << endl;
     }
     my_file.close();
 }
@@ -2074,13 +2163,14 @@ int main(int argc, char **argv)
 		counter++;
 	}
 
-	// outdata.open("build_today/output.txt");
-	clock_t start, end;
+	outdata.open("build_today/old_output.txt");
+
+	string infix_formulas;
+
+  clock_t start, end;
 	double time_taken;
 
-
-	start = clock();
-	string infix_formulas;
+  start = clock();
 	for (int i = 0; i < inputs.size() - 3; i += 2)
 	{
 		string unrolled_I = I_unroller(k, inputs[i], model_types[i / 2]);
@@ -2088,50 +2178,45 @@ int main(int argc, char **argv)
 		unrolled_I = if_replacer(unrolled_I);
 		unrolled_I = negation_remover(unrolled_I);
 		string unrolled_R = R_unroller(k, inputs[i + 1], model_types[i / 2]);
-		// unrolled_R = iff_replacer(unrolled_R);
-		// unrolled_R = if_replacer(unrolled_R); // THH: to update
-		// unrolled_R = negation_remover(unrolled_R); // THH: to update
+		unrolled_R = iff_replacer(unrolled_R);
+		unrolled_R = if_replacer(unrolled_R);
+		unrolled_R = negation_remover(unrolled_R);
+		outdata << unrolled_I << endl;
+		outdata << "/\\" << endl;
+		outdata << unrolled_R << endl;
+		outdata << "/\\" << endl;
 
-		// outdata << unrolled_I << endl;
-		// outdata << "/\\" << endl;
-		// outdata << unrolled_R << endl;
-		// outdata << "/\\" << endl;
-
-		infix_formulas = infix_formulas + unrolled_I + "/\\" + unrolled_R;
+		infix_formulas = infix_formulas + unrolled_I + "/\\" + unrolled_R + "/\\";
 	}
-	end = clock();
+  end = clock();
 	time_taken = double(end - start) / double(CLOCKS_PER_SEC);
     cout << "Time for unrolling models  : " << fixed
          << time_taken << setprecision(5);
     cout << " sec " << endl;
 
 
-	start = clock();
-	string unrolled_formula = formula_unroller(k+1, inputs[inputs.size() - 1], inputs[inputs.size() - 2]);
-	end = clock();
+
+  start = clock();
+	string unrolled_formula = formula_unroller(k, inputs[inputs.size() - 1], inputs[inputs.size() - 2]);
+	unrolled_formula = iff_replacer(unrolled_formula);
+	unrolled_formula = if_replacer(unrolled_formula);
+	unrolled_formula = negation_remover(unrolled_formula);
+	unrolled_formula = "(" + unrolled_formula + ")";
+	outdata << unrolled_formula << endl;
+	outdata.close();
+
+	unrolled_formula = iff_replacer(unrolled_formula);
+	unrolled_formula = if_replacer(unrolled_formula);
+	unrolled_formula = negation_remover(unrolled_formula);
+	unrolled_formula = "(" + unrolled_formula + ")";
+
+  end = clock();
 	time_taken = double(end - start) / double(CLOCKS_PER_SEC);
 		cout << "Time for unrolling formula : " << fixed
 				 << time_taken << setprecision(5);
 		cout << " sec " << endl;
-	unrolled_formula = iff_replacer(unrolled_formula);
-	unrolled_formula = if_replacer(unrolled_formula);
-	unrolled_formula = negation_remover(unrolled_formula);
-	unrolled_formula = "(" + unrolled_formula + ")"; // warning: here has a hidden ,\\
-
-
-
-
-
 
 	infix_formulas = infix_formulas+unrolled_formula;
-	// infix_formulas = infix_formulas+"TRUE";
-
-	// infix_formulas = "((~PC_1_A_[0]/\\PC_0_A_[0])/\\~a_B_[0])";
-	// cout << infix_formulas << endl;
-
-	outdata.open("build_today/output.txt");
-	outdata << infix_formulas << endl;
-	outdata.close();
 
 
 	map<string, int> var_map;
@@ -2147,8 +2232,7 @@ int main(int argc, char **argv)
 
 	// ifstream myfile (input_file);
 
-
-	// cout << "tiiiiiiiiiiiiiime" << endl;
+	// cout << infix_formulas << endl;
 
 	// stringstream infix;
 
@@ -2172,9 +2256,11 @@ int main(int argc, char **argv)
 
 	// InfixToQCIR(stack, infix.str() , var_map, quantifier);
 
-	start = clock();
+  start = clock();
 	InfixToQCIR(stack, infix_formulas, var_map, quantifier);
-	end = clock();
+	// cout << "\nConversion complete\n" << endl;
+
+  end = clock();
 	time_taken = double(end - start) / double(CLOCKS_PER_SEC);
 		cout << "Time for converting QCIR : " << fixed
 				 << time_taken << setprecision(5);
@@ -2182,6 +2268,5 @@ int main(int argc, char **argv)
 	// cout << "\nConversion complete\n" << endl;
 	// cout << "tiiiiiiiiiiiiiime" << endl;
 	return 0;
-
 
 }
