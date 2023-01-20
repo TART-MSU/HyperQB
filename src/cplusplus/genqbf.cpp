@@ -1316,431 +1316,143 @@ string R_unroller(int k, string R_file, string model_type)
 	return output;
 }
 
-
-//This is the function for unrolling our formula
-string formula_unroller(int k, string P_file, string status)
-{
-	string ad_P = "";
-	string P = "";
-	fstream mini_P;
-	mini_P.open(P_file);
-	while (!mini_P.eof())
-	{
-		string added;
-
-		mini_P >> added;
-		P += added;
-	}
-
-	char *P_str = &P[0];
-	string new_P = P_str;
-
-	vector<string> added_strs_A;
-	vector<string> added_strs_B;
-
-	string A = "_A_[]";
-
-	string B = "_B_[]";
-
-	string new_A;
-
-	string new_B;
-
-	for (int i = 0; i < k + 1; i++)
-	{
-		string s = to_string(i);
-
-		new_A = A;
-		new_B = B;
-
-		new_A.insert(4, s);
-		new_B.insert(4, s);
-
-		added_strs_A.push_back(new_A);
-
-		added_strs_B.push_back(new_B);
-	}
-
-	//Detecting G, F, U, R signs:
-
-	vector<int> positions_all;
-
-	vector<int> positions_G_1;
-
-	string sub_str = "G(";
-
-	positions_G_1 = substrPosition(new_P, sub_str);
-
-	if (positions_G_1.size() > 0)
-	{
-		positions_all.insert(positions_all.begin(), positions_G_1.begin(), positions_G_1.end());
-	}
-
-	vector<int> positions_G_2;
-
-	sub_str = "G~";
-
-	positions_G_2 = substrPosition(new_P, sub_str);
-
-	if (positions_G_2.size() > 0)
-	{
-		positions_all.insert(positions_all.begin(), positions_G_2.begin(), positions_G_2.end());
-	}
-
-	vector<int> positions_F_1;
-
-	sub_str = "F(";
-
-	positions_F_1 = substrPosition(new_P, sub_str);
-
-	if (positions_F_1.size() > 0)
-	{
-		positions_all.insert(positions_all.begin(), positions_F_1.begin(), positions_F_1.end());
-	}
-
-	vector<int> positions_F_2;
-
-	sub_str = "F~";
-
-	positions_F_2 = substrPosition(new_P, sub_str);
-
-	if (positions_F_2.size() > 0)
-	{
-		positions_all.insert(positions_all.begin(), positions_F_2.begin(), positions_F_2.end());
-	}
-
-	vector<int> positions_U_1;
-
-	sub_str = "]U";
-
-	positions_U_1 = substrPosition(new_P, sub_str);
-
-	if (positions_U_1.size() > 0)
-	{
-		positions_all.insert(positions_all.begin(), positions_U_1.begin(), positions_U_1.end());
-	}
-
-	vector<int> positions_U_2;
-
-	sub_str = ")U";
-
-	positions_U_2 = substrPosition(new_P, sub_str);
-
-	if (positions_U_2.size() > 0)
-	{
-		positions_all.insert(positions_all.begin(), positions_U_2.begin(), positions_U_2.end());
-	}
-
-	vector<int> positions_R_1;
-
-	sub_str = "]R";
-
-	positions_R_1 = substrPosition(new_P, sub_str);
-
-	if (positions_R_1.size() > 0)
-	{
-		positions_all.insert(positions_all.begin(), positions_R_1.begin(), positions_R_1.end());
-	}
-
-	vector<int> positions_R_2;
-
-	sub_str = ")R";
-
-	positions_R_2 = substrPosition(new_P, sub_str);
-
-	if (positions_R_2.size() > 0)
-	{
-		positions_all.insert(positions_all.begin(), positions_R_2.begin(), positions_R_2.end());
-	}
-
-	string final_P;
-	vector<int> positions;
-
-	if (positions_all.size() > 0)
-	{
-		sort(positions_all.begin(), positions_all.end());
-
-		//cout << "Sorted \n";
-		for (auto x: positions_all)
-		{
-			if (count(positions_G_1.begin(), positions_G_1.end(), x))
-			{
-				final_P += G_unroller(k, x, new_P, added_strs_A, added_strs_B);
-			}
-			else if (count(positions_G_2.begin(), positions_G_2.end(), x))
-			{
-				final_P += G_unroller(k, x, new_P, added_strs_A, added_strs_B);
-			}
-			else if (count(positions_F_1.begin(), positions_F_1.end(), x))
-			{
-				final_P += F_unroller(k, x, new_P, added_strs_A, added_strs_B);
-			}
-			else if (count(positions_F_2.begin(), positions_F_2.end(), x))
-			{
-				final_P += F_unroller(k, x, new_P, added_strs_A, added_strs_B);
-			}
-			else if (count(positions_U_1.begin(), positions_U_1.end(), x))
-			{
-				sub_str = "(";
-
-				positions = substrPosition(new_P, sub_str);
-
-				int minimum = new_P.length();
-				int positions_1;
-
-				for (int i = 0; i < positions.size(); i++)
-				{
-					if ((x - positions[i]) > 0 && (x - positions[i]) < minimum)
-					{
-						minimum = x - positions[i];
-
-						positions_1 = positions[i];
-					}
-				}
-
-				string atom_A;
-				string atom_B;
-
-				for (int i = positions_1 + 1; i < x + 1; i++)
-				{
-					atom_A += new_P[i];
-				}
-
-				sub_str = ")";
-
-				positions = substrPosition(new_P, sub_str);
-
-				minimum = new_P.length();
-				int positions_2;
-
-				for (int i = 0; i < positions.size(); i++)
-				{
-					if ((positions[i] - x) > 0 && (positions[i] - x) < minimum)
-					{
-						minimum = positions[i] - x;
-
-						positions_2 = positions[i];
-					}
-				}
-
-				for (int i = x + 2; i < positions_2; i++)
-				{
-					atom_B += new_P[i];
-				}
-
-				string output_U = until_unroller(atom_A, atom_B, k, added_strs_A, added_strs_B, status);
-
-				final_P += output_U;
-
-				if (new_P[positions_2 + 1] == '/')
-				{
-					final_P.insert(0, "(");
-
-					final_P += ")";
-
-					final_P += "/\\";
-				}
-				else if (new_P[positions_2 + 1] == '\\')
-				{
-					final_P.insert(0, "(");
-
-					final_P += ")";
-
-					final_P += "\\/";
-				}
-			}
-			else if (count(positions_U_2.begin(), positions_U_2.end(), x))
-			{
-				sub_str = "(";
-
-				positions = substrPosition(new_P, sub_str);
-
-				int minimum = new_P.length();
-				int positions_1;
-
-				for (int i = 0; i < positions.size(); i++)
-				{
-					if ((x - positions[i]) > 0 && (x - positions[i]) < minimum)
-					{
-						minimum = x - positions[i];
-
-						positions_1 = positions[i];
-					}
-				}
-
-				string atom_A;
-				string atom_B;
-
-				for (int i = positions_1 + 1; i < x + 1; i++)
-				{
-					atom_A += new_P[i];
-				}
-
-				sub_str = ")";
-
-				positions = substrPosition(new_P, sub_str);
-
-				minimum = new_P.length();
-				int positions_2;
-
-				for (int i = 0; i < positions.size(); i++)
-				{
-					if ((positions[i] - x) > 0 && (positions[i] - x) < minimum)
-					{
-						minimum = positions[i] - x;
-
-						positions_2 = positions[i];
-					}
-				}
-
-				for (int i = x + 2; i < positions_2; i++)
-				{
-					atom_B += new_P[i];
-				}
-
-				string output_U = until_unroller(atom_A, atom_B, k, added_strs_A, added_strs_B, status);
-				final_P += output_U;
-				if (new_P[positions_2 + 1] == '/')
-				{
-					final_P.insert(0, "(");
-					final_P += ")";
-					final_P += "/\\";
-				}
-				else if (new_P[positions_2 + 1] == '\\')
-				{
-					final_P.insert(0, "(");
-					final_P += ")";
-					final_P += "\\/";
-				}
-			}
-			else if (count(positions_R_1.begin(), positions_R_1.end(), x))
-			{
-				sub_str = "(";
-				positions = substrPosition(new_P, sub_str);
-				int minimum = new_P.length();
-				int positions_1;
-				for (int i = 0; i < positions.size(); i++)
-				{
-					if ((x - positions[i]) > 0 && (x - positions[i]) < minimum)
-					{
-						minimum = x - positions[i];
-						positions_1 = positions[i];
-					}
-				}
-
-				string atom_A;
-				string atom_B;
-				for (int i = positions_1 + 1; i < x + 1; i++)
-				{
-					atom_A += new_P[i];
-				}
-
-				sub_str = ")";
-				positions = substrPosition(new_P, sub_str);
-				minimum = new_P.length();
-				int positions_2;
-				for (int i = 0; i < positions.size(); i++)
-				{
-					if ((positions[i] - x) > 0 && (positions[i] - x) < minimum)
-					{
-						minimum = positions[i] - x;
-						positions_2 = positions[i];
-					}
-				}
-
-				for (int i = x + 2; i < positions_2; i++)
-				{
-					atom_B += new_P[i];
-				}
-
-				string output_R = release_unroller(atom_A, atom_B, k, added_strs_A, added_strs_B, status);
-				final_P += output_R;
-				if (new_P[positions_2 + 1] == '/')
-				{
-					final_P.insert(0, "(");
-					final_P += ")";
-					final_P += "/\\";
-				}
-				else if (new_P[positions_2 + 1] == '\\')
-				{
-					final_P.insert(0, "(");
-					final_P += ")";
-					final_P += "\\/";
-				}
-			}
-			else if (count(positions_R_2.begin(), positions_R_2.end(), x))
-			{
-				sub_str = "(";
-				positions = substrPosition(new_P, sub_str);
-				int minimum = new_P.length();
-				int positions_1;
-				for (int i = 0; i < positions.size(); i++)
-				{
-					if ((x - positions[i]) > 0 && (x - positions[i]) < minimum)
-					{
-						minimum = x - positions[i];
-						positions_1 = positions[i];
-					}
-				}
-
-				string atom_A;
-				string atom_B;
-				for (int i = positions_1 + 1; i < x + 1; i++)
-				{
-					atom_A += new_P[i];
-				}
-
-				sub_str = ")";
-				positions = substrPosition(new_P, sub_str);
-				minimum = new_P.length();
-				int positions_2;
-				for (int i = 0; i < positions.size(); i++)
-				{
-					if ((positions[i] - x) > 0 && (positions[i] - x) < minimum)
-					{
-						minimum = positions[i] - x;
-						positions_2 = positions[i];
-					}
-				}
-
-				for (int i = x + 2; i < positions_2; i++)
-				{
-					atom_B += new_P[i];
-				}
-
-				string output_R = release_unroller(atom_A, atom_B, k, added_strs_A, added_strs_B, status);
-				final_P += output_R;
-				if (new_P[positions_2 + 1] == '/')
-				{
-					final_P.insert(0, "(");
-					final_P += ")";
-					final_P += "/\\";
-				}
-				else if (new_P[positions_2 + 1] == '\\')
-				{
-					final_P.insert(0, "(");
-					final_P += ")";
-					final_P += "\\/";
-				}
-			}
-		}
-
-		int final_len = final_P.length();
-		for (int i = 0; i < final_len; i++)
-		{
-			string s = "[A]";
-			string::size_type x = final_P.find(s);
-			if (x != string::npos)
-				final_P.erase(x, s.length());
-			s = "[B]";
-			x = final_P.find(s);
-			if (x != string::npos)
-				final_P.erase(x, s.length());
+string attach_time(string expr, int t){
+	bool isAP = false;
+	string model_name;
+	string suffix = "_[" + to_string(t) +"]";
+	string timed_formula;
+	for (int i = 0 ; i < expr.length() ; i++){
+		switch(expr[i]){
+			case ('['):
+				model_name = (expr[i+1]);
+				cout << model_name << endl;
+				timed_formula += "_" + model_name + suffix;
+				i = i+2; // skip the next 2 charss
+			break;
+			default:
+				timed_formula += expr[i];
+			break;
 		}
 	}
-
-	return final_P;
+	return timed_formula;
 }
+
+// recursive functions
+string rec_F(int k, string expr){
+	string unrolled_formula;
+	for (int i = 0 ; i < k ; i++){
+		unrolled_formula += attach_time(expr, i) + "\\/" + attach_time(expr, i+1);
+	}
+	return unrolled_formula;
+}
+string rec_G(int k, string expr){
+	string unrolled_formula;
+	for (int i = 0 ; i < k ; i++){
+		unrolled_formula += attach_time(expr, i) + "/\\" + attach_time(expr, i+1);
+	}
+	return unrolled_formula;
+}
+string rec_U(int k, string phi1, string phi2, string sem){
+	string unrolled_formula;
+	string parans(k, ')');
+	for (int i = 0 ; i < k ; i++){
+		unrolled_formula += attach_time(phi2, i) + "\\/ (" + attach_time(phi1, i) + "/\\";
+		if (i == (k-1)){
+			if (sem == "pes"){
+				unrolled_formula += attach_time(phi2, k) + parans;
+			}
+			else{
+				unrolled_formula += attach_time(phi1, k) + parans;
+			}
+		}
+	}
+	return unrolled_formula;
+}
+string rec_R(int k, string phi1, string phi2, string sem){
+	string unrolled_formula;
+	string parans(k, ')');
+	for (int i = 0 ; i < k ; i++){
+		unrolled_formula += attach_time(phi2, i) + "/\\ (" + attach_time(phi1, i) + "\\/";
+		if (i == (k-1)){
+			if (sem == "pes"){
+				unrolled_formula += attach_time(phi1, k) + parans;
+			}
+			else{
+				unrolled_formula += attach_time(phi2, k) + parans;
+			}
+		}
+	}
+	return unrolled_formula;
+}
+
+
+// THH: edit here
+string formula_unroller(int k, string P_file, string sem)
+{
+
+	string prop;
+	std::ifstream file(P_file);
+	while (!file.eof())
+	{
+		std::string line;
+			while (std::getline(file, line)) {
+			for (int i = 0 ; i < line.length() ; i++){
+				prop += line[i];
+			}
+		}
+	}
+
+	cout << "original formula:" << endl;
+	cout << prop << endl;
+
+
+	int L_ptr = 0;
+	int R_ptr = 0;
+	string phi1;
+	string phi2;
+	for (int i = 0; i < prop.length(); i++){
+		switch (prop[i]) {
+			case ('F'):
+				cout << "eventually" << endl;
+			 	L_ptr = i+1;
+				R_ptr = prop.find_last_of(')');
+				cout << L_ptr << endl;
+				cout << rec_F(k, prop.substr(L_ptr, R_ptr)) << endl;
+			break;
+			case ('G'):
+				cout << "always" << endl;
+				L_ptr = prop.find('(');
+				R_ptr = prop.find_last_of(')');
+			break;
+			case ('U'):
+				phi1 = prop.substr(0, i-1);
+				phi2 = prop.substr(i+1, prop.length());
+				cout << "until" << endl;
+				// cout << phi1 << endl;
+				// cout << phi2 << endl;
+				cout << rec_U(k, phi1, phi2, "-pes");
+			break;
+			case ('R'):
+			phi1 = prop.substr(0, i-1);
+			phi2 = prop.substr(i+1, prop.length());
+			cout << "release" << endl;
+			cout << rec_R(k, phi1, phi2, "-pes");
+			break;
+		}
+	}
+	// int L_pointer = prop.find('(');
+	// int R_pointer = prop.find_last_of(')');
+	// cout << L_ptr << endl;
+	// cout << R_ptr << endl;
+	return prop;
+}
+
+
+
+
+
+
+
 
 // Lilly & Tess
 void write_quantifiers (vector<char> const &quantifier, map<string, int> const &var_map, ofstream &my_file) {
