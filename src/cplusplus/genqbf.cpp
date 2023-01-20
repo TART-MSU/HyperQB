@@ -1325,8 +1325,11 @@ string attach_time(string expr, int t){
 		switch(expr[i]){
 			case ('['):
 				model_name = (expr[i+1]);
+				// model_name.assign(expr[i+1], expr[i+1]);
+				// cout << "???" << endl;
 				// cout << model_name << endl;
 				timed_formula += "_" + model_name + suffix;
+				// timed_formula +=  suffix;
 				i = i+2; // skip the next 2 charss
 			break;
 			default:
@@ -1334,12 +1337,15 @@ string attach_time(string expr, int t){
 			break;
 		}
 	}
+	// cout << suffix << endl;
+	// cout << timed_formula << endl;
 	return timed_formula;
 }
 
 // recursive functions
 string rec_F(int k, string expr, string sem){
 	string unrolled_formula = "(";
+	// cout << expr;
 	for (int i = 0 ; i < k ; i++){
 		unrolled_formula += attach_time(expr, i) + "\\/";
 		if (i == (k-1)){
@@ -1403,7 +1409,6 @@ string rec_R(int k, string phi1, string phi2, string sem){
 // THH: edit here
 string formula_unroller(int k, string P_file, string sem)
 {
-
 	string prop;
 	std::ifstream file(P_file);
 	while (!file.eof())
@@ -1415,9 +1420,11 @@ string formula_unroller(int k, string P_file, string sem)
 			}
 		}
 	}
-	prop = prop.substr( prop.find_last_of('.')+1, prop.length());
-	cout << "original formula: " << prop << endl;
 	// cout << prop << endl;
+	// prop = prop.substr( prop.find_last_of('.')+1, prop.length());
+	// cout << "original formula: " << prop << endl;
+	// cout << prop << endl;
+
 	int L_ptr = 0;
 	int R_ptr = 0;
 	string phi1;
@@ -1425,7 +1432,7 @@ string formula_unroller(int k, string P_file, string sem)
 	for (int i = 0; i < prop.length(); i++){
 		switch (prop[i]) {
 			case ('F'):
-				// cout << "eventually" << endl;
+				cout << "eventually" << endl;
 			 	L_ptr = i+1;
 				R_ptr = prop.find_last_of(')');
 				prop = rec_F(k, prop.substr(L_ptr, R_ptr), sem);
