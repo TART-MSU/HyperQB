@@ -1415,7 +1415,8 @@ string formula_unroller(int k, string P_file, string sem)
 			}
 		}
 	}
-	// cout << "original formula:" << endl;
+	prop = prop.substr( prop.find_last_of('.')+1, prop.length());
+	cout << "original formula: " << prop << endl;
 	// cout << prop << endl;
 	int L_ptr = 0;
 	int R_ptr = 0;
@@ -1728,7 +1729,8 @@ int main(int argc, char **argv)
 		counter++;
 	}
 
-	// outdata.open("build_today/output.txt");
+
+
 	clock_t start, end;
 	double time_taken;
 
@@ -1791,8 +1793,8 @@ int main(int argc, char **argv)
 	outdata.close();
 
 
-	infix_formulas.erase(std::remove(infix_formulas.begin(), infix_formulas.end(), '\n'), infix_formulas.cend());
-	infix_formulas.erase(std::remove(infix_formulas.begin(), infix_formulas.end(), ' '), infix_formulas.cend());
+	// infix_formulas.erase(std::remove(infix_formulas.begin(), infix_formulas.end(), '\n'), infix_formulas.cend());
+	// infix_formulas.erase(std::remove(infix_formulas.begin(), infix_formulas.end(), ' '), infix_formulas.cend());
 
 	map<string, int> var_map;
 	stack<string> stack;
@@ -1809,7 +1811,7 @@ int main(int argc, char **argv)
 
 	// string QCIR_out = "test.qcir";
 
-	string QCIR_out = "build_today/HQ.qcir";
+	string QCIR_out = "build_today/HQ-cpp.qcir";
 	start = clock();
 	InfixToQCIR(stack, infix_formulas, var_map, quantifier, QCIR_out);
 	end = clock();
@@ -1820,6 +1822,4 @@ int main(int argc, char **argv)
 	// cout << "\nConversion complete\n" << endl;
 	// cout << "tiiiiiiiiiiiiiime" << endl;
 	return 0;
-
-
 }
