@@ -1851,7 +1851,7 @@ int main(int argc, char **argv)
 
 	cout << quants << endl;
 	regex re("([A-Z].)");
-	cout << regex_replace(quants, re, "") << endl;
+	// cout << regex_replace(quants, re, "") << endl;
 
 
 
@@ -1864,11 +1864,11 @@ int main(int argc, char **argv)
 				quantifier.push_back('A');
 		}
 	}
-	// for(int i=0; i < quantifier.size(); i++){
-  //  std::cout << quantifier.at(i) << ' ';
- 	// }
+	for(int i=0; i < quantifier.size(); i++){
+   std::cout << quantifier.at(i) << ' ';
+ 	}
 	prop = prop.substr(last_dot+1, prop.length());
-	cout << prop << endl;
+	// cout << prop << endl;
 
 
 
