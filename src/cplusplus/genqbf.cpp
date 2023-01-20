@@ -1325,7 +1325,7 @@ string attach_time(string expr, int t){
 		switch(expr[i]){
 			case ('['):
 				model_name = (expr[i+1]);
-				cout << model_name << endl;
+				// cout << model_name << endl;
 				timed_formula += "_" + model_name + suffix;
 				i = i+2; // skip the next 2 charss
 			break;
@@ -1338,17 +1338,31 @@ string attach_time(string expr, int t){
 }
 
 // recursive functions
-string rec_F(int k, string expr){
-	string unrolled_formula;
+string rec_F(int k, string expr, string sem){
+	string unrolled_formula = "(";
 	for (int i = 0 ; i < k ; i++){
-		unrolled_formula += attach_time(expr, i) + "\\/" + attach_time(expr, i+1);
+		unrolled_formula += attach_time(expr, i) + "\\/";
+		if (i == (k-1)){
+			if (sem == "-pes"){
+				unrolled_formula += attach_time(expr, i) + ")";
+			}
+			else{
+				unrolled_formula += attach_time(expr, i) + ")"; //add a FALSE
+			}
+		}
 	}
 	return unrolled_formula;
 }
-string rec_G(int k, string expr){
-	string unrolled_formula;
-	for (int i = 0 ; i < k ; i++){
-		unrolled_formula += attach_time(expr, i) + "/\\" + attach_time(expr, i+1);
+string rec_G(int k, string expr, string sem){
+	string unrolled_formula = "(";
+	for (int i = 0 ; i < k-1 ; i++){
+		unrolled_formula += attach_time(expr, i) + "/\\";
+		if (sem == "-pes"){
+			unrolled_formula += attach_time(expr, i) + ")"; //add a TRUE
+		}
+		else{
+			unrolled_formula += attach_time(expr, i) + ")";
+		}
 	}
 	return unrolled_formula;
 }
@@ -1358,7 +1372,7 @@ string rec_U(int k, string phi1, string phi2, string sem){
 	for (int i = 0 ; i < k ; i++){
 		unrolled_formula += attach_time(phi2, i) + "\\/ (" + attach_time(phi1, i) + "/\\";
 		if (i == (k-1)){
-			if (sem == "pes"){
+			if (sem == "-pes"){
 				unrolled_formula += attach_time(phi2, k) + parans;
 			}
 			else{
@@ -1374,7 +1388,7 @@ string rec_R(int k, string phi1, string phi2, string sem){
 	for (int i = 0 ; i < k ; i++){
 		unrolled_formula += attach_time(phi2, i) + "/\\ (" + attach_time(phi1, i) + "\\/";
 		if (i == (k-1)){
-			if (sem == "pes"){
+			if (sem == "-pes"){
 				unrolled_formula += attach_time(phi1, k) + parans;
 			}
 			else{
@@ -1401,11 +1415,8 @@ string formula_unroller(int k, string P_file, string sem)
 			}
 		}
 	}
-
-	cout << "original formula:" << endl;
-	cout << prop << endl;
-
-
+	// cout << "original formula:" << endl;
+	// cout << prop << endl;
 	int L_ptr = 0;
 	int R_ptr = 0;
 	string phi1;
@@ -1413,30 +1424,36 @@ string formula_unroller(int k, string P_file, string sem)
 	for (int i = 0; i < prop.length(); i++){
 		switch (prop[i]) {
 			case ('F'):
-				cout << "eventually" << endl;
+				// cout << "eventually" << endl;
 			 	L_ptr = i+1;
 				R_ptr = prop.find_last_of(')');
-				cout << L_ptr << endl;
-				cout << rec_F(k, prop.substr(L_ptr, R_ptr)) << endl;
+				prop = rec_F(k, prop.substr(L_ptr, R_ptr), sem);
+				// cout << L_ptr << endl;
+				// cout << rec_F(k, prop.substr(L_ptr, R_ptr)) << endl;
 			break;
 			case ('G'):
-				cout << "always" << endl;
-				L_ptr = prop.find('(');
+				// cout << "always" << endl;
+				L_ptr = i+1;
 				R_ptr = prop.find_last_of(')');
+				prop = rec_G(k, prop.substr(L_ptr, R_ptr), sem);
+				// cout << L_ptr << endl;
+				// cout << rec_G(k, prop.substr(L_ptr, R_ptr)) << endl;
 			break;
 			case ('U'):
 				phi1 = prop.substr(0, i-1);
 				phi2 = prop.substr(i+1, prop.length());
-				cout << "until" << endl;
+				prop = rec_U(k, phi1, phi2, sem);
+				// cout << "until" << endl;
 				// cout << phi1 << endl;
 				// cout << phi2 << endl;
-				cout << rec_U(k, phi1, phi2, "-pes");
+				// cout << rec_U(k, phi1, phi2, "-pes");
 			break;
 			case ('R'):
 			phi1 = prop.substr(0, i-1);
 			phi2 = prop.substr(i+1, prop.length());
-			cout << "release" << endl;
-			cout << rec_R(k, phi1, phi2, "-pes");
+			prop = rec_R(k, phi1, phi2, sem);
+			// cout << "release" << endl;
+			// cout << rec_R(k, phi1, phi2, "-pes");
 			break;
 		}
 	}
@@ -1748,23 +1765,34 @@ int main(int argc, char **argv)
 		cout << "Time for unrolling formula : " << fixed
 				 << time_taken << setprecision(5);
 		cout << " sec " << endl;
-	unrolled_formula = iff_replacer(unrolled_formula);
-	unrolled_formula = if_replacer(unrolled_formula);
-	unrolled_formula = negation_remover(unrolled_formula);
+	// unrolled_formula = iff_replacer(unrolled_formula);
+	// unrolled_formula = if_replacer(unrolled_formula);
+	// unrolled_formula = negation_remover(unrolled_formula);
 	unrolled_formula = "(" + unrolled_formula + ")"; // warning: here has a hidden ,\\
 
 
 
 	infix_formulas = infix_formulas+unrolled_formula;
-	// infix_formulas = infix_formulas+"TRUE";
 
+	// infix_formulas = infix_formulas+"~a_A_[0]";
+
+
+
+	// ((~a_A_[0]\/~a_B_[0])\/(~a_A_[1]\/~a_B_[1])(~a_A_[1]\/~a_B_[1])\/(~a_A_[2]\/~a_B_[2]))
+	// infix_formulas = infix_formulas+"TRUE";
 	// infix_formulas = "((~PC_1_A_[0]/\\PC_0_A_[0])/\\~a_B_[0])";
 	// cout << infix_formulas << endl;
+
+	// infix_formulas = "(~a_A_[0]/\\b_A_[0])/\\(((~a_A_[0]/\\b_A_[0]))\\/((~a_A_[1]/\\b_A_[1])))/\\(((~a_A_[1]/\\b_A_[1]))\\/((~a_A_[2]/\\b_A_[2])))/\\(~a_B_[0]/\\b_B_[0])/\\(((~a_B_[0]/\\b_B_[0]))\\/((~a_B_[1]/\\b_B_[1])))/\\(((~a_B_[1]/\\b_B_[1]))\\/((~a_B_[2]/\\b_B_[2])))/\\TRUE";
+
 
 	outdata.open("build_today/output.txt");
 	outdata << infix_formulas << endl;
 	outdata.close();
 
+
+	infix_formulas.erase(std::remove(infix_formulas.begin(), infix_formulas.end(), '\n'), infix_formulas.cend());
+	infix_formulas.erase(std::remove(infix_formulas.begin(), infix_formulas.end(), ' '), infix_formulas.cend());
 
 	map<string, int> var_map;
 	stack<string> stack;
