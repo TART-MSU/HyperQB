@@ -185,6 +185,7 @@ echo "generating QBF BMC..."
 
 
 #old genqbf
+QCIR_OUT=${OUTFOLDER}HQ-ocaml.qcir
 echo "\n(ocaml genqbf)"
 GENQBF=exec/genqbf
 time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
@@ -193,11 +194,10 @@ time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
 OUTCOME=$(grep "r " ${QUABS_OUT})
 echo "\nQuABs outcome: "${OUTCOME}
 
-rm ${QCIR_OUT}
+# rm ${QCIR_OUT}
 rm ${QUABS_OUT}
 
 # new_genqbf
-
 
 # echo "\n(c++ genqbf)"
 # GENQBF=src/cplusplus/old_genqbf
@@ -209,9 +209,12 @@ rm ${QUABS_OUT}
 # rm ${QCIR_OUT}
 # rm ${QUABS_OUT}
 
+
+# we use the original formula!! ${FORMULA} instead of ${P}
+QCIR_OUT=${OUTFOLDER}HQ-cpp.qcir
 echo "\n(upgraded c++ genqbf)"
 GENQBF=src/cplusplus/genqbf
-time ${GENQBF} ${k} ${I} ${R} ${J} ${S} ${SEM} demo/mini_P.hq
+time ${GENQBF} ${k} ${I} ${R} ${J} ${S} ${SEM} ${FORMULA}
 echo "\nsolving QBF..."
 time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
 OUTCOME=$(grep "r " ${QUABS_OUT})
@@ -228,27 +231,17 @@ echo "\nQuABs outcome: "${OUTCOME}
 # echo "\nQuABs outcome: "${OUTCOME}
 
 
+## THHTODO: update these two scripts
+# echo "\n=== Get Nice-formatted Output if output is SAT ==="
+# if [ ! -f "$QCIR_OUT" ]; then
+#     echo "$QCIR_OUT does not exists"
+#     exit 1
+# fi
 
-echo "\n=== Get Nice-formatted Output if output is SAT ==="
+# echo "parsing into readable format..."
+# ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+# ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
 
-if [ ! -f "$QCIR_OUT" ]; then
-    echo "$QCIR_OUT does not exists"
-    exit 1
-fi
-
-
-echo "parsing into readable format..."
-# # echo "---Counterexample Mapping---"
-# javac ${MAP}.java
-# java ${MAP}.java ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-
-# javac ${PARSE_BOOL}.java
-# java ${PARSE_BOOL}.java ${MAP_OUT2} ${PARSE_OUT}
-${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
-# echo  "(under condtruction...)"
-# python3 ${PARSE_OUTPUT} ${MAP_OUT2} ${PARSE_OUT} ${k}
-# #by time
 
 echo "\n------(END HyperQube)------\n"
 
@@ -265,3 +258,13 @@ echo "\n------(END HyperQube)------\n"
 # find . -name "*.qcir"   -delete
 # find . -name "*.cex"    -delete
 # make clean
+
+# # echo "---Counterexample Mapping---"
+# javac ${MAP}.java
+# java ${MAP}.java ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+
+# javac ${PARSE_BOOL}.java
+# java ${PARSE_BOOL}.java ${MAP_OUT2} ${PARSE_OUT}
+# echo  "(under condtruction...)"
+# python3 ${PARSE_OUTPUT} ${MAP_OUT2} ${PARSE_OUT} ${k}
+# #by time
