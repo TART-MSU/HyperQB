@@ -1,1 +1,1 @@
-F(~a[A]\/~a[B])
+exists A. exists B. forall C. exists D. F(~a[A]\/~a[B])
