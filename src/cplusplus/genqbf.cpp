@@ -1760,21 +1760,111 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
 
 
 
+map<string, int> variable_map;
+
+// void build_AND(string subform){
+//
+//
+// }
 
 
 
 
+// THH try infix to QCIR
+string subformulas(string formula){
 
+	string LEFT;
+	string RIGHT;
+	string LR;
+	int L_ptr = formula.find_first_of("(");;
+	int R_ptr = formula.find_last_of(")");
+	// formula = formula.substr(L_ptr+1, R_ptr-1);
+	// cout << L_ptr << endl;
+	// cout << R_ptr << endl;
+	// cout << "original: " << formula << endl;
+	// L_ptr = formula.find_first_of("(");
+	// R_ptr = formula.find_last_of(")");
 
+	if ((L_ptr == -1) && (R_ptr == -1)) { // base case
+			cout << formula << endl;
+			if (formula.find("/\\") != -1){
+				cout << formula <<  "  << build AND gate" << endl;
+				LEFT = formula.substr(0, formula.find("/\\"));
+				RIGHT = formula.substr(formula.find("/\\")+2, formula.length());
+				cout << LEFT << endl;
+				cout << RIGHT << endl;
+				subformulas(LEFT);
+				subformulas(RIGHT);
+			}
+			else if ( formula.find("\\/") != -1){
+				cout << formula <<  "  << build OR gate" << endl;
+				LEFT = formula.substr(0, formula.find("\\/"));
+				RIGHT = formula.substr(formula.find("\\/")+2, formula.length());
+				cout << LEFT << endl;
+				cout << RIGHT << endl;
+				subformulas(LEFT);
+				subformulas(RIGHT);
+			}
+			else{
+				cout << formula <<  "  << single AP" << endl;
+			}
+	}
+	else if (formula[0] == '~'){
+		if (formula.find(")\\/(") == -1){
+			cout << formula << "  << build NOT gate" << endl;
+			return "DONE.";
+		}
+		else{
+			LEFT = formula.substr(0, formula.find(")\\/(")+1); // but negated
+			RIGHT = formula.substr(formula.find(")\\/(")+3, formula.length());
+			cout << LEFT << endl;
+			cout << RIGHT << endl;
+			subformulas(LEFT);
+			subformulas(RIGHT);
+		}
+		// cout << formula.find(")\\/(") << endl;
+	}
+	else if ((R_ptr < L_ptr) || formula[0] == '~'){ // find if split needed
+			if ( formula.find(")/\\(") || (formula.find(")\\/("))){
+					LEFT = formula.substr(0, R_ptr);
+					RIGHT = formula.substr(L_ptr+1, formula.length());
+					// cout << "LEFT: " << LEFT << endl;
+					// cout << "RIGHT: " << RIGHT << endl;
+			}
+			else if ( formula.find(")/\\~(") || formula.find(")\\/~(")) {
+					LEFT = formula.substr(0, R_ptr);
+					RIGHT = formula.substr(L_ptr+1, formula.length());
+					// cout << "TODO: leading negation" << endl;
+					// cout << "LEFT: " << LEFT << endl;
+					// cout << "RIGHT: " << RIGHT << endl;
+			}
+			else{
+				cout << "error, wrong formulation, perhaps parantheses. " << endl;
+			}
+			cout << LEFT << endl;
+			cout << RIGHT << endl;
+			subformulas(LEFT);
+			subformulas(RIGHT);
+	}
+	else if ((L_ptr == 0) && !(R_ptr == formula.length()-1)){ // inballance
+			cout << "error: inbalance" << endl;
+	}
+	else if (!(L_ptr == 0) && (R_ptr == formula.length()-1)){ // inballance
+			cout << "error: inbalance" << endl;
+			cout << formula << endl;
+	}
+	else {
+		cout << "keep going!! " << endl;
+		cout << formula << endl;
+		formula = formula.substr(L_ptr+1, R_ptr-1);
+		subformulas(formula);
+	}
 
+	// cout << formula << endl;
+	return "NONE.";
+}
 
-
-
-
-
-
-
-
+string test_formula = "~(a/\\b)\\/(~c\\/d)";
 
 
 
@@ -1800,8 +1890,6 @@ int main(int argc, char **argv)
 		final_check += variable[variable.length() - 1];
 		counter++;
 	}
-
-
 
 	clock_t start, end;
 	double time_taken;
@@ -1849,7 +1937,7 @@ int main(int argc, char **argv)
 	int last_dot = prop.find_last_of('.');
 	string quants = prop.substr(0, last_dot+1);
 
-	cout << quants << endl;
+	// cout << quants << endl;
 	regex re("([A-Z].)");
 	// cout << regex_replace(quants, re, "") << endl;
 
@@ -1864,9 +1952,9 @@ int main(int argc, char **argv)
 				quantifier.push_back('A');
 		}
 	}
-	for(int i=0; i < quantifier.size(); i++){
-   std::cout << quantifier.at(i) << ' ';
- 	}
+	// for(int i=0; i < quantifier.size(); i++){
+  //  std::cout << quantifier.at(i) << ' ';
+ 	// }
 	prop = prop.substr(last_dot+1, prop.length());
 	// cout << prop << endl;
 
@@ -1884,18 +1972,27 @@ int main(int argc, char **argv)
 	unrolled_formula = "(" + unrolled_formula + ")"; // warning: here has a hidden ,\\
 
 
+	// infix_formulas = "(((some_A_[0]/\\~some_B_[0])\\/(some_A_[0]/\\~some_B_[0]))/\\some_A[0])";
+	// infix_formulas = "(a /\\ b) /\\ (~c \\/ d)";
+	// infix_formulas = "((some_A_[0]/\\~some_B_[0])\\/(some_A_[0]/\\~some_B_[0]))";
 
 	infix_formulas = infix_formulas+unrolled_formula;
 
+	// cout << infix_formulas << endl;
+
+
+	// string test = subformulas(infix_formulas);
+	string test = subformulas(test_formula);
+
+
+	// cout << L_ptr << endl;
+	// cout << R_ptr << endl;
+	// cout << infix_formulas.substr(L_ptr, R_ptr) << endl;
 
 
 	outdata.open("build_today/output.txt");
 	outdata << infix_formulas << endl;
 	outdata.close();
-
-
-	// infix_formulas.erase(std::remove(infix_formulas.begin(), infix_formulas.end(), '\n'), infix_formulas.cend());
-	// infix_formulas.erase(std::remove(infix_formulas.begin(), infix_formulas.end(), ' '), infix_formulas.cend());
 
 	map<string, int> var_map;
 	stack<string> stack;
@@ -1913,9 +2010,12 @@ int main(int argc, char **argv)
 
 	// string QCIR_out = "test.qcir";
 
-	// string QCIR_out = "build_today/HQ-cpp.qcir";
+	string QCIR_out = "build_today/HQ-cpp.qcir";
 
-	string QCIR_out = "test.qcir";
+
+
+
+	// string QCIR_out = "test.qcir";
 	start = clock();
 	InfixToQCIR(stack, infix_formulas, var_map, quantifier, QCIR_out, gate_map);
 	end = clock();
