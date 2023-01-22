@@ -15,1160 +15,6 @@ using namespace std;
 
 map<pair<int, int>, int> gate_map;
 
-//The function for finding indexes of a text
-vector<int> substrPosition(string str, string sub_str)
-{
-	bool flag = false;
-	vector<int> arr;
-	for (int i = 0; i < str.length(); i++)
-	{
-		if (str.substr(i, sub_str.length()) == sub_str)
-		{
-			arr.push_back(i);
-			flag = true;
-		}
-	}
-
-	return arr;
-}
-
-//The function that removes "~~" in our text
-string negation_remover(string input)
-{
-	for (int i = 0; i < input.length(); i++)
-	{
-		string s = "~~";
-		string::size_type x = input.find(s);
-		if (x != string::npos)
-			input.erase(x, s.length());
-	}
-	return input;
-}
-
-
-//The function for replacing -> existing in the output by the equal logical relations
-string if_replacer(string input)
-{
-	string sub_str;
-	int distance;
-	sub_str = "->";
-	vector<int> positions_if = substrPosition(input, sub_str);
-	sub_str = "(";
-	vector<int> positions_p1 = substrPosition(input, sub_str);
-	sub_str = ")";
-	vector<int> positions_p2 = substrPosition(input, sub_str);
-	int position = 0;
-	int added = 0;
-	for (int i = 0; i < positions_if.size(); i++)
-	{
-		distance = input.length();
-		for (int j = 0; j < positions_p1.size(); j++)
-		{
-			if ((positions_if[i] - positions_p1[j]) < distance && (positions_if[i] - positions_p1[j]) > 0)
-			{
-				position = positions_p1[j];
-				distance = positions_if[i] - positions_p1[j];
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		input.insert(positions_if[i] + added, "\\/");
-		input.insert(position + 1 + added, "~");
-		added += 3;
-	}
-
-	for (int i = 0; i < input.length(); i++)
-	{
-		string s = "->";
-		string::size_type x = input.find(s);
-		if (x != string::npos)
-			input.erase(x, s.length());
-	}
-
-	return input;
-}
-
-//The function for replacing < -> existing in the output by the equal logical relations
-string iff_replacer(string input)
-{
-	string sub_str;
-	int distance;
-	sub_str = "<->";
-	vector<int> positions_iff = substrPosition(input, sub_str);
-	sub_str = "(";
-	vector<int> positions_p1 = substrPosition(input, sub_str);
-	sub_str = ")";
-	vector<int> positions_p2 = substrPosition(input, sub_str);
-	int position1;
-	int position2;
-	int added;
-	string part1;
-	string part2;
-	string added_part;
-	added = 0;
-	for (int i = 0; i < positions_iff.size(); i++)
-	{
-		distance = input.length();
-		position1 = 0;
-		position2 = 0;
-		part1 = "";
-		part2 = "";
-		for (int j = 0; j < positions_p1.size(); j++)
-		{
-			if ((positions_iff[i] - positions_p1[j]) < distance && (positions_iff[i] - positions_p1[j]) > 0)
-			{
-				position1 = positions_p1[j];
-				distance = positions_iff[i] - positions_p1[j];
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		distance = input.length();
-		for (int j = 0; j < positions_p2.size(); j++)
-		{
-			if ((-positions_iff[i] + positions_p2[j]) > 0)
-			{
-				position2 = positions_p2[j];
-				break;
-			}
-		}
-
-		for (int j = position1 + added + 1; j < positions_iff[i] + added; j++)
-		{
-			part1 += input[j];
-			input[j] = '@';
-		}
-
-		for (int j = added + positions_iff[i] + 3; j < position2 + added; j++)
-		{
-			part2 += input[j];
-			input[j] = '@';
-		}
-
-		added_part += "(";
-		added_part += "~";
-		added_part += part1;
-		added_part += "\\/";
-		added_part += part2;
-		added_part += ")";
-		added_part += "/\\";
-		added_part += "(";
-		added_part += "~";
-		added_part += part2;
-		added_part += "\\/";
-		added_part += part1;
-		added_part += ")";
-		input.insert(position1 + added + 1, added_part);
-		added += added_part.length();
-		added_part = "";
-	}
-
-	for (int i = 0; i < input.length(); i++)
-	{
-		string s = "@";
-		string::size_type x = input.find(s);
-		if (x != string::npos)
-			input.erase(x, s.length());
-		s = "<->";
-		x = input.find(s);
-		if (x != string::npos)
-			input.erase(x, s.length());
-	}
-
-	return input;
-}
-
-//The function for until unroller
-string until_unroller(string modelA, string modelB, int k, vector<string> added_strs_A, vector<string> added_strs_B, string status)
-{
-	string final_return;
-	string new_A = modelA;
-	string new_B = modelB;
-	string paranthesis;
-	string P_nextgen;
-	string sub_str;
-	int counter;
-	vector<int> positions;
-	for (int t = 0; t < k + 1; t++)
-	{
-		int added_l = end(added_strs_A[t]) - begin(added_strs_A[t]);
-		P_nextgen = "";
-		if (t < k - 1)
-		{
-			P_nextgen += new_B;
-			P_nextgen += "\\/";
-			P_nextgen += "(";
-			P_nextgen += new_A;
-			P_nextgen += "/\\";
-			P_nextgen += "(";
-			paranthesis += "))";
-			sub_str = "/\\";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "\\/";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = ")";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "<->";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			final_return += P_nextgen;
-		}
-		else if (t == k - 1)
-		{
-			P_nextgen = "";
-			P_nextgen += new_B;
-			P_nextgen += "\\/";
-			P_nextgen += new_A;
-			P_nextgen += "/\\";
-			sub_str = "/\\";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "\\/";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = ")";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "<->";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			final_return += P_nextgen;
-		}
-		else if (t == k)
-		{
-			P_nextgen = "";
-			if (status == "-pes")
-			{
-				P_nextgen += new_B;
-			}
-			else if (status == "-opt")
-			{
-				P_nextgen += "(";
-				P_nextgen += new_A;
-				P_nextgen += "\\/";
-				P_nextgen += new_B;
-				P_nextgen += ")";
-			}
-
-			P_nextgen += paranthesis;
-			sub_str = "/\\";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "\\/";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = ")";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "<->";
-			positions = substrPosition(P_nextgen, sub_str);
-			counter = 0;
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-						counter += added_l;
-					}
-				}
-			}
-
-			final_return += P_nextgen;
-		}
-	}
-
-	return final_return;
-}
-
-//The function for release unroller
-string release_unroller(string modelA, string modelB, int k, vector<string> added_strs_A, vector<string> added_strs_B, string status)
-{
-	string final_return;
-
-	string new_A = modelA;
-	string new_B = modelB;
-	string paranthesis;
-
-	string P_nextgen;
-	string sub_str;
-	int counter;
-	vector<int> positions;
-
-	for (int t = 0; t < k + 1; t++)
-	{
-		int added_l = end(added_strs_A[t]) - begin(added_strs_A[t]);
-		P_nextgen = "";
-
-		if (t < k - 1)
-		{
-			P_nextgen += new_B;
-			P_nextgen += "/\\";
-			P_nextgen += "(";
-			P_nextgen += new_A;
-			P_nextgen += "\\/";
-			P_nextgen += "(";
-
-			paranthesis += "))";
-
-			//The new algorithm starts right there**********************************************************************************
-			sub_str = "/\\";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "\\/";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = ")";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-			 	//        cout<<positions[i]<<endl;
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "<->";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-			 	//        cout<<positions[i]<<endl;
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			final_return += P_nextgen;
-		}
-		else if (t == k - 1)
-		{
-			P_nextgen = "";
-
-			P_nextgen += new_B;
-			P_nextgen += "/\\";
-
-			P_nextgen += new_A;
-			P_nextgen += "\\/";
-
-			sub_str = "/\\";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "\\/";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = ")";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-			 	//        cout<<positions[i]<<endl;
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "<->";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-			 	//        cout<<positions[i]<<endl;
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			final_return += P_nextgen;
-		}
-		else if (t == k)
-		{
-			P_nextgen = "";
-
-			if (status == "-pes")
-			{
-				P_nextgen += "(";
-				P_nextgen += new_A;
-				P_nextgen += "/\\";
-				P_nextgen += new_B;
-				P_nextgen += ")";
-			}
-			else if (status == "-opt")
-			{
-				P_nextgen += new_B;
-			}
-
-			P_nextgen += paranthesis;
-
-			sub_str = "/\\";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "\\/";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = ")";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-			 	//        cout<<positions[i]<<endl;
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			sub_str = "<->";
-
-			positions = substrPosition(P_nextgen, sub_str);
-
-			counter = 0;
-
-			for (int i = 0; i < positions.size(); i++)
-			{
-				if (P_nextgen[positions[i] + counter - 1] != ')')
-				{
-					if (P_nextgen[positions[i] + counter - 2] == 'A')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-						counter += added_l;
-					}
-					else if (P_nextgen[positions[i] + counter - 2] == 'B')
-					{
-						P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-						counter += added_l;
-					}
-				}
-			}
-
-			final_return += P_nextgen;
-		}
-	}
-
-	return final_return;
-
-}
-
-//The function for unrolling G
-
-string G_unroller(int k, int position_G, string new_P, vector<string> added_strs_A, vector<string> added_strs_B)
-{
-	string P_nextgen = "";
-	string end_sign = "";
-	string P_reference;
-	string final_P;
-	string sub_str;
-
-	vector<int> positions;
-	int counter;
-
-	for (int i = position_G + 1; i < new_P.length(); i++)
-	{
-		if (new_P[i] == 'F' || new_P[i] == 'G')
-		{
-			if (new_P[i + 1] == '(' || new_P[i + 1] == '~')
-			{
-				end_sign = P_nextgen[P_nextgen.length() - 2];
-				end_sign += P_nextgen[P_nextgen.length() - 1];
-
-				P_nextgen = P_nextgen.substr(0, P_nextgen.size() - 1);
-				P_nextgen = P_nextgen.substr(0, P_nextgen.size() - 1);
-
-				break;
-			}
-		}
-
-		P_nextgen += new_P[i];
-	}
-
-	P_reference = P_nextgen;
-
-	for (int t = 0; t < k; t++)
-	{
-		int added_l = end(added_strs_A[t]) - begin(added_strs_A[t]);
-
-		sub_str = "/\\";
-
-		positions = substrPosition(P_nextgen, sub_str);
-
-		counter = 0;
-
-		for (int i = 0; i < positions.size(); i++)
-		{
-			if (P_nextgen[positions[i] + counter - 1] != ')')
-			{
-				if (P_nextgen[positions[i] + counter - 2] == 'A')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-					counter += added_l;
-				}
-				else if (P_nextgen[positions[i] + counter - 2] == 'B')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-					counter += added_l;
-				}
-			}
-		}
-
-		sub_str = "\\/";
-
-		positions = substrPosition(P_nextgen, sub_str);
-
-		counter = 0;
-
-		for (int i = 0; i < positions.size(); i++)
-		{
-			if (P_nextgen[positions[i] + counter - 1] != ')')
-			{
-				if (P_nextgen[positions[i] + counter - 2] == 'A')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-					counter += added_l;
-				}
-				else if (P_nextgen[positions[i] + counter - 2] == 'B')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-					counter += added_l;
-				}
-			}
-		}
-
-		sub_str = ")";
-
-		positions = substrPosition(P_nextgen, sub_str);
-
-		counter = 0;
-
-		for (int i = 0; i < positions.size(); i++)
-		{
-			//        cout<<positions[i]<<endl;
-			if (P_nextgen[positions[i] + counter - 1] != ')')
-			{
-				if (P_nextgen[positions[i] + counter - 2] == 'A')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-					counter += added_l;
-				}
-				else if (P_nextgen[positions[i] + counter - 2] == 'B')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-					counter += added_l;
-				}
-			}
-		}
-
-		sub_str = "<->";
-
-		positions = substrPosition(P_nextgen, sub_str);
-
-		counter = 0;
-
-		for (int i = 0; i < positions.size(); i++)
-		{
-			//        cout<<positions[i]<<endl;
-			if (P_nextgen[positions[i] + counter - 1] != ')')
-			{
-				if (P_nextgen[positions[i] + counter - 2] == 'A')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-					counter += added_l;
-				}
-				else if (P_nextgen[positions[i] + counter - 2] == 'B')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-					counter += added_l;
-				}
-			}
-		}
-
-		final_P += P_nextgen;
-		P_nextgen = P_reference;
-
-		if (t != k - 1)
-		{
-			final_P += "/\\";
-		}
-	}
-
-	final_P += end_sign;
-
-	return final_P;
-
-}
-
-//The function for unrolling F
-string F_unroller(int k, int position_F, string new_P, vector<string> added_strs_A, vector<string> added_strs_B)
-{
-	string P_nextgen = "";
-	string end_sign = "";
-	string P_reference;
-	string final_P;
-	string sub_str;
-
-	vector<int> positions;
-	int counter;
-
-	for (int i = position_F + 1; i < new_P.length(); i++)
-	{
-		if (new_P[i] == 'F' || new_P[i] == 'G')
-		{
-			if (new_P[i + 1] == '(' || new_P[i + 1] == '~')
-			{
-				end_sign = P_nextgen[P_nextgen.length() - 2];
-				end_sign += P_nextgen[P_nextgen.length() - 1];
-
-				P_nextgen = P_nextgen.substr(0, P_nextgen.size() - 1);
-				P_nextgen = P_nextgen.substr(0, P_nextgen.size() - 1);
-
-				break;
-			}
-		}
-
-		P_nextgen += new_P[i];
-	}
-
-	P_reference = P_nextgen;
-
-	for (int t = 0; t < k; t++)
-	{
-		int added_l = end(added_strs_A[t]) - begin(added_strs_A[t]);
-
-		sub_str = "/\\";
-
-		positions = substrPosition(P_nextgen, sub_str);
-
-		counter = 0;
-
-		for (int i = 0; i < positions.size(); i++)
-		{
-			if (P_nextgen[positions[i] + counter - 1] != ')')
-			{
-				if (P_nextgen[positions[i] + counter - 2] == 'A')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-					counter += added_l;
-				}
-				else if (P_nextgen[positions[i] + counter - 2] == 'B')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-					counter += added_l;
-				}
-			}
-		}
-
-		sub_str = "\\/";
-
-		positions = substrPosition(P_nextgen, sub_str);
-
-		counter = 0;
-
-		for (int i = 0; i < positions.size(); i++)
-		{
-			if (P_nextgen[positions[i] + counter - 1] != ')')
-			{
-				if (P_nextgen[positions[i] + counter - 2] == 'A')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-					counter += added_l;
-				}
-				else if (P_nextgen[positions[i] + counter - 2] == 'B')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-					counter += added_l;
-				}
-			}
-		}
-
-		sub_str = ")";
-
-		positions = substrPosition(P_nextgen, sub_str);
-
-		counter = 0;
-
-		for (int i = 0; i < positions.size(); i++)
-		{
-			//        cout<<positions[i]<<endl;
-			if (P_nextgen[positions[i] + counter - 1] != ')')
-			{
-				if (P_nextgen[positions[i] + counter - 2] == 'A')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-					counter += added_l;
-				}
-				else if (P_nextgen[positions[i] + counter - 2] == 'B')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-					counter += added_l;
-				}
-			}
-		}
-
-		sub_str = "<->";
-
-		positions = substrPosition(P_nextgen, sub_str);
-
-		counter = 0;
-
-		for (int i = 0; i < positions.size(); i++)
-		{
-			//        cout<<positions[i]<<endl;
-			if (P_nextgen[positions[i] + counter - 1] != ')')
-			{
-				if (P_nextgen[positions[i] + counter - 2] == 'A')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_A[t]);
-
-					counter += added_l;
-				}
-				else if (P_nextgen[positions[i] + counter - 2] == 'B')
-				{
-					P_nextgen.insert(positions[i] + counter, added_strs_B[t]);
-
-					counter += added_l;
-				}
-			}
-		}
-
-		final_P += P_nextgen;
-		P_nextgen = P_reference;
-
-		if (t != k - 1)
-		{
-			final_P += "\\/";
-		}
-	}
-
-	final_P += end_sign;
-
-	return final_P;
-
-}
-
 //The function for unrolling initial conditions
 string I_unroller(int k, string I_file, string model_type)
 {
@@ -1318,6 +164,7 @@ string R_unroller(int k, string R_file, string model_type)
 	return output;
 }
 
+// Helper method
 string attach_time(string expr, int t){
 	bool isAP = false;
 	string model_name;
@@ -1411,22 +258,6 @@ string rec_R(int k, string phi1, string phi2, string sem){
 // THH: edit here
 string formula_unroller(int k, string prop, string sem)
 {
-	// string prop;
-	// std::ifstream file(P_file);
-	// while (!file.eof())
-	// {
-	// 	std::string line;
-	// 		while (std::getline(file, line)) {
-	// 		for (int i = 0 ; i < line.length() ; i++){
-	// 			prop += line[i];
-	// 		}
-	// 	}
-	// }
-	// cout << prop << endl;
-	// prop = prop.substr( prop.find_last_of('.')+1, prop.length());
-	// cout << "original formula: " << prop << endl;
-	// cout << prop << endl;
-
 	int L_ptr = 0;
 	int R_ptr = 0;
 	string phi1;
@@ -1498,7 +329,6 @@ void write_quantifiers (vector<char> const &quantifier, map<string, int> const &
             if (x.first.find(identifier) != string::npos){
                 ss << x.second << ",";
             }
-
         }
         string string_ss = ss.str();
         my_file << string_ss.substr(0,string_ss.length()-1) << ")" << endl;
@@ -1514,69 +344,32 @@ pair<int, int> find_last_vars(string formula) {
     return index_pair;
 }
 
-
-string write_to_file (ofstream &my_file, int &count, stack<string> &s, string &prefix, pair<int, int> &index_pair){
-		// THH update:
-		stringstream ss;
-
-		index_pair = find_last_vars(prefix);
-
+string write_to_file (map<string, int> &formula_map,int &count, stack<string> &s, string &prefix, pair<int, int> &index_pair){
+    stringstream ss;
+    string formula;
     ss << to_string(count) << " = ";
     if (s.top() == "/\\") { // or operator
-        ss << "or(";
+        formula += "or(";
     } else if (s.top() == "\\/") { // and operator
-        ss << "and(";
+        formula += "and(";
     }
+    index_pair = find_last_vars(prefix);
+    formula += prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2)) + "," + prefix.substr(index_pair.second+1, prefix.length()-(index_pair.second+2)) + ")";
 
-		// gate_map[index_pair] = count;
+    //check if formula already in ss
+    for (auto x : formula_map ) {
+        if (x.first==formula){
+            prefix = prefix.substr(0,index_pair.first) + '(' + to_string(x.second) + ')';
+            return "";
+        }
+    }
+    formula_map[formula] = count;
 
-		// debug
-		// cout << "gate_map: " << endl;
-		// for (auto x: gate_map) {
-		// 		cout << x.second << ": " << (x.first).first << ", " << x.first.second << endl;
-		// }
-
-    //my_file << prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2))
-    //<< "," << prefix.substr(index_pair.second+1, prefix.length()-(index_pair.second+2)) << ')' << endl;
-    ss << prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2))
-    << "," << prefix.substr(index_pair.second+1, prefix.length()-(index_pair.second+2)) << ')' << endl;
-
-		// cout << ss.str() << endl;
+    ss << formula << endl;
     prefix = prefix.substr(0,index_pair.first) + '(' + to_string(count) + ')';
-
-
     count++;
 
     return ss.str();
-
-
-    // stringstream ss;
-		//
-		//
-    // ss << to_string(count) << " = ";
-    // if (s.top() == "/\\") { // or operator
-    //     //my_file << "or(";
-    //     ss << "or(";
-    // } else if (s.top() == "\\/") { // and operator
-    //     //my_file << "and(";
-    //     ss << "and(";
-    // }
-    // index_pair = find_last_vars(prefix);
-		//
-		//
-		//
-		//
-    // //my_file << prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2))
-    // //<< "," << prefix.substr(index_pair.second+1, prefix.length()-(index_pair.second+2)) << ')' << endl;
-    // ss << prefix.substr(index_pair.first+1, index_pair.second-(index_pair.first+2))
-    // << "," << prefix.substr(index_pair.second+1, prefix.length()-(index_pair.second+2)) << ')' << endl;
-		//
-    // prefix = prefix.substr(0,index_pair.first) + '(' + to_string(count) + ')';
-		//
-		//
-    // count++;
-		//
-    // return ss.str();
 }
 
 bool isOperator(string c)
@@ -1618,40 +411,42 @@ int precedence(string c)
         return -1;
 }
 
-void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector<char> const & quantifier, string out_file, map<pair<int, int>, int> &gate_map)
+void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector<char> const & quantifier)
 {
     int count = 1;
     pair<int, int> index_pair;
+    map<string, int> formula_map;
     ofstream my_file;
     stringstream ss;
+		// string ss; // let's use string
 
-		my_file.open(out_file);
-
+    my_file.open("build_today/HQ-cpp.qcir");
     string prefix;
     string variable;
-
-		// cout << infix << endl;
-
     reverse(infix.begin(), infix.end());
 
-
-		// cout << infix << endl;
-
+    // for (int i = 0; i < infix.length(); i++) {
+    //     if (infix[i] == '(') {
+    //         infix[i] = ')';
+    //     }
+    //     else if (infix[i] == ')') {
+    //         infix[i] = '(';
+    //     }
+    // }
     for (int i = 0; i < infix.length(); i++) {
-        if (infix[i] == '(') {
-            infix[i] = ')';
-        }
-        else if (infix[i] == ')') {
-            infix[i] = '(';
-        }
-    }
 
+				// THH: it's the same change them here right?
+				if (infix[i] == '(') {
+						infix[i] = ')';
+				}
+				else if (infix[i] == ')') {
+						infix[i] = '(';
+				}
 
-    for (int i = 0; i < infix.length(); i++) {
 
         if (infix[i]=='~') {
             //account for negation
-            prefix +=infix[i];
+            prefix += infix[i];
             size_t pos;
             while ((pos = prefix.find(")~")) != std::string::npos) {
                 size_t pos2 = prefix.substr(0,pos).find_last_of("(");
@@ -1659,7 +454,8 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
                 prefix.insert(pos2+1, "-");
             }
         // adding variable to prefix
-        } else if (infix[i] != '/' && infix[i] != '\\' && infix[i] != '~' && !isPar(infix.substr(i,1))){
+        }
+				else if (infix[i] != '/' && infix[i] != '\\' && infix[i] != '~' && !isPar(infix.substr(i,1))){
             // assign numbers to variables here
             variable += infix[i];
             // end of variable due to operator or parentheses
@@ -1684,11 +480,7 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
         else if (infix[i] == ')') {
             while ((s.top() != "(") && (!s.empty())) {
                 // assign number to formula and write to file
-								// cout << "\n(A)" << endl;
-								// cout << count << endl;
-								// cout << prefix << endl;
-								// cout << index_pair.first << ", " << index_pair.second << endl;
-                ss << write_to_file (my_file, count, s, prefix, index_pair);
+                ss << write_to_file (formula_map, count, s, prefix, index_pair);
                 s.pop();
             }
             if (s.top() == "(") {
@@ -1716,11 +508,7 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
                 else {
                     while ((!s.empty()) && (precedence(prec) < precedence(s.top()))) {
                         // assign number to formula and write to file
-												// cout << "\n(B)" << endl;
-												// cout << count << endl;
-												// cout << prefix << endl;
-												// cout << index_pair.first << ", " << index_pair.second << endl;
-                        ss << write_to_file (my_file, count, s, prefix, index_pair);
+                        ss << write_to_file (formula_map, count, s, prefix, index_pair);
                         s.pop();
                     }
                     s.push(prec);
@@ -1731,140 +519,30 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
     while (!s.empty()) {
         // last formula
         // assign number to formula and write to file
-				// cout << "\n(C)" << endl;
-				// cout << count << endl;
-				// cout << prefix << endl;
-				// cout << index_pair.first << ", " << index_pair.second << endl;
-        ss << write_to_file (my_file, count, s, prefix, index_pair);
+        ss << write_to_file (formula_map, count, s, prefix, index_pair);
 
         s.pop();
     }
-		my_file << "#QCIR-G14" << endl;
     // quantifiers
     write_quantifiers (quantifier, var_map, my_file);
     // output and variables
-    my_file << "output" << prefix << endl;
+    my_file << "output" << prefix << '\n' << endl;
     // write formulas to file
-    my_file << ss.str();
+    my_file << ss.str() << endl;
     // new map so variables can be sorted by number in qcir file
     map<int, string> new_map;
     for (auto x: var_map) {
         new_map[x.second] = x.first;
     }
-    // my_file << "#  variables" << endl;
+    my_file << "# variables" << endl;
     for (auto x: new_map) {
-        my_file << "# " << x.first << " : " << x.second << endl;
+        my_file << "#  " << x.first << " " << x.second << endl;
     }
     my_file.close();
 }
 
 
 
-map<string, int> variable_map;
-
-// void build_AND(string subform){
-//
-//
-// }
-
-
-
-
-// THH try infix to QCIR
-string subformulas(string formula){
-
-	string LEFT;
-	string RIGHT;
-	string LR;
-	int L_ptr = formula.find_first_of("(");;
-	int R_ptr = formula.find_last_of(")");
-	// formula = formula.substr(L_ptr+1, R_ptr-1);
-	// cout << L_ptr << endl;
-	// cout << R_ptr << endl;
-	// cout << "original: " << formula << endl;
-	// L_ptr = formula.find_first_of("(");
-	// R_ptr = formula.find_last_of(")");
-
-	if ((L_ptr == -1) && (R_ptr == -1)) { // base case
-			cout << formula << endl;
-			if (formula.find("/\\") != -1){
-				cout << formula <<  "  << build AND gate" << endl;
-				LEFT = formula.substr(0, formula.find("/\\"));
-				RIGHT = formula.substr(formula.find("/\\")+2, formula.length());
-				cout << LEFT << endl;
-				cout << RIGHT << endl;
-				subformulas(LEFT);
-				subformulas(RIGHT);
-			}
-			else if ( formula.find("\\/") != -1){
-				cout << formula <<  "  << build OR gate" << endl;
-				LEFT = formula.substr(0, formula.find("\\/"));
-				RIGHT = formula.substr(formula.find("\\/")+2, formula.length());
-				cout << LEFT << endl;
-				cout << RIGHT << endl;
-				subformulas(LEFT);
-				subformulas(RIGHT);
-			}
-			else{
-				cout << formula <<  "  << single AP" << endl;
-			}
-	}
-	else if (formula[0] == '~'){
-		if (formula.find(")\\/(") == -1){
-			cout << formula << "  << build NOT gate" << endl;
-			return "DONE.";
-		}
-		else{
-			LEFT = formula.substr(0, formula.find(")\\/(")+1); // but negated
-			RIGHT = formula.substr(formula.find(")\\/(")+3, formula.length());
-			cout << LEFT << endl;
-			cout << RIGHT << endl;
-			subformulas(LEFT);
-			subformulas(RIGHT);
-		}
-		// cout << formula.find(")\\/(") << endl;
-	}
-	else if ((R_ptr < L_ptr) || formula[0] == '~'){ // find if split needed
-			if ( formula.find(")/\\(") || (formula.find(")\\/("))){
-					LEFT = formula.substr(0, R_ptr);
-					RIGHT = formula.substr(L_ptr+1, formula.length());
-					// cout << "LEFT: " << LEFT << endl;
-					// cout << "RIGHT: " << RIGHT << endl;
-			}
-			else if ( formula.find(")/\\~(") || formula.find(")\\/~(")) {
-					LEFT = formula.substr(0, R_ptr);
-					RIGHT = formula.substr(L_ptr+1, formula.length());
-					// cout << "TODO: leading negation" << endl;
-					// cout << "LEFT: " << LEFT << endl;
-					// cout << "RIGHT: " << RIGHT << endl;
-			}
-			else{
-				cout << "error, wrong formulation, perhaps parantheses. " << endl;
-			}
-			cout << LEFT << endl;
-			cout << RIGHT << endl;
-			subformulas(LEFT);
-			subformulas(RIGHT);
-	}
-	else if ((L_ptr == 0) && !(R_ptr == formula.length()-1)){ // inballance
-			cout << "error: inbalance" << endl;
-	}
-	else if (!(L_ptr == 0) && (R_ptr == formula.length()-1)){ // inballance
-			cout << "error: inbalance" << endl;
-			cout << formula << endl;
-	}
-	else {
-		cout << "keep going!! " << endl;
-		cout << formula << endl;
-		formula = formula.substr(L_ptr+1, R_ptr-1);
-		subformulas(formula);
-	}
-
-	// cout << formula << endl;
-	return "NONE.";
-}
-
-string test_formula = "~(a/\\b)\\/(~c\\/d)";
 
 
 
@@ -1977,12 +655,12 @@ int main(int argc, char **argv)
 	// infix_formulas = "((some_A_[0]/\\~some_B_[0])\\/(some_A_[0]/\\~some_B_[0]))";
 
 	infix_formulas = infix_formulas+unrolled_formula;
+	// infix_formulas should be space free
 
 	// cout << infix_formulas << endl;
-
-
 	// string test = subformulas(infix_formulas);
-	string test = subformulas(test_formula);
+	// int test = subformulas(test_formula);
+	// cout << test << "  (final) " << endl;
 
 
 	// cout << L_ptr << endl;
@@ -2007,17 +685,25 @@ int main(int argc, char **argv)
 
 	// this is broken
 	// infix_formulas = "(some_A_[0]/\\~some_B_[0])\\/(some_A_[0]/\\~some_B_[0])/\\some_A[0]";
-
 	// string QCIR_out = "test.qcir";
 
 	string QCIR_out = "build_today/HQ-cpp.qcir";
 
+	// takes an input file
+	// cout << "Enter a file name: " << endl;
+	// cin >> input_file;
+	// ifstream myfile (input_file);
+	// stringstream infix;
 
+	// else cout << "Unable to open file";
+	// InfixToQCIR(stack, infix_formulas , var_map, quantifier);
+	// cout << "\nConversion complete\n" << endl;
+	// return 0;
 
 
 	// string QCIR_out = "test.qcir";
 	start = clock();
-	InfixToQCIR(stack, infix_formulas, var_map, quantifier, QCIR_out, gate_map);
+	InfixToQCIR(stack, infix_formulas , var_map, quantifier);
 	end = clock();
 	time_taken = double(end - start) / double(CLOCKS_PER_SEC);
 		cout << "Time for converting QCIR : " << fixed
@@ -2027,3 +713,151 @@ int main(int argc, char **argv)
 	// cout << "tiiiiiiiiiiiiiime" << endl;
 	return 0;
 }
+
+
+
+
+
+// void build_AND(string subform){
+//
+//
+// }
+
+// map<string, int> variable_map;
+// int global_counter = 1;
+// // THH try infix to QCIR
+// int subformulas(string formula){
+//
+// 	string LEFT;
+// 	string RIGHT;
+// 	string LR;
+// 	int L_ptr = formula.find_first_of("(");;
+// 	int R_ptr = formula.find_last_of(")");
+// 	// formula = formula.substr(L_ptr+1, R_ptr-1);
+// 	// cout << L_ptr << endl;
+// 	// cout << R_ptr << endl;
+// 	// cout << "original: " << formula << endl;
+// 	// L_ptr = formula.find_first_of("(");
+// 	// R_ptr = formula.find_last_of(")");
+//
+// 	if ((L_ptr == -1) && (R_ptr == -1)) { // base case
+// 			// cout << formula << endl;
+// 			if (formula.find("/\\") != -1){
+// 				cout << formula <<  "  << build AND gate" << endl;
+// 				LEFT = formula.substr(0, formula.find("/\\"));
+// 				RIGHT = formula.substr(formula.find("/\\")+2, formula.length());
+// 				cout << LEFT << endl;
+// 				cout << RIGHT << endl;
+//
+// 				global_counter ++;
+// 				cout << to_string(global_counter) << "=and(" <<  subformulas(LEFT) << ", " <<  subformulas(RIGHT) << ")" << endl;
+// 				return global_counter;
+// 				// subformulas(LEFT);
+// 				// subformulas(RIGHT);
+// 			}
+// 			else if ( formula.find("\\/") != -1){
+// 				cout << formula <<  "  << build OR gate" << endl;
+// 				LEFT = formula.substr(0, formula.find("\\/"));
+// 				RIGHT = formula.substr(formula.find("\\/")+2, formula.length());
+// 				cout << LEFT << endl;
+// 				cout << RIGHT << endl;
+//
+// 				global_counter ++;
+// 				cout << to_string(global_counter) << "=or(" <<  subformulas(LEFT) << ", " <<  subformulas(RIGHT) << ")" << endl;
+// 				return global_counter;
+// 				// cout << subformulas(LEFT) << endl;
+// 				// cout << subformulas(RIGHT) << endl;
+// 			}
+// 			else{
+// 				// cout << formula <<  "  << single AP" << endl;
+// 				string name = formula;
+// 				if (formula[0] == '~'){
+// 					name.erase(0,1);
+// 				}
+// 				if (variable_map.find(name) != variable_map.end()) {
+//         	// std::cout << "Key found" << endl;
+// 					return variable_map[name];
+// 		    }
+// 		    else {
+// 					global_counter ++;
+// 		      variable_map[name] = global_counter;
+// 					return global_counter;
+// 		    }
+// 			}
+// 	}
+// 	else if (formula[0] == '~'){
+// 		if (formula.find(")\\/(") == -1){
+// 			if (formula.find("/\\") != -1){
+// 				cout << formula << "  << build NOT + AND gate" << endl;
+// 				LEFT = formula.substr(2, formula.find("/\\")-2);
+// 				RIGHT = formula.substr(formula.find("/\\")+2, formula.length()-1);
+// 				RIGHT.pop_back();
+// 				cout << LEFT << endl;
+//
+// 				global_counter ++;
+// 				cout << to_string(global_counter) << "=or(" <<  -subformulas(LEFT) << ", " <<  subformulas(RIGHT) << ")" << endl;
+// 				return global_counter;
+// 			}
+// 		}
+// 		else{
+// 			LEFT = formula.substr(0, formula.find(")\\/(")+1); // but negated
+// 			RIGHT = formula.substr(formula.find(")\\/(")+3, formula.length());
+// 			cout << LEFT << endl;
+// 			cout << RIGHT << endl;
+// 			subformulas(LEFT);
+// 			subformulas(RIGHT);
+// 		}
+// 		// cout << formula.find(")\\/(") << endl;
+// 	}
+// 	else if ((R_ptr < L_ptr)){ // find if split needed
+// 			if ( formula.find(")/\\(")!= -1 ) {
+// 					LEFT = formula.substr(0, R_ptr);
+// 					RIGHT = formula.substr(L_ptr+1, formula.length());
+// 					global_counter ++;
+// 					cout << to_string(global_counter) << "=or(" <<  subformulas(LEFT) << ", " <<  subformulas(RIGHT) << ")" << endl;
+// 					return global_counter;
+// 					// cout << "LEFT: " << LEFT << endl;
+// 					// cout << "RIGHT: " << RIGHT << endl;
+// 			}
+// 			else if ((formula.find(")\\/(") != -1){
+//
+// 			}
+// 			else if ( formula.find(")\\/~(") != -1) {
+// 			else if ( formula.find(")/\\~(") != -1) {
+// 					LEFT = formula.substr(0, R_ptr);
+// 					RIGHT = formula.substr(L_ptr+1, formula.length());
+// 					global_counter ++;
+// 					cout << to_string(global_counter) << "=or(" <<  subformulas(LEFT) << ", " <<  -subformulas(RIGHT) << ")" << endl;
+// 					return global_counter;
+// 					// cout << "TODO: leading negation" << endl;
+// 					// cout << "LEFT: " << LEFT << endl;
+// 					// cout << "RIGHT: " << RIGHT << endl;
+// 			}
+// 			else{
+// 				cout << "error, wrong formulation, perhaps parantheses. " << endl;
+// 			}
+// 			cout << LEFT << endl;
+// 			cout << RIGHT << endl;
+// 			subformulas(LEFT);
+// 			subformulas(RIGHT);
+// 	}
+// 	else if ((L_ptr == 0) && !(R_ptr == formula.length()-1)){ // inballance
+// 			cout << "error: inbalance" << endl;
+// 	}
+// 	else if (!(L_ptr == 0) && (R_ptr == formula.length()-1)){ // inballance
+// 			cout << "error: inbalance" << endl;
+// 			cout << formula << endl;
+// 	}
+// 	else {
+// 		cout << "keep going!! " << endl;
+// 		cout << formula << endl;
+// 		formula = formula.substr(L_ptr+1, R_ptr-1);
+// 		subformulas(formula);
+// 	}
+//
+// 	// cout << formula << endl;
+// 	// return "NONE.";
+// 	return 1;
+// }
+
+// string test_formula = "(~(a/\\b)\\/(~c\\/d))";
