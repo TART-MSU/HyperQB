@@ -316,23 +316,29 @@ string formula_unroller(int k, string prop, string sem)
 void write_quantifiers (vector<char> const &quantifier, map<string, int> const &var_map, ofstream &my_file) {
     int len = quantifier.size();
     char letter = 'A';
-    stringstream ss;
+    // stringstream ss;
+		string s;
     for (int i=0; i<len; i++) {
         if (quantifier.at(i)=='A') {
-            ss << "forall(" ;
+            // ss << "forall(" ;
+						s += "forall(";
         } else {
-            ss << "exists(" ;
+            // ss << "exists(" ;
+						s += "exists(";
         }
         string identifier = "_";
         identifier.push_back(letter);
         for (auto x : var_map ) {
             if (x.first.find(identifier) != string::npos){
-                ss << x.second << ",";
+                // ss << x.second << ",";
+								s += to_string(x.second) + ",";
             }
         }
-        string string_ss = ss.str();
-        my_file << string_ss.substr(0,string_ss.length()-1) << ")" << endl;
-        ss.str(std::string());
+        // string string_ss = ss.str();
+        // my_file << string_ss.substr(0,string_ss.length()-1) << ")" << endl;
+				my_file << s.substr(0, s.size()-1) << ")" << endl;
+				s = "";
+        // ss.str(std::string());
         letter++;
     }
 }
@@ -345,9 +351,11 @@ pair<int, int> find_last_vars(string formula) {
 }
 
 string write_to_file (map<string, int> &formula_map,int &count, stack<string> &s, string &prefix, pair<int, int> &index_pair){
-    stringstream ss;
+    // stringstream ss;
+		string ss_string;
     string formula;
-    ss << to_string(count) << " = ";
+    // ss << to_string(count) << " = ";
+		ss_string += to_string(count) + " = ";
     if (s.top() == "/\\") { // or operator
         formula += "or(";
     } else if (s.top() == "\\/") { // and operator
@@ -365,11 +373,15 @@ string write_to_file (map<string, int> &formula_map,int &count, stack<string> &s
     }
     formula_map[formula] = count;
 
-    ss << formula << endl;
+    // ss << formula << endl;
+
+		ss_string += formula + "\n";
+
     prefix = prefix.substr(0,index_pair.first) + '(' + to_string(count) + ')';
     count++;
 
-    return ss.str();
+    // return ss.str();
+		return ss_string;
 }
 
 bool isOperator(string c)
@@ -417,13 +429,16 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
     pair<int, int> index_pair;
     map<string, int> formula_map;
     ofstream my_file;
-    stringstream ss;
-		// string ss; // let's use string
+    // stringstream ss;
+		string ss_string; // THH: let's try using string
 
     my_file.open("build_today/HQ-cpp.qcir");
     string prefix;
     string variable;
     reverse(infix.begin(), infix.end());
+
+		string prec;
+		int index1;
 
     // for (int i = 0; i < infix.length(); i++) {
     //     if (infix[i] == '(') {
@@ -473,14 +488,15 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
             }
         }
         else if (infix[i] == '(') {
-            string s1;
-            s1 += infix[i];
+            // string s1 = infix[i];
+						string s1(1, infix[i]);
             s.push(s1);
         }
         else if (infix[i] == ')') {
             while ((s.top() != "(") && (!s.empty())) {
                 // assign number to formula and write to file
-                ss << write_to_file (formula_map, count, s, prefix, index_pair);
+                // ss << write_to_file (formula_map, count, s, prefix, index_pair);
+								ss_string += write_to_file (formula_map, count, s, prefix, index_pair);
                 s.pop();
             }
             if (s.top() == "(") {
@@ -488,17 +504,17 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
             }
         }
         else if (isOperator(infix.substr(i,2)) || isOperator2(infix.substr(i,1))) {
-            int index1;
+            // int index1;
             if (isOperator(infix.substr(i,2))) {
                 index1 = 2;
             } else {
                 index1 = 1;
             }
-            string prec = infix.substr(i,index1);
             if (s.empty()) {
                 s.push(infix.substr(i,index1));
             }
             else {
+								prec = infix.substr(i,index1);
                 if (precedence(prec) > precedence(s.top())) {
                     s.push(prec);
                 }
@@ -508,7 +524,8 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
                 else {
                     while ((!s.empty()) && (precedence(prec) < precedence(s.top()))) {
                         // assign number to formula and write to file
-                        ss << write_to_file (formula_map, count, s, prefix, index_pair);
+                        // ss << write_to_file (formula_map, count, s, prefix, index_pair);
+												ss_string += write_to_file (formula_map, count, s, prefix, index_pair);
                         s.pop();
                     }
                     s.push(prec);
@@ -519,7 +536,8 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
     while (!s.empty()) {
         // last formula
         // assign number to formula and write to file
-        ss << write_to_file (formula_map, count, s, prefix, index_pair);
+        // ss << write_to_file (formula_map, count, s, prefix, index_pair);
+				ss_string += write_to_file (formula_map, count, s, prefix, index_pair);
 
         s.pop();
     }
@@ -528,16 +546,19 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
     // output and variables
     my_file << "output" << prefix << '\n' << endl;
     // write formulas to file
-    my_file << ss.str() << endl;
+    // my_file << ss.str() << endl;
+		my_file << ss_string;
     // new map so variables can be sorted by number in qcir file
-    map<int, string> new_map;
+    // map<int, string> new_map;
+		my_file << "# variables" << endl;
     for (auto x: var_map) {
-        new_map[x.second] = x.first;
+        // new_map[x.second] = x.first;
+				my_file << "#  " << x.first << " " << x.second << endl;
     }
-    my_file << "# variables" << endl;
-    for (auto x: new_map) {
-        my_file << "#  " << x.first << " " << x.second << endl;
-    }
+    // for (auto x: new_map) {
+    //     my_file << "#  " << x.first << " " << x.second << endl;
+    // }
+
     my_file.close();
 }
 
@@ -668,9 +689,9 @@ int main(int argc, char **argv)
 	// cout << infix_formulas.substr(L_ptr, R_ptr) << endl;
 
 
-	outdata.open("build_today/output.txt");
-	outdata << infix_formulas << endl;
-	outdata.close();
+	// outdata.open("build_today/output.txt");
+	// outdata << infix_formulas << endl;
+	// outdata.close();
 
 	map<string, int> var_map;
 	stack<string> stack;
