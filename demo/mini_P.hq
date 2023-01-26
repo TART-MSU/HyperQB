@@ -1,1 +1,1 @@
-F(~a[A] \/ ~a[B])
+exists A. exists B. F(~a[A])
