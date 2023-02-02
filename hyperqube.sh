@@ -225,7 +225,7 @@ echo "\nQuABs outcome: "${OUTCOME}
 
 
 ## THHTODO: update these two scripts
-echo "\n=== Get Nice-formatted Output if output is SAT ==="
+echo "\n=== Get Nice-formatted Output if witness/counterexample is found ==="
 if [ ! -f "$QCIR_OUT" ]; then
     echo "$QCIR_OUT does not exists"
     exit 1

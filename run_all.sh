@@ -43,9 +43,15 @@ DUMMY="cases_bmc/dummy.hq"
 # 1. doubleSquare
 # ${HYPERQUBE} cases_bmc/cav_ksafety/doubleSquare.smv cases_bmc/cav_ksafety/doubleSquare.smv cases_bmc/cav_ksafety/doubleSquare1.hq 64 ${PES} ${MULTI} ${BUGHUNT}
 # 2. arrayinsert
-${HYPERQUBE} cases_bmc/cav_ksafety/arrayinsert.smv cases_bmc/cav_ksafety/arrayinsert.smv cases_bmc/cav_ksafety/arrayinsert.hq 15 ${PES} ${MULTI} ${BUGHUNT}
+# ${HYPERQUBE} cases_bmc/cav_ksafety/arrayinsert.smv cases_bmc/cav_ksafety/arrayinsert.smv cases_bmc/cav_ksafety/arrayinsert.hq 15 ${PES} ${MULTI} ${BUGHUNT}
 
-# [TINI]
+#  [TINI]
 # ${HYPERQUBE} cases_bmc/cav_tini/ni_example.smv cases_bmc/cav_tini/ni_example.smv cases_bmc/cav_tini/tini.hq 10 ${OPT} ${MULTI} ${BUGHUNT}
 # [TSNI]
 # ${HYPERQUBE} cases_bmc/cav_tsni/ni_example.smv cases_bmc/cav_tsni/ni_example.smv cases_bmc/cav_tsni/tsni.hq 10 ${OPT} ${MULTI} ${BUGHUNT}
+
+# [intransitive]
+# --- first, it violates classical OD
+${HYPERQUBE} cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/intrans_OD.hq 10 ${PES} ${MULTI} ${BUGHUNT}
+# ${HYPERQUBE} cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/intrans_OD.hq 10 ${OPT} ${MULTI} ${FIND}
+# ${HYPERQUBE} cases_bmc/cav_shared_buffer/buffer.smv cases_bmc/cav_shared_buffer/buffer.smv cases_bmc/cav_shared_buffer/intransni.hq 10 ${OPT} ${MULTI} ${BUGHUNT}
