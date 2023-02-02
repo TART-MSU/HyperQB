@@ -73,7 +73,7 @@ string I_unroller(int k, string I_file, string model_type)
 
 // // A helper method
 void ReplaceStringInPlace(std::string& subject, const std::string& search,
-                          const std::string& replace) {
+    const std::string& replace) {
     size_t pos = 0;
     while ((pos = subject.find(search, pos)) != std::string::npos) {
          subject.replace(pos, search.length(), replace);
@@ -350,6 +350,7 @@ pair<int, int> find_last_vars(string formula) {
     return index_pair;
 }
 
+ofstream my_file("build_today/HQ-cpp.qcir");
 string write_to_file (map<string, int> &formula_map,int &count, stack<string> &s, string &prefix, pair<int, int> &index_pair){
     // stringstream ss;
 		string ss_string;
@@ -381,6 +382,7 @@ string write_to_file (map<string, int> &formula_map,int &count, stack<string> &s
     count++;
 
     // return ss.str();
+		// my_file << ss_string;
 		return ss_string;
 }
 
@@ -423,31 +425,142 @@ int precedence(string c)
         return -1;
 }
 
+// void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector<char> const & quantifier)
+// {
+//     int count = 1;
+//     pair<int, int> index_pair;
+//     map<string, int> formula_map;
+//     // ofstream my_file;
+//     // stringstream ss;
+// 		string ss_string; // THH: let's try using string
+//
+// 		// my_file.open("build_today/HQ-test.qcir");
+//     // my_file.open("build_today/HQ-cpp.qcir");
+//     string prefix;
+//     string variable;
+//
+//
+//     reverse(infix.begin(), infix.end());
+//
+// 		string prec;
+// 		int index1;
+//
+//     for (int i = 0; i < infix.length(); i++) {
+//
+// 				// THH: it's the same change them here right?
+// 				if (infix[i] == '(') {
+// 						infix[i] = ')';
+// 				}
+// 				else if (infix[i] == ')') {
+// 						infix[i] = '(';
+// 				}
+//
+//
+//         if (infix[i]=='~') {
+//             //account for negation
+//             prefix += infix[i];
+//             size_t pos;
+//             while ((pos = prefix.find(")~")) != std::string::npos) {
+//                 size_t pos2 = prefix.substr(0,pos).find_last_of("(");
+//                 prefix.replace(pos, 2, ")");
+//                 prefix.insert(pos2+1, "-");
+//             }
+//         // adding variable to prefix
+//         }
+// 				else if (infix[i] != '/' && infix[i] != '\\' && infix[i] != '~' && !isPar(infix.substr(i,1))){
+//             // assign numbers to variables here
+//             variable += infix[i];
+//             // end of variable due to operator or parentheses
+//             if ((infix.length() >= (i+1) && (infix[i+1] == '/' || infix[i+1] == '\\' || infix[i+1] == '~' || isPar(infix.substr(i+1,1))))||(infix.length()-1) == i) {
+//                 reverse(variable.begin(), variable.end());
+//                 // check if variable already in map or not
+//                 if (var_map.find(variable) == var_map.end()) {
+//                     prefix = prefix +  "(" + std::to_string(count) + ')';
+//                     var_map [variable] = count;
+//                     count++;
+//                 } else {
+//                     prefix = prefix +  "(" + to_string(var_map[variable]) + ')';
+//                 }
+//                 variable = "";
+//             }
+//         }
+//         else if (infix[i] == '(') {
+//             // string s1 = infix[i];
+// 						string s1(1, infix[i]);
+//             s.push(s1);
+//         }
+//         else if (infix[i] == ')') {
+//             while ((s.top() != "(") && (!s.empty())) {
+//                 // assign number to formula and write to file
+//                 // ss << write_to_file (formula_map, count, s, prefix, index_pair);
+// 								ss_string += write_to_file (formula_map, count, s, prefix, index_pair);
+//                 s.pop();
+//             }
+//             if (s.top() == "(") {
+//                 s.pop();
+//             }
+//         }
+//         else if (isOperator(infix.substr(i,2)) || isOperator2(infix.substr(i,1))) {
+// 				// else if (infix[i] == '/' || infix[i] == '\\' || infix[i] == '~') {
+//             // int index1;
+//             if (isOperator(infix.substr(i,2))) {
+//                 index1 = 2;
+//             } else {
+//                 index1 = 1;
+//             }
+//             if (s.empty()) {
+//                 s.push(infix.substr(i,index1));
+//             }
+//             else {
+// 								prec = infix.substr(i,index1);
+//                 if (precedence(prec) > precedence(s.top())) {
+//                     s.push(prec);
+//                 }
+//                 else if (precedence(prec) == precedence(s.top())) {
+//                     s.push(prec);
+//                 }
+//                 else {
+//                     while ((!s.empty()) && (precedence(prec) < precedence(s.top()))) {
+//                         // assign number to formula and write to file
+//                         // ss << write_to_file (formula_map, count, s, prefix, index_pair);
+// 												ss_string += write_to_file (formula_map, count, s, prefix, index_pair);
+//                         s.pop();
+//                     }
+//                     s.push(prec);
+//                 }
+//             }
+//         }
+//     }
+//     while (!s.empty()) {
+//         // last formula
+//         // assign number to formula and write to file
+//         // ss << write_to_file (formula_map, count, s, prefix, index_pair);
+// 				ss_string += write_to_file (formula_map, count, s, prefix, index_pair);
+//         s.pop();
+//     }
+
+
+// THH try
 void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector<char> const & quantifier)
 {
     int count = 1;
     pair<int, int> index_pair;
     map<string, int> formula_map;
-    ofstream my_file;
+    // ofstream my_file;
     // stringstream ss;
 		string ss_string; // THH: let's try using string
 
-    my_file.open("build_today/HQ-cpp.qcir");
+		// my_file.open("build_today/HQ-test.qcir");
+    // my_file.open("build_today/HQ-cpp.qcir");
     string prefix;
     string variable;
+
+
     reverse(infix.begin(), infix.end());
 
 		string prec;
 		int index1;
 
-    // for (int i = 0; i < infix.length(); i++) {
-    //     if (infix[i] == '(') {
-    //         infix[i] = ')';
-    //     }
-    //     else if (infix[i] == ')') {
-    //         infix[i] = '(';
-    //     }
-    // }
     for (int i = 0; i < infix.length(); i++) {
 
 				// THH: it's the same change them here right?
@@ -475,7 +588,7 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
             variable += infix[i];
             // end of variable due to operator or parentheses
             if ((infix.length() >= (i+1) && (infix[i+1] == '/' || infix[i+1] == '\\' || infix[i+1] == '~' || isPar(infix.substr(i+1,1))))||(infix.length()-1) == i) {
-                reverse(variable.begin(), variable.end());
+                // reverse(variable.begin(), variable.end());
                 // check if variable already in map or not
                 if (var_map.find(variable) == var_map.end()) {
                     prefix = prefix +  "(" + std::to_string(count) + ')';
@@ -484,6 +597,8 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
                 } else {
                     prefix = prefix +  "(" + to_string(var_map[variable]) + ')';
                 }
+
+
                 variable = "";
             }
         }
@@ -504,6 +619,7 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
             }
         }
         else if (isOperator(infix.substr(i,2)) || isOperator2(infix.substr(i,1))) {
+				// else if (infix[i] == '/' || infix[i] == '\\' || infix[i] == '~') {
             // int index1;
             if (isOperator(infix.substr(i,2))) {
                 index1 = 2;
@@ -538,9 +654,9 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
         // assign number to formula and write to file
         // ss << write_to_file (formula_map, count, s, prefix, index_pair);
 				ss_string += write_to_file (formula_map, count, s, prefix, index_pair);
-
         s.pop();
     }
+
     // quantifiers
     write_quantifiers (quantifier, var_map, my_file);
     // output and variables
@@ -549,15 +665,22 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
     // my_file << ss.str() << endl;
 		my_file << ss_string;
     // new map so variables can be sorted by number in qcir file
-    // map<int, string> new_map;
+    map<int, string> new_map;
 		my_file << "# variables" << endl;
     for (auto x: var_map) {
         // new_map[x.second] = x.first;
-				my_file << "#  " << x.first << " " << x.second << endl;
+				// my_file << "#  " << x.first << " " << x.second << endl;
+				// var_map[x] = reverse(x.first.begin(), x.first.end());
+				my_file <<  "#  " << x.second << ": "<< x.first  << endl;
+				// my_file <<  "#  " << x.second << ": "<< (x.first.begin(), x.first.end())  << endl;
+				// reverse(variable.begin(), variable.end());
     }
     // for (auto x: new_map) {
     //     my_file << "#  " << x.first << " " << x.second << endl;
     // }
+
+		//// debug
+
 
     my_file.close();
 }
@@ -565,11 +688,173 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
 
 
 
+/// T --- H --- Hs
+map<string, int> variable_map;
+int global_counter = 1;
+string final_QCIR;
+
+
+
+string numerize_vars(string var_name){
+	if (!variable_map.count(var_name)){
+		variable_map[var_name] = ++global_counter;
+	}
+	return to_string(variable_map[var_name]);
+  // return "error";
+}
+
+
+void debug(string s){
+	cout << s << endl;
+}
+
+int build_AND(string expr){
+	debug("building: " + expr);
+	string var_name = "";
+	string final_QCIR = "";
+	final_QCIR += to_string(global_counter) + "=(";
+	for (int i = 0 ; i < expr.length() ; i++){
+		if (expr[i] == ')'){
+			final_QCIR += numerize_vars(var_name);
+			final_QCIR += ')';
+		}
+		else if (expr[i] == '~'){
+			final_QCIR += "-";
+		}
+		else if (expr[i] != '/'){
+			var_name += expr[i];
+			debug(var_name);
+		}
+		else{
+			final_QCIR += numerize_vars(var_name) + ",";
+			var_name = "";
+			i = i + 1;
+		}
+
+	}
+
+	// final_QCIR += to_string(global_counter) + "=(" + var_name + ")";
+
+	debug("final: "+final_QCIR);
+	global_counter ++;
+
+	return 999;
+}
+
+int build_OR(string expr){
+	debug("building: " + expr);
+	string var_name = "";
+	string final_QCIR = "";
+	final_QCIR += to_string(global_counter) + "=(";
+	for (int i = 0 ; i < expr.length() ; i++){
+		if (expr[i] == ')'){
+			final_QCIR += numerize_vars(var_name);
+			final_QCIR += ')';
+		}
+		else if (expr[i] == '~'){
+			final_QCIR += "-";
+		}
+		else if (expr[i] != '\\'){
+			var_name += expr[i];
+			debug(var_name);
+		}
+		else{
+			final_QCIR += numerize_vars(var_name) + ",";
+			var_name = "";
+			i = i + 1;
+		}
+
+	}
+
+	// final_QCIR += to_string(global_counter) + "=(" + var_name + ")";
+
+	debug("final: "+final_QCIR);
+	global_counter ++;
+
+	return 999;
+}
+
+// A binary version
+// int BoolToQCIR(string formula, int L_ptr, int R_ptr ){
+int BoolToQCIR(string formula, int L_ptr, int R_ptr){
+
+	string L_expr;
+	string R_expr;
+	// int L_ptr = formula[0];
+	// int R_ptr = formula[formula.length()];
+
+	if(formula[L_ptr+1] == '(' && formula[R_ptr-1] == ')'){
+		BoolToQCIR(formula, L_ptr+1, R_ptr-1);
+	}
+	else{
+		// for (int k = L_ptr; k < formula.length(); k++){
+			// cout << "[last layer, assigning numbers]" << endl;
+			// if (k == formula.find(")")){ //
+				if (formula[L_ptr+2] == '/'){
+					cout << "build AND: " << endl;
+					build_AND(formula.substr(1, R_ptr-1)); // also remove the parans
+				}
+				else if (formula.find("\\")){
+					build_OR(formula.substr(1, R_ptr-1));
+
+				}
+			// }
+		// }
+	}
+	for (auto x: variable_map) {
+		 cout << "#  " << x.second << ": "<< x.first  << endl;
+	}
+	return 1;
+
+}
+
+string test_formula = "((a/\\b)\\/(c/\\d))";
+
+
 
 
 //Min genqbf function to run
 int main(int argc, char **argv)
 {
+	clock_t start, end;
+	double time_taken;
+	vector<char> quantifier;
+
+	bool test = false;
+
+	if (test){
+		cout << "(test)" << endl;
+		cout << "translating: " << test_formula << endl;
+
+		start = clock();
+		quantifier = {"E", "E"};
+		map<string, int> var_map;
+		stack<string> stack;
+		string line, input_file;
+		InfixToQCIR(stack, test_formula , var_map, quantifier);
+		// InfixToQCIR(stack, infix_formulas , var_map, quantifier);
+		end = clock();
+		time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+
+		cout << "(L&T) code. \n Time for converting QCIR : " << fixed
+				 << time_taken << setprecision(6);
+		cout << " sec " << endl;
+
+
+		cout << "__________________" << endl;
+		start = clock();
+		BoolToQCIR(test_formula, 0, test_formula.length()-1);
+		// BoolToQCIR(test_formula);
+		end = clock();
+		time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+
+		cout << "(THH) code. \n Time for converting QCIR : " << fixed
+		<< time_taken << setprecision(6);
+		cout << " sec " << endl;
+
+	}
+	else{
+
 	int k;
 	char *a = argv[1];
 	k = atoi(a);
@@ -590,27 +875,15 @@ int main(int argc, char **argv)
 		counter++;
 	}
 
-	clock_t start, end;
-	double time_taken;
-
-
+	//
+	//
 	start = clock();
 	string infix_formulas;
 	for (int i = 0; i < inputs.size() - 3; i += 2)
 	{
 		string unrolled_I = I_unroller(k, inputs[i], model_types[i / 2]);
-		// unrolled_I = iff_replacer(unrolled_I);
-		// unrolled_I = if_replacer(unrolled_I);
-		// unrolled_I = negation_remover(unrolled_I);
 		string unrolled_R = R_unroller(k, inputs[i + 1], model_types[i / 2]);
-		// unrolled_R = iff_replacer(unrolled_R);
-		// unrolled_R = if_replacer(unrolled_R); // THH: to update // THH: to update!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// unrolled_R = negation_remover(unrolled_R);
-		// outdata << unrolled_I << endl;
-		// outdata << "/\\" << endl;
-		// outdata << unrolled_R << endl;
-		// outdata << "/\\" << endl;
-		infix_formulas = infix_formulas + unrolled_I + "/\\" + unrolled_R;
+		infix_formulas = infix_formulas + "("+unrolled_I + ")" + "/\\" + "(" + unrolled_R + ")";
 	}
 	end = clock();
 	time_taken = double(end - start) / double(CLOCKS_PER_SEC);
@@ -620,6 +893,25 @@ int main(int argc, char **argv)
 
 
 	// FORMULA
+	// int last_dot = prop.find_last_of('.');
+	// string quants = prop.substr(0, last_dot+1);
+	// regex re("([A-Z].)");
+	//
+	// for (int i = 0 ; i < quants.length() ; i++){
+	// 	if (quants[i] == 'e'){ // 'exists'
+	// 			quantifier.push_back('E');
+	// 	}
+	// 	if (quants[i] == 'f'){ // 'forall'
+	// 			quantifier.push_back('A');
+	// 	}
+	// }
+
+	string semantic = inputs[inputs.size() - 3];
+	string QS = inputs[inputs.size() - 2];
+	// string prop = inputs[inputs.size() - 1];
+
+	std::ifstream 
+
 	start = clock();
 	string prop;
 	std::ifstream file(inputs[inputs.size() - 1]);
@@ -633,31 +925,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	int last_dot = prop.find_last_of('.');
-	string quants = prop.substr(0, last_dot+1);
-
-	// cout << quants << endl;
-	regex re("([A-Z].)");
-	// cout << regex_replace(quants, re, "") << endl;
-
-
-
-	vector<char> quantifier;
-	for (int i = 0 ; i < quants.length() ; i++){
-		if (quants[i] == 'e'){ // 'exists'
-				quantifier.push_back('E');
-		}
-		if (quants[i] == 'f'){ // 'forall'
-				quantifier.push_back('A');
-		}
-	}
-	// for(int i=0; i < quantifier.size(); i++){
-  //  std::cout << quantifier.at(i) << ' ';
- 	// }
 	prop = prop.substr(last_dot+1, prop.length());
-	// cout << prop << endl;
-
-
 
 	string unrolled_formula = formula_unroller(k+1, prop, inputs[inputs.size() - 2]);
 	end = clock();
@@ -665,64 +933,18 @@ int main(int argc, char **argv)
 		cout << "Time for unrolling formula : " << fixed
 				 << time_taken << setprecision(5);
 		cout << " sec " << endl;
-	// unrolled_formula = iff_replacer(unrolled_formula);
-	// unrolled_formula = if_replacer(unrolled_formula);
-	// unrolled_formula = negation_remover(unrolled_formula);
 	unrolled_formula = "(" + unrolled_formula + ")"; // warning: here has a hidden ,\\
 
-
-	// infix_formulas = "(((some_A_[0]/\\~some_B_[0])\\/(some_A_[0]/\\~some_B_[0]))/\\some_A[0])";
-	// infix_formulas = "(a /\\ b) /\\ (~c \\/ d)";
-	// infix_formulas = "((some_A_[0]/\\~some_B_[0])\\/(some_A_[0]/\\~some_B_[0]))";
-
 	infix_formulas = infix_formulas+unrolled_formula;
-	// infix_formulas should be space free
-
-	// cout << infix_formulas << endl;
-	// string test = subformulas(infix_formulas);
-	// int test = subformulas(test_formula);
-	// cout << test << "  (final) " << endl;
+	ofstream bool_output("build_today/output-cpp.txt");
+	bool_output << infix_formulas;
 
 
-	// cout << L_ptr << endl;
-	// cout << R_ptr << endl;
-	// cout << infix_formulas.substr(L_ptr, R_ptr) << endl;
-
-
-	// outdata.open("build_today/output.txt");
-	// outdata << infix_formulas << endl;
-	// outdata.close();
-
+	// L & T
 	map<string, int> var_map;
 	stack<string> stack;
 	string line, input_file;
-	// map<pair<int, int>, int> gate_map;
-
-	//change this to change the quantifiers
-
-	// takes an input file
-	// cout << "Enter a file name: " << endl;
-	// cin >> input_file;
-
-	// this is broken
-	// infix_formulas = "(some_A_[0]/\\~some_B_[0])\\/(some_A_[0]/\\~some_B_[0])/\\some_A[0]";
-	// string QCIR_out = "test.qcir";
-
 	string QCIR_out = "build_today/HQ-cpp.qcir";
-
-	// takes an input file
-	// cout << "Enter a file name: " << endl;
-	// cin >> input_file;
-	// ifstream myfile (input_file);
-	// stringstream infix;
-
-	// else cout << "Unable to open file";
-	// InfixToQCIR(stack, infix_formulas , var_map, quantifier);
-	// cout << "\nConversion complete\n" << endl;
-	// return 0;
-
-
-	// string QCIR_out = "test.qcir";
 	start = clock();
 	InfixToQCIR(stack, infix_formulas , var_map, quantifier);
 	end = clock();
@@ -730,24 +952,18 @@ int main(int argc, char **argv)
 		cout << "Time for converting QCIR : " << fixed
 				 << time_taken << setprecision(5);
 		cout << " sec " << endl;
-	// cout << "\nConversion complete\n" << endl;
-	// cout << "tiiiiiiiiiiiiiime" << endl;
+
+	}
+
 	return 0;
+
+
 }
 
 
 
-
-
-// void build_AND(string subform){
-//
-//
-// }
-
-// map<string, int> variable_map;
-// int global_counter = 1;
-// // THH try infix to QCIR
-// int subformulas(string formula){
+// a recursive version
+// int BoolToQCIR(string formula){
 //
 // 	string LEFT;
 // 	string RIGHT;
@@ -771,7 +987,7 @@ int main(int argc, char **argv)
 // 				cout << RIGHT << endl;
 //
 // 				global_counter ++;
-// 				cout << to_string(global_counter) << "=and(" <<  subformulas(LEFT) << ", " <<  subformulas(RIGHT) << ")" << endl;
+// 				cout << to_string(global_counter) << "=and(" <<  BoolToQCIR(LEFT) << ", " <<  BoolToQCIR(RIGHT) << ")" << endl;
 // 				return global_counter;
 // 				// subformulas(LEFT);
 // 				// subformulas(RIGHT);
@@ -784,7 +1000,7 @@ int main(int argc, char **argv)
 // 				cout << RIGHT << endl;
 //
 // 				global_counter ++;
-// 				cout << to_string(global_counter) << "=or(" <<  subformulas(LEFT) << ", " <<  subformulas(RIGHT) << ")" << endl;
+// 				cout << to_string(global_counter) << "=or(" <<  BoolToQCIR(LEFT) << ", " <<  BoolToQCIR(RIGHT) << ")" << endl;
 // 				return global_counter;
 // 				// cout << subformulas(LEFT) << endl;
 // 				// cout << subformulas(RIGHT) << endl;
@@ -816,7 +1032,7 @@ int main(int argc, char **argv)
 // 				cout << LEFT << endl;
 //
 // 				global_counter ++;
-// 				cout << to_string(global_counter) << "=or(" <<  -subformulas(LEFT) << ", " <<  subformulas(RIGHT) << ")" << endl;
+// 				cout << to_string(global_counter) << "=or(" <<  -BoolToQCIR(LEFT) << ", " <<  BoolToQCIR(RIGHT) << ")" << endl;
 // 				return global_counter;
 // 			}
 // 		}
@@ -825,8 +1041,8 @@ int main(int argc, char **argv)
 // 			RIGHT = formula.substr(formula.find(")\\/(")+3, formula.length());
 // 			cout << LEFT << endl;
 // 			cout << RIGHT << endl;
-// 			subformulas(LEFT);
-// 			subformulas(RIGHT);
+// 			BoolToQCIR(LEFT);
+// 			BoolToQCIR(RIGHT);
 // 		}
 // 		// cout << formula.find(")\\/(") << endl;
 // 	}
@@ -835,20 +1051,21 @@ int main(int argc, char **argv)
 // 					LEFT = formula.substr(0, R_ptr);
 // 					RIGHT = formula.substr(L_ptr+1, formula.length());
 // 					global_counter ++;
-// 					cout << to_string(global_counter) << "=or(" <<  subformulas(LEFT) << ", " <<  subformulas(RIGHT) << ")" << endl;
+// 					cout << to_string(global_counter) << "=or(" <<  BoolToQCIR(LEFT) << ", " <<  BoolToQCIR(RIGHT) << ")" << endl;
 // 					return global_counter;
 // 					// cout << "LEFT: " << LEFT << endl;
 // 					// cout << "RIGHT: " << RIGHT << endl;
 // 			}
-// 			else if ((formula.find(")\\/(") != -1){
-//
-// 			}
-// 			else if ( formula.find(")\\/~(") != -1) {
+// 			// else if ((formula.find(")\\/(") != -1){
+// 			//
+// 			// }
+// 			// else if ( formula.find(")\\/~(") != -1) {
+// 			// }
 // 			else if ( formula.find(")/\\~(") != -1) {
 // 					LEFT = formula.substr(0, R_ptr);
 // 					RIGHT = formula.substr(L_ptr+1, formula.length());
 // 					global_counter ++;
-// 					cout << to_string(global_counter) << "=or(" <<  subformulas(LEFT) << ", " <<  -subformulas(RIGHT) << ")" << endl;
+// 					cout << to_string(global_counter) << "=or(" <<  BoolToQCIR(LEFT) << ", " <<  -BoolToQCIR(RIGHT) << ")" << endl;
 // 					return global_counter;
 // 					// cout << "TODO: leading negation" << endl;
 // 					// cout << "LEFT: " << LEFT << endl;
@@ -859,8 +1076,8 @@ int main(int argc, char **argv)
 // 			}
 // 			cout << LEFT << endl;
 // 			cout << RIGHT << endl;
-// 			subformulas(LEFT);
-// 			subformulas(RIGHT);
+// 			BoolToQCIR(LEFT);
+// 			BoolToQCIR(RIGHT);
 // 	}
 // 	else if ((L_ptr == 0) && !(R_ptr == formula.length()-1)){ // inballance
 // 			cout << "error: inbalance" << endl;
@@ -873,12 +1090,18 @@ int main(int argc, char **argv)
 // 		cout << "keep going!! " << endl;
 // 		cout << formula << endl;
 // 		formula = formula.substr(L_ptr+1, R_ptr-1);
-// 		subformulas(formula);
+// 		BoolToQCIR(formula);
 // 	}
 //
 // 	// cout << formula << endl;
 // 	// return "NONE.";
+//
+//
+// 	for (auto x: variable_map) {
+// 		 cout << "#  " << x.first << " " << x.second << endl;
+// 	}
+//
+//
 // 	return 1;
+//
 // }
-
-// string test_formula = "(~(a/\\b)\\/(~c\\/d))";

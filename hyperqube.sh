@@ -9,8 +9,6 @@ MULTI_PARSER=exec/multi_model_parser.py
 
 # GENQBF=exec/genqbf
 # GENQBF=src/cplusplus/genqbf
-
-
 QUABS=exec/quabs
 MAP=exec/util_mapvars
 PARSE_BOOL=exec/util_parsebools
@@ -125,10 +123,6 @@ then
 
 
 
-
-
-
-
 else
   echo "HyperQube error: please specify mode: -single | -multi \n"
   exit 1
@@ -185,20 +179,22 @@ echo "generating QBF BMC..."
 
 
 #old genqbf
-QCIR_OUT=${OUTFOLDER}HQ-ocaml.qcir
+QCIR_OUT=${OUTFOLDER}HQ.qcir
 echo "\n(ocaml genqbf)"
 GENQBF=exec/genqbf
+# GENQBF=exec/genqbf_v5
 time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+# time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n
+
 echo "\nsolving QBF..."
+# time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
 OUTCOME=$(grep "r " ${QUABS_OUT})
 echo "\nQuABs outcome: "${OUTCOME}
 
-# rm ${QCIR_OUT}
-rm ${QUABS_OUT}
+
 
 # new_genqbf
-
 # echo "\n(c++ genqbf)"
 # GENQBF=src/cplusplus/old_genqbf
 # time ${GENQBF} ${k} ${I} ${R} ${J} ${S} ${SEM} demo/mini_P.hq
@@ -209,18 +205,15 @@ rm ${QUABS_OUT}
 # rm ${QCIR_OUT}
 # rm ${QUABS_OUT}
 
-
-# we use the original formula!! ${FORMULA} instead of ${P}
-QCIR_OUT=${OUTFOLDER}HQ-cpp.qcir
-echo "\n(upgraded c++ genqbf)"
-GENQBF=src/cplusplus/genqbf
-time ${GENQBF} ${k} ${I} ${R} ${J} ${S} ${SEM} ${FORMULA}
-echo "\nsolving QBF..."
-time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
-OUTCOME=$(grep "r " ${QUABS_OUT})
-echo "\nQuABs outcome: "${OUTCOME}
-
-
+# TODO add QS quantifier for GENQBF, and use ${P}
+# QCIR_OUT=${OUTFOLDER}HQ-cpp.qcir
+# echo "\n(upgraded c++ genqbf)"
+# GENQBF=src/cplusplus/genqbf
+# time ${GENQBF} ${k} ${I} ${R} ${J} ${S} ${SEM} ${FORMULA}
+# echo "\nsolving QBF..."
+# time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
+# OUTCOME=$(grep "r " ${QUABS_OUT})
+# echo "\nQuABs outcome: "${OUTCOME}
 
 # put back
 # echo "\nsolving QBF..."
@@ -232,21 +225,21 @@ echo "\nQuABs outcome: "${OUTCOME}
 
 
 ## THHTODO: update these two scripts
-# echo "\n=== Get Nice-formatted Output if output is SAT ==="
-# if [ ! -f "$QCIR_OUT" ]; then
-#     echo "$QCIR_OUT does not exists"
-#     exit 1
-# fi
+echo "\n=== Get Nice-formatted Output if output is SAT ==="
+if [ ! -f "$QCIR_OUT" ]; then
+    echo "$QCIR_OUT does not exists"
+    exit 1
+fi
 
-# echo "parsing into readable format..."
-# ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-# ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
+echo "parsing into readable format..."
+${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
 
 
 echo "\n------(END HyperQube)------\n"
 
 
-
+##### UNUSED
 # echo ${ALLARG}
 ## execute python scripts on docker
 # docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
