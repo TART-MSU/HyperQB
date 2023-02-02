@@ -13,16 +13,16 @@ MODULE main
  VAR
 	location: 1..7;
 	y: 0..50;
-	z: 0..40;
+	z: 0..20;
 
  FROZENVAR
 	h: boolean;
-	x: 0..20;
+	x: 0..10;
 
  ASSIGN
 	init(location) := 1 ;
 	init(h) := {TRUE, FALSE} ;
-	-- init(x) := 0..5;
+	init(x) := 0..5;
 	init(y) := 0;
 	init(z) := 0;
 
@@ -32,23 +32,25 @@ MODULE main
 		(location = 3) : 4;
 		(location = 2) : 4;
 		(location = 4 & z > 0) : 5;
-		(location = 4 & z = 0) : 6;
-		(location = 5 & z = 0) : 6;
+    (location = 4 & z = 0) : 6;
+    (location = 5) : 4; -- jump back
 		(location = 6): 7;
 		TRUE: location ;
 	esac;
 
-	next(y) := case
-	    (location = 5 & y <= 50 - x & z > 0) : y + x;
-	    (location = 6 & !h & y <= 25): 2 * y;
+	next(y) :=
+  case
+	    (location = 5 & (y <= 50 - x) & z > 0) : y + x;
+	    (location = 6 & !h & (y <= 25)): 2 * y;
 	    TRUE: y;
 	esac;
 
-	next(z) := case
+	next(z) :=
+  case
 		(h & location = 1) : 2 * x;
 		(!h & location = 1) : x;
 		(location = 5 & z > 0) : (z - 1);
-	        TRUE: z;
+	  TRUE: z;
 	esac;
 
 DEFINE
