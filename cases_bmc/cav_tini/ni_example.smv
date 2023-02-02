@@ -1,4 +1,17 @@
 MODULE main
+-- gniEx(bool high, int low) {
+--   1 if (high)
+--      { int x = ndet_int ; // here we assign at the beginning
+--   2    if (x >= low)
+--   3      { return x; }
+--   4    else { while (true) {} } }
+--     else {
+--   5   int x = low;
+--       while ( ndet_bool ) {
+--   6        x++; }
+--       return x;
+-- }
+
  VAR
 	location: 1..7;
 	x: 0..10;
@@ -11,7 +24,7 @@ MODULE main
  ASSIGN
 	init(location) := 1 ;
 	init(nondet) := {TRUE, FALSE};
-	init(x) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	init(x) := 0..10;
 	init(low) := {0, 1, 2, 3, 4, 5};
 	init(high) := {TRUE, FALSE};
 
