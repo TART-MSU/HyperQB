@@ -200,7 +200,8 @@ def conjunct_trans(list):
 	return output + list[len(list)-1]
 
 def trans(pre, post):
-	return "(("+pre+")"+IMPLIES+"("+post+"))"
+	# return "(("+pre+")"+IMPLIES+"("+post+"))"
+	return "(~("+pre+")"+OR+"("+post+"))"
 
 
 
@@ -225,7 +226,8 @@ def binary_eq(var_l, var_r,  num_bits):
 		left = var_l[0] + "_"+str(i) +"_"+var_l[1]
 		right = var_r[0] + "_"+str(i) +"_"+var_r[1]
 		# print(left + " <-> " + right)
-		result.append("("+left + IFF + right+")")
+		# result.append("("+left + IFF + right+")")
+		result.append("((~"+left + OR + right+")/\\(~" + right + OR + left + "))");
 	return conjunct(result)
 
 def binary_assign(var, num, bitblasting_dict):
@@ -423,10 +425,23 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	## make '!' as "~" for genqbf
 	text = text.replace("!","~")
 
+	iff_ops = re.findall("\(.*?<->.*?\)", text)
+	for op in iff_ops:
+		convert_iff = ""
+		op = op.replace("(", "")
+		op = op.replace(")", "")
+		op = op.replace(" ", "")
+		vars = op.split("<->")
+
+		# print(op)
+		convert_iff = "((~" + vars[0] + OR + vars[1] + ")/\\" + "(~" + vars[1] + OR + vars[0] + "))";
+		print(convert_iff)
+		text = text.replace(op, convert_iff)
+		print(text)
 
 
 
-
+	## parse arith
 	arith_ops = re.findall("\*.*?\*", text)
 	for op in arith_ops:
 		blasted = ""
@@ -441,8 +456,6 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 		var_l = str(vars[0]).rsplit('_', 1)
 		var_r = str(vars[1]).rsplit('_', 1)
 
-		# print(var_l)
-		# print(var_r)
 
 		if (var_l[0].isdigit() and var_r[0].isdigit()):
 			print("[ error! arithmetic operation is not correctly constructed. ]")

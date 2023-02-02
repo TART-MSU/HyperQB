@@ -1,7 +1,11 @@
 MODULE main
 
+-- 0	while (x>0){
+-- 1		x = x - y
+-- 2	}
+
 	VAR
-		x:-5..10;
+		x:-5..100;
 		t: 0..1;
 		location: 0..2;
 
@@ -10,9 +14,9 @@ MODULE main
 
 	ASSIGN
 		init(location) := 1;
-		init(x) := 5;
+		init(x) := 100;
 		init(t) := 0;
-        	init(y) := 1;
+  	init(y) := 2;
 
 		next(location) :=
 		case
