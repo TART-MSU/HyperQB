@@ -51,10 +51,15 @@ DUMMY="cases_bmc/dummy.hq"
 # ${HYPERQUBE} cases_bmc/cav_tsni/ni_example.smv cases_bmc/cav_tsni/ni_example.smv cases_bmc/cav_tsni/tsni.hq 10 ${OPT} ${MULTI} ${BUGHUNT}
 
 # [intransitive]
-# --- first, it violates classical OD (PES, SAT)
-# ${HYPERQUBE} cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/classic_OD.hq 10 ${PES} ${MULTI} ${BUGHUNT}
-# --- however, with scheduler involves, it satisfies intransitive_OD
+# --- first, it violates classic_OD (PES, SAT)
+${HYPERQUBE} cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/classic_OD.hq 10 ${PES} ${MULTI} ${BUGHUNT}
+# --- however, with scheduler involves, it satisfies intransitive_OD (OPT, UNSAT)
 ${HYPERQUBE} cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/intrans_OD.hq 10 ${OPT} ${MULTI} ${BUGHUNT}
+# --- next, it violates
+
+
+# --- same, the scheduler guarantees GMNI
+${HYPERQUBE} cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/intrans_GMNI.hq 10 ${PES} ${MULTI} ${BUGHUNT}
 
 
 

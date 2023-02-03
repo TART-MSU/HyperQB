@@ -265,7 +265,7 @@ def main_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed
 	# print("FSM Model info:")
 	# print("\n============ Parse M1 ============")
 	state_variables = list(enc.stateVars)
-	print("all state variables: ", state_variables)
+	# print("all state variables: ", state_variables)
 	num_states = fsm.count_states(fsm.reachable_states)
 	# print("total number of reachable states: ", num_states)
 	# inputs = list(enc.inputsVars)
@@ -364,9 +364,6 @@ def main_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed
 
 		transitions = []
 		curr = state.get_str_values()
-		# print('from')
-		# print(curr)
-		# print('to')
 		post_list = [] # list of all next states
 		for post_state in fsm.pick_all_states(fsm.post(state)):
 			post = post_state.get_str_values()
@@ -435,9 +432,9 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 
 		# print(op)
 		convert_iff = "((~" + vars[0] + OR + vars[1] + ")/\\" + "(~" + vars[1] + OR + vars[0] + "))";
-		print(convert_iff)
+		# print(convert_iff)
 		text = text.replace(op, convert_iff)
-		print(text)
+		# print(text)
 
 
 
