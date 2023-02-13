@@ -43,8 +43,8 @@ You can start using HyperQube in 2 simple steps:
 You are now ready to run HyperQube!
 
 We provide two demo examples. To run, execute each of the followings:
-- (Example 1: bakery with symmetry:) <br/> ```./hyperqube.sh demo/bakery.smv demo/symmetry 10 pes -single```
-- (Example 2: SNARK with linearizability) <br/> ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes -multi```
+- (Example 1: bakery with symmetry:) <br/> ```./hyperqube.sh demo/bakery.smv demo/symmetry.hq 10 pes -single```
+- (Example 2: SNARK with linearizability) <br/> ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 pes -multi```
 
 
 
