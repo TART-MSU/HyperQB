@@ -5,60 +5,60 @@ This file provide the command lines to run specific experiments we provided in t
 
 Small demos in the tool paper:
 
-./hyperqube.sh demo/simple.smv demo/simple.hq 1 pes -single
-./hyperqube.sh demo/mini.smv demo/mini.hq 1 pes -single
+./hyperqb.sh demo/simple.smv demo/simple.hq 1 pes -single
+./hyperqb.sh demo/mini.smv demo/mini.hq 1 pes -single
 
 [run bakery algorithm with symmetry property]
-  ./hyperqube.sh demo/bakery.smv demo/symmetry.hq 10 pes -single
+  ./hyperqb.sh demo/bakery.smv demo/symmetry.hq 10 pes -single
 
 [run SNARK algorithm with linearizability propoerty]
-  ./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes -multi
+  ./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/linearizability 18 pes -multi
 
 
 Experiments in the tool paper:
 [run simple_krip with simple_krip_formula]
-  ./hyperqube.sh cases_bmc/simple_krip.smv  cases_bmc/simple_krip_formula.hq 5 pes
+  ./hyperqb.sh cases_bmc/simple_krip.smv  cases_bmc/simple_krip_formula.hq 5 pes
 
 
 [BAKERY]
 -- 1.1 BAKERY 3PROC SYM1 --
-  ./hyperqube.sh cases_bmc/bakery_3procs.smv cases_bmc/bakery_formula_sym1_3proc.hq 10 pes
+  ./hyperqb.sh cases_bmc/bakery_3procs.smv cases_bmc/bakery_formula_sym1_3proc.hq 10 pes
 
 -- 1.2 BAKERY 3PROC SYM2  --
-  ./hyperqube.sh cases_bmc/bakery_3procs.smv cases_bmc/bakery_formula_sym2_3proc.hq 10 pes
+  ./hyperqb.sh cases_bmc/bakery_3procs.smv cases_bmc/bakery_formula_sym2_3proc.hq 10 pes
 
 -- 1.3 BAKERY 5PROC SYM1 --
-  ./hyperqube.sh cases_bmc/bakery_5procs.smv cases_bmc/bakery_formula_sym1_5proc.hq 10 pes
+  ./hyperqb.sh cases_bmc/bakery_5procs.smv cases_bmc/bakery_formula_sym1_5proc.hq 10 pes
 
 -- 1.4 BAKERY 5PROC SYM2 --
-  ./hyperqube.sh cases_bmc/bakery_5procs.smv cases_bmc/bakery_formula_sym2_5proc.hq 10 pes
+  ./hyperqb.sh cases_bmc/bakery_5procs.smv cases_bmc/bakery_formula_sym2_5proc.hq 10 pes
 
 
 
 [SNARK]
 
 -- 2.1 SNARK_BUG 1 --
-  ./hyperqube.sh cases_bmc/snark1_M1_concurrent.smv cases_bmc/snark1_M2_sequential.smv  cases_bmc/snark1_formula.hq 18 pes
+  ./hyperqb.sh cases_bmc/snark1_M1_concurrent.smv cases_bmc/snark1_M2_sequential.smv  cases_bmc/snark1_formula.hq 18 pes
 
 -- 2.2 SNARK_BUG 2 --
-  ./hyperqube.sh cases_bmc/snark2_new_M1_concurrent.smv  cases_bmc/snark2_new_M2_sequential.smv cases_bmc/snark2_formula.hq 30 pes
+  ./hyperqb.sh cases_bmc/snark2_new_M1_concurrent.smv  cases_bmc/snark2_new_M2_sequential.smv cases_bmc/snark2_formula.hq 30 pes
 
 
 
 [3-thread]
 -- 3.1 3-thread incorrect --
-  ./hyperqube.sh cases_bmc/NI_incorrect.smv cases_bmc/NI_formula.hq 50 hpes
+  ./hyperqb.sh cases_bmc/NI_incorrect.smv cases_bmc/NI_formula.hq 50 hpes
 
 -- 3.2 3-thread correct --
-  ./hyperqube.sh cases_bmc/NI_correct.smv cases_bmc/NI_formula.hq 50 hopt
+  ./hyperqb.sh cases_bmc/NI_correct.smv cases_bmc/NI_formula.hq 50 hopt
 
 [Non-repudiation Protocol]
 
 -- 4.1 NRP incorrect
-  ./hyperqube.sh cases_bmc/NRP_incorrect.smv cases_bmc/NRP_formula.hq 15 hpes
+  ./hyperqb.sh cases_bmc/NRP_incorrect.smv cases_bmc/NRP_formula.hq 15 hpes
 
 -- 4.2 NRP_correct --
-  ./hyperqube.sh cases_bmc/NRP_correct.smv cases_bmc/NRP_formula.hq 15 hopt
+  ./hyperqb.sh cases_bmc/NRP_correct.smv cases_bmc/NRP_formula.hq 15 hopt
 
 
 
@@ -66,35 +66,35 @@ Experiments in the tool paper:
 
 [Shortest Path]
 -- Shortest Path 10x10 --
-  ./hyperqube.sh cases_bmc/robotic_sp_100.smv  cases_bmc/robotic_sp_formula.hq 20 hpes -find
+  ./hyperqb.sh cases_bmc/robotic_sp_100.smv  cases_bmc/robotic_sp_formula.hq 20 hpes -find
 
 -- Shortest Path 20x20 --
-  ./hyperqube.sh cases_bmc/robotic_sp_400.smv cases_bmc/robotic_sp_formula.hq 40 hpes -find
+  ./hyperqb.sh cases_bmc/robotic_sp_400.smv cases_bmc/robotic_sp_formula.hq 40 hpes -find
 
 -- Shortest Path 40x40 --
-  ./hyperqube.sh cases_bmc/robotic_sp_1600.smv cases_bmc/robotic_sp_formula.hq 80 hpes -find
+  ./hyperqb.sh cases_bmc/robotic_sp_1600.smv cases_bmc/robotic_sp_formula.hq 80 hpes -find
 
 -- Shortest Path 60x60 --
-  ./hyperqube.sh cases_bmc/robotic_sp_3600.smv cases_bmc/robotic_sp_formula.hq 120 hpes -find
+  ./hyperqb.sh cases_bmc/robotic_sp_3600.smv cases_bmc/robotic_sp_formula.hq 120 hpes -find
 
 
 
 [Initial State Robustness]
 
 -- Robustness 10x10 --
-  ./hyperqube.sh cases_bmc/robotic_robustness_100.smv cases_bmc/robotic_robustness_formula.hq 20 hpes -find
+  ./hyperqb.sh cases_bmc/robotic_robustness_100.smv cases_bmc/robotic_robustness_formula.hq 20 hpes -find
 
 -- Robustness 20x20 --
-  ./hyperqube.sh cases_bmc/robotic_robustness_400.smv cases_bmc/robotic_robustness_formula.hq 40 hpes -find
+  ./hyperqb.sh cases_bmc/robotic_robustness_400.smv cases_bmc/robotic_robustness_formula.hq 40 hpes -find
 
 -- Robustness 40x40 --
-  ./hyperqube.sh cases_bmc/robotic_robustness_1600.smv cases_bmc/robotic_robustness_formula.hq 80 hpes -find
+  ./hyperqb.sh cases_bmc/robotic_robustness_1600.smv cases_bmc/robotic_robustness_formula.hq 80 hpes -find
 
 -- Robustness 60x60 --
-  ./hyperqube.sh cases_bmc/robotic_robustness_3600.smv cases_bmc/robotic_robustness_formula.hq 120 hpes -find
+  ./hyperqb.sh cases_bmc/robotic_robustness_3600.smv cases_bmc/robotic_robustness_formula.hq 120 hpes -find
 
 
 
 [Mutation Testing]
 
-  ./hyperqube.sh cases_bmc/mutation_testing.smv cases_bmc/mutation_testing.hq 10 hpes -find
+  ./hyperqb.sh cases_bmc/mutation_testing.smv cases_bmc/mutation_testing.hq 10 hpes -find
