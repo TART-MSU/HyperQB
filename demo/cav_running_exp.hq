@@ -1,0 +1,2 @@
+forall A. forall B. exists C.
+X(high[A] <-> high[C]) /\ G(low[B]<->low[C])

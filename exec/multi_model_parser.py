@@ -413,7 +413,7 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	# get all tid after all the quantifiers
 	tid_list = re.findall("[a-z, A-Z]\.", text)
 	# fornow, genQBF suppots two quantifiers, subsitute all [...] into _...
-	characters = ["_A", "_B"]
+	characters = ["_A", "_B", "_C", "_D", "_E", "_F", "_G", "_H", "_I", "_J", "_K", "_L", "_M", "_N", "_O", "_P", "_Q", "_R", "_S", "_T", "_U", "_V", "_W", "_X", "_Y", "_Z"]
 	for i in range(len(tid_list)):
 		tid = tid_list[i].replace(".","")
 		text = re.sub("\["+tid+"\]", characters[i], text)
@@ -435,8 +435,6 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 		# print(convert_iff)
 		text = text.replace(op, convert_iff)
 		# print(text)
-
-
 
 	## parse arith
 	arith_ops = re.findall("\*.*?\*", text)
@@ -495,27 +493,48 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 
 
 	# read quantifier selection, store in QS.hq
-	QUANTIFIER_1 = text.split(" ", 0)
-	Quants=""
-	if (re.findall("exists.*?exists.*?", text)):
-		Quants="QS=EE"
-		if(To_Negate_formula):
-			Quants="QS=AA"
-	elif (re.findall("forall.*?forall.*?", text)):
-		Quants="QS=AA"
-		if(To_Negate_formula):
-			Quants="QS=EE"
-	elif (re.findall("exists.*?forall.*?", text)):
-		Quants="QS=EA"
-		if(To_Negate_formula):
-			Quants="QS=AE"
-	elif (re.findall("forall.*?exists.*?", text)):
-		Quants="QS=AE"
-		if(To_Negate_formula):
-			Quants="QS=EA"
-	else:
-		print("[ error: invald format of quantifiers and path variables. ]")
-		print("correct format {exists, forall} {var1_name}. {exists, forall} {var2_name}. ")
+	Quants="QS="
+
+	for char in text:
+		if (char == 'f'):
+			# print("forall")
+			if(To_Negate_formula):
+				Quants+="E"
+			else:
+				Quants+="A"
+		elif(char == 'e'):
+			# print("exists")
+			if(To_Negate_formula):
+				Quants+="A"
+			else:
+				Quants+="E"
+		elif(char == '('):
+			break;		
+
+	# THH: update, arbitrary quantifiers
+	# QUANTIFIER_1 = text.split(" ", 0)
+	# Quants=""
+	# if (re.findall("exists.*?exists.*?", text)):
+	# 	Quants="QS=EE"
+	# 	if(To_Negate_formula):
+	# 		Quants="QS=AA"
+	# elif (re.findall("forall.*?forall.*?", text)):
+	# 	Quants="QS=AA"
+	# 	if(To_Negate_formula):
+	# 		Quants="QS=EE"
+	# elif (re.findall("exists.*?forall.*?", text)):
+	# 	Quants="QS=EA"
+	# 	if(To_Negate_formula):
+	# 		Quants="QS=AE"
+	# elif (re.findall("forall.*?exists.*?", text)):
+	# 	Quants="QS=AE"
+	# 	if(To_Negate_formula):
+	# 		Quants="QS=EA"
+	# # elif (re.findall("f"))
+	# else:
+	# 	print("????")
+	# 	print("[ error: invald format of quantifiers and path variables. ]")
+	# 	print("correct format {exists, forall} {var1_name}. {exists, forall} {var2_name}. ")
 
 
 	QS = open(QS_file_name, "w")
