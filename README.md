@@ -40,16 +40,19 @@ You can start using HyperQube in 2 simple steps:
 - ```git clone https://github.com/TART-MSU/HyperQube.git```
 - ```cd HyperQube```
 
-You are now ready to run HyperQube!
+You are now ready to run HyperQube!:)
 
-We provide two demo examples. To run, execute each of the followings:
-- (Example 1: bakery with symmetry:) <br/> ```./hyperqube.sh demo/bakery.smv demo/symmetry.hq 10 pes -single```
-- (Example 2: SNARK with linearizability) <br/> ```./hyperqube.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 pes -multi```
 
+We provide two demo examples as presented in the tool paper. 
+To run, execute each of the followings:
+- [DEMO 1: run bakery algorithm with symmetry property]
+```./hyperqb.sh demo/bakery.smv demo/bakery demo/symmetry.hq 10 -pes -bughunt```
+- [DEMO 2: run SNARK1 with linearizabilty property]
+```./hyperqb.sh demo/snark_conc.smv demo/snark_seq.smv demo/lin.hq 18 -pes -bughunt```
 
 
 ## Experiments
-(all models and formulas are in directory tacas21_cases)
+(all models and formulas are in directory cases_bmc)
 
 Our evaluations include the following cases,<br/>
 - Case #1.1-#1.4: Symmetry in the Bakery Algorithm<br/>
@@ -58,6 +61,12 @@ Our evaluations include the following cases,<br/>
 - Case #4.1-#4.2: Fairness in Non-repudiation Protocols<br/>
 - Case #5.1-#5.2: Privacy-Preserving Path Synthesis for Robots<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
+- Case #7.1: Co-termination of multiple programs<br/>
+- Case #6.1: Mutant Synthesis for Mutation Testing<br/>
+- Case #6.1: Mutant Synthesis for Mutation Testing<br/>
+- Case #6.1: Mutant Synthesis for Mutation Testing<br/>
+- Case #6.1: Mutant Synthesis for Mutation Testing<br/>
+
 
 We also provide all the command lines needed for each experiment in the document *RUN.txt*
 
