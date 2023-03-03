@@ -1,8 +1,14 @@
+
+-- 1  high := {true, false}
+-- 2  low := false
+-- 3  if (high):
+-- 4    low := true;
+-- 5  halt
 MODULE main
  VAR
     high: boolean;
     low:  boolean;
-    PC: 1..6;
+    PC: 1..5;
     halt: boolean;
  ASSIGN
     -- Initial Conditions, here are dummy values.
@@ -30,11 +36,11 @@ MODULE main
         (PC=3 & high): 4; -- the if-the-else on line 3
         (PC=3 & !high): 5; -- the if-the-else on line 3
         (PC=4): 5;
-        (PC=5): 6;
+        (PC=5): 5;
         TRUE: PC;
       esac;
     next(halt) :=
       case
-        (PC=6): TRUE;
+        (PC=5): TRUE;
         TRUE: halt;
       esac;

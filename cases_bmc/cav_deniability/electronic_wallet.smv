@@ -1,14 +1,14 @@
 MODULE main
  VAR
-    init_balance: 0..10;
+    init_balance: 0..20;
     debits_amount: 1..10;
     PC: 1..6;
     num_itr: 0..11;
     halt: boolean;
  ASSIGN
     -- Initial Conditions
-    init(init_balance):= 10;
-    init(debits_amount) := 3..5;
+    init(init_balance):= 0..20;
+    init(debits_amount) := 1..10;
     init(num_itr):= 0;
     init(PC):= 1; -- but program counter starts at 1.
     init(halt) := FALSE;

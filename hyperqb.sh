@@ -1,6 +1,6 @@
 #!/bin/sh
 # TIMEFORMAT=%R
-
+## THHTODO: make sure the format is: /hyperqb.sh  bakery.smv bakery.smv symmetry.hq 10 -pes -bughunt
 ### Parameters
 SINGLE_PARSER=exec/single_model_parser.py
 MULTI_PARSER=exec/multi_model_parser.py
@@ -42,7 +42,7 @@ P=${OUTFOLDER}P.hq
 QSFILE=${OUTFOLDER}QS.bool
 
 ## updated Jan.28:merge parse and bmc
-echo "\n------( HyperQube START! )------\n"
+echo "\n------( HyperQB START! )------\n"
 ## get current location
 PWD=$(pwd)
 ## get all arguments
@@ -51,10 +51,10 @@ ALLARG=$@
 
 # if wrong number of arguments
 if [ "$#" -ne 4 ] && [ "$#" -ne 5 ] && [ "$#" -ne 6 ] && [ "$#" -ne 7 ]; then
-  echo "HyperQube error: wrong number of arguments of HyperQube: \n"
+  echo "HyperQB error: wrong number of arguments of HyperQB: \n"
   echo "- Simgle-model BMC: $0 {model}.smv {formula}.hq"
   echo "- Multi-model BMC:  $0 {model_1}.smv {model_2}.smv {formula}.hq \n"
-  echo "\n------(END HyperQube)------\n"
+  echo "\n------(END HyperQB)------\n"
   exit 1
 fi
 
@@ -124,7 +124,7 @@ then
 
 
 else
-  echo "HyperQube error: please specify mode: -single | -multi \n"
+  echo "HyperQB error: please specify mode: -single | -multi \n"
   exit 1
 fi
 
@@ -143,7 +143,7 @@ elif echo $* | grep -e "-hopt" -q
 then
   SEM="TER_OPT"
 else
-  echo "HyperQube error: incorrect semantic input. "
+  echo "HyperQB error: incorrect semantic input. "
   echo " use { -pes | -opt | -hpes | -hopt } semantics of the unrolling from one of the follows:"
   echo "             (pessimistic / optimistic / halting-pessimistic / halting-optimistic)"
   exit 1
@@ -152,11 +152,11 @@ fi
 
 # cd ${OUTFOLDER}
 if [ ! -f "$QSFILE" ]; then
-  echo "HyperQube error: no QS.bool exists."
+  echo "HyperQB error: no QS.bool exists."
   exit 1
 fi
 # source "QS.bool"
-source "$QSFILE"
+source "${QSFILE}"
 # cd ..
 # source QS.bool
 # cd ..
@@ -181,11 +181,21 @@ echo "generating QBF BMC..."
 #old genqbf
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 echo "\n(ocaml genqbf)"
-GENQBF=exec/genqbf
-# GENQBF=exec/genqbf_v5
-time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
-# time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n
 
+
+n=${#QS}
+
+if [ ${n} -eq 2 ]
+then
+  # old genqbf, two quantifiers
+  GENQBF=exec/genqbf
+  time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+  # time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n
+else
+  # updated genqbf, arbitrary quantifiers
+  GENQBF=exec/genqbf_v5
+  time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem PES -n
+fi
 echo "\nsolving QBF..."
 # time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT}
@@ -236,7 +246,7 @@ ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
 ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
 
 
-echo "\n------(END HyperQube)------\n"
+echo "\n------(END HyperQB)------\n"
 
 
 ##### UNUSED

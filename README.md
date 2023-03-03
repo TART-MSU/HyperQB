@@ -4,7 +4,7 @@ HyperQube is a home-grown tool of Bounded Model Checking for Hyperproperties.
 
 
 Hyperproperty specifies and reasons about important requirements among multiple traces.
-We implement our algorithm for Bounded Model Checking for Hyperproperty as a tool, HyperQube.
+We implement our QBF-based algorithm for Bounded Model Checking for Hyperproperty as a tool, HyperQube.
 
 HyperQube includes several parts:
 - NuSMV model parsing and Boolean encoding of transition relation and specification,
