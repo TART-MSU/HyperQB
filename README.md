@@ -1,12 +1,11 @@
-# Welcome to HyperQube!
+# Welcome to HyperQB!
 
-HyperQube is a home-grown tool of Bounded Model Checking for Hyperproperties.
-
+HyperQB is a home-grown tool of Bounded Model Checking for Hyperproperties.
 
 Hyperproperty specifies and reasons about important requirements among multiple traces.
-We implement our QBF-based algorithm for Bounded Model Checking for Hyperproperty as a tool, HyperQube.
+We implement our QBF-based algorithm for Bounded Model Checking for Hyperproperty as a tool, HyperQB.
 
-HyperQube includes several parts:
+HyperQB includes several parts:
 - NuSMV model parsing and Boolean encoding of transition relation and specification,
 - HyperLTL formula translation,
 - QBF encoding of unfolding with bound k using specific semantics,
@@ -18,13 +17,13 @@ while the existing tool, QuAbs, is under AGPL license.
 
 
 ## HOW TO USE
-To run HyperQube, install [docker](https://docs.docker.com/get-docker/) then execute ```hyperqube.sh``` with one of the following two scenarios:
+To run HyperQB, install [docker](https://docs.docker.com/get-docker/) then execute ```hyperqb.sh``` with one of the following two scenarios:
 
    1. BMC with single model:<br/>
-	```./hyperqube.sh <model_file_name.smv> <formula_file_name.hq> <k> ```
+	```./hyperqb.sh <model_file_name.smv> <formula_file_name.hq> <k> ```
 
    2. BMC with multi-model:<br/>
-	```./hyperqube.sh <model_1_file_name.smv> <model_2_file_name.smv> <formula_file_name.hq> <k>```
+	```./hyperqb.sh <model_1_file_name.smv> <model_2_file_name.smv> <formula_file_name.hq> <k>```
 
 Note that <k> is a natural number specifies the length of unrolling.
 
@@ -33,17 +32,17 @@ To observe the tool outputs, all model checking results with counterexample will
 
 
 ## GET STARTED
-You can start using HyperQube in 2 simple steps:		
+You can start using HyperQB in 2 simple steps:		
 
-1. First make sure DOCKER is installed from: https://docs.docker.com/get-docker/ . HyperQube will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies.
+1. First make sure DOCKER is installed from: https://docs.docker.com/get-docker/ . HyperQB will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies.
 2. Next, clone the repository and step into the repo:
-- ```git clone https://github.com/TART-MSU/HyperQube.git```
-- ```cd HyperQube```
+- ```git clone https://github.com/TART-MSU/HyperQB.git```
+- ```cd HyperQB```
 
-You are now ready to run HyperQube!:)
+You are now ready to run HyperQB!:)
 
 
-We provide two demo examples as presented in the tool paper. 
+We provide two demo examples as presented in the tool paper.
 To run, execute each of the followings:
 - [DEMO 1: run bakery algorithm with symmetry property]
 ```./hyperqb.sh demo/bakery.smv demo/bakery demo/symmetry.hq 10 -pes -bughunt```
@@ -68,9 +67,10 @@ Our evaluations include the following cases,<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
 
 
+
+
+
 We also provide all the command lines needed for each experiment in the document *RUN.txt*
-
-
 
 
 ## People
