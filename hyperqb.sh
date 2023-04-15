@@ -1,5 +1,5 @@
 #!/bin/sh
-TIMEFORMAT="time took: "%R"s"
+TIMEFORMAT="[time took: "%R"s]"
 ### Parameters
 # SINGLE_PARSER=exec/single_model_parser.py
 MULTI_PARSER=exec/model_parser.py
@@ -88,14 +88,14 @@ done
 ### Check which <mode> is used (-bughunt or -find) ###
 if echo $* | grep -e "-find" -q
 then
-  echo "running with find witness mode (-find)"
+  echo "find witness mode (-find)"
   FLAG="-find"
 elif echo $* | grep -e "-bughunt" -q
 then
-  echo "running with bug hunting mode (-bughunt)"
+  echo "bug hunting mode (-bughunt)"
   FLAG="-bughunt"
 else
-  echo "mode is not specified, use default mode (-bughunt)"
+  echo "mode is not specified, default to (-bughunt)"
   FLAG="-bughunt"
 fi
 
@@ -104,19 +104,19 @@ fi
 if echo $* | grep -e "-pes" -q
 then
   SEM="PES"
-  echo "running with pessimistic semantics (-pes)"
+  echo "pessimistic semantics (-pes)"
 elif echo $* | grep -e "-opt" -q
 then
   SEM="OPT"
-  echo "running with optimistic semantics (-opt)"
+  echo "optimistic semantics (-opt)"
 elif echo $* | grep -e "-hpes" -q
 then
   SEM="TER_PES"
-  echo "running with halting-pessimistic semantics (-hpes)"
+  echo "halting-pessimistic semantics (-hpes)"
 elif echo $* | grep -e "-hopt" -q
 then
   SEM="TER_OPT"
-  echo "running with halting-optimistic semantics (-opt)"
+  echo "halting-optimistic semantics (-opt)"
 else
   echo "(!) HyperQB error: incorrect semantic input."
   echo "  please use { -pes | -opt | -hpes | -hopt } semantics of the unrolling from one of the follows:"
@@ -125,12 +125,18 @@ else
 fi
 
 
-
+ERROR="(!) HyperQB error"
 ### parse the NuSMV models and the given formula ###
 echo "parsing NuSMV models and HyperLTL formula..."
 # time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
 TIME_PARSE=$(time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 echo ${TIME_PARSE}
+
+# if any error happens in parsing, exit HyperQB
+if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
+  exit 1
+fi
+
 
 ### check what is the quantifier selection
 # echo ${QSFILE}
@@ -141,12 +147,12 @@ if [ ! -f "${QSFILE}" ]; then
 fi
 source "${QSFILE}" # instantiate QS
 
-echo "generating QBF BMC unrolling..."
+echo "\ngenerating QBF BMC unrolling..."
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 n=${#QS}
 if [ ${n} -eq 2 ]
 then
-  GENQBF=exec/genqbf # traditional two quantifiers (most cases)
+  GENQBF=exec/genqbf
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
 else
   GENQBF=exec/genqbf_v5 # updated genqbf with arbitrary quantifiers
