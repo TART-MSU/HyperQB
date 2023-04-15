@@ -17,7 +17,18 @@ while the existing tool, QuAbs, is under AGPL license.
 
 
 ## HOW TO USE
-First install [docker](https://docs.docker.com/get-docker/).
+You can start using HyperQB in 2 simple steps:
+1. First install [docker](https://docs.docker.com/get-docker/). 
+HyperQB will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies!
+
+2. Next, clone the repository and step into the repo:
+- ```git clone https://github.com/TART-MSU/HyperQB.git```
+- ```cd HyperQB```
+
+You are now ready to run HyperQB!:D
+
+
+
 
 To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
     – <list of models>, written in NuSMV format (as .smv files),
@@ -29,6 +40,9 @@ To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
     
 RUN HyperQB in the following format:
     ./hyperqube <list of models> <formula> <k> <sem> <mode>
+
+To observe the tool outputs (i.e., counterexample or witness) 
+    See *_OUTPUT_formatted.cex. The parsed outputs have variables, time stamps, and values neatly presented.
     
 Demo Examples:
     1. [demo 1: run bakery algorithm with symmetry property]
@@ -36,28 +50,6 @@ Demo Examples:
     
     2. [dem0 2: run SNARK algorithm with linearizability propoerty]
     ```./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes```    
-
-
-To observe the tool outputs, all model checking results with counterexample will output as *_OUTPUT_formatted.cex. The parsed outputs have variables, time stamps, and values neatly presented.
-
-
-## GET STARTED
-You can start using HyperQB in 2 simple steps:		
-
-1. First make sure DOCKER is installed from: https://docs.docker.com/get-docker/ . HyperQB will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies.
-2. Next, clone the repository and step into the repo:
-- ```git clone https://github.com/TART-MSU/HyperQB.git```
-- ```cd HyperQB```
-
-You are now ready to run HyperQB!:)
-
-
-We provide two demo examples as presented in the tool paper.
-To run, execute each of the followings:
-- [DEMO 1: run bakery algorithm with symmetry property]
-```./hyperqb.sh demo/bakery.smv demo/bakery demo/symmetry.hq 10 -pes -bughunt```
-- [DEMO 2: run SNARK1 with linearizabilty property]
-```./hyperqb.sh demo/snark_conc.smv demo/snark_seq.smv demo/lin.hq 18 -pes -bughunt```
 
 
 ## Experiments
@@ -76,15 +68,21 @@ Our evaluations include the following cases,<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
 
+## One-click Scripts
+We provide several convenient scripts for executing exeperiments. 
 
-
-
+- run ``` ./run_demos.sh``` to run demo examples
+- run ``` ./run_tacas21.sh``` to run all experiments for TACAS21
+- run ``` ./run_cav23.sh``` to run all experiments for CAV23 
 
 We also provide all the command lines needed for each experiment in the document *RUN.txt*
 
 
-## People
+## People and Publications
 Authors:
 - [Tzu-Han Hsu](https://tzuhancs.github.io/), Michigan State University.
 - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University.
 - [César Sánchez](https://software.imdea.org/~cesar/), IMDEA Software Institute.
+
+- [Bounded Model Checking for Hyperproperties](https://link.springer.com/content/pdf/10.1007/978-3-030-72016-2_6.pdf)
+
