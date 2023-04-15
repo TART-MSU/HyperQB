@@ -31,12 +31,11 @@ You are now ready to run HyperQB!:D
 
 
 To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
-    – <list of models>, written in NuSMV format (as .smv files),
-    – <formula>, written in the grammar described in Sec. 4 (as a .hq file),
-    – <k>, a natural number 0, specifying the unrolling bound,
-    – <sem>, the semantics, which can be -pes, -opt, -hpes or -hopt, and
-    – <mode>, to say performing classic BMC (i.e., negating the formula) or not,
-    which can be -bughunt or -find (we use the former as default value).  
+- <list of models>, written in NuSMV format (as .smv files),
+- <formula>, written in the grammar described in Sec. 4 (as a .hq file),
+- <k>, a natural number 0, specifying the unrolling bound,
+- <sem>, the semantics, which can be -pes, -opt, -hpes or -hopt, and
+- <mode>, to say performing classic BMC (i.e., negating the formula) or not, which can be -bughunt or -find (we use the former as default value).  
     
 RUN HyperQB in the following format:
     ./hyperqube <list of models> <formula> <k> <sem> <mode>
