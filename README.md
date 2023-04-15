@@ -17,15 +17,25 @@ while the existing tool, QuAbs, is under AGPL license.
 
 
 ## HOW TO USE
-To run HyperQB, install [docker](https://docs.docker.com/get-docker/) then execute ```hyperqb.sh``` with one of the following two scenarios:
+First install [docker](https://docs.docker.com/get-docker/).
 
-   1. BMC with single model:<br/>
-	```./hyperqb.sh <model_file_name.smv> <formula_file_name.hq> <k> ```
-
-   2. BMC with multi-model:<br/>
-	```./hyperqb.sh <model_1_file_name.smv> <model_2_file_name.smv> <formula_file_name.hq> <k>```
-
-Note that <k> is a natural number specifies the length of unrolling.
+To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
+    – <list of models>, written in NuSMV format (as .smv files),
+    – <formula>, written in the grammar described in Sec. 4 (as a .hq file),
+    – <k>, a natural number 0, specifying the unrolling bound,
+    – <sem>, the semantics, which can be -pes, -opt, -hpes or -hopt, and
+    – <mode>, to say performing classic BMC (i.e., negating the formula) or not,
+    which can be -bughunt or -find (we use the former as default value).  
+    
+RUN HyperQB in the following format:
+    ./hyperqube <list of models> <formula> <k> <sem> <mode>
+    
+Demo Examples:
+    1. [demo 1: run bakery algorithm with symmetry property]
+    ```./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes```
+    
+    2. [dem0 2: run SNARK algorithm with linearizability propoerty]
+    ```./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes```    
 
 
 To observe the tool outputs, all model checking results with counterexample will output as *_OUTPUT_formatted.cex. The parsed outputs have variables, time stamps, and values neatly presented.
