@@ -23,8 +23,6 @@ OUTFOLDER="build_"${DATE}"/"
 rm -f -R "build_today/"
 mkdir ${OUTFOLDER}
 
-
-
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 QUABS_OUT=${OUTFOLDER}HQ.quabs
 MAP_OUT1=${OUTFOLDER}_byName.cex
@@ -62,7 +60,6 @@ ALLARG=$@
 
 ### fetch model(s) and HP formula
 HQFILE='.hq'
-# echo "Model(s)"
 COUNTER=1
 declare -a MODELS
 for var in "$@"
@@ -88,14 +85,14 @@ done
 ### Check which <mode> is used (-bughunt or -find) ###
 if echo $* | grep -e "-find" -q
 then
-  echo "find witness mode (-find)"
+  # echo "find witness mode (-find)"
   FLAG="-find"
 elif echo $* | grep -e "-bughunt" -q
 then
-  echo "bug hunting mode (-bughunt)"
+  # echo "bug hunting mode (-bughunt)"
   FLAG="-bughunt"
 else
-  echo "mode is not specified, default to (-bughunt)"
+  echo "*mode is not specified, default to (-bughunt)"
   FLAG="-bughunt"
 fi
 
@@ -104,19 +101,19 @@ fi
 if echo $* | grep -e "-pes" -q
 then
   SEM="PES"
-  echo "pessimistic semantics (-pes)"
+  # echo "pessimistic semantics (-pes)"
 elif echo $* | grep -e "-opt" -q
 then
   SEM="OPT"
-  echo "optimistic semantics (-opt)"
+  # echo "optimistic semantics (-opt)"
 elif echo $* | grep -e "-hpes" -q
 then
   SEM="TER_PES"
-  echo "halting-pessimistic semantics (-hpes)"
+  # echo "halting-pessimistic semantics (-hpes)"
 elif echo $* | grep -e "-hopt" -q
 then
   SEM="TER_OPT"
-  echo "halting-optimistic semantics (-opt)"
+  # echo "halting-optimistic semantics (-opt)"
 else
   echo "(!) HyperQB error: incorrect semantic input."
   echo "  please use { -pes | -opt | -hpes | -hopt } semantics of the unrolling from one of the follows:"
@@ -127,13 +124,13 @@ fi
 
 ERROR="(!) HyperQB error"
 ### parse the NuSMV models and the given formula ###
-echo "parsing NuSMV models and HyperLTL formula..."
+echo "NuSMV models and HyperLTL formula parsing..."
 # time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
 TIME_PARSE=$(time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
-echo ${TIME_PARSE}
 
 # if any error happens in parsing, exit HyperQB
 if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
+  echo ${TIME_PARSE}
   exit 1
 fi
 
@@ -147,7 +144,7 @@ if [ ! -f "${QSFILE}" ]; then
 fi
 source "${QSFILE}" # instantiate QS
 
-echo "\ngenerating QBF BMC unrolling..."
+echo "\nBMC unrolling with genqbf..."
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 n=${#QS}
 if [ ${n} -eq 2 ]
@@ -155,12 +152,19 @@ then
   GENQBF=exec/genqbf
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
 else
-  GENQBF=exec/genqbf_v5 # updated genqbf with arbitrary quantifiers
-  TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
+  lst_NEW_QUANTS="AAE EAA EEA AEA AAAE EAAE AAEE EAAEE AAAEEE"
+  if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then
+    GENQBF=exec/genqbf_v5 # updated genqbf with arbitrary quantifiers
+    TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
+  else
+    GENQBF=src/cplusplus/genqbf ### insert this, new project
+    echo "quantifier not supported yet"
+    exit 1
+  fi
 fi
 
-# GENQBF=src/cplusplus/genqbf ### insert this
-echo "\nsolving QBF with QuAbS..."
+
+echo "\nQBF solving with QuAbS..."
 # time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
@@ -170,10 +174,11 @@ echo "\n--------------- Summary of HyperQB ---------------"
 echo "|  Models:     " ${MODELS[*]}
 echo "|  Formula:    " ${FORMULA}
 echo "|  Quantifiers:" ${QS}
-echo "|  Bound k:    " ${k}
-echo "|  Semantics:  " ${SEM}
-echo "|  Mode:       " ${FLAG}
 echo "|  QBF solving:" ${OUTCOME}
+echo "|  Semantics:  " ${SEM}
+echo "|  #states:    " ${TIME_PARSE}
+echo "|  Bound k:    " ${k}
+echo "|  Mode:       " ${FLAG}
 echo "----------------------------------------------------\n"
 echo "\n------(END HyperQB)------\n"
 

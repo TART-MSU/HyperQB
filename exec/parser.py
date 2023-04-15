@@ -386,7 +386,6 @@ def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, 
 ##################################
 #  HyperLTL Formula Construction #
 ##################################
-QS_size=0
 def main_formula_construct(formula_file_name, dictionaries, translated_formula_file_name, QS_file_name, To_Negate_formula):
 	text = ""
 	file = open(formula_file_name, 'r')
@@ -395,6 +394,35 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 		if ("#" not in line):
 			text += line
 	# print(formula_file_name)
+
+	### read quantifier selection, store in QS.hq
+	Quants=""
+	for char in text:
+		if (char == 'f'):
+			# print("forall")
+			if(To_Negate_formula):
+				Quants+="E"
+			else:
+				Quants+="A"
+		elif(char == 'e'):
+			# print("exists")
+			if(To_Negate_formula):
+				Quants+="A"
+			else:
+				Quants+="E"
+		elif(char == '('):
+			break;
+	global PARSE_INDEX
+	# error check if num of models and quants conform
+	if (len(Quants) != (PARSE_INDEX-1)):
+		error_exit("number of models and number of quantifiers must match.")
+	Quants="QS="+Quants
+	# print(Quants)
+	QS = open(QS_file_name, "w")
+	QS.write(Quants)
+	QS.close()
+
+
 
 
 	# get all tid after all the quantifiers, subsitute all [...] into _...
@@ -467,31 +495,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 
 		text = text.replace(op, blasted)
 
-	### read quantifier selection, store in QS.hq
-	# Quants="QS="
-	Quants=""
-	for char in text:
-		if (char == 'f'):
-			# print("forall")
-			if(To_Negate_formula):
-				Quants+="E"
-			else:
-				Quants+="A"
-		elif(char == 'e'):
-			# print("exists")
-			if(To_Negate_formula):
-				Quants+="A"
-			else:
-				Quants+="E"
-		elif(char == '('):
-			break;
-	global QS_size
-	QS_size=len(Quants)
-	Quants="QS="+Quants
-	# print(Quants)
-	QS = open(QS_file_name, "w")
-	QS.write(Quants)
-	QS.close()
 
 	# clea up quantifiers
 	text = text.replace("forall","")
@@ -564,13 +567,7 @@ for i in range(0, len(ARGS)):
 		main_formula_construct(formula_file_name, DICTIONARIES, translated_formula_file_name, QS_file_name, To_Negate_formula)
 		break
 
-# Check if number of models and number of quantifiers comform
-# print(QS_size)
-# print(PARSE_INDEX)
-if (QS_size != (PARSE_INDEX-1)):
-	error_exit("number of models and number of quantifiers must be the same.")
-
-print(SUCCESS_OUT) # parsing completed.
+print(SUCCESS_OUT) # parsing successfully completed. return. 
 
 
 
