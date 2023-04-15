@@ -216,8 +216,8 @@ def binary_eq(var_l, var_r,  num_bits):
 	# num_bits = bitblasting_dict[var_l[0]]
 	result = []
 	for i in range(num_bits):
-		left = var_l[0] + "_"+str(i) +"_"+var_l[1]
-		right = var_r[0] + "_"+str(i) +"_"+var_r[1]
+		left = var_l[0] + "_"+str(i) +var_l[1]
+		right = var_r[0] + "_"+str(i) +var_r[1]
 		# print(left + " <-> " + right)
 		# result.append("("+left + IFF + right+")")
 		result.append("((~"+left + OR + right+")/\\(~" + right + OR + left + "))");
@@ -433,6 +433,9 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 		var_l = str(vars[0]).rsplit('_', 1)
 		var_r = str(vars[1]).rsplit('_', 1)
 
+		var_r[1] = '_'+var_r[1]
+		var_l[1] = "_"+var_l[1]
+
 		print(var_l)
 		print(var_r)
 
@@ -442,7 +445,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 
 		# case 1: (num)=(var)
 		elif (var_l[0].isdigit()):
-			var_r[1] = '_'+var_r[1]
 			blasted = binary_assign(var_r, int(var_l[0]), DICTIONARIES[int(Mindex.index(var_r[1]))])
 			# if("A"==var_r[1]):
 				# blasted = binary_assign(var_r, int(var_l[0]), M1_bitblasting_dict)
@@ -450,7 +452,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 				# blasted = binary_assign(var_r, int(var_l[0]), M2_bitblasting_dict)
 		# case 2: (var)=(num)
 		elif (var_r[0].isdigit()):
-			var_l[1] = "_"+var_l[1]
 			blasted = binary_assign(var_l, int(var_r[0]), DICTIONARIES[int(Mindex.index(var_l[1]))])
 			# if("A"==var_l[2]):
 			# 	blasted = binary_assign(var_l, int(var_r[0]), M1_bitblasting_dict)
@@ -459,18 +460,25 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 
 		# case 3: (var)=(var)
 		else:
-			if(var_l[1]=="A"):
-				num_bits_left = M1_bitblasting_dict[var_l[0].replace(" ","")]
-			else:
-				num_bits_left = M2_bitblasting_dict[var_l[0].replace(" ","")]
+			dict_l=DICTIONARIES[int(Mindex.index(var_l[1]))]
+			num_bits_left=dict_l[var_l[0]]
 
-			if(var_r[1]=="A"):
-				num_bits_right = M1_bitblasting_dict[var_r[0].replace(" ","")]
-			else:
-				num_bits_right = M2_bitblasting_dict[var_r[0].replace(" ","")]
-
+			dict_r=DICTIONARIES[int(Mindex.index(var_r[1]))]
+			num_bits_right=dict_r[var_r[0]]
+			# # print("???", Test)
+			# if(var_l[1]=="A"):
+			# 	num_bits_left = M1_bitblasting_dict[var_l[0].replace(" ","")]
+			# else:
+			# 	num_bits_left = M2_bitblasting_dict[var_l[0].replace(" ","")]
+			#
+			# if(var_r[1]=="A"):
+			# 	num_bits_right = M1_bitblasting_dict[var_r[0].replace(" ","")]
+			# else:
+			# 	num_bits_right = M2_bitblasting_dict[var_r[0].replace(" ","")]
+			#
+			# print("!!!", num_bits_left)
 			if(num_bits_left != num_bits_right):
-				error_exit("arithmetic operation requires two variables with same number of bits in binary representation.")
+				error_exit("arithmetic operation requires two variables with same number of bits in binary representations.")
 			else:
 				if("!="in op):
 					blasted = "~"+binary_eq(var_l, var_r, num_bits_left)
@@ -481,41 +489,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 		print(op)
 		print(blasted)
 		text = text.replace(op, blasted)
-
-		# # case 1: (num)=(var)
-		# elif (var_l[0].isdigit()):
-		# 	if("A"==var_r[1]):
-		# 		blasted = binary_assign(var_r, int(var_l[0]), M1_bitblasting_dict)
-		# 	else:
-		# 		blasted = binary_assign(var_r, int(var_l[0]), M2_bitblasting_dict)
-		#
-		# # case 2: (var)=(num)
-		# elif (var_r[1].isdigit()):
-		# 	if("A"==var_l[2]):
-		# 		blasted = binary_assign(var_l, int(var_r[0]), M1_bitblasting_dict)
-		# 	else:
-		# 		blasted = binary_assign(var_l, int(var_r[0]), M2_bitblasting_dict)
-		#
-		# # case 3: (var)=(var)
-		# else:
-		# 	if(var_l[1]=="A"):
-		# 		num_bits_left = M1_bitblasting_dict[var_l[0].replace(" ","")]
-		# 	else:
-		# 		num_bits_left = M2_bitblasting_dict[var_l[0].replace(" ","")]
-		#
-		# 	if(var_r[1]=="A"):
-		# 		num_bits_right = M1_bitblasting_dict[var_r[0].replace(" ","")]
-		# 	else:
-		# 		num_bits_right = M2_bitblasting_dict[var_r[0].replace(" ","")]
-		#
-		# 	if(num_bits_left != num_bits_right):
-		# 		error_exit("arithmetic operation requires two variables with same number of bits in binary representation.")
-		# 	else:
-		# 		if("!="in op):
-		# 			blasted = "~"+binary_eq(var_l, var_r, num_bits_left)
-		# 		else:
-		# 			blasted = binary_eq(var_l, var_r, num_bits_left)
-
 
 	### read quantifier selection, store in QS.hq
 	Quants="QS="
