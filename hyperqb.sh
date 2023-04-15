@@ -1,5 +1,5 @@
 #!/bin/sh
-TIMEFORMAT="[time took: "%R"s]"
+TIMEFORMAT="%Rs"
 ### Parameters
 # SINGLE_PARSER=exec/single_model_parser.py
 MULTI_PARSER=exec/model_parser.py
@@ -12,7 +12,7 @@ QUABS=exec/quabs
 MAP=exec/util_mapvars
 PARSE_BOOL=exec/util_parsebools
 
-
+ERROR="(!) HyperQB error"
 
 ### setup output folder
 # \THH_TODO: put this back before submission.
@@ -28,16 +28,12 @@ QUABS_OUT=${OUTFOLDER}HQ.quabs
 MAP_OUT1=${OUTFOLDER}_byName.cex
 MAP_OUT2=${OUTFOLDER}_byTime.cex
 PARSE_OUT=${OUTFOLDER}_formatted.cex
-# I=${OUTFOLDER}I.bool
-# R=${OUTFOLDER}R.bool
-# J=${OUTFOLDER}J.bool
-# S=${OUTFOLDER}S.bool
 I=${OUTFOLDER}I_1.bool
 R=${OUTFOLDER}R_1.bool
 J=${OUTFOLDER}I_2.bool
 S=${OUTFOLDER}R_2.bool
 P=${OUTFOLDER}P.hq
-QSFILE=${OUTFOLDER}QS.bool
+QSFILE=${OUTFOLDER}QS
 FORMULA=""
 
 
@@ -52,7 +48,7 @@ done
 
 
 ## updated Jan.28:merge parse and bmc
-echo "\n------( HyperQB START! )------\n"
+echo "\n------( HyperQB START! )------"
 ## get current location and arguments
 PWD=$(pwd)
 ALLARG=$@
@@ -122,11 +118,17 @@ else
 fi
 
 
-ERROR="(!) HyperQB error"
 ### parse the NuSMV models and the given formula ###
-echo "NuSMV models and HyperLTL formula parsing..."
-# time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
-TIME_PARSE=$(time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
+
+# RUN PARSER on Docker
+echo "(using docker for parsing, parsing could become slower)"
+printf "NuSMV models and HyperLTL formula parsing..."
+TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
+
+# RUN PARSER locally, if the setup on your local machine is successful
+# printf "NuSMV models and HyperLTL formula parsing..."
+# TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
+
 
 # if any error happens in parsing, exit HyperQB
 if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
@@ -134,9 +136,7 @@ if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
   exit 1
 fi
 
-
 ### check what is the quantifier selection
-# echo ${QSFILE}
 if [ ! -f "${QSFILE}" ]; then
   echo "(!) HyperQB error: no ${QSFILE} exists."
   echo "please check the formula see if the quantifers are corretly specified. "
@@ -144,31 +144,42 @@ if [ ! -f "${QSFILE}" ]; then
 fi
 source "${QSFILE}" # instantiate QS
 
-echo "\nBMC unrolling with genqbf..."
+
+
+
+
+
+printf "BMC unrolling with genqbf..................."
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 n=${#QS}
 if [ ${n} -eq 2 ]
 then
-  GENQBF=exec/genqbf
+  GENQBF=exec/genqbf # classic 1 quants
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
 else
-  lst_NEW_QUANTS="AAE EAA EEA AEA AAAE EAAE AAEE EAAEE AAAEEE"
+  lst_NEW_QUANTS="AAE EAA EEA AEA EEE AEE AAAE EAAE AAAE AAEE EAAEE AAAEEE" #special cases we investigate
   if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then
-    GENQBF=exec/genqbf_v5 # updated genqbf with arbitrary quantifiers
+    GENQBF=exec/genqbf_v5 # updated genqbf
     TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
   else
-    GENQBF=src/cplusplus/genqbf ### insert this, new project
-    echo "quantifier not supported yet"
-    exit 1
+    ALL_I_R=$(find ${OUTFOLDER}*.bool )
+    GENQBF=src/cplusplus/genqbf # with arbitrary quantifiers
+    # TIME_GENQBF=$(time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${FORMULA})
+    time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${P}
   fi
 fi
 
 
-echo "\nQBF solving with QuAbS..."
+if [ ! -s ${QCIR_OUT} ]; then
+        echo "(!) HyperQB error: .qcir file is empty. check if errors are reported."
+        exit 1
+fi
+printf "QBF solving with QuAbS......................"
 # time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
-# echo "\nQuABs outcome: "${OUTCOME}
+
+
 
 echo "\n--------------- Summary of HyperQB ---------------"
 echo "|  Models:     " ${MODELS[*]}
@@ -179,7 +190,7 @@ echo "|  Semantics:  " ${SEM}
 echo "|  #states:    " ${TIME_PARSE}
 echo "|  Bound k:    " ${k}
 echo "|  Mode:       " ${FLAG}
-echo "----------------------------------------------------\n"
+echo "----------------------------------------------------"
 echo "\n------(END HyperQB)------\n"
 
 
@@ -209,6 +220,7 @@ exit 1
 
 
 ##### UNUSED
+# time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
 # if [ "$MODE" = "single" ]; then
 # echo "|  Model:      " ${NUSMVFILE}
 # elif [ "$MODE" = "multi" ]; then
@@ -279,6 +291,10 @@ exit 1
 #   exit 1
 # fi
 
+# I=${OUTFOLDER}I.bool
+# R=${OUTFOLDER}R.bool
+# J=${OUTFOLDER}J.bool
+# S=${OUTFOLDER}S.bool
 
 # echo ${ALLARG}
 ## execute python scripts on docker

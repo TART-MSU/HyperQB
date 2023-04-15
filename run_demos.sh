@@ -15,4 +15,5 @@
 # ./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes
 ### [demo 3: run simple_krip with simple_krip_formula]
 # ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
+./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
 # ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes

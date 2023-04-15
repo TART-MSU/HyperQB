@@ -15,19 +15,6 @@ using namespace std;
 
 map<pair<int, int>, int> gate_map;
 
-
-// // A helper method
-void ReplaceStringInPlace(std::string& subject, const std::string& search,
-	const std::string& replace) {
-	size_t pos = 0;
-	while ((pos = subject.find(search, pos)) != std::string::npos) {
-	     subject.replace(pos, search.length(), replace);
-	     pos += replace.length();
-	}
-}
-
-// //THH updated
-
 //The function for unrolling initial conditions
 string I_unroller(int k, string I_file, string model_type)
 {
@@ -84,6 +71,17 @@ string I_unroller(int k, string I_file, string model_type)
 	return init;
 }
 
+// // A helper method
+void ReplaceStringInPlace(std::string& subject, const std::string& search,
+    const std::string& replace) {
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos) {
+         subject.replace(pos, search.length(), replace);
+         pos += replace.length();
+    }
+}
+
+// //THH updated
 string R_unroller(int k, string R_file, string model_type)
 {
 	bool isAP = false;
@@ -200,7 +198,7 @@ string rec_F(int k, string expr, string sem){
 	for (int i = 0 ; i < k ; i++){
 		unrolled_formula += attach_time(expr, i) + "\\/";
 		if (i == (k-1)){
-			if (sem == "PES"){
+			if (sem == "-pes"){
 				unrolled_formula += attach_time(expr, i) + ")";
 			}
 			else{
@@ -214,7 +212,7 @@ string rec_G(int k, string expr, string sem){
 	string unrolled_formula = "(";
 	for (int i = 0 ; i < k-1 ; i++){
 		unrolled_formula += attach_time(expr, i) + "/\\";
-		if (sem == "PES"){
+		if (sem == "-pes"){
 			unrolled_formula += attach_time(expr, i) + ")"; //add a TRUE
 		}
 		else{
@@ -229,7 +227,7 @@ string rec_U(int k, string phi1, string phi2, string sem){
 	for (int i = 0 ; i < k ; i++){
 		unrolled_formula += attach_time(phi2, i) + "\\/ (" + attach_time(phi1, i) + "/\\";
 		if (i == (k-1)){
-			if (sem == "PES"){
+			if (sem == "-pes"){
 				unrolled_formula += attach_time(phi2, k) + parans;
 			}
 			else{
@@ -245,7 +243,7 @@ string rec_R(int k, string phi1, string phi2, string sem){
 	for (int i = 0 ; i < k ; i++){
 		unrolled_formula += attach_time(phi2, i) + "/\\ (" + attach_time(phi1, i) + "\\/";
 		if (i == (k-1)){
-			if (sem == "PES"){
+			if (sem == "-pes"){
 				unrolled_formula += attach_time(phi1, k) + parans;
 			}
 			else{
@@ -308,6 +306,7 @@ string formula_unroller(int k, string prop, string sem)
 }
 
 
+
 // Lilly & Tess
 void write_quantifiers (vector<char> const &quantifier, map<string, int> const &var_map, ofstream &my_file) {
     int len = quantifier.size();
@@ -346,7 +345,7 @@ pair<int, int> find_last_vars(string formula) {
     return index_pair;
 }
 
-ofstream my_file("build_today/HQ.qcir");
+ofstream my_file("build_today/HQ-cpp.qcir");
 string write_to_file (map<string, int> &formula_map,int &count, stack<string> &s, string &prefix, pair<int, int> &index_pair){
     // stringstream ss;
 		string ss_string;
@@ -418,6 +417,7 @@ int precedence(string c)
     else
         return -1;
 }
+
 
 void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector<char> const & quantifier)
 {
@@ -565,10 +565,10 @@ void InfixToQCIR(stack<string> s, string infix, map<string,int> &var_map, vector
 
 
 
+
 map<string, int> variable_map;
 int global_counter = 1;
 string final_QCIR;
-
 string numerize_vars(string var_name){
 	if (!variable_map.count(var_name)){
 		variable_map[var_name] = ++global_counter;
@@ -681,7 +681,7 @@ int BoolToQCIR(string formula, int L_ptr, int R_ptr){
 
 }
 
-// string test_formula = "((a/\\b)\\/(c/\\d))";
+string test_formula = "((a/\\b)\\/(c/\\d))";
 
 //Min genqbf function to run
 int main(int argc, char **argv)
@@ -689,102 +689,132 @@ int main(int argc, char **argv)
 	// clock_t start, end;
 	// double time_taken;
 	vector<char> quantifier;
-	bool test = false;
 
-	// cout << "You have entered " << argc << " arguments:"
-       // << "\n";
-  // for (int i = 0; i < argc; ++i)
-      // cout << argv[i] << "\n";
-	int k = atoi(argv[1]);
-	// cout << "???" << k << "\n";
-	// exit(1);
+	bool test = true;
 
-	vector<string> inputs;
-	string final_check;
-	string variable;
-	int counter = 2;
-	string model_names[26] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+	if (test){
+		cout << "(test)" << endl;
+		cout << "translating: " << test_formula << endl;
 
-	string SEM = (argv[2]);
-	string QS = (argv[3]);
-	string infix_formulas;
-	string FORMULA;
+		quantifier = {"E", "E"};
+		map<string, int> var_map;
+		stack<string> stack;
+		string line, input_file;
 
+		InfixToQCIR(stack, test_formula , var_map, quantifier);
+		// InfixToQCIR(stack, infix_formulas , var_map, quantifier);
+		// time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+		// cout << "(L&T) code. \n Time for converting QCIR : " << fixed
+				 // << time_taken << setprecision(6);
+		// cout << " sec " << endl;
+		cout << "__________________" << endl;
+		BoolToQCIR(test_formula, 0, test_formula.length()-1);
+		// BoolToQCIR(test_formula);
 
+		// cout << "(THH) code. \n Time for converting QCIR : " << fixed
+		// << time_taken << setprecision(6);
+		// cout << " sec " << endl;
 
-	for (int i = 4; i < argc; i+=2)
-	{
-		if (i == (argc-1)){
-			// last argument is formula
-			FORMULA=argv[i];
-			break;
-		}
-		else{
-			string I_file = argv[i];
-			string R_file = argv[i+1];
-			string unrolled_I = I_unroller(k, I_file, model_names[i/2]);
-			string unrolled_R = R_unroller(k, R_file, model_names[i/2]);
-			infix_formulas = infix_formulas + "(" +unrolled_I + ")" + "/\\" + "(" + unrolled_R + ")";
-		}
 	}
+	else{
+
+		int k;
+		char *a = argv[1];
+		k = atoi(a);
+		vector<string> inputs;
+		string final_check;
+		string variable;
+		int counter = 2;
+		string model_types[26] = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 
 
+		ofstream outdata;
+		while (final_check != "hq")
+		{
+			final_check = "";
+			variable = argv[counter];
+			inputs.push_back(variable);
+			final_check += variable[variable.length() - 2];
+			final_check += variable[variable.length() - 1];
+			counter++;
+		}
 
+		// start = clock();
+		string infix_formulas;
+		for (int i = 0; i < inputs.size() - 3; i += 2)
+		{
+			string unrolled_I = I_unroller(k, inputs[i], model_types[i / 2]);
+			string unrolled_R = R_unroller(k, inputs[i + 1], model_types[i / 2]);
+			infix_formulas = infix_formulas + "("+unrolled_I + ")" + "/\\" + "(" + unrolled_R + ")";
+		}
+		// end = clock();
+		// time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+	    // cout << "Time for unrolling models  : " << fixed
+	    //      << time_taken << setprecision(5);
+	    // cout << " sec " << endl;
 
+		// FORMULA
+		// int last_dot = prop.find_last_of('.');
+		// string quants = prop.substr(0, last_dot+1);
+		// regex re("([A-Z].)");
+		//
+		// for (int i = 0 ; i < quants.length() ; i++){
+		// 	if (quants[i] == 'e'){ // 'exists'
+		// 			quantifier.push_back('E');
+		// 	}
+		// 	if (quants[i] == 'f'){ // 'forall'
+		// 			quantifier.push_back('A');
+		// 	}
+		// }
 
-	// FORMULA
-	// int last_dot = prop.find_last_of('.');
-	// string quants = prop.substr(0, last_dot+1);
-	// regex re("([A-Z].)");
-	//
-	// for (int i = 0 ; i < quants.length() ; i++){
-	// 	if (quants[i] == 'e'){ // 'exists'
-	// 			quantifier.push_back('E');
-	// 	}
-	// 	if (quants[i] == 'f'){ // 'forall'
-	// 			quantifier.push_back('A');
-	// 	}
-	// }
-
-
-	// string semantic = inputs[inputs.size() - 3];
-	// string QS = inputs[inputs.size() - 2];
-	// string prop = inputs[inputs.size() - 1];
-
-
-	// FORMULA !!!!
-	string prop;
-	std::ifstream file(FORMULA);
-	while (!file.eof())
-	{
-		std::string line;
-			while (std::getline(file, line)) {
-			for (int i = 0 ; i < line.length() ; i++){
-				prop += line[i];
+		string semantic = inputs[inputs.size() - 3];
+		string QS = inputs[inputs.size() - 2];
+		// string prop = inputs[inputs.size() - 1];
+		// start = clock();
+		string prop;
+		std::ifstream file(inputs[inputs.size() - 1]);
+		while (!file.eof())
+		{
+			std::string line;
+				while (std::getline(file, line)) {
+				for (int i = 0 ; i < line.length() ; i++){
+					prop += line[i];
+				}
 			}
 		}
+
+		int last_dot = prop.find_last_of('.');
+		prop = prop.substr(last_dot+1, prop.length());
+
+		string unrolled_formula = formula_unroller(k+1, prop, inputs[inputs.size() - 2]);
+		// end = clock();
+		// time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+			// cout << "Time for unrolling formula : " << fixed
+			// 		 << time_taken << setprecision(5);
+			// cout << " sec " << endl;
+
+		unrolled_formula = "(" + unrolled_formula + ")"; // warning: here has a hidden ,\\
+
+		infix_formulas = infix_formulas+unrolled_formula;
+		ofstream bool_output("build_today/output-cpp.txt");
+		bool_output << infix_formulas;
+
+
+		// L & T
+		map<string, int> var_map;
+		stack<string> stack;
+		string line, input_file;
+		string QCIR_out = "build_today/HQ-cpp.qcir";
+		// start = clock();
+		InfixToQCIR(stack, infix_formulas , var_map, quantifier);
+		// end = clock();
+		// time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+			// cout << "Time for converting QCIR : " << fixed
+			// 		 << time_taken << setprecision(5);
+			// cout << " sec " << endl;
+
 	}
-	int last_dot = prop.find_last_of('.');
-	prop = prop.substr(last_dot+1, prop.length());
-	string unrolled_formula = formula_unroller(k+1, prop, SEM);
-	unrolled_formula = "(" + unrolled_formula + ")"; // warning: here has a hidden
-	infix_formulas = infix_formulas+unrolled_formula;
 
-
-	// ofstream bool_output("build_today/output.txt");
-	// bool_output << infix_formulas;
-
-
-	// GATE BUILDING
-	map<string, int> var_map;
-	stack<string> stack;
-	string line, input_file;
-	string QCIR_out = "build_today/HQ.qcir";
-	InfixToQCIR(stack, infix_formulas , var_map, quantifier);
-
-
-	// cout << infix_formulas << endl;
-	// exit(1);
 
 	return 0;
 }
