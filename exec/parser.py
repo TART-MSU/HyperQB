@@ -240,7 +240,7 @@ def binary_assign(var, num, bitblasting_dict):
 #  Error message #
 ##################
 def error_exit(msg):
-	print("(!) HyperQB error: ", meg)
+	print("\n(!) HyperQB error: ", msg)
 	sys.exit()
 
 
@@ -248,7 +248,7 @@ def error_exit(msg):
 #########################
 #      Parse Model      #
 #########################
-def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed_madel_file_R_name):
+def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed_madel_file_R_name, PARSE_INDEX):
 	# pynusmv.init.init_nusmv()
 	pynusmv.glob.load_from_file(smv_file_name)
 	pynusmv.glob.compute_model()
@@ -376,7 +376,9 @@ def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, 
 	##  write to R_bool file
 	# R_bool = open("test_R.bool", "w")
 	# R_bool.write(conjunct_trans(all_transitions))
-	print(str(counter), ", ")
+	# print(str(counter), ", ")
+	global SUCCESS_OUT
+	SUCCESS_OUT += "|M" + str(PARSE_INDEX) + "|=" + str(counter) + "	"
 	R_bool.close()
 
 
@@ -384,6 +386,7 @@ def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, 
 ##################################
 #  HyperLTL Formula Construction #
 ##################################
+QS_size=0
 def main_formula_construct(formula_file_name, dictionaries, translated_formula_file_name, QS_file_name, To_Negate_formula):
 	text = ""
 	file = open(formula_file_name, 'r')
@@ -465,8 +468,8 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 		text = text.replace(op, blasted)
 
 	### read quantifier selection, store in QS.hq
-	Quants="QS="
-	# print(text)
+	# Quants="QS="
+	Quants=""
 	for char in text:
 		if (char == 'f'):
 			# print("forall")
@@ -482,7 +485,10 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 				Quants+="E"
 		elif(char == '('):
 			break;
-	print(Quants)
+	global QS_size
+	QS_size=len(Quants)
+	Quants="QS="+Quants
+	# print(Quants)
 	QS = open(QS_file_name, "w")
 	QS.write(Quants)
 	QS.close()
@@ -516,6 +522,7 @@ ARGS=(sys.argv)
 OUTPUT_LOCATION=ARGS[1]
 PARSE_INDEX=1
 DICTIONARIES = []
+SUCCESS_OUT=""
 
 # get the mode first
 FLAG=""
@@ -532,10 +539,10 @@ for i in range(0, len(ARGS)):
 		parsed_madel_file_I_name = OUTPUT_LOCATION + '/I_'+ str(PARSE_INDEX)+'.bool'
 		parsed_madel_file_R_name = OUTPUT_LOCATION + '/R_'+ str(PARSE_INDEX)+'.bool'
 		### start parsing
-		print("|model#" + str(PARSE_INDEX) + "|=", end = '')
+		# print("|model#" + str(PARSE_INDEX) + "|=", end = '')
 		pynusmv.init.init_nusmv()
 		bitblasting_dict = {}
-		main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed_madel_file_R_name)
+		main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed_madel_file_R_name, PARSE_INDEX)
 		PARSE_INDEX = PARSE_INDEX + 1
 		# print(bitblasting_dict)
 		# global DICTIONARIES
@@ -556,6 +563,14 @@ for i in range(0, len(ARGS)):
 		# global DICTIONARIES
 		main_formula_construct(formula_file_name, DICTIONARIES, translated_formula_file_name, QS_file_name, To_Negate_formula)
 		break
+
+# Check if number of models and number of quantifiers comform
+# print(QS_size)
+# print(PARSE_INDEX)
+if (QS_size != (PARSE_INDEX-1)):
+	error_exit("number of models and number of quantifiers must be the same.")
+
+print(SUCCESS_OUT) # parsing completed.
 
 
 
