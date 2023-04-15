@@ -373,11 +373,10 @@ def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, 
 	# R_bool.write("TRUE"); ##DUMMY
 	# R_bool.replace(AND + "\n" + TRUE, "")
 
-
 	##  write to R_bool file
 	# R_bool = open("test_R.bool", "w")
 	# R_bool.write(conjunct_trans(all_transitions))
-	print("state space size: " + str(counter))
+	print(str(counter), ", ")
 	R_bool.close()
 
 
@@ -392,7 +391,7 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 	for line in Lines:
 		if ("#" not in line):
 			text += line
-	print(formula_file_name)
+	# print(formula_file_name)
 
 
 	# get all tid after all the quantifiers, subsitute all [...] into _...
@@ -432,12 +431,9 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 			vars = op.split("=")
 		var_l = str(vars[0]).rsplit('_', 1)
 		var_r = str(vars[1]).rsplit('_', 1)
-
 		var_r[1] = '_'+var_r[1]
 		var_l[1] = "_"+var_l[1]
 
-		print(var_l)
-		print(var_r)
 
 		blasted = ""
 		if (var_l[0].isdigit() and var_r[0].isdigit()):
@@ -446,37 +442,18 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 		# case 1: (num)=(var)
 		elif (var_l[0].isdigit()):
 			blasted = binary_assign(var_r, int(var_l[0]), DICTIONARIES[int(Mindex.index(var_r[1]))])
-			# if("A"==var_r[1]):
-				# blasted = binary_assign(var_r, int(var_l[0]), M1_bitblasting_dict)
-			# else:
-				# blasted = binary_assign(var_r, int(var_l[0]), M2_bitblasting_dict)
+
 		# case 2: (var)=(num)
 		elif (var_r[0].isdigit()):
 			blasted = binary_assign(var_l, int(var_r[0]), DICTIONARIES[int(Mindex.index(var_l[1]))])
-			# if("A"==var_l[2]):
-			# 	blasted = binary_assign(var_l, int(var_r[0]), M1_bitblasting_dict)
-			# else:
-			# 	blasted = binary_assign(var_l, int(var_r[0]), M2_bitblasting_dict)
 
 		# case 3: (var)=(var)
 		else:
 			dict_l=DICTIONARIES[int(Mindex.index(var_l[1]))]
 			num_bits_left=dict_l[var_l[0]]
-
 			dict_r=DICTIONARIES[int(Mindex.index(var_r[1]))]
 			num_bits_right=dict_r[var_r[0]]
-			# # print("???", Test)
-			# if(var_l[1]=="A"):
-			# 	num_bits_left = M1_bitblasting_dict[var_l[0].replace(" ","")]
-			# else:
-			# 	num_bits_left = M2_bitblasting_dict[var_l[0].replace(" ","")]
-			#
-			# if(var_r[1]=="A"):
-			# 	num_bits_right = M1_bitblasting_dict[var_r[0].replace(" ","")]
-			# else:
-			# 	num_bits_right = M2_bitblasting_dict[var_r[0].replace(" ","")]
-			#
-			# print("!!!", num_bits_left)
+
 			if(num_bits_left != num_bits_right):
 				error_exit("arithmetic operation requires two variables with same number of bits in binary representations.")
 			else:
@@ -485,9 +462,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 				else:
 					blasted = binary_eq(var_l, var_r, num_bits_left)
 
-		print(text)
-		print(op)
-		print(blasted)
 		text = text.replace(op, blasted)
 
 	### read quantifier selection, store in QS.hq
@@ -508,10 +482,10 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 				Quants+="E"
 		elif(char == '('):
 			break;
+	print(Quants)
 	QS = open(QS_file_name, "w")
 	QS.write(Quants)
 	QS.close()
-
 
 	# clea up quantifiers
 	text = text.replace("forall","")
@@ -525,9 +499,7 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 	if(To_Negate_formula):
 		text= "~("+ text + ")"
 
-	### finally
-	# def gen_P():
-	##  write to R_bool file
+	### finally, write to P file
 	P_bool = open(translated_formula_file_name , "w")
 	text = text.replace(' ', '').replace('\t', '').replace('\n', '')
 	P_bool.write(text)
@@ -536,13 +508,11 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 
 
 
-
-
 #################
 #      Main	    #
 #################
 ARGS=(sys.argv)
-print("ARGS: ", ARGS)
+# print("ARGS: ", ARGS)
 OUTPUT_LOCATION=ARGS[1]
 PARSE_INDEX=1
 DICTIONARIES = []
@@ -554,7 +524,7 @@ if ("-find" in ARGS):
 else:
 	FLAG="-bughunt"
 
-print("\nparsing models... ")
+# print("\nparsing models... ")
 for i in range(0, len(ARGS)):
 	# print(ARGS[i])
 	if (".smv" in str(ARGS[i])):
@@ -562,7 +532,7 @@ for i in range(0, len(ARGS)):
 		parsed_madel_file_I_name = OUTPUT_LOCATION + '/I_'+ str(PARSE_INDEX)+'.bool'
 		parsed_madel_file_R_name = OUTPUT_LOCATION + '/R_'+ str(PARSE_INDEX)+'.bool'
 		### start parsing
-		print("translating SMV model(s) #" + str(PARSE_INDEX))
+		print("|model#" + str(PARSE_INDEX) + "|=", end = '')
 		pynusmv.init.init_nusmv()
 		bitblasting_dict = {}
 		main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed_madel_file_R_name)
@@ -574,11 +544,11 @@ for i in range(0, len(ARGS)):
 		pynusmv.init.deinit_nusmv() # release pynusmv instance for next parsing
 
 	elif ((".hq" in str(ARGS[i])) and (str(ARGS[i]) != "P.hq")):
-		print("\nparsing formula... ")
+		# print("\nparsing HyperLTL formula... ")
 		formula_file_name = ARGS[i]
 		translated_formula_file_name = OUTPUT_LOCATION + '/P.hq'
 		QS_file_name = OUTPUT_LOCATION + '/QS.bool'
-		print(DICTIONARIES)
+		# print(DICTIONARIES)
 		# FLAG = sys.argv[4]
 		To_Negate_formula=(FLAG=="-bughunt")
 		# print("\ntranslating HyperLTL formula...")
