@@ -3,6 +3,7 @@ import pynusmv
 import string
 import re
 import os.path
+import os
 from os import path
 from pynusmv.model 			import *
 from pynusmv.fsm 			import BddTrans
@@ -254,23 +255,21 @@ def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, 
 	pynusmv.glob.compute_model()
 	fsm = pynusmv.glob.prop_database().master.bddFsm
 	enc = fsm.bddEnc
-
-	# print("\n[ success! SMV model M1 accepted. ]")
-
 	# ### DEBUG
 	# print("====================================")
 	# print("FSM Model info:")
 	# print("\n============ Parse M1 ============")
-	state_variables = list(enc.stateVars)
+	# state_variables = list(enc.stateVars)
 	# print("all state variables: ", state_variables)
-	num_states = fsm.count_states(fsm.reachable_states)
+	# num_states = fsm.count_states(fsm.reachable_states)
 	# print("total number of reachable states: ", num_states)
 	# inputs = list(enc.inputsVars)
 	# print("input variables", inputs)
 	# atomics = list(enc.definedVars)
 	# print("atomic propositions", atomics)
 
-
+	state_variables = list(enc.stateVars)
+	num_states = fsm.count_states(fsm.reachable_states)
 	############################
 	#  bit-blasting dictionary #
 	############################
@@ -414,7 +413,9 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 			break;
 	global PARSE_INDEX
 	# error check if num of models and quants conform
-	if (len(Quants) != (PARSE_INDEX-1)):
+	if (len(Quants) != (PARSE_INDEX)):
+		# print(len(Quants))
+		# print((PARSE_INDEX))
 		error_exit("number of models and number of quantifiers must match.")
 	Quants="QS="+Quants
 	# print(Quants)
@@ -453,6 +454,8 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 
 	## parse arithmetic operations
 	arith_ops = re.findall("\*.*?\*", text)
+
+
 	for op in arith_ops:
 		op = op.replace(" ", "")
 		op = op.replace("*", "")
@@ -462,9 +465,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 			vars = op.split("=")
 		var_l = str(vars[0]).rsplit('_', 1)
 		var_r = str(vars[1]).rsplit('_', 1)
-		var_r[1] = '_'+var_r[1]
-		var_l[1] = "_"+var_l[1]
-
 
 		blasted = ""
 		if (var_l[0].isdigit() and var_r[0].isdigit()):
@@ -472,18 +472,33 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 
 		# case 1: (num)=(var)
 		elif (var_l[0].isdigit()):
-			blasted = binary_assign(var_r, int(var_l[0]), DICTIONARIES[int(Mindex.index(var_r[1]))])
+			try:
+				var_r[1] = "_"+var_r[1]
+				blasted = binary_assign(var_r, int(var_l[0]), DICTIONARIES[int(Mindex.index(var_r[1]))])
+			except KeyError as ke:
+			    	error_exit("incorrect arithmetic assignment. please check:" + str(ke))
 
 		# case 2: (var)=(num)
 		elif (var_r[0].isdigit()):
-			blasted = binary_assign(var_l, int(var_r[0]), DICTIONARIES[int(Mindex.index(var_l[1]))])
+			try:
+				var_l[1] = "_"+var_l[1]
+				blasted = binary_assign(var_l, int(var_r[0]), DICTIONARIES[int(Mindex.index(var_l[1]))])
+			except KeyError as ke:
+			    	error_exit("incorrect arithmetic assignment. please check:" + str(ke))
 
 		# case 3: (var)=(var)
 		else:
-			dict_l=DICTIONARIES[int(Mindex.index(var_l[1]))]
-			num_bits_left=dict_l[var_l[0]]
-			dict_r=DICTIONARIES[int(Mindex.index(var_r[1]))]
-			num_bits_right=dict_r[var_r[0]]
+			try:
+				var_r[1] = "_"+var_r[1]
+				var_l[1] = "_"+var_l[1]
+				dict_l=DICTIONARIES[int(Mindex.index(var_l[1]))]
+				num_bits_left=dict_l[var_l[0]]
+				dict_r=DICTIONARIES[int(Mindex.index(var_r[1]))]
+				num_bits_right=dict_r[var_r[0]]
+			except KeyError as ke:
+			    	# print('Key Not Found in Employee Dictionary:', ke)
+					error_exit("incorrect arithmetic assignment. please check:"+ str(ke))
+
 
 			if(num_bits_left != num_bits_right):
 				error_exit("arithmetic operation requires two variables with same number of bits in binary representations.")
@@ -494,6 +509,8 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 					blasted = binary_eq(var_l, var_r, num_bits_left)
 
 		text = text.replace(op, blasted)
+
+
 
 
 	# clea up quantifiers
@@ -523,9 +540,10 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 ARGS=(sys.argv)
 # print("ARGS: ", ARGS)
 OUTPUT_LOCATION=ARGS[1]
-PARSE_INDEX=1
+PARSE_INDEX=0
 DICTIONARIES = []
 SUCCESS_OUT=""
+smv_file_name=""
 
 # get the mode first
 FLAG=""
@@ -538,26 +556,32 @@ else:
 for i in range(0, len(ARGS)):
 	# print(ARGS[i])
 	if (".smv" in str(ARGS[i])):
-		smv_file_name = ARGS[i]
+		PARSE_INDEX = PARSE_INDEX + 1
 		parsed_madel_file_I_name = OUTPUT_LOCATION + '/I_'+ str(PARSE_INDEX)+'.bool'
 		parsed_madel_file_R_name = OUTPUT_LOCATION + '/R_'+ str(PARSE_INDEX)+'.bool'
-		### start parsing
-		# print("|model#" + str(PARSE_INDEX) + "|=", end = '')
-		pynusmv.init.init_nusmv()
-		bitblasting_dict = {}
-		main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed_madel_file_R_name, PARSE_INDEX)
-		PARSE_INDEX = PARSE_INDEX + 1
-		# print(bitblasting_dict)
-		# global DICTIONARIES
-		DICTIONARIES.append(bitblasting_dict)
 
-		pynusmv.init.deinit_nusmv() # release pynusmv instance for next parsing
+		### if model is repeating
+		if (smv_file_name == ARGS[i]):
+			prev_I = OUTPUT_LOCATION + '/I_'+ str(PARSE_INDEX-1)+'.bool'
+			prev_R = OUTPUT_LOCATION + '/R_'+ str(PARSE_INDEX-1)+'.bool'
+			os.system("cp" + " " + prev_I + " " + parsed_madel_file_I_name)
+			os.system("cp" + " " + prev_R + " " + parsed_madel_file_R_name)
+			DICTIONARIES.append(bitblasting_dict)
+		else:
+			### start a new parsing
+			smv_file_name = ARGS[i]
+			pynusmv.init.init_nusmv()
+			bitblasting_dict = {}
+			main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, parsed_madel_file_R_name, PARSE_INDEX)
+			DICTIONARIES.append(bitblasting_dict)
+			pynusmv.init.deinit_nusmv() # release pynusmv instance for next parsing
+
 
 	elif ((".hq" in str(ARGS[i])) and (str(ARGS[i]) != "P.hq")):
 		# print("\nparsing HyperLTL formula... ")
 		formula_file_name = ARGS[i]
 		translated_formula_file_name = OUTPUT_LOCATION + '/P.hq'
-		QS_file_name = OUTPUT_LOCATION + '/QS.bool'
+		QS_file_name = OUTPUT_LOCATION + '/QS'
 		# print(DICTIONARIES)
 		# FLAG = sys.argv[4]
 		To_Negate_formula=(FLAG=="-bughunt")
@@ -567,7 +591,7 @@ for i in range(0, len(ARGS)):
 		main_formula_construct(formula_file_name, DICTIONARIES, translated_formula_file_name, QS_file_name, To_Negate_formula)
 		break
 
-print(SUCCESS_OUT) # parsing successfully completed. return. 
+print(SUCCESS_OUT) # parsing successfully completed. return.
 
 
 
