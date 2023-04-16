@@ -76,18 +76,19 @@ Our evaluations include the following cases,<br/>
 ## One-click Scripts
 We provide several convenient scripts for executing exeperiments. 
 
-- run ``` ./run_demos.sh``` to run demo examples
-- run ``` ./run_tacas21.sh``` to run all experiments for TACAS21
-- run ``` ./run_cav23.sh``` to run all experiments for CAV23 
+- run ```./run_demos.sh``` to run demo examples
+- run ```./run_tacas21.sh``` to run all experiments for TACAS21
+- run ```./run_cav23.sh``` to run all experiments for CAV23 
 
 We also provide all the command lines needed for each experiment in the document *RUN.txt*
 
 
-## People and Publications
+## People
 Authors:
 - [Tzu-Han Hsu](https://tzuhancs.github.io/), Michigan State University.
 - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University.
 - [César Sánchez](https://software.imdea.org/~cesar/), IMDEA Software Institute.
 
-- [Bounded Model Checking for Hyperproperties](https://link.springer.com/content/pdf/10.1007/978-3-030-72016-2_6.pdf)
+Publication:
+- [Bounded Model Checking for Hyperproperties (TACAS'21)](https://link.springer.com/content/pdf/10.1007/978-3-030-72016-2_6.pdf)
 
