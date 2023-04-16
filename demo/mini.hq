@@ -1,1 +1,1 @@
-exists A. exists B. F(~a[A])
+exists A. exists B. F(*PC[A] = PC[B]*)

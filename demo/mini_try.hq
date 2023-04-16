@@ -1,0 +1,2 @@
+exists A. exists B. exists C. forall D.
+F((a[A] <-> a[B]) /\\ (a[C] <-> a[D]))
