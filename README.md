@@ -16,7 +16,7 @@ while the existing tool, QuAbs, is under AGPL license.
 
 
 
-## HOW TO USE
+## Get Started
 You can start using HyperQB in 2 simple steps:
 1. First install [docker](https://docs.docker.com/get-docker/). 
 HyperQB will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies!
@@ -29,7 +29,7 @@ You are now ready to run HyperQB!:D
 
 
 
-
+## How to Use
 To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
 - `<list of models>` written in NuSMV format (as .smv files),
 - `<formula>` written in the grammar described in Sec. 4 (as a .hq file),
@@ -44,11 +44,11 @@ To observe the tool outputs (i.e., counterexample or witness)
     See ```*_OUTPUT_formatted.cex``` for parsed outputs have variables, time stamps, and values neatly presented.
     
 Demo Examples:
-    1. [demo 1: run bakery algorithm with symmetry property]
-    ```./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes```
-    
-    2. [dem0 2: run SNARK algorithm with linearizability propoerty]
-    ```./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes```    
+1. [demo 1: run bakery algorithm with symmetry property]
+```./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes```
+
+2. [dem0 2: run SNARK algorithm with linearizability propoerty]
+```./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes```    
 
 
 ## Experiments
