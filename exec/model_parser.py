@@ -509,7 +509,7 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 			else:
 				Quants+="E"
 		elif(char == '('):
-			break;		
+			break;
 
 	# THH: update, arbitrary quantifiers
 	# QUANTIFIER_1 = text.split(" ", 0)
@@ -568,6 +568,11 @@ def main_formula(fomula_file_name, M1_bitblasting_dict, M2_bitblasting_dict, tra
 	P_bool.close()
 	# gen_P()
 	# print("[ success! input formula translated into Boolean Expressions: " + translated_formula_file_name + "]")
+
+
+
+
+
 
 #########################
 #      Get Arguments    #

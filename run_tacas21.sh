@@ -58,3 +58,29 @@ FIND="-find"
 
 ### [6.1 Mutation Testing]
 # ${HyperQB} cases_bmc/tacas_mutation_testing/mutation_testing.smv cases_bmc/tacas_mutation_testing/mutation_testing.smv cases_bmc/tacas_mutation_testing/mutation_testing.hq 10 ${HOPT} ${BUGHUNT}
+
+
+### (2) New cases in CAV23 submission compare to TACAS21 submission:
+
+### [7.1 Coterm]
+# ${HyperQB} cases_bmc/cav_coterm/coterm1.smv cases_bmc/cav_coterm/coterm2.smv cases_bmc/cav_coterm/coterm.hq 102 ${OPT} ${BUGHUNT}
+
+### [8.1 Deniability]
+# ${HyperQB} cases_bmc/cav_deniability/electronic_wallet.smv cases_bmc/cav_deniability/electronic_wallet.smv cases_bmc/cav_deniability/electronic_wallet.smv cases_bmc/cav_deniability/den.hq 20 ${OPT} ${BUGHUNT}
+
+### [9.1 - 9.3 Intransitive]
+### first, it violates classic_OD (PES, SAT)
+# ${HyperQB} cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/classic_OD.hq 10 ${PES} ${BUGHUNT}
+### however, with scheduler involves, it satisfies intransitive_OD (OPT, UNSAT)
+# ${HyperQB} cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/intrans_OD.hq 10 ${OPT} ${BUGHUNT}
+### next, it violates
+### same, the scheduler guarantees GMNI
+# ${HyperQB} cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/intrans_GMNI.hq 10 ${PES} ${BUGHUNT}
+
+### [10.1 - 10.2 TINI and TSNI]
+# ${HyperQB} cases_bmc/cav_tini/ni_example.smv cases_bmc/cav_tini/ni_example.smv cases_bmc/cav_tini/tini.hq 10 ${OPT}  ${BUGHUNT}
+# ${HyperQB} cases_bmc/cav_tsni/ni_example.smv cases_bmc/cav_tsni/ni_example.smv cases_bmc/cav_tsni/tsni.hq 10 ${OPT} ${BUGHUNT}
+
+### [11.1 K-safety]
+### doubleSquare
+# ${HyperQB} cases_bmc/cav_ksafety/doubleSquare.smv cases_bmc/cav_ksafety/doubleSquare.smv cases_bmc/cav_ksafety/doubleSquare1.hq 64 ${PES} ${BUGHUNT}

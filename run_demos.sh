@@ -11,7 +11,7 @@
 
 ### [demo 1: run bakery algorithm with symmetry property]
 # ./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes
-### [demi 2: run SNARK algorithm with linearizability propoerty]
+### [dem0 2: run SNARK algorithm with linearizability propoerty]
 # ./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes
 ### [demo 3: run simple_krip with simple_krip_formula]
 # ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
