@@ -66,6 +66,12 @@ Our evaluations include the following cases,<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
 - Case #6.1: Mutant Synthesis for Mutation Testing<br/>
+- Case #7.1: Co-termination<br/>
+- Case #8.1: Deniability<br/>
+- Case #9.1 - #9.3: Intransitive Non-interference<br/>
+- Case #10.1 - #10.2: TINI and TSNI
+- Case #11.1: K-safety
+
 
 ## One-click Scripts
 We provide several convenient scripts for executing exeperiments. 
