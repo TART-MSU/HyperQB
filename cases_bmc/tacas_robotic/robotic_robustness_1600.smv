@@ -13,8 +13,11 @@
       next(act):=
         case
           -- init
-          (x_axis=0 & y_axis=0): {1,4};
-
+          --- the boundary of the whole environment
+          (x_axis=0): {1,4};
+          (x_axis=39): {2,3};
+          (y_axis=0): {1,4};
+          (y_axis=39): {2,3};
 
           (x_axis=0 & ((y_axis=5) | (y_axis=6) | (y_axis=7) | (y_axis=8) | (y_axis=9) | (y_axis=10) | (y_axis=11) | (y_axis=12) | (y_axis=13) | (y_axis=14) | (y_axis=15) | (y_axis=16) | (y_axis=17) | (y_axis=18) | (y_axis=19) | (y_axis=20) | (y_axis=21) | (y_axis=22) | (y_axis=23) | (y_axis=24) | (y_axis=25) | (y_axis=26) | (y_axis=27) | (y_axis=28) | (y_axis=29) | (y_axis=30) | (y_axis=31) | (y_axis=32) | (y_axis=33) | (y_axis=34) | (y_axis=35) | (y_axis=36) | (y_axis=37) | (y_axis=38) | (y_axis=39)) ): act;
           (x_axis=1 & ((y_axis=6) | (y_axis=7) | (y_axis=8) | (y_axis=9) | (y_axis=10) | (y_axis=11) | (y_axis=12) | (y_axis=13) | (y_axis=14) | (y_axis=15) | (y_axis=16) | (y_axis=17) | (y_axis=18) | (y_axis=19) | (y_axis=20) | (y_axis=21) | (y_axis=22) | (y_axis=23) | (y_axis=24) | (y_axis=25) | (y_axis=26) | (y_axis=27) | (y_axis=28) | (y_axis=29) | (y_axis=30) | (y_axis=31) | (y_axis=32) | (y_axis=33) | (y_axis=34) | (y_axis=35) | (y_axis=36) | (y_axis=37) | (y_axis=38) | (y_axis=39)) ): act;
@@ -170,13 +173,6 @@
           -----4
 
 
-
-          --- the boundary of the whole environment
-          (x_axis=0): {1,4};
-          (x_axis=39): {2,3};
-          (y_axis=0): {1,4};
-          (y_axis=39): {2,3};
-
           -- else, move to all four directions
           TRUE: {1,2,3,4};
         esac;
@@ -267,9 +263,6 @@
            (x_axis=38 & act=3) :  37 ;
            (x_axis=38 & act=4) :  39 ;
            (x_axis=39 & act=3) :  38 ;
-
-
-
            TRUE: x_axis;
          esac;
 
