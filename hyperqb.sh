@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 TIMEFORMAT="%Rs"
 ### Parameters
 # SINGLE_PARSER=exec/single_model_parser.py
@@ -48,7 +48,8 @@ done
 
 
 ## updated Jan.28:merge parse and bmc
-echo "\n------( HyperQB START! )------"
+echo ""
+echo "------( HyperQB START! )------"
 ## get current location and arguments
 PWD=$(pwd)
 ALLARG=$@
@@ -75,17 +76,14 @@ do
   fi
   let COUNTER++
 done
-# echo "receiving models:  " ${MODELS[*]}
 
 
 ### Check which <mode> is used (-bughunt or -find) ###
 if echo $* | grep -e "-find" -q
 then
-  # echo "find witness mode (-find)"
   FLAG="-find"
 elif echo $* | grep -e "-bughunt" -q
 then
-  # echo "bug hunting mode (-bughunt)"
   FLAG="-bughunt"
 else
   echo "*mode is not specified, default to (-bughunt)"
@@ -120,14 +118,13 @@ fi
 
 ### parse the NuSMV models and the given formula ###
 
-# RUN PARSER on Docker
-echo "(using docker for parsing, parsing could become slower)"
 printf "NuSMV models and HyperLTL formula parsing..."
-TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
+# RUN PARSER on Docker
+# echo "(using docker for parsing, parsing could become slower)"
+# TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 
 # RUN PARSER locally, if the setup on your local machine is successful
-# printf "NuSMV models and HyperLTL formula parsing..."
-# TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
+TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
 
 
 # if any error happens in parsing, exit HyperQB
@@ -143,8 +140,6 @@ if [ ! -f "${QSFILE}" ]; then
   exit 1
 fi
 source "${QSFILE}" # instantiate QS
-
-
 
 
 
@@ -181,7 +176,7 @@ OUTCOME=$(grep "r " ${QUABS_OUT})
 
 
 
-echo "\n--------------- Summary of HyperQB ---------------"
+echo "--------------- Summary of HyperQB ---------------"
 echo "|  Models:     " ${MODELS[*]}
 echo "|  Formula:    " ${FORMULA}
 echo "|  Quantifiers:" ${QS}
@@ -191,7 +186,10 @@ echo "|  #states:    " ${TIME_PARSE}
 echo "|  Bound k:    " ${k}
 echo "|  Mode:       " ${FLAG}
 echo "----------------------------------------------------"
-echo "\n------(END HyperQB)------\n"
+echo "------(END HyperQB)------"
+
+echo ""
+echo ""
 
 
 exit 1
