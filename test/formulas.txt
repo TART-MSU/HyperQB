@@ -1,0 +1,15 @@
+Example 1:
+(~p3-TOKEN /\ ~p2-TOKEN /\ ~p1-TOKEN /\ ~SELECTING /\ ~STARTED /\ (p1_ticket_1 /\ p1_ticket_0) /\ (p2_ticket_1 /\ p2_ticket_0) /\ (p3_ticket_1 /\ p3_ticket_0) /\ (~MAX_ticket_1 /\ ~MAX_ticket_0) /\ (~p1_line_2 /\ ~p1_line_1 /\ ~p1_line_0) /\ (~p2_line_2 /\ ~p2_line_1 /\ ~p2_line_0) /\ (~p3_line_2 /\ ~p3_line_1 /\ ~p3_line_0))
+
+Example 2:
+(~p3-TOKEN[0] /\ ~p2-TOKEN[0] /\ ~p1-TOKEN[0] /\ ~SELECTING[0] /\ ~STARTED[0] /\ (p1_ticket_1[0] /\ p1_ticket_0[0]) /\ (p2_ticket_1[0] /\ p2_ticket_0[0]) /\ (p3_ticket_1[0] /\ p3_ticket_0[0]) /\ (~MAX_ticket_1[0] /\ ~MAX_ticket_0[0]) /\ (~p1_line_2[0] /\ ~p1_line_1[0] /\ ~p1_line_0[0]) /\ (~p2_line_2[0] /\ ~p2_line_1[0] /\ ~p2_line_0[0]) /\ (~p3_line_2[0] /\ ~p3_line_1[0] /\ ~p3_line_0[0]))
+
+Example 3:
+(~p3-TOKEN[0] /\ ~p2-TOKEN[0] /\ ~p1-TOKEN[0] /\ ~SELECTING[0] /\ ~STARTED[0] /\ (p1_ticket_1[0] /\ p1_ticket_0[0]) /\ (p2_ticket_1[0] /\ p2_ticket_0[0]) /\ (p3_ticket_1[0] /\ p3_ticket_0[0]) /\ (~MAX_ticket_1[0] /\ ~MAX_ticket_0[0]) /\ (~p1_line_2[0] /\ ~p1_line_1[0] /\ ~p1_line_0[0]) /\ (~p2_line_2[0] /\ ~p2_line_1[0] /\ ~p2_line_0[0]) /\ (~p3_line_2[0] /\ ~p3_line_1[0] /\ ~p3_line_0[0]))
+/\
+(~p3-TOKEN[1] /\ ~p2-TOKEN[1] /\ ~p1-TOKEN[1] /\ ~SELECTING[1] /\ ~STARTED[1] /\ (p1_ticket_1[1] /\ p1_ticket_0[1]) /\ (p2_ticket_1[1] /\ p2_ticket_0[1]) /\ (p3_ticket_1[1] /\ p3_ticket_0[1]) /\ (~MAX_ticket_1[1] /\ ~MAX_ticket_0[1]) /\ (~p1_line_2[1] /\ ~p1_line_1[1] /\ ~p1_line_0[1]) /\ (~p2_line_2[1] /\ ~p2_line_1[1] /\ ~p2_line_0[1]) /\ (~p3_line_2[1] /\ ~p3_line_1[1] /\ ~p3_line_0[1]))
+
+Example 4:
+(~p3-TOKEN_A[0] /\ ~p2-TOKEN_A[0] /\ ~p1-TOKEN_A[0] /\ ~SELECTING_A[0] /\ ~STARTED_A[0] /\ (p1_ticket_1_A[0] /\ p1_ticket_0_A[0]) /\ (p2_ticket_1_A[0] /\ p2_ticket_0_A[0]) /\ (p3_ticket_1_A[0] /\ p3_ticket_0_A[0]) /\ (~MAX_ticket_1_A[0] /\ ~MAX_ticket_0_A[0]) /\ (~p1_line_2_A[0] /\ ~p1_line_1_A[0] /\ ~p1_line_0_A[0]) /\ (~p2_line_2_A[0] /\ ~p2_line_1_A[0] /\ ~p2_line_0_A[0]) /\ (~p3_line_2_A[0] /\ ~p3_line_1_A[0] /\ ~p3_line_0_A[0]))
+/\
+(~p3-TOKEN_B[0] /\ ~p2-TOKEN_B[0] /\ ~p1-TOKEN_B[0] /\ ~SELECTING_B[0] /\ ~STARTED_B[0] /\ (p1_ticket_1_B[0] /\ p1_ticket_0_B[0]) /\ (p2_ticket_1_B[0] /\ p2_ticket_0_B[0]) /\ (p3_ticket_1_B[0] /\ p3_ticket_0_B[0]) /\ (~MAX_ticket_1_B[0] /\ ~MAX_ticket_0_B[0]) /\ (~p1_line_2_B[0] /\ ~p1_line_1_B[0] /\ ~p1_line_0_B[0]) /\ (~p2_line_2_B[0] /\ ~p2_line_1_B[0] /\ ~p2_line_0_B[0]) /\ (~p3_line_2_B[0] /\ ~p3_line_1_B[0] /\ ~p3_line_0_B[0]))
