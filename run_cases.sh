@@ -24,20 +24,25 @@ FIND="-find"
 ### (1) Previous cases in TACAS21 submission:
 
 ### [0.1-0.3 BAKERY]
+#### example to try #######
 # ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_S1_3proc.hq 7 ${PES} ${FIND}
 # ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_S2_3proc.hq 12 ${PES} ${FIND}
 # ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_S3_3proc.hq 20 ${OPT} ${FIND}
 ### [1.1-1.4 BAKERY]
 # ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_sym1_3proc.hq 10 ${PES} ${BUGHUNT}
 # ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_sym2_3proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_formula_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
+
+
+${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_formula_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
 # ${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_formula_sym2_5proc.hq 10 ${PES} ${BUGHUNT}
 
 ### [2.1-2.2 SNARK 2.1-2.2]
+## example to try  ######
 # ${HyperQB} cases_bmc/tacas_snark/snark1_M1_concurrent.smv cases_bmc/tacas_snark/snark1_M2_sequential.smv  cases_bmc/tacas_snark/snark1_formula.hq 18 ${PES} ${FIND}
 # ${HyperQB} cases_bmc/tacas_snark/snark2_new_M1_concurrent.smv  cases_bmc/tacas_snark/snark2_new_M2_sequential.smv cases_bmc/tacas_snark/snark2_formula.hq 30 ${PES} ${FIND}
 
 ### [3.1-3.2 3-Thread]
+### EXAMPLE TO TRY ####
 # ${HyperQB} cases_bmc/tacas_multi_threaded/NI_incorrect.smv cases_bmc/tacas_multi_threaded/NI_incorrect.smv cases_bmc/tacas_multi_threaded/NI_formula.hq 57 ${HPES} ${BUGHUNT}
 # ${HyperQB} cases_bmc/tacas_multi_threaded/NI_correct.smv cases_bmc/tacas_multi_threaded/NI_correct.smv cases_bmc/tacas_multi_threaded/NI_formula.hq 57 ${HOPT} ${BUGHUNT}
 
