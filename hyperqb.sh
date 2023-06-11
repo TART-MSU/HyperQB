@@ -32,6 +32,8 @@ I=${OUTFOLDER}I_1.bool
 R=${OUTFOLDER}R_1.bool
 J=${OUTFOLDER}I_2.bool
 S=${OUTFOLDER}R_2.bool
+Q=${OUTFOLDER}I_3.bool
+W=${OUTFOLDER}R_3.bool
 P=${OUTFOLDER}P.hq
 QSFILE=${OUTFOLDER}QS
 FORMULA=""
@@ -153,9 +155,10 @@ then
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
 else
   lst_NEW_QUANTS="AAE EAA EEA AEA EEE AEE AAAE EAAE AAAE AAEE EAAEE AAAEEE" #special cases we investigate
+
   if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then
     GENQBF=exec/genqbf_v5 # updated genqbf
-    TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
+    TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${Q} -W ${W} -Z ${J} -X ${S} -C ${Q} -V ${W} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
   else
     ALL_I_R=$(find ${OUTFOLDER}*.bool )
     GENQBF=src/cplusplus/genqbf # with arbitrary quantifiers
@@ -192,13 +195,14 @@ echo ""
 echo ""
 
 
-exit 1
+
 
 # ## TODO: update these two scripts using python
-# echo "\n=== Get Nice-formatted Output if witness/counterexample is found ==="
+# echo "(Get Nice-formatted Output if witness/counterexample is found)"
 # if [ ! -f "$QCIR_OUT" ]; then
 #     echo "$QCIR_OUT does not exists"
 #     exit 1
+#     echo "no QCIR output"
 # fi
 # echo "parsing into readable format..."
 # ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}

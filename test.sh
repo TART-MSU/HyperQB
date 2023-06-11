@@ -1,16 +1,19 @@
 #!/bin/bash
 TIMEFORMAT="%Rs"
 GENQBF=src/expression/bin/genqbf # classic 1 quants
-I=test/I.bool
-R=test/R.bool
-J=test/I.bool
-S=test/R.bool
-P=test/P.hq
-k=1
-QS='EE'
-SEM='PES'
-QCIR_OUT=test/HQ.qcir
-time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+# I=test/I.bool
+# R=test/R.bool
+# J=test/I.bool
+# S=test/R.bool
+# P=test/P.hq
+# k=1
+# QS='EE'
+# SEM='PES'
+# QCIR_OUT=test/HQ.qcir
+# time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast
+
+
+
 
 AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 
@@ -81,3 +84,14 @@ AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 # echo ""
 # echo "------(AutoHyper Starts)------"
 # time ${AUTOHYPER} -nusmv ${SMV} ${HQAUTO} -v 4
+
+# Mappying Synthesis
+SMV_A='cases_compare/msynth_MA.smv'
+SMV_B='cases_compare/msynth_MB.smv'
+SMV_M='cases_compare/msynth_MM.smv'
+HQ='cases_compare/msynth_f1.hq'
+HQAUTO='cases_compare/msynth_f2.hq'
+time ./hyperqb.sh ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -pes -find
+echo ""
+echo "------(AutoHyper Starts)------"
+time ${AUTOHYPER} -nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO} -v 4
