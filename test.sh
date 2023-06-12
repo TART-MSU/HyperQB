@@ -85,13 +85,26 @@ AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 # echo "------(AutoHyper Starts)------"
 # time ${AUTOHYPER} -nusmv ${SMV} ${HQAUTO} -v 4
 
-# Mappying Synthesis
+# Mappying Synthesis - examples
 SMV_A='cases_compare/msynth_MA.smv'
 SMV_B='cases_compare/msynth_MB.smv'
 SMV_M='cases_compare/msynth_MM.smv'
 HQ='cases_compare/msynth_f1.hq'
 HQAUTO='cases_compare/msynth_f2.hq'
 time ./hyperqb.sh ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -pes -find
+echo ""
+echo "------(AutoHyper Starts)------"
+time ${AUTOHYPER} -nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO} -v 4
+
+
+# Mappying Synthesis - Alice and Bob with non-interference
+SMV_A='cases_compare/msynth1_MA.smv'
+SMV_B='cases_compare/msynth1_MB.smv'
+SMV_M='cases_compare/msynth1_MM.smv'
+HQ='cases_compare/msynth1_f1.hq'
+HQAUTO='cases_compare/msynth1_f2.hq'
+# echo "HyperQB total time: "
+time ./hyperqb.sh ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 8 -pes -find
 echo ""
 echo "------(AutoHyper Starts)------"
 time ${AUTOHYPER} -nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO} -v 4
