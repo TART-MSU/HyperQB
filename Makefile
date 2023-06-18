@@ -10,3 +10,4 @@ clean:
 	find . -name "*QS" -delete
 	find . -name "*.cex" -delete
 	find . -name "P.hq" -delete
+	find . -name "*.hoa" -delete
