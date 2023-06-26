@@ -143,12 +143,15 @@ source "${QSFILE}" # instantiate QS
 
 
 
-
+(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -sem ${SEM} -n --fast) | (time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${P})
 printf "BMC unrolling with genqbf..................."
+
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 n=${#QS}
+
 if [ ${n} -eq 2 ]
 then
+  mount -t tmpfs -o size=500m tmpfs /
   GENQBF=exec/genqbf # classic 1 quants
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
 else
