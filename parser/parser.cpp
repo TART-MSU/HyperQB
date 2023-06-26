@@ -91,7 +91,7 @@ void initialize(set<string> &vars, map<string, string> &var_type, map<string, st
         var_str += init_str[i];
         i++;
     }
-    cout << "var: " << init_str << endl;
+    cout << "var: " << var_str << endl;
 }
 
 
@@ -127,6 +127,11 @@ int main() {
                     
                 }
             }
+            // if (line == "ASSIGN") {
+            //     getline (myfile, line);
+            //     line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
+
+            // }
         }
 
         myfile.close();
