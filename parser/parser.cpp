@@ -127,11 +127,21 @@ int main() {
                     
                 }
             }
-            // if (line == "ASSIGN") {
-            //     getline (myfile, line);
-            //     line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
+            if (line == "ASSIGN") {
+                getline (myfile, line);
+                line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
+                while (line != "DEFINE") {
+                    if (line.substr(0,3) == "init") {
+                        string var_init = "";
+                        for (int i=5; line[i] != ')'; i++) {
+                            var_init+= line[i];
+                        }
+                        de[var_init] =
+                        
+                    }
+                }
 
-            // }
+            }
         }
 
         myfile.close();
