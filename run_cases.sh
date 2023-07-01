@@ -33,7 +33,7 @@ FIND="-find"
 # ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_sym2_3proc.hq 10 ${PES} ${BUGHUNT}
 
 
-${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_formula_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_formula_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
 # ${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_formula_sym2_5proc.hq 10 ${PES} ${BUGHUNT}
 
 ### [2.1-2.2 SNARK 2.1-2.2]
@@ -53,7 +53,7 @@ ${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/baker
 ### -------------------------Table 5-----------------------------------
 ### [5.1 Robotic planning: Shortest Path]
 # ${HyperQB} cases_bmc/tacas_robotic/robotic_sp_100.smv  cases_bmc/tacas_robotic/robotic_sp_100.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 20 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_robotic/robotic_sp_400.smv cases_bmc/tacas_robotic/robotic_sp_400.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 40 ${PES} ${FIND}
+${HyperQB} cases_bmc/tacas_robotic/robotic_sp_400.smv cases_bmc/tacas_robotic/robotic_sp_400.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 40 ${PES} ${FIND}
 # ${HyperQB} cases_bmc/tacas_robotic/robotic_sp_1600.smv cases_bmc/tacas_robotic/robotic_sp_1600.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 80 ${PES} ${FIND}
 # ${HyperQB} cases_bmc/tacas_robotic/robotic_sp_3600.smv cases_bmc/tacas_robotic/robotic_sp_3600.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 120 ${PES} ${FIND}
 

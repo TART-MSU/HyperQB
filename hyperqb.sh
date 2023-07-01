@@ -1,5 +1,5 @@
 #!/bin/bash
-TIMEFORMAT="%Rs"
+# TIMEFORMAT="%Rs"
 ### Parameters
 # SINGLE_PARSER=exec/single_model_parser.py
 MULTI_PARSER=exec/model_parser.py
@@ -23,7 +23,7 @@ OUTFOLDER="build_"${DATE}"/"
 rm -f -R "build_today/"
 mkdir ${OUTFOLDER}
 
-QCIR_OUT=${OUTFOLDER}HQ.qcir
+# QCIR_OUT=${OUTFOLDER}HQ.qcir
 QUABS_OUT=${OUTFOLDER}HQ.quabs
 MAP_OUT1=${OUTFOLDER}_byName.cex
 MAP_OUT2=${OUTFOLDER}_byTime.cex
@@ -142,14 +142,15 @@ fi
 source "${QSFILE}" # instantiate QS
 
 
-
+diskutil erasevolume apfs "RAMDisk" `hdiutil attach -nomount ram://20000000`
+touch /Volumes/RAMDisk/HQ.qcir
+QCIR_OUT=/Volumes/RAMDisk/HQ.qcir
 printf "BMC unrolling with genqbf..................."
 
-QCIR_OUT=${OUTFOLDER}HQ.qcir
+# QCIR_OUT=${OUTFOLDER}HQ.qcir
 n=${#QS}
 if [ ${n} -eq 2 ]
 then
-  mount -t tmpfs -o size=500m tmpfs /
   GENQBF=exec/genqbf # classic 1 quants
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
 else
@@ -178,6 +179,9 @@ printf "QBF solving with QuAbS......................"
 # time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
+
+diskutil unmount /Volumes/RAMDisk
+
 
 
 
