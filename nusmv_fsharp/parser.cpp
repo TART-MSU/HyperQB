@@ -82,7 +82,22 @@ void next_state (set<string> &vars, map<string, string> &init, map<string, vecto
     next[next_var] = next_state_list;
 }
 
-stringstream transition_formula (map<string, string> var_type, map<string, string> init, map<string, vector<string>> next) {
+vector<vector<string>> cart_product (const vector<vector<string>>& v) {
+    vector<vector<string>> s = {{}};
+    for (const auto& u : v) {
+        vector<vector<string>> r;
+        for (const auto& x : s) {
+            for (const auto& y : u) {
+                r.push_back(x);
+                r.back().push_back(y);
+            }
+        }
+        s = move(r);
+    }
+    return s;
+}
+
+stringstream transition_relation (map<string, string> var_type, map<string, string> init, map<string, vector<string>> next) {
     stringstream ss;
     string init_str;
     ss << "[" ;
@@ -96,6 +111,7 @@ stringstream transition_formula (map<string, string> var_type, map<string, strin
     string next_str;
     vector<vector<string>> next_vec_pairs;
     int combinations = 1;
+
     // trying to figure out how to find all possible pairs
     for (auto x: next) {
         vector<string> possible_states;
@@ -108,32 +124,45 @@ stringstream transition_formula (map<string, string> var_type, map<string, strin
                 possible_states.push_back(var);
             }
         }
-        combinations *= possible_states.size();
+        // combinations *= possible_states.size();
         next_vec_pairs.push_back(possible_states);
     }
-    cout << "combinations: " << combinations << endl;
-    for (auto x: next_vec_pairs) {
-        for (auto y: x) {
-            cout << "y: " << y << endl;
-        }
-    }
+    
 
-    for (int i = 0; i < next_vec_pairs.size(); i++) {
-        for (int j = 0; j < 2; j++) {
-            string formula = next_vec_pairs[i][0] + "/\\" + next_vec_pairs[i][1];
-            cout << formula << endl;
-        }
-    }
-    // for (int i = 0; i < next_vec_pairs.size(); i++) {
-    //     for (int j = 0; j < next_vec_pairs[0].size(); j++) {
-    //         for (int k =0; k < next_vec_pairs[1].size(); k++) {
-
-    //         }
+    // cout << "combinations: " << combinations << endl;
+    // for (auto x: next_vec_pairs) {
+    //     for (auto y: x) {
+    //         cout << "y: " << y << endl;
     //     }
     // }
-            // for(int i =0;i<a.size() ;i++)
-            //  for(int j =0;j<a.size() ;j++)
-            //       std::cout << "{"<< a[i] << "," << b[j] << "} ";
+
+    next_vec_pairs = cart_product(next_vec_pairs);
+
+    for (int i =0; i < next_vec_pairs.size(); i++) {
+        string formula;
+        for (auto state: next_vec_pairs[i]) {
+            formula += state + "/\\";
+        }
+        ss << "(" << formula.substr(0, formula.length()-2) << ")";
+        if ((i+1) < next_vec_pairs.size()) {
+            ss << "\\/";
+        }
+    }
+    ss << "]";
+    // for (auto x: next_vec_pairs) {
+    //     cout << "________" << endl;
+    //     for (auto y: x) {
+    //         cout << y << endl;
+    //     }
+    // }
+
+    // for (int i = 0; i < next_vec_pairs.size(); i++) {
+    //     for (int j = 0; j < 2; j++) {
+    //         string formula = next_vec_pairs[i][0] + "/\\" + next_vec_pairs[i][1];
+    //         cout << formula << endl;
+    //     }
+    // }
+    
     return ss;
 }
 
@@ -148,7 +177,7 @@ int main() {
     
     // std::cout << "Enter a file name: " << endl;
     // cin >> input_file;
-    ifstream myfile ("smv.txt");
+    ifstream myfile ("smv_2.txt");
     
     if (myfile.is_open())
     {
@@ -232,31 +261,45 @@ int main() {
 
 
     else std::cout << "Unable to open file";
+    
+    // debugging
 
-    std::cout << "\nVAR TYPE MAP:" << endl;
-    for(const auto& elem : var_type)
-    {
-        std::cout << elem.first << " " << elem.second << "\n";
-    }
+    // std::cout << "\nVAR TYPE MAP:" << endl;
+    // for(const auto& elem : var_type)
+    // {
+    //     std::cout << elem.first << " " << elem.second << "\n";
+    // }
 
-    std::cout << "\nINIT MAP:" << endl;
-    for(const auto& elem : init)
-    {
-        std::cout << elem.first << " " << elem.second << "\n";
-    }
+    // std::cout << "\nINIT MAP:" << endl;
+    // for(const auto& elem : init)
+    // {
+    //     std::cout << elem.first << " " << elem.second << "\n";
+    // }
 
-    std::cout << "\nNEXT MAP:" << endl;
-    for(const auto& elem : next)
-    {
-        std::cout << elem.first << " ";
-        for (auto x : elem.second) {
-            std::cout << x << " ";
-        }
-        std::cout << "\n";
-    }
+    // std::cout << "\nNEXT MAP:" << endl;
+    // for(const auto& elem : next)
+    // {
+    //     std::cout << elem.first << " ";
+    //     for (auto x : elem.second) {
+    //         std::cout << x << " ";
+    //     }
+    //     std::cout << "\n";
+    // }
 
-    stringstream output = transition_formula(var_type, init, next);
-    cout << "transition formula: " << output.str() << endl;
+    stringstream output = transition_relation(var_type, init, next);
+    cout << "transition relation: " << output.str() << endl;
+
+    // debugging
+
+    // vector<vector<string>> v = {{"a", "~a"}, {"b", "~b"}};
+    // vector<vector<string>> prod = cart_product(v);
+
+    // for (auto x: prod) {
+    //     cout << "________" << endl;
+    //     for (auto y: x) {
+    //         cout << y << endl;
+    //     }
+    // }
 
     return 0;
 }
