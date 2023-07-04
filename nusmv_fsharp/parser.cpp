@@ -31,7 +31,8 @@ void init_state (set<string> &vars, map<string, string> &var_type, map<string, s
     var_str = init_str.substr(first_paren + 1, second_paren - (first_paren + 1));
     init_str.pop_back();
     string init_cond = init_str.substr(second_paren + 3);
-    std::cout << "init_cond:  " << init_cond << endl;
+    // debugging
+    // std::cout << "init_cond:  " << init_cond << endl;
     init[var_str] = init_cond;
 }
 
@@ -40,7 +41,8 @@ void init_var (set<string> &vars, map<string, string> &var_type, map<string, str
     int i = 0;
     string var_str;
     while (init_str[i] != ':') {
-        std::cout << init_str[i] << endl;
+        // debugging
+        // std::cout << init_str[i] << endl;
         var_str += init_str[i];
         i++;
     }
@@ -51,7 +53,8 @@ void init_var (set<string> &vars, map<string, string> &var_type, map<string, str
     // add var and var type to var_type map
     string type_info = init_str.substr(i+1);
     var_type[var_str] = type_info;
-    std::cout << "var: " << type_info << endl;
+    // debugging
+    // std::cout << "var: " << type_info << endl;
 }
 
 void next_state (set<string> &vars, map<string, string> &init, map<string, vector<string>> &next, string next_var, string line) {
@@ -59,7 +62,8 @@ void next_state (set<string> &vars, map<string, string> &init, map<string, vecto
     vector<string> next_state_list;
     if (line.find("TRUE") == 0) {
         size_t found_colon = line.find(":");
-        std::cout << "next function:  "<< line.substr(found_colon + 1) << endl;
+        // debugging
+        // std::cout << "next function:  "<< line.substr(found_colon + 1) << endl;
         // if state does not change
         if (line.substr(found_colon + 1) == next_var) {
             // find state in init map
@@ -110,7 +114,7 @@ stringstream transition_relation (map<string, string> var_type, map<string, stri
     ss << init_str.substr(0, init_str.length() - 2) << "] -> [" ;
     string next_str;
     vector<vector<string>> next_vec_pairs;
-    int combinations = 1;
+    // int combinations = 1;
 
     // trying to figure out how to find all possible pairs
     for (auto x: next) {
@@ -190,7 +194,8 @@ int main() {
                 line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
                 while (line != "ASSIGN") {
                     // line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
-                    std::cout << line << endl;
+                    // debugging
+                    // std::cout << line << endl;
                     init_var(vars, var_type, init, line);
                     
                     getline(myfile, line);
@@ -237,7 +242,8 @@ int main() {
                     found_next += 1;
                     ch = line[found_next];
                 }
-                std::cout << "next var chars: " << next_var << endl;
+                // debugging
+                // std::cout << "next var chars: " << next_var << endl;
                 getline (myfile, line);
                 line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
                 if (line == "case") {
@@ -248,7 +254,8 @@ int main() {
                         getline(myfile, line);
                         line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
                     }
-                    cout << "next line: " << line << endl;
+                    // debugging
+                    // cout << "next line: " << line << endl;
                     next_state(vars, init, next, next_var, line);
                 }
                 
