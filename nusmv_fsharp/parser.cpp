@@ -161,7 +161,9 @@ void next_state (set<string> &vars, map<string, vector<string>> &init, map<strin
         string condition = line.substr(open_paren + 1, closed_paren - (open_paren + 1));
         // cout << "condition: " << condition << endl;
         // cout << "next_var: " << next_var << endl;
-        
+        if (condition[0] == '!') {
+            condition = "~" + condition.substr(1);
+        }
         // fix later on, prob need a separate function / parser
         size_t found_colon = line.find(":");
         // debugging
@@ -421,31 +423,31 @@ int main() {
     
     // debugging
 
-    // std::cout << "\nVAR TYPE MAP:" << endl;
-    // for(const auto& elem : var_type)
-    // {
-    //     std::cout << elem.first << " " << elem.second << "\n";
-    // }
+    std::cout << "\nVAR TYPE MAP:" << endl;
+    for(const auto& elem : var_type)
+    {
+        std::cout << elem.first << " " << elem.second << "\n";
+    }
 
-    // std::cout << "\nINIT MAP:" << endl;
-    // for(const auto& elem : init)
-    // {
-    //     std::cout << elem.first << " ";
-    //     for (auto x : elem.second) {
-    //         std::cout << x << " ";
-    //     }
-    //     std::cout << "\n";
-    // }
+    std::cout << "\nINIT MAP:" << endl;
+    for(const auto& elem : init)
+    {
+        std::cout << elem.first << " ";
+        for (auto x : elem.second) {
+            std::cout << x << " ";
+        }
+        std::cout << "\n";
+    }
 
-    // std::cout << "\nNEXT MAP:" << endl;
-    // for(const auto& elem : next)
-    // {
-    //     std::cout << elem.first << " ";
-    //     for (auto x : elem.second) {
-    //         std::cout << x << " ";
-    //     }
-    //     std::cout << "\n";
-    // }
+    std::cout << "\nNEXT MAP:" << endl;
+    for(const auto& elem : next)
+    {
+        std::cout << elem.first << " ";
+        for (auto x : elem.second) {
+            std::cout << x << " ";
+        }
+        std::cout << "\n";
+    }
 
     for (auto state: all_init_states) {
         stringstream output = transition_relation(var_type, state, next);
@@ -477,3 +479,4 @@ int main() {
 
     return 0;
 }
+
