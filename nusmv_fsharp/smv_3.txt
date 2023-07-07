@@ -12,10 +12,10 @@ MODULE main
     next(a) :=
       case
         (b): TRUE;
-        (~b): FALSE;
+        (!b): FALSE;
       esac;
     next(b) :=
       case
         (a): TRUE;
-        (~a): FALSE;
+        (!a): FALSE;
       esac;
