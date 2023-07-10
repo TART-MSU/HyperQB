@@ -25,7 +25,95 @@ using namespace std;
 //     }
 // }
 
-vector<vector<string> > cart_product (const vector<vector<string> >& v) {
+vector<pair<string,string>> condition_tokenizer (string condition) {
+    int i = 0;
+    vector<pair<string,string>> condition_vec;
+    while (i < (condition.length()) ) {
+        if (condition[i] == '|') {
+            condition_vec.push_back({"or", "|"});
+            i+=1;
+        } else if (condition[i] == '!') {
+            condition_vec.push_back({"not","!"});
+            i+=1;
+        } else if (condition[i] == '&') {
+            condition_vec.push_back({"and","&"});
+            i+=1;
+        } else if (condition[i] == ' '){
+            i+=1;
+        } else if (condition[i] == '=') {
+            condition_vec.push_back({"eq", "="});
+            i+=1;
+        } else {
+            string var;
+            int j = i;
+            while (condition[j] != '&' && condition[j] != '!' && condition[j] != '|' && condition[j]!= ' ' && j < condition.length()) {
+                var += condition[j];
+                j+=1;
+            }
+            i += (j-i);
+            condition_vec.push_back({"var", var});
+        }
+    }
+    return condition_vec;
+}
+
+void condition_parser (vector<pair<string,string>> condition_vec, vector<pair<string,string>> init_state) {
+    for (int i = 0; i < condition_vec.size(); i++) {
+        if (condition_vec[i].first == "var") {
+            
+        } else if (condition_vec[i].first == "or") {
+
+        } else if (condition_vec[i].first == "and"){
+
+        } else if (condition_vec[i].first == "not") {
+
+        } else if (condition_vec[i].first == "eq") {
+
+        }
+    }
+}
+
+vector<string> to_binary(int n, string var)
+{
+    int bit_order = 0;
+    vector<string> bit_vector;
+    string bit,r;
+    while(n!=0) {
+        r=(n%2==0 ?"0":"1");
+        if (r == "0") {
+            bit_vector.push_back("~" + var + "[" + to_string(bit_order) + "]");
+        } else {
+            bit_vector.push_back(var + "[" + to_string(bit_order) + "]");
+        }
+        bit=(n%2==0 ?"0":"1")+bit; 
+        n/=2;
+        // cout << "bit: " << bit << endl;
+        // cout << "r: " << r << endl;
+        bit_order++;
+    }
+    reverse(bit_vector.begin(), bit_vector.end());
+    for (auto x: bit_vector){
+        // cout << "bit:    " << x <<endl;
+    }
+    return bit_vector;
+}
+
+vector<vector<pair<string,string>> > cart_product (const vector<vector<pair<string,string>> >& v) {
+    vector<vector<pair<string,string>>> s = {{}};
+    for (const auto& u : v) {
+        vector<vector<pair<string,string>>> r;
+        for (const auto& x : s) {
+            for (const auto& y : u) {
+                r.push_back(x);
+                r.back().push_back(y);
+            }
+        }
+        s = move(r);
+    }
+    return s;
+}
+
+vector<vector<string> > cart_product_2 (const vector<vector<string> >& v) {
     vector<vector<string>> s = {{}};
     for (const auto& u : v) {
         vector<vector<string>> r;
@@ -41,21 +129,23 @@ vector<vector<string> > cart_product (const vector<vector<string> >& v) {
 }
 
 // create state map of initial conditions
-vector<vector<string>> create_init_map (map<string, vector<string>> &init) {
+vector<vector<pair<string,string>>> create_init_map (map<string, vector<string>> &init) {
     map<string, vector<string>> init_state_map;
     int state;
 
-    vector<vector<string>> state_vec;
+    vector<vector<pair<string,string>>> state_vec;
 
     for (auto x: init) {
-        vector<string> possible_states;
+        vector<pair<string,string>> possible_states;
         for (auto y: x.second) {
             if (y == "FALSE") {
                 string var = "~" + x.first;
-                possible_states.push_back(var);
+                possible_states.push_back({var, "FALSE"});
             } else if (y == "TRUE") {
                 string var = x.first;
-                possible_states.push_back(var);
+                possible_states.push_back({var, "TRUE"});
+            } else {
+                possible_states.push_back({x.first, y});
             }
         }
 
@@ -121,11 +211,14 @@ void init_var (set<string> &vars, map<string, string> &var_type, map<string, vec
 }
 
 // finding all possible next states, no matter init conditions
-void next_state (set<string> &vars, map<string, vector<string>> &init, map<string, vector<string>> &next, string next_var, string line) {
+void next_state (set<string> &vars, map<string, vector<string> > &init, map<string, vector<vector<string> > > &next, string next_var, string line) {
     line.pop_back();
+    // cout << "next var: " << next_var << endl;
     // cout << "line: " << line << endl;
+    string condition;
     vector<string> next_state_list;
     if (line.find("TRUE") == 0) {
+        condition = "TRUE";
         size_t found_colon = line.find(":");
         // debugging
         // std::cout << "next function:  "<< line.substr(found_colon + 1) << endl;
@@ -135,9 +228,11 @@ void next_state (set<string> &vars, map<string, vector<string>> &init, map<strin
         if (line.substr(found_colon + 1) == next_var) {
             // find state in init map
             // cout << "next_var: " << next_var << endl; 
-            if (next_var[0] == '~') {
+            
+            if (next_var[0] == '!') {
                 next_state_list.push_back("FALSE");
             } else {
+
                 next_state_list.push_back("TRUE");
             }
         }
@@ -153,12 +248,14 @@ void next_state (set<string> &vars, map<string, vector<string>> &init, map<strin
                 getline(ss, substring, ','); //get first string delimited by comma
                 next_state_list.push_back(substring);
             }
+        } else {
+            next_state_list.push_back(line.substr(found_colon+1));
         }
     // conditional
     } else {
         size_t open_paren = line.find("(");
         size_t closed_paren = line.find(")");
-        string condition = line.substr(open_paren + 1, closed_paren - (open_paren + 1));
+        condition = line.substr(open_paren + 1, closed_paren - (open_paren + 1));
         // cout << "condition: " << condition << endl;
         // cout << "next_var: " << next_var << endl;
         if (condition[0] == '!') {
@@ -174,7 +271,7 @@ void next_state (set<string> &vars, map<string, vector<string>> &init, map<strin
         if (line.substr(found_colon + 1) == next_var) {
             // find state in init map
             // cout << "next_var: " << next_var << endl; 
-            if (next_var[0] == '~') {
+            if (next_var[0] == '!') {
                 next_state_list.push_back("FALSE");
             } else {
                 next_state_list.push_back("TRUE");
@@ -204,19 +301,32 @@ void next_state (set<string> &vars, map<string, vector<string>> &init, map<strin
         // if (vars.find(condition) != vars.end()) {
         //     // next_state_list.push_back();
         // }
-        next_var = condition;
+
+
+        // next_var = condition;
     }
     // debugging
     // for (auto x: next_state_list) {
     //     cout << "list: " << x << endl;
     // }
+    // insert condition at beginning of next_state_list
+    // cout << "conditionnnnnnn  " << condition << endl;
+    next_state_list.push_back(condition);
 
-    next[next_var] = next_state_list;
+    reverse(next_state_list.begin(), next_state_list.end());
+    for (auto x: next_state_list) {
+        // cout << "BRO; " << x << endl;
+    }
+    next[next_var].push_back(next_state_list);
 }
 
 // finding the correct next states
 
-stringstream transition_relation (map<string, string> var_type, vector<string> init_state, map<string, vector<string>> all_next) {
+stringstream transition_relation (map<string, string> var_type, vector<pair<string,string>> init_state, map<string, vector<vector<string>>> all_next) {
+    for (auto x: init_state) {
+        // cout << "init_state: " << x.first << x.second << endl;
+    }
+    
     stringstream ss;
     string init_str;
     ss << "[" ;
@@ -231,18 +341,51 @@ stringstream transition_relation (map<string, string> var_type, vector<string> i
     //         init_str += x.first + "/\\";
     //     } 
     // }
+    // std::cout << "\nALL NEXT MAP:" << endl;
+
+    // for(const auto& elem : all_next)
+    // {
+    //     std::cout << elem.first << " ";
+    //     for (auto x : elem.second) {
+    //         for (auto z: x) {
+    //             std::cout << z << " ";
+    //         }
+    //     }
+    //     std::cout << "\n";
+    // }
 
     for (auto x: init_state) {
-        init_str += x + "/\\";
+        if (std::find_if(x.second.begin(), x.second.end(), [](unsigned char c) { return !std::isdigit(c);}) == x.second.end()) {
+            vector<string> bin_vec = to_binary(stoi(x.second), x.first);
+            for (auto bit: bin_vec) {
+                init_str += bit + "/\\";
+            }
+        } else {
+            init_str += x.first + "/\\";
+        }
         for (auto y: all_next) {
             // cout << "x: " << x << endl;
             // cout << "y: " << y.first << endl;
-            if (y.first == x) {
-                next[y.first] = y.second;
+            for (auto z: y.second) {
+                // cout << "z[0]: " << z[0] << endl;
+                if (z[0] == x.first || (z[0] == "TRUE" && next.find(y.first) == next.end())) {
+                    vector<string>::const_iterator first = z.begin() + 1;
+                    vector<string>::const_iterator last = z.begin() + z.size();
+                    vector<string> newVec(first, last);
+                    next[y.first] = newVec;
+                }
             }
+            // if (y.first == x) {
+            //     next[y.first] = y.second;
+            // }
         }
     }
-    
+    // for (auto x: next) {
+    //     std::cout  << "next:   "<< x.first;
+    //     for (auto y: x.second) {
+    //         cout << y << endl;
+    //     }
+    // }
 
     // for(const auto& elem : next)
     // {
@@ -264,11 +407,18 @@ stringstream transition_relation (map<string, string> var_type, vector<string> i
         vector<string> possible_states;
         for (auto y: x.second) {
             if (y == "FALSE") {
-                string var = x.first + "'";
+                string var = "~" + x.first + "'";
                 possible_states.push_back(var);
             } else if (y == "TRUE") {
                 string var = x.first + "'";
                 possible_states.push_back(var);
+            } else {
+                string var = x.first;
+                // perform binary here
+                vector<string> bin = to_binary(stoi(y), var);
+                for (auto x: bin) {
+                    possible_states.push_back(x + "'");
+                }
             }
         }
         // combinations *= possible_states.size();
@@ -283,7 +433,7 @@ stringstream transition_relation (map<string, string> var_type, vector<string> i
     //     }
     // }
 
-    next_vec_pairs = cart_product(next_vec_pairs);
+    next_vec_pairs = cart_product_2(next_vec_pairs);
 
     for (int i =0; i < next_vec_pairs.size(); i++) {
         string formula;
@@ -317,8 +467,8 @@ int main() {
     set<string> vars;
     map<string, string> var_type;
     map<string, vector<string> > init;
-    map<string, vector<string> > next;
-    vector<vector<string> > all_init_states;
+    map<string, vector<vector<string> > > next;
+    vector<vector<pair<string,string> > > all_init_states;
     //int state_num = 0;
     // map<string, string> define;
 
@@ -326,7 +476,7 @@ int main() {
     
     // std::cout << "Enter a file name: " << endl;
     // cin >> input_file;
-    ifstream myfile ("smv_3.txt");
+    ifstream myfile ("smv_4.txt");
     
     if (myfile.is_open())
     {
@@ -377,7 +527,19 @@ int main() {
                     getline (myfile, line);
                     line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
                 }
+
+                // for (auto x: init) {
+                //     for (auto y: x.second) {
+                //         cout << "DEBUGGG: "<< y << endl;
+                //     }
+                // }
                 all_init_states = create_init_map(init);
+
+                // for (auto x: all_init_states) {
+                //     for (auto y: x) {
+                //         cout << "WHAT: " << y;
+                //     }
+                // }
             }
             size_t found_next = line.find("next(");
             if (found_next != string::npos) {
@@ -444,14 +606,23 @@ int main() {
     {
         std::cout << elem.first << " ";
         for (auto x : elem.second) {
-            std::cout << x << " ";
+            for (auto z: x) {
+                std::cout << z << " ";
+            }
         }
         std::cout << "\n";
     }
 
+    // write to text file
+    ofstream my_file;
+    my_file.open("output.txt");
     for (auto state: all_init_states) {
         stringstream output = transition_relation(var_type, state, next);
-        cout << "transition relation: " << output.str() << endl;
+        my_file <<  output.str() << "\n" << endl;
+
+        // for (auto x: state) {
+        //     cout << "state: "<< x << endl;
+        // }
         // map<string, string> single_state_map;
         // for (auto var: state) {
             // if (var[0] == '~') {
@@ -464,7 +635,7 @@ int main() {
         // stringstream output = transition_relation(var_type, single_state_map, next);
         // cout << "transition relation: " << output.str() << endl;
     }
-
+    my_file.close();
     // debugging
 
     // vector<vector<string>> v = {{"a", "~a"}, {"b", "~b"}};
@@ -476,6 +647,9 @@ int main() {
     //         cout << y << endl;
     //     }
     // }
+
+    // vector<string> bin = to_binary(10, "PC");
+    // cout << "bin: " << bin << endl;
 
     return 0;
 }
