@@ -1,0 +1,4 @@
+[a/\b/\p1_ticket[1]/\p1_ticket[0]] -> [(a'/\b'/\p1_ticket[1]')\/(a'/\b'/\~p1_ticket[0]')\/(a'/\b'/\p1_ticket[0]')]
+
+[~a/\b/\p1_ticket[1]/\p1_ticket[0]] -> [(a'/\~b'/\p1_ticket[1]')\/(a'/\~b'/\~p1_ticket[0]')]
+
