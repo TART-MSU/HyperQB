@@ -1,0 +1,1 @@
+time bash ramdisk_tests.sh
