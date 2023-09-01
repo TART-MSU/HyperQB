@@ -156,8 +156,11 @@ def gen_qcir(time_steps, num_states=8, traces=1, out=sys.stdout):
         match_all_traces.append(match_step_impl_time_step)
         
     # Start from state zero and above combined traces should be true
-    out.write("# Combined traces and initial state\n")
-    out.write(f"{output_base} = and({to_out_list(state_to_bin(0,vars_base))},{to_out_list(match_all_traces)})\n")
+    out.write(f"# Conjunct initial condition and all traces\n")
+    initial_condition = []
+    for var_trace in range(0, traces):
+        initial_condition.extend(state_to_bin(0, var_trace * num_vars_one_trace + vars_base))
+    out.write(f"{output_base} = and({to_out_list(initial_condition)},{to_out_list(match_all_traces)})\n")
 
 if __name__ == "__main__":
     gen_qcir(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
