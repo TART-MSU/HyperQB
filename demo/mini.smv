@@ -1,3 +1,6 @@
+-- 1: ~a
+-- 2: (a \/ ~a)
+
 MODULE main
  VAR
     a: boolean;
