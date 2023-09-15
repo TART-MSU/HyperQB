@@ -32,6 +32,8 @@ I=${OUTFOLDER}I_1.bool
 R=${OUTFOLDER}R_1.bool
 J=${OUTFOLDER}I_2.bool
 S=${OUTFOLDER}R_2.bool
+Q=${OUTFOLDER}I_3.bool
+W=${OUTFOLDER}R_3.bool
 P=${OUTFOLDER}P.hq
 QSFILE=${OUTFOLDER}QS
 FORMULA=""
@@ -153,9 +155,10 @@ then
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
 else
   lst_NEW_QUANTS="AAE EAA EEA AEA EEE AEE AAAE EAAE AAAE AAEE EAAEE AAAEEE" #special cases we investigate
+
   if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then
     GENQBF=exec/genqbf_v5 # updated genqbf
-    TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
+    TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${Q} -W ${W} -Z ${J} -X ${S} -C ${Q} -V ${W} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
   else
     ALL_I_R=$(find ${OUTFOLDER}*.bool )
     GENQBF=src/cplusplus/genqbf # with arbitrary quantifiers
@@ -192,126 +195,15 @@ echo ""
 echo ""
 
 
-exit 1
+
 
 # ## TODO: update these two scripts using python
-# echo "\n=== Get Nice-formatted Output if witness/counterexample is found ==="
+# echo "(Get Nice-formatted Output if witness/counterexample is found)"
 # if [ ! -f "$QCIR_OUT" ]; then
 #     echo "$QCIR_OUT does not exists"
 #     exit 1
+#     echo "no QCIR output"
 # fi
 # echo "parsing into readable format..."
 # ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
 # ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##### UNUSED
-# time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
-# if [ "$MODE" = "single" ]; then
-# echo "|  Model:      " ${NUSMVFILE}
-# elif [ "$MODE" = "multi" ]; then
-# echo "|  Models:     " ${M1_NUSMVFILE} ", " ${M2_NUSMVFILE}
-# fi
-# # if wrong number of arguments
-# if [ "$#" -ne 4 ] && [ "$#" -ne 5 ] && [ "$#" -ne 6 ] && [ "$#" -ne 7 ]; then
-#   echo "HyperQB error: wrong number of arguments of HyperQB: \n"
-#   echo "- Simgle-model BMC: $0 {model}.smv {formula}.hq"
-#   echo "- Multi-model BMC:  $0 {model_1}.smv {model_2}.smv {formula}.hq \n"
-#   echo "\n------(END HyperQB)------\n"
-#   exit 1
-# fi
-#
-#
-# ### Check if multiple model is used
-# if echo $* | grep -e "-single" -q
-# then
-#   echo "Running with single model semantic (-single)"
-#   MODE=single
-#   NUSMVFILE=$1
-#   FORMULA=$2
-#   k=$3
-#   SEMANTICS=$4
-#   if [ ! -f "$NUSMVFILE" ]; then
-#       echo "error: $NUSMVFILE does not exist"
-#       exit 1
-#   fi
-#   if [ ! -f "$FORMULA" ]; then
-#       echo "error: $FORMULA does not exist"
-#       exit 1
-#   fi
-#   ### using local python build
-#   # python3 ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${FLAG}
-#   ### using docker
-#   # --platform linux/amd64
-#   time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3  ${SINGLE_PARSER} ${NUSMVFILE} ${FORMULA} ${I} ${R} ${P} ${QSFILE} ${FLAG}; "
-# elif echo $* | grep -e "-multi" -q
-# then
-#   echo "Running with multi model semantics (-multi)"
-#   MODE=multi
-#   M1_NUSMVFILE=$1
-#   M2_NUSMVFILE=$2
-#   FORMULA=$3
-#   k=$4
-#   SEMANTICS=$5
-#   if [ ! -f "$M1_NUSMVFILE" ]; then
-#       echo "error: $M1_NUSMVFILE does not exist"
-#       exit 1
-#   fi
-#   if [ ! -f "$M2_NUSMVFILE" ]; then
-#       echo "error: $M2_NUSMVFILE does not exist"
-#       exit 1
-#   fi
-#   if [ ! -f "$FORMULA" ]; then
-#       echo "error: $FORMULA does not exist"
-#       exit 1
-#   fi
-#   ### using local python build
-#   # python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA}  ${P} ${FLAG}
-#   ### using docker
-#
-#   echo "parsing models and formulas..."
-#   time docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; python3 ${MULTI_PARSER} ${M1_NUSMVFILE} ${I} ${R} ${M2_NUSMVFILE} ${J} ${S} ${FORMULA} ${P} ${QSFILE} ${FLAG}; "
-#
-# else
-#   echo "HyperQB error: please specify mode: { -single | -multi }\n"
-#   exit 1
-# fi
-
-# I=${OUTFOLDER}I.bool
-# R=${OUTFOLDER}R.bool
-# J=${OUTFOLDER}J.bool
-# S=${OUTFOLDER}S.bool
-
-# echo ${ALLARG}
-## execute python scripts on docker
-# docker run -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; ./parse.sh ${ALLARG}; "
-## clean up previous generated
-# echo "(clean up previous generated files..)\n"
-# find . -name "*.bool"   -delete
-# find . -name "*.cex"    -delete
-# find . -name "*.quabs"  -delete
-# find . -name "*.qcir"   -delete
-# find . -name "*.cex"    -delete
-# make clean
-
-# # echo "---Counterexample Mapping---"
-# javac ${MAP}.java
-# java ${MAP}.java ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-
-# javac ${PARSE_BOOL}.java
-# java ${PARSE_BOOL}.java ${MAP_OUT2} ${PARSE_OUT}
-# echo  "(under condtruction...)"
-# python3 ${PARSE_OUTPUT} ${MAP_OUT2} ${PARSE_OUT} ${k}
-# #by time

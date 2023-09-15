@@ -1,0 +1,36 @@
+MODULE main
+-- A simple program that violates non-interference
+--
+-- 1: LOW=0, HIGH={0}
+-- 2: HIGH={0...10}
+-- 3: if(HIGH>5):
+-- 4:   LOW=HIGH
+--
+VAR
+  HIGH: 0..10;
+  LOW: 0..10;
+  PC: 1..4;
+ASSIGN
+  -- Initial Conditions
+  init(HIGH):= {0};
+  init(LOW):= {0};
+  init(PC):= 1; -- program counter starts at 1.
+
+  -- Transition Relations
+  next(HIGH):=
+    case
+      (PC=2): {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+      TRUE: HIGH;
+    esac;
+
+  next(LOW) :=
+    case
+      ((PC=3) & (HIGH>5)): HIGH;
+      TRUE: LOW;
+    esac;
+  next(PC) :=
+    case
+      (PC=4): 4;
+      TRUE: PC+1;
+    esac;
+DEFINE
