@@ -18,5 +18,21 @@
 # ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
 # ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
 
+# ./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/temp.hq 1 -pes -find
 
-./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/temp.hq 1 -pes -find
+
+# ./hyperqb.sh demo/cmu1.smv demo/cmu1.smv demo/cmu1.smv demo/cmu1.hq 5 -pes -find
+
+# ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 2 -pes -find
+
+# ./hyperqb.sh demo/small.smv demo/small.smv demo/small.hq 5 -pes -find
+
+# ./hyperqb.sh demo/robotic_sp10.smv demo/robotic_sp10.smv demo/robotic_sp.hq 10 -pes -find
+# ./hyperqb.sh demo/robotic_sp.smv demo/robotic_sp.smv demo/robotic_sp.hq 3 -pes -find
+# ./hyperqb.sh demo/robotic_sp5.smv demo/robotic_sp5.smv demo/robotic_sp.hq 5 -pes -find
+# ./hyperqb.sh demo/robotic_sp10.smv demo/robotic_sp10.smv demo/robotic_sp.hq 10 -pes -find
+# ./hyperqb.sh demo/robotic_sp13.smv demo/robotic_sp13.smv demo/robotic_sp.hq 13 -pes -find
+./hyperqb.sh demo/robotic_sp15.smv demo/robotic_sp15.smv demo/robotic_sp.hq 15 -pes -find
+# ./hyperqb.sh demo/robotic_sp20.smv demo/robotic_sp20.smv demo/robotic_sp.hq 20 -pes -find
+
+# cp build_today/HQ.qcir gen_qcir/test/AB.qcir

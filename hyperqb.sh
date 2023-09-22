@@ -142,12 +142,12 @@ fi
 source "${QSFILE}" # instantiate QS
 
 
-diskutil erasevolume apfs "RAMDisk" `hdiutil attach -nomount ram://20000000`
-touch /Volumes/RAMDisk/HQ.qcir
-QCIR_OUT=/Volumes/RAMDisk/HQ.qcir
+# diskutil erasevolume apfs "RAMDisk" `hdiutil attach -nomount ram://20000000`
+# touch /Volumes/RAMDisk/HQ.qcir
+# QCIR_OUT=/Volumes/RAMDisk/HQ.qcir
 printf "BMC unrolling with genqbf..................."
 
-# QCIR_OUT=${OUTFOLDER}HQ.qcir
+QCIR_OUT=${OUTFOLDER}HQ.qcir
 n=${#QS}
 if [ ${n} -eq 2 ]
 then
@@ -158,13 +158,13 @@ else
   if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then
     GENQBF=exec/genqbf_v5 # updated genqbf
     TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
-    printf "-I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n"
+    # printf "-I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n"
   else
     ALL_I_R=$(find ${OUTFOLDER}*.bool )
     GENQBF=src/cplusplus/genqbf # with arbitrary quantifiers
     TIME_GENQBF=$(time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${FORMULA})
     time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${P}
-    printf "-I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n"
+    # printf "-I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n"
 
     
   fi
@@ -180,7 +180,7 @@ printf "QBF solving with QuAbS......................"
 TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
 
-diskutil unmount /Volumes/RAMDisk
+# diskutil unmount /Volumes/RAMDisk
 
 
 
@@ -200,18 +200,17 @@ echo "------(END HyperQB)------"
 echo ""
 echo ""
 
-
-exit 1
+# exit 1
 
 # ## TODO: update these two scripts using python
-# echo "\n=== Get Nice-formatted Output if witness/counterexample is found ==="
-# if [ ! -f "$QCIR_OUT" ]; then
-#     echo "$QCIR_OUT does not exists"
-#     exit 1
-# fi
-# echo "parsing into readable format..."
-# ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-# ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
+echo "=== Get Nice-formatted Output if witness/counterexample is found ==="
+if [ ! -f "$QCIR_OUT" ]; then
+    echo "$QCIR_OUT does not exists"
+    exit 1
+fi
+echo "parsing into readable format..."
+${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
 
 
 

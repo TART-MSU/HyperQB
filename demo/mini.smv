@@ -1,26 +1,17 @@
--- 1: ~a
--- 2: (a \/ ~a)
+-- 1: a
+-- 2: loop: (a \/ ~a)
 
 MODULE main
  VAR
     a: boolean;
-    PC: 1..2;
  ASSIGN
     -- Initial Conditions
-    init(a):= FALSE;
-    init(PC):= 1; -- program counter starts at 1.
+    init(a):= TRUE;
+    -- init(PC):= 1; -- program counter starts at 1.
 
     -- Transition Relations
     next(a) :=
       case
-        (PC=1): {FALSE};
-        (PC=2): {TRUE, FALSE};
-        TRUE: a;
-      esac;
-
-    next(PC) :=
-      case
-        (PC=1): 2;
-        (PC=2): 2;
-        TRUE: PC;
+        a: {TRUE, FALSE};
+        TRUE: {TRUE, FALSE};
       esac;

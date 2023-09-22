@@ -35,7 +35,9 @@ def gen_qcir(time_steps, num_states=8, traces=1, out=sys.stdout):
         gate_value_memo[out_gate] = gate_id
         return gate_id
 
+
     var_index = 1
+    
     # Get the minimum number of binary digits required to identify a state
     bin_digits = math.ceil(math.log(num_states, 2))
     # Get the number of boolean variables required
@@ -163,4 +165,5 @@ def gen_qcir(time_steps, num_states=8, traces=1, out=sys.stdout):
     out.write(f"{output_base} = and({to_out_list(initial_condition)},{to_out_list(match_all_traces)})\n")
 
 if __name__ == "__main__":
+
     gen_qcir(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
