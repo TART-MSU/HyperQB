@@ -24,7 +24,6 @@ let convert (f:formula) : formula =
   | Some NNF -> nnf_formula f
   | None     -> f
 
-
 let pr_time s =
   print_endline (sprintf "Time elapsed: %.3f secs (%s)" (Sys.time()) s)
 
@@ -73,8 +72,12 @@ let fprint_circuit ch qphi : unit =
 
   let generate_formula desc k n_exists n_forall =
   (* let generator = *)
-    if      !Args.anonymous     then
+    if  !Args.anonymous     then
       QBF.generate_quantified_formula_anon desc k
+  (* apply new encodings *)
+    else if !Args.is_new_encoding then 
+      (* fprintf "??" *)
+      QBF.generate_quantified_YN_formula desc k
     else if !Args.is_exists_num then
       QBF.generate_quantified_ES_formula desc k n_exists
     else if !Args.is_forall_num then
@@ -159,7 +162,10 @@ let parse_separate_files () : QBF.problem_desc =
       quants     = qalt;
       sem        = (match !Args.unrolling_semantics with
                     | Some sem -> sem
-                    | None -> raise(ArgsError("must provide semantics of unrolling")))
+                    | None -> raise(ArgsError("must provide semantics of unrolling")));
+      encode     = (match !Args.newencoding_form with
+                    | Some encode -> encode
+                    | None -> raise(ArgsError("must provide forms of new encodings")));              
     }
   | None -> raise(ArgsError("must provide filenames"))
 
@@ -193,7 +199,7 @@ let parse_n_forall () =
   if !Args.is_forall_num then
     !Args.forall_num
   else
-    raise (ArgsError("missing number of foralls with -FS <num>"))
+    raise (ArgsError("missing number of foralls with -AS <num>"))
 
 
 
@@ -211,6 +217,7 @@ let _ =
     (* read number of exists if -ES is flagged, generate formula of series of exists  *)
     let n_exists    = if (!Args.is_exists_num) then parse_n_exists () else 0 in
     let n_forall    = if (!Args.is_forall_num) then parse_n_forall () else 0 in
+    (* generate formula *)
     let (quants,phi) = generate_formula desc k n_exists n_forall in
     let outch = Args.open_output () in
     (* conversion (into CNF, etc, if required) for the time being on the
@@ -218,7 +225,7 @@ let _ =
     let form = convert phi in
     
     (* simplification (if required) *)
-    let form =if (!Args.simplify)  then (simplify_formula form) else form in
+    let form = if (!Args.simplify)  then (simplify_formula form) else form in
     (* generate_circuit *)
     
     (* OLD *)

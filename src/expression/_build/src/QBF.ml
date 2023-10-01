@@ -1,5 +1,7 @@
 open Printf
 open Expression
+module EParser = ExprParser
+module ELexer  = ExprLexer
 module Pr=Property
 open Model
 
@@ -11,6 +13,8 @@ type quantifiers = AA | AE | EE | EA | EAA
 
 type semantics = OPT | PES | TER_OPT | TER_PES
 
+type newencoding = YY | NN | YN | NY
+
 type problem_desc =
   { init_A     : formula ;
     tr_A       : formula ;
@@ -21,6 +25,7 @@ type problem_desc =
     property : Pr.property ;
     quants   : quantifiers ;
     sem      : semantics ;
+    encode   : newencoding;
   }
 
 type unrolled_problem_desc =
@@ -32,6 +37,7 @@ type unrolled_problem_desc =
     tr_C     : formula ;
     property : formula ;
     quants   : quantifiers ;
+    encode   : newencoding;
   }
 
 (* A series of exists *)
@@ -48,6 +54,18 @@ type unrolled_AS_problem_desc =
     tr_list: formula list; 
     property : formula; 
   }  
+
+
+type unrolled_YN_problem_desc = 
+  { init_A     : formula ;
+    tr_A       : formula ;
+    init_B     : formula ;
+    tr_B       : formula ;
+    property   : formula ;
+    quants     : quantifiers ;
+    encode     : newencoding ;
+  }
+
 
     
 (* TODO: check that init does not use primes *)
@@ -119,7 +137,8 @@ let generate_unrolled_desc (desc:problem_desc) (k:int): unrolled_problem_desc =
     init_C = unroll_name  desc.init_C 0 "C" ; 
     tr_C   = unroll_uptok desc.tr_C   k "C" ; 
     property = unroll_property desc.property k desc;
-    quants = desc.quants
+    quants = desc.quants;
+    encode = desc.encode
   }
 
 let generate_unrolled_desc_anon (desc:problem_desc) (k:int): unrolled_problem_desc =
@@ -130,10 +149,10 @@ let generate_unrolled_desc_anon (desc:problem_desc) (k:int): unrolled_problem_de
     init_C = unroll_name  desc.init_C 0 "" ; 
     tr_C   = unroll_uptok desc.tr_C   k "" ;  
     property = unroll_property desc.property k desc;
-    quants = desc.quants
+    quants = desc.quants;
+    encode = desc.encode
   } 
 
-    
 let generate_formula (desc:problem_desc) (k:int): formula =
   generate_problem (generate_unrolled_desc desc k)
 
@@ -175,10 +194,7 @@ let generate_quantified_formula_anon desc k: quantified_formula =
   generate_quantified_formula_aux desc k generate_unrolled_desc_anon
 
 
-
-
-
-(* helper: build list of init, with extensions from 1 - es *)
+(* helper: build list of init, extensions from 1 - es *)
 let build_init_list (desc:problem_desc) (n_quantifier:int) : formula list =
   let rec unfold_from n =
     let f_n = (unroll_name desc.init_A 0 (string_of_int(n))) in
@@ -193,9 +209,6 @@ let build_tr_list (desc:problem_desc) (k:int) (n_quantifier:int) : formula list 
     if n==(n_quantifier+1) then [] else f_n :: unfold_from (n+1)
   in
   unfold_from 1
-
-
-
 
 (* Attepmt to implement -ES n_exists: A series of exists using tr_A and init_A *)
 
@@ -228,7 +241,6 @@ let generate_quantified_ES_formula_aux desc k n_exists unroller : quantified_for
   let f             = generate_ES_problem (unroller desc k n_exists) n_exists in
   let all_vars_list = build_ES udesc n_exists in
     ([Exists(SetVar.elements (all_vars_list))], f)
-
 
 let generate_ES_formula (desc:problem_desc) (k:int) (n_exists:int): formula =
   generate_ES_problem (generate_ES_unrolled_desc desc k n_exists) n_exists
@@ -276,6 +288,93 @@ let generate_AS_formula (desc:problem_desc) (k:int) (n_forall:int): formula =
 let generate_quantified_AS_formula desc k n_forall: quantified_formula =
   generate_quantified_AS_formula_aux desc k n_forall generate_AS_unrolled_desc  
 
+
+
+
+
+
+(* Attempt to build YN problem *)
+(* build YN problem *)
+let generate_YN_problem (desc:unrolled_YN_problem_desc) : formula =
+  let m =build_and desc.init_A desc.tr_A in
+  let n =build_and desc.init_B desc.tr_B in
+  build_and m (build_and n desc.property)
+
+
+let generate_encode_problem (desc:unrolled_YN_problem_desc) : formula =
+  match desc.encode with
+  | YY -> generate_YN_problem desc
+  | YN -> generate_YN_problem desc
+  | NY -> generate_YN_problem desc
+  | NN -> generate_YN_problem desc
+
+
+let build_match_expr (vars: variable list): formula =
+  (* let rec length vars = 
+    match vars with
+    | [] -> 0
+    | h::t -> Parser.parse_str ch (EParser.letclause ELexer.norm)
+  in *)
+  let var = "a" in
+  let ch = var ^ "<->" ^ var ^ "_helper'" in
+  let f = Parser.parse_str ch (EParser.letclause ELexer.norm) in
+    f
+
+let test (vars: variable list) = 
+  for i = 1 to 10 do 
+    print_int i 
+  done
+  (* let rec do_all f vars =
+    match vars with
+    | [] -> ()
+    | x :: xs -> f x; do_all f xs *)
+
+
+(* generate unroll YN *)
+let generate_unrolled_YN_desc (desc:problem_desc) (k:int): unrolled_YN_problem_desc =
+  { init_A = unroll_name  desc.init_A 0 "A" ;
+    (* tr_A   = unroll_uptok desc.tr_A   k "A" ; *)
+    (* tr_A   = unroll_match_uptok desc.tr_A   k "A" ; *)
+    (* tr_A   = unroll_match_uptok desc.tr_A  k "A" (get_vars desc.tr_A) ; *)
+    tr_A   = unroll_match_uptok (build_match_expr (get_vars desc.init_A))  k "A" ;
+    init_B = unroll_name  desc.init_B 0 "B" ; 
+    tr_B   = unroll_uptok desc.tr_B   k "B" ;
+    property = unroll_property desc.property k desc;
+    quants = desc.quants;
+    encode = desc.encode
+  } 
+
   
 
+
+
+let generate_YN_formula (desc:problem_desc) (k:int): formula =
+  generate_YN_problem (generate_unrolled_YN_desc desc k)
+
+(* generate all universal quantified formula *)
+let generate_quantified_YN_formula_aux desc k unroller : quantified_formula =
+  let udesc  = unroller desc k in
+  let f      = generate_YN_problem udesc in
+  (* let _ = print_endline (Printf.sprintf "Formula size: %d" (size f)) in *)
+  let varinitA = get_vars udesc.init_A in
+  (* let _ = print_endline (Printf.sprintf "varinitA length: %d" (List.length varinitA)) in *)
+  let vartrA   = get_vars udesc.tr_A in
+  (* let _ = print_endline (Printf.sprintf "vartrtA length: %d" (List.length vartrA)) in *)
+  (* let vars_A = two_varlists_to_set (get_vars udesc.init_A) (get_vars udesc.tr_A) in *)
+  let vars_A = two_varlists_to_set varinitA vartrA in 
+  (* let vars_C = two_varlists_to_set (get_vars udesc.init_C) (get_vars udesc.tr_C) in *)
+  let all_vars_B = two_varlists_to_set (get_vars udesc.init_B) (get_vars udesc.tr_B) in
+  let vars_B = SetVar.diff all_vars_B vars_A in
+  match udesc.quants with
+  | AA -> ([Forall(SetVar.elements (SetVar.union vars_A vars_B))], f)
+  | EE -> ([Exists(SetVar.elements (SetVar.union vars_A vars_B))], f)
+  | AE -> ([Forall(SetVar.elements vars_A) ;  Exists(SetVar.elements vars_B)], f)
+  | EA -> ([Exists(SetVar.elements vars_A) ;  Forall(SetVar.elements vars_B)], f)
+  | EAA -> ([Exists(SetVar.elements vars_A) ;  Forall(SetVar.elements vars_B)], f)
+  (* match udesc.encode with
+  | YN -> generate_matching desc.tr_A k  *)
+
+
+let generate_quantified_YN_formula desc k: quantified_formula =
+  generate_quantified_YN_formula_aux desc k generate_unrolled_YN_desc    
 

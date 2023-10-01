@@ -8,6 +8,8 @@ type temporal = G | F | X | U | R
 
 type semantics = OPT | PES | TER_OPT | TER_PES
 
+type newencoding = YY | NN | YN | NY
+
 type problem_desc =
   { init_A   : formula ;
     tr_A     : formula ;
@@ -18,6 +20,7 @@ type problem_desc =
     property : Pr.property ;
     quants   : quantifiers ;
     sem      : semantics;
+    encode   : newencoding;
   }
 
 type unrolled_problem_desc =
@@ -29,6 +32,7 @@ type unrolled_problem_desc =
     tr_C     : formula ;
     property : formula ;
     quants   : quantifiers ;
+    encode   : newencoding;
   }
 
 (* A series of exists *)
@@ -45,6 +49,18 @@ type unrolled_AS_problem_desc =
     tr_list   : formula list; 
     property  : formula ;
   } 
+
+type unrolled_YN_problem_desc = 
+  { init_A     : formula ;
+    tr_A       : formula ;
+    init_B     : formula ;
+    tr_B       : formula ;
+    property   : formula ;
+    quants     : quantifiers ;
+    encode     : newencoding;
+  }
+
+
     
 val generate_quantified_formula      : problem_desc -> int -> quantified_formula  
 val generate_quantified_formula_anon : problem_desc -> int  -> quantified_formula 
@@ -68,3 +84,11 @@ val generate_quantified_AS_formula      : problem_desc -> int -> int -> quantifi
 val generate_AS_formula: problem_desc -> int -> int -> formula
 val generate_AS_unrolled_desc: problem_desc -> int  -> int  -> unrolled_AS_problem_desc 
 val generate_AS_problem: unrolled_AS_problem_desc -> int -> formula
+
+
+val generate_quantified_formula      : problem_desc -> int -> quantified_formula
+val generate_quantified_YN_formula      : problem_desc -> int -> quantified_formula
+val generate_YN_formula: problem_desc -> int -> formula
+val generate_unrolled_YN_desc: problem_desc -> int   -> unrolled_YN_problem_desc 
+val generate_encode_problem: unrolled_YN_problem_desc -> formula
+val generate_YN_problem: unrolled_YN_problem_desc  -> formula

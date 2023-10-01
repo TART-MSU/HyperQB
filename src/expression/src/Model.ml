@@ -94,7 +94,7 @@ let unroll_expr_uptok (r:expression) (k:int) (name:string) : expression =
   in
   unroll_from 0
 
-(* keep as k-1 because unroll_name is adding suffix (n+1), it's upto and include k *)
+
 let unroll_uptok (r:formula) (k:int) (name:string) : formula =
   let rec unroll_from n =
     let r_n = unroll_name r n name in
@@ -102,6 +102,96 @@ let unroll_uptok (r:formula) (k:int) (name:string) : formula =
     else  build_and r_n (unroll_from (n+1))
   in
   unroll_from 0
+
+(* Attempt, new encodings *)
+let unroll_match_name (f:formula) (k:int) (name:string) : formula =
+  let str = if (String.length name) = 0 
+            then "" 
+            else "_helper_" ^ name
+            in
+  let (now,next) = suffix k str in
+  unroll_suf now next f
+
+let rename_match_variable (now:string) (next:string) (v:variable) : variable =
+    let len  = String.length v in
+    let last = v.[len-1] in
+    let is_primed = (last == '\'') in
+    if not is_primed 
+      then Printf.sprintf "%s%s" v now 
+    else
+      Printf.sprintf "%s%s" (String.sub v 0 (len-1)) next
+  
+let rename_match_literal (now:string) (next:string) (l:literal) : literal =
+  match l with
+    Atom v    -> Atom   (rename_variable now next v)
+  | NegAtom v -> NegAtom(rename_variable now next v)
+
+let rec unroll_match_expr_suf (now:string) (next:string) (trel:expression) : expression =
+  let rename = (unroll_match_expr_suf now next) in
+  match trel with
+  | True  -> True
+  | False -> False
+  | Literal(l)   -> Literal(rename_match_literal now next l)
+  | Neg(x)       -> Neg(rename x)
+  | Or(x,y)      -> Or(rename x, rename y)
+  | And(x,y)     -> And(rename x, rename y)
+  | Implies(x,y) -> Implies(rename x, rename y)
+  | Iff(x,y)     -> Iff(rename x, rename y)
+  | MOr(ls)      -> MOr(List.map rename ls)
+  | MAnd(ls)     -> MAnd(List.map rename ls)  
+
+let rec unroll_match_suf (now:string) (next:string) (f:formula) : formula =
+    let rename_expr    = unroll_match_expr_suf now next in
+    let rename_formula = unroll_match_suf now next in
+    let rename_var = rename_match_variable now next in
+    match f with
+    | Let(n,a,b) -> Let(rename_var n, rename_expr a, rename_formula b)
+    | CNF(dfs) -> CNF(List.map (unroll_df_suf now next) dfs)
+    | DNF(cfs) -> DNF(List.map (unroll_cf_suf now next) cfs)
+    | General(e) -> General(rename_expr e)
+
+
+let suffix_match_now (k:int) (name:string) : (string*string) =
+  let now  = Printf.sprintf "%s[%d]" name k in
+  (* let next = Printf.sprintf "%s[%d]" name (k+1) in *)
+  (* let next = Printf.sprintf "%s[%d]" name 0 in *)
+  let next = Printf.sprintf "%s" "_now" ^ name in
+  (now,next)
+
+let suffix_match_next (k:int) (name:string) : (string*string) =
+    let now  = Printf.sprintf "%s[%d]" name k in
+    (* let next = Printf.sprintf "%s[%d]" name (k+1) in *)
+    (* let next = Printf.sprintf "%s[%d]" name 0 in *)
+    let next = Printf.sprintf "%s" "_next" ^ name in
+    (now,next)  
+
+let unroll_match_now (f:formula) (k:int) (name:string) : formula =
+    let str = if (String.length name) =0 then "" else "_" ^ name in
+    let (now,next) = suffix_match_now k str in
+    unroll_match_suf now next f
+
+let unroll_match_next (f:formula) (k:int) (name:string) : formula =
+  let str = if (String.length name) =0 then "" else "_" ^ name in
+  let (now,next) = suffix_match_next k str in
+  unroll_match_suf now next f
+
+let unroll_match_uptok (r:formula) (k:int) (name:string)  : formula =
+  let _ = print_endline (Printf.sprintf "test unroll match") in 
+  let rec unroll_from n =
+    let r_n_now  = unroll_match_now r n name in
+    let r_n_next = unroll_match_next r (n+1) name in
+    if (n == k) 
+      then  r_n_now
+    else    build_or (build_and r_n_now r_n_next)  (unroll_from (n+1))
+  in
+  unroll_from 0
+  (* let _ = print_int (List.length vars) in *)
+
+
+
+  
+
+
 
 
 (* chagne to n==k, so include the last state *)

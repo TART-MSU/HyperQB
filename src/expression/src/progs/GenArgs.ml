@@ -72,7 +72,7 @@ let set_output_format (fmt:string) : unit =
   match fmt with
   | "qcir"    -> format := Some QCIR
   | "qdimacs" -> format := Some QDIMACS
-  | "qaiger"   -> format := Some AIGER
+  | "qaiger"  -> format := Some AIGER
   | _         -> format := None 
 
 
@@ -99,7 +99,6 @@ let set_exists_num n_exists =  is_exists_num := true;  exists_num    := n_exists
 let is_forall_num = ref false
 let forall_num    = ref 0
 let set_forall_num n_forall =  is_forall_num := true;  forall_num    := n_forall
-
 
 (* -M name *)    
 let is_model_name = ref false
@@ -144,19 +143,32 @@ let set_unrolling_format (fmt:string) : unit =
   | "EA" -> unrolling_format  := Some EA
   | "EAA" -> unrolling_format := Some EAA
   | _    -> unrolling_format  := None 
-
-
  
+
+
 (* -sem  OPT | PES *)
 let unrolling_semantics_list = ["OPT"; "PES"; "TER_OPT"; "TER_PES"]
 let unrolling_semantics = ref None
 let set_unrolling_semantics (fmt:string) : unit =
   match fmt with
-    "OPT" -> unrolling_semantics  := Some OPT
-  | "PES" -> unrolling_semantics  := Some PES
+    "OPT"     -> unrolling_semantics  := Some OPT
+  | "PES"     -> unrolling_semantics  := Some PES
   | "TER_OPT" -> unrolling_semantics  := Some TER_OPT
   | "TER_PES" -> unrolling_semantics  := Some TER_PES
-  | _    -> unrolling_semantics  := None
+  | _         -> unrolling_semantics  := None
+
+
+(* -new YY | NN | YN | NY *)  
+let is_new_encoding = ref true
+let newencoding_form_list = ["NN"; "YY"; "NY"; "YN"]
+let newencoding_form    = ref None
+let set_newencoding_form (fmt:string) : unit =  
+  match fmt with 
+    "NN"  -> newencoding_form := Some NN
+  | "NY"  -> newencoding_form := Some NY
+  | "YN"  -> newencoding_form := Some YN
+  | "YY"  -> newencoding_form := Some YY
+  | _     -> newencoding_form := None
 
 
 let opts =
@@ -169,8 +181,8 @@ let opts =
     ("-S", Arg.String set_transition_file_B, "input file for transition relation for B");
     ("-P", Arg.String set_property_file, "property file");
     ("-F", Arg.Symbol (unrolling_format_list,set_unrolling_format), "format of the unrolling: AE, AA, EE, EA, or EAA");
-    ("-ES", Arg.Int set_exists_num, "solve a series of EXISTS with same initial state and transition relation");
-    ("-AS", Arg.Int set_forall_num, "solve a series of FORALL with same initial state and transition relation");
+    ("-ES",Arg.Int set_exists_num, "solve a series of EXISTS with same initial state and transition relation");
+    ("-AS",Arg.Int set_forall_num, "solve a series of FORALL with same initial state and transition relation");
     ("-sem", Arg.Symbol (unrolling_semantics_list,set_unrolling_semantics), "semantics of the unrolling:(optimistic/pessimistic)");
     ("-k", Arg.Int set_unroll_num, "integer depth of the unrolling");
     ("-n", Arg.Unit tonum, "transform variable ids to numeric");
@@ -182,7 +194,7 @@ let opts =
     ("-p", Arg.Unit onlyparse, "only parse the input formula and print it");
     ("--debug", Arg.Unit setdebug,  "debug output information");
     ("--fast", Arg.Unit setfast,  "use tail recursive faster algorithms");
-    
+    ("-new", Arg.Symbol (newencoding_form_list,set_newencoding_form), "applying new encodings or not.");
   ]
 
 let anon_fun str = 
