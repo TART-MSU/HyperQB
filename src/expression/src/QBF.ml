@@ -59,6 +59,7 @@ type unrolled_AS_problem_desc =
 type unrolled_YN_problem_desc = 
   { init_A     : formula ;
     tr_A       : formula ;
+    helper_A   : formula ;
     init_B     : formula ;
     tr_B       : formula ;
     property   : formula ;
@@ -291,8 +292,6 @@ let generate_quantified_AS_formula desc k n_forall: quantified_formula =
 
 
 
-
-
 (* Attempt to build YN problem *)
 (* build YN problem *)
 let generate_YN_problem (desc:unrolled_YN_problem_desc) : formula =
@@ -309,43 +308,57 @@ let generate_encode_problem (desc:unrolled_YN_problem_desc) : formula =
   | NN -> generate_YN_problem desc
 
 
+let trim (var: string) (len: int): string = 
+  (* let len = (String.length var) in *)
+  if (len != 0) then
+    String.sub var 0 (len)
+  else
+    var
+
+(* TODO: not working *)
+let build_match_f (lst: variable list) =
+  let lst_len = List.length lst in
+  let rec exp l i =
+    (* let name = (List.nth lst i) in  *)
+    (* let len  = String.length name in  *)
+    (* let len = (String.length (List.nth lst i)) in *)
+    (* let var  = (trim name len) in *)
+    if (i == (lst_len-1)) then 
+      (* exp  *)
+      (l ^ "(" ^ (trim (List.nth lst i) (String.length (List.nth lst i))) ^ " <-> " ^ (trim (List.nth lst i) (String.length (List.nth lst i)))  ^ "_helper'" ^ ")" ) 
+      (* (i+1)  *)
+    else 
+      exp 
+      (l ^ "(" ^ (trim (List.nth lst i) (String.length (List.nth lst i))) ^ " <-> " ^ (trim (List.nth lst i) (String.length (List.nth lst i)))  ^ "_helper'" ^ ")/\\" ) 
+      (i+1) 
+    in
+  (* exp "" ((List.length lst) - 1)  *)
+  exp " " 0
+
+(* TODO: how to build expression string *)
 let build_match_expr (vars: variable list): formula =
-  (* let rec length vars = 
-    match vars with
-    | [] -> 0
-    | h::t -> Parser.parse_str ch (EParser.letclause ELexer.norm)
-  in *)
-  let var = "a" in
-  let ch = var ^ "<->" ^ var ^ "_helper'" in
-  let f = Parser.parse_str ch (EParser.letclause ELexer.norm) in
-    f
-
-let test (vars: variable list) = 
-  for i = 1 to 10 do 
-    print_int i 
-  done
-  (* let rec do_all f vars =
-    match vars with
-    | [] -> ()
-    | x :: xs -> f x; do_all f xs *)
-
+    (* let str = (build_match_f vars) in *)
+    (* Parser.parse_str str (EParser.letclause ELexer.norm)  *)
+    (* let str = (build_match_f vars) in *)
+    (* let str = "(a <-> a_helper') /\\ (b <-> b_helper')" in *)
+    let str = "(a <-> a_helper')" in
+    let f = Parser.parse_str str (EParser.letclause ELexer.norm) in f        
 
 (* generate unroll YN *)
 let generate_unrolled_YN_desc (desc:problem_desc) (k:int): unrolled_YN_problem_desc =
   { init_A = unroll_name  desc.init_A 0 "A" ;
-    (* tr_A   = unroll_uptok desc.tr_A   k "A" ; *)
+    tr_A   = unroll_uptok desc.tr_A   k "A" ;
     (* tr_A   = unroll_match_uptok desc.tr_A   k "A" ; *)
     (* tr_A   = unroll_match_uptok desc.tr_A  k "A" (get_vars desc.tr_A) ; *)
-    tr_A   = unroll_match_uptok (build_match_expr (get_vars desc.init_A))  k "A" ;
+    (* tr_A   = unroll_match_uptok (build_match_expr (get_vars desc.init_A))  k "A" ; *)
+    (* tr_A   = unroll_match_uptok (build_match_expr "(a <-> a_helper')")  k "A" ; *)
+    helper_A  = unroll_match_uptok (build_match_expr (get_vars desc.init_A)) k "A" ;
     init_B = unroll_name  desc.init_B 0 "B" ; 
     tr_B   = unroll_uptok desc.tr_B   k "B" ;
     property = unroll_property desc.property k desc;
     quants = desc.quants;
     encode = desc.encode
   } 
-
-  
-
 
 
 let generate_YN_formula (desc:problem_desc) (k:int): formula =
@@ -355,14 +368,12 @@ let generate_YN_formula (desc:problem_desc) (k:int): formula =
 let generate_quantified_YN_formula_aux desc k unroller : quantified_formula =
   let udesc  = unroller desc k in
   let f      = generate_YN_problem udesc in
-  (* let _ = print_endline (Printf.sprintf "Formula size: %d" (size f)) in *)
+  (* let _ = print_endline (Printf.sprintf "var: %s" (test (get_vars udesc.init_A))) in *)
+  let _ = print_endline (Printf.sprintf "var: %s" (build_match_f (get_vars udesc.init_A))) in
+  (* let _ = print_endline (Printf.sprintf "var length: %d" (List.length (get_vars udesc.init_A))) in *)
   let varinitA = get_vars udesc.init_A in
-  (* let _ = print_endline (Printf.sprintf "varinitA length: %d" (List.length varinitA)) in *)
   let vartrA   = get_vars udesc.tr_A in
-  (* let _ = print_endline (Printf.sprintf "vartrtA length: %d" (List.length vartrA)) in *)
-  (* let vars_A = two_varlists_to_set (get_vars udesc.init_A) (get_vars udesc.tr_A) in *)
   let vars_A = two_varlists_to_set varinitA vartrA in 
-  (* let vars_C = two_varlists_to_set (get_vars udesc.init_C) (get_vars udesc.tr_C) in *)
   let all_vars_B = two_varlists_to_set (get_vars udesc.init_B) (get_vars udesc.tr_B) in
   let vars_B = SetVar.diff all_vars_B vars_A in
   match udesc.quants with
