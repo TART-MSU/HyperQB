@@ -52,8 +52,8 @@ type unrolled_AS_problem_desc =
 
 type unrolled_YN_problem_desc = 
   { init_A     : formula ;
-    tr_A       : formula ;
-    helper_A   : formula ;
+    helper_tr_A       : formula ;
+    match_helper_A   : formula ;
     init_B     : formula ;
     tr_B       : formula ;
     property   : formula ;

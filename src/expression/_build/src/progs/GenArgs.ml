@@ -194,7 +194,7 @@ let opts =
     ("-p", Arg.Unit onlyparse, "only parse the input formula and print it");
     ("--debug", Arg.Unit setdebug,  "debug output information");
     ("--fast", Arg.Unit setfast,  "use tail recursive faster algorithms");
-    ("-new", Arg.Symbol (newencoding_form_list,set_newencoding_form), "applying new encodings or not.");
+    ("-new", Arg.Symbol (newencoding_form_list,set_newencoding_form), "apply new encodings or not.");
   ]
 
 let anon_fun str = 

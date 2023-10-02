@@ -76,8 +76,12 @@ let fprint_circuit ch qphi : unit =
       QBF.generate_quantified_formula_anon desc k
   (* apply new encodings *)
     else if !Args.is_new_encoding then 
-      (* fprintf "??" *)
-      QBF.generate_quantified_YN_formula desc k
+      (match !Args.newencoding_form with
+        | Some NN -> QBF.generate_quantified_formula desc k
+        | Some YN -> QBF.generate_quantified_YN_formula desc k
+        | Some NY -> QBF.generate_quantified_YN_formula desc k
+        | Some YY -> QBF.generate_quantified_YN_formula desc k
+        | None    -> raise(ArgsError("error, wrong form of applying new encoding.")))
     else if !Args.is_exists_num then
       QBF.generate_quantified_ES_formula desc k n_exists
     else if !Args.is_forall_num then
