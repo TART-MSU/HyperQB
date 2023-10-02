@@ -155,14 +155,16 @@ let suffix_match_now (k:int) (name:string) : (string*string) =
   let now  = Printf.sprintf "%s[%d]" name k in
   (* let next = Printf.sprintf "%s[%d]" name (k+1) in *)
   (* let next = Printf.sprintf "%s[%d]" name 0 in *)
-  let next = Printf.sprintf "%s" "_now" ^ name in
+  (* let next = Printf.sprintf "%s" "_now" ^ name in *)
+  let next = Printf.sprintf "%s[%d]" name 0 in
   (now,next)
 
 let suffix_match_next (k:int) (name:string) : (string*string) =
     let now  = Printf.sprintf "%s[%d]" name k in
     (* let next = Printf.sprintf "%s[%d]" name (k+1) in *)
     (* let next = Printf.sprintf "%s[%d]" name 0 in *)
-    let next = Printf.sprintf "%s" "_next" ^ name in
+    (* let next = Printf.sprintf "%s" "_next" ^ name in *)
+    let next = Printf.sprintf "%s[%d]" name 1 in
     (now,next)  
 
 let unroll_match_now (f:formula) (k:int) (name:string) : formula =
