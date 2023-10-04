@@ -50,6 +50,10 @@ val build_and     : formula -> formula -> formula
 val build_or      : formula -> formula -> formula
 val build_implies : formula -> formula -> formula
 
+(* val build_mand : formula list -> formula *)
+(* val build_mor  : formula list -> formula *)
+
+
 val nnf: expression -> expression
 val nnf_fast: expression -> expression
 val cnf: expression -> disjunctive_formula list

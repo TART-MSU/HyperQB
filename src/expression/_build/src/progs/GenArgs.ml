@@ -145,7 +145,6 @@ let set_unrolling_format (fmt:string) : unit =
   | _    -> unrolling_format  := None 
  
 
-
 (* -sem  OPT | PES *)
 let unrolling_semantics_list = ["OPT"; "PES"; "TER_OPT"; "TER_PES"]
 let unrolling_semantics = ref None
@@ -181,8 +180,8 @@ let opts =
     ("-S", Arg.String set_transition_file_B, "input file for transition relation for B");
     ("-P", Arg.String set_property_file, "property file");
     ("-F", Arg.Symbol (unrolling_format_list,set_unrolling_format), "format of the unrolling: AE, AA, EE, EA, or EAA");
-    ("-ES",Arg.Int set_exists_num, "solve a series of EXISTS with same initial state and transition relation");
-    ("-AS",Arg.Int set_forall_num, "solve a series of FORALL with same initial state and transition relation");
+    ("-Es",Arg.Int set_exists_num, "solve a sequence of EXISTSs with same initial state and transition relation");
+    ("-As",Arg.Int set_forall_num, "solve a sequence of FORALLs with same initial state and transition relation");
     ("-sem", Arg.Symbol (unrolling_semantics_list,set_unrolling_semantics), "semantics of the unrolling:(optimistic/pessimistic)");
     ("-k", Arg.Int set_unroll_num, "integer depth of the unrolling");
     ("-n", Arg.Unit tonum, "transform variable ids to numeric");

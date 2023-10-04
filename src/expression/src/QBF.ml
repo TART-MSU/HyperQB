@@ -67,6 +67,29 @@ type unrolled_YN_problem_desc =
     encode     : newencoding ;
   }
 
+type unrolled_NY_problem_desc = 
+  { init_A     : formula ;
+    tr_A       : formula ;
+    init_B     : formula ;
+    helper_tr_B       : formula ;
+    match_helper_B   : formula ;
+    property   : formula ;
+    quants     : quantifiers ;
+    encode     : newencoding ;
+  }  
+
+type unrolled_YY_problem_desc = 
+  { init_A     : formula ;
+    helper_tr_A       : formula ;
+    match_helper_A   : formula ;
+    init_B     : formula ;
+    helper_tr_B       : formula ;
+    match_helper_B   : formula ;
+    property   : formula ;
+    quants     : quantifiers ;
+    encode     : newencoding ;
+  }    
+
 
     
 (* TODO: check that init does not use primes *)
@@ -252,7 +275,6 @@ let generate_quantified_ES_formula desc k n_exists: quantified_formula =
 
 
 (* Attepmt to implement -AS n_forall: A series of foralls using tr_A and init_A *)
-
 (* build AS problem *)
 let generate_AS_problem (desc:unrolled_AS_problem_desc) (n_forall:int) : formula =
   let rec generate_from n =
@@ -291,6 +313,9 @@ let generate_quantified_AS_formula desc k n_forall: quantified_formula =
 
 
 
+let get_var_set lst =
+  List.fold_left (fun set elem -> SetVar.add elem set) SetVar.empty lst
+  
 
 (* Attempt to build YN problem *)
 (* build YN problem *)
@@ -299,28 +324,65 @@ let generate_YN_problem (desc:unrolled_YN_problem_desc) : formula =
   let init_m  =desc.init_A in
   let match_m =desc.match_helper_A in
   let tr_m    =desc.helper_tr_A in
+  (* let m =(build_and init_m (build_implies match_m tr_m))in *)
   let m =(build_and init_m (build_implies match_m tr_m))in
   let n =build_and desc.init_B desc.tr_B in
-  (* EE: build_and m (build_and n desc.property) *)
-  (* EA: build_and m (build_implies n desc.property) *)
-  (* AE: build_implies m (build_and n desc.property) *)
-  (* AA: build_implies (build_and m n) desc.property *)
   match desc.quants with
   | EE -> build_and m (build_and n desc.property)
   | EA -> build_and m (build_implies n desc.property)
   | AE -> build_implies m (build_and n desc.property) 
   | AA -> build_implies (build_and m n) desc.property
+  | EAA -> build_and m (build_implies n desc.property) (*TODO*)
+
+let generate_NY_problem (desc:unrolled_NY_problem_desc) : formula =
+  (* let m =build_and desc.init_A desc.tr_A in *)
+  let m =build_and desc.init_A desc.tr_A in
+  let init_n  =desc.init_B in
+  let match_n =desc.match_helper_B in
+  let tr_n    =desc.helper_tr_B in
+  let n =(build_and init_n (build_implies match_n tr_n))in
+  match desc.quants with
+  | EE -> build_and m (build_and n desc.property)
+  | EA -> build_and m (build_implies n desc.property)
+  | AE -> build_implies m (build_and n desc.property) 
+  | AA -> build_implies (build_and m n) desc.property  
+  | EAA -> build_and m (build_implies n desc.property) (*TODO*)
+
+let generate_YY_problem (desc:unrolled_YY_problem_desc) : formula =
+  let init_m  =desc.init_A in
+  let match_m =desc.match_helper_A in
+  let tr_m    =desc.helper_tr_A in
+  let m =(build_and init_m (build_implies match_m tr_m))in
+  let init_n  =desc.init_B in
+  let match_n =desc.match_helper_B in
+  let tr_n    =desc.helper_tr_B in
+  let n =(build_and init_n (build_implies match_n tr_n))in
+  match desc.quants with
+  | EE -> build_and m (build_and n desc.property)
+  | EA -> build_and m (build_implies n desc.property)
+  | AE -> build_implies m (build_and n desc.property) 
+  | AA -> build_implies (build_and m n) desc.property  
+  | EAA -> build_and m (build_implies n desc.property) (*TODO*)  
+
   
 
-
-let generate_encode_problem (desc:unrolled_YN_problem_desc) : formula =
+(* let generate_encode_problem (desc:unrolled_YN_problem_desc) : formula =
   match desc.encode with
   | YY -> generate_YN_problem desc
   | YN -> generate_YN_problem desc
-  | NY -> generate_YN_problem desc
-  | NN -> generate_YN_problem desc
+  | NY -> generate_NY_problem desc
+  | NN -> generate_YN_problem desc *)
 
+let generate_YN_encode_problem (desc:unrolled_YN_problem_desc) : formula =
+  generate_YN_problem desc
+  
+let generate_NY_encode_problem (desc:unrolled_NY_problem_desc) : formula =
+  generate_NY_problem desc
 
+let generate_YY_encode_problem (desc:unrolled_YY_problem_desc) : formula =
+  generate_YY_problem desc  
+
+(* helper methods *)
 let trim (var: string) (len: int): string = 
   (* let len = (String.length var) in *)
   if (len != 0) then
@@ -332,18 +394,14 @@ let build_match_f (lst: variable list) =
   let lst_len = List.length lst in
   let rec exp l i =
     if (i == (lst_len-1)) then 
-      (* exp  *)
-      (l ^ "(" ^ (trim (List.nth lst i) (String.length (List.nth lst i))) ^ " <-> " ^ (trim (List.nth lst i) (String.length (List.nth lst i)))  ^ "_helper'" ^ ")" ) 
-      (* (i+1)  *)
+      (l ^ "(" ^ (trim (List.nth lst i) (String.length (List.nth lst i))) ^ " <-> " ^ (trim (List.nth lst i) (String.length (List.nth lst i)))  ^ "_helper'" ^ "))" ) 
     else 
       exp 
-      (l ^ "(" ^ (trim (List.nth lst i) (String.length (List.nth lst i))) ^ " <-> " ^ (trim (List.nth lst i) (String.length (List.nth lst i)))  ^ "_helper'" ^ ")/\\" ) 
+      (l ^ "(" ^ (trim (List.nth lst i) (String.length (List.nth lst i))) ^ " <-> " ^ (trim (List.nth lst i) (String.length (List.nth lst i)))  ^ "_helper'" ^ ")" ^ "/\\" ) 
       (i+1) 
     in
-  (* exp "" ((List.length lst) - 1)  *)
-  exp " " 0
+  exp "(" 0
 
-(* TODO: how to build expression string *)
 let build_match_expr (vars: variable list): formula =
     let str = (build_match_f vars) in
     (* let str = "(a <-> a_helper') /\\ (b <-> b_helper')" in *)
@@ -361,39 +419,116 @@ let generate_unrolled_YN_desc (desc:problem_desc) (k:int): unrolled_YN_problem_d
     encode = desc.encode
   } 
 
+  (* generate unroll NY *)
+let generate_unrolled_NY_desc (desc:problem_desc) (k:int): unrolled_NY_problem_desc =
+  { 
+    init_A = unroll_name  desc.init_A 0 "A" ; 
+    tr_A   = unroll_uptok desc.tr_A   k "A" ;
+    init_B = unroll_name  desc.init_B 0 "B" ;
+    helper_tr_B     = unroll_uptok desc.tr_B   1 "helper_B" ;
+    match_helper_B  = unroll_match_uptok (build_match_expr (get_vars desc.init_B)) k "B" ;
+    property = unroll_property desc.property k desc;
+    quants = desc.quants;
+    encode = desc.encode
+  } 
+
+let generate_unrolled_YY_desc (desc:problem_desc) (k:int): unrolled_YY_problem_desc =
+  { 
+    init_A = unroll_name  desc.init_A 0 "A" ;
+    helper_tr_A     = unroll_uptok desc.tr_A   1 "helper_A" ;
+    match_helper_A  = unroll_match_uptok (build_match_expr (get_vars desc.init_A)) k "A" ;
+    init_B = unroll_name  desc.init_B 0 "B" ;
+    helper_tr_B     = unroll_uptok desc.tr_B   1 "helper_B" ;
+    match_helper_B  = unroll_match_uptok (build_match_expr (get_vars desc.init_B)) k "B" ;
+    property = unroll_property desc.property k desc;
+    quants = desc.quants;
+    encode = desc.encode
+  }   
+
+
 
 let generate_YN_formula (desc:problem_desc) (k:int): formula =
   generate_YN_problem (generate_unrolled_YN_desc desc k)
 
-let get_var_set lst =
-  List.fold_left (fun set elem -> SetVar.add elem set) SetVar.empty lst
+let generate_NY_formula (desc:problem_desc) (k:int): formula =
+  generate_NY_problem (generate_unrolled_NY_desc desc k)
+
+let generate_YY_formula (desc:problem_desc) (k:int): formula =
+  generate_YY_problem (generate_unrolled_YY_desc desc k)
 
 (* generate all universal quantified formula *)
 let generate_quantified_YN_formula_aux desc k unroller : quantified_formula =
   let udesc  = unroller desc k in
   let f      = generate_YN_problem udesc in
-  (* let _ = print_endline (Printf.sprintf "var: %s" (build_match_f (get_vars udesc.init_A))) in *)
+  let _ = print_endline (Printf.sprintf "var: %s" (build_match_f (get_vars udesc.init_A))) in
   let varinitA    = get_vars udesc.init_A in
   let varhelperA  = get_vars udesc.helper_tr_A in
   let varsA       = get_vars udesc.match_helper_A in 
   let all_vars_A  = two_varlists_to_set varinitA varsA in 
   let helpers_A   = get_var_set varhelperA in 
   let vars_A      = SetVar.diff all_vars_A helpers_A in
-  (* let vars_A = two_varlists_to_set varinitA vartrA in *)
-  (* let vars_helper_A = get_vars udesc.helper_A in *)
-  (* let vars_helper = two_varlists_to_set vars_helper_A vartrA in *)
-  (* let all_vars_helper_A = SetVar.diff vars_helper_A vars_A in *)
-  (* let all_vars_A = two_varlists_to_set (get_vars udesc.init_A) (get_vars udesc.tr_A) in *)
   let all_vars_B = two_varlists_to_set (get_vars udesc.init_B) (get_vars udesc.tr_B) in
   let vars_B = SetVar.diff all_vars_B vars_A in
   match udesc.quants with
   | AA -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements helpers_A) ; Forall(SetVar.elements vars_B)], f)
-  | AE -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements helpers_A) ; Exists(SetVar.elements vars_B)], f)
+  (* | AE -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements helpers_A) ; Exists(SetVar.elements vars_B)], f) *)
+  | AE -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements (SetVar.union helpers_A vars_B)) ], f)
   | EE -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements helpers_A) ; Exists(SetVar.elements vars_B)], f)
   | EA -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements helpers_A) ; Forall(SetVar.elements vars_B)], f)
+  (* | EA -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements (SetVar.union vars_B helpers_A ))], f) *)
   | EAA -> ([Exists(SetVar.elements vars_A) ;  Forall(SetVar.elements vars_B)], f)
+
+let generate_quantified_NY_formula_aux desc k unroller : quantified_formula =
+  let udesc  = unroller desc k in
+  let f      = generate_NY_problem udesc in
+  (* let _ = print_endline (Printf.sprintf "var: %s" (build_match_f (get_vars udesc.init_A))) in *)
+  let varinitB    = get_vars udesc.init_B in
+  let varhelperB  = get_vars udesc.helper_tr_B in
+  let varsB       = get_vars udesc.match_helper_B in 
+  let all_vars_B  = two_varlists_to_set varinitB varsB in 
+  let helpers_B   = get_var_set varhelperB in 
+  let vars_B      = SetVar.diff all_vars_B helpers_B in
+  let all_vars_A = two_varlists_to_set (get_vars udesc.init_A) (get_vars udesc.tr_A) in
+  let vars_A = SetVar.diff all_vars_A vars_B in
+  match udesc.quants with
+  | AA -> ([Forall(SetVar.elements vars_A) ; Forall(SetVar.elements vars_B) ; Exists(SetVar.elements helpers_B)], f)
+  | AE -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements vars_B) ; Forall(SetVar.elements helpers_B)], f)
+  | EE -> ([Exists(SetVar.elements vars_A) ; Exists(SetVar.elements vars_B) ; Forall(SetVar.elements helpers_B)], f)
+  | EA -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements vars_B) ; Exists(SetVar.elements helpers_B)], f)
+  | EAA -> ([Exists(SetVar.elements vars_A) ;  Forall(SetVar.elements vars_B)], f)
+
+let generate_quantified_YY_formula_aux desc k unroller : quantified_formula =
+  let udesc  = unroller desc k in
+  let f      = generate_YY_problem udesc in
+  let varinitA    = get_vars udesc.init_A in
+  let varhelperA  = get_vars udesc.helper_tr_A in
+  let varsA       = get_vars udesc.match_helper_A in 
+  let all_vars_A  = two_varlists_to_set varinitA varsA in 
+  let helpers_A   = get_var_set varhelperA in 
+  let vars_A      = SetVar.diff all_vars_A helpers_A in
+  (* let all_vars_A = two_varlists_to_set (get_vars udesc.init_A) (get_vars udesc.tr_A) in
+  let vars_A = SetVar.diff all_vars_A vars_B in *)
+  let varinitB    = get_vars udesc.init_B in
+  let varhelperB  = get_vars udesc.helper_tr_B in
+  let varsB       = get_vars udesc.match_helper_B in 
+  let all_vars_B  = two_varlists_to_set varinitB varsB in 
+  let helpers_B   = get_var_set varhelperB in 
+  let vars_B      = SetVar.diff all_vars_B helpers_B in
+  match udesc.quants with
+  | AA -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements helpers_A) ; Forall(SetVar.elements vars_B) ; Exists(SetVar.elements helpers_B)], f)
+  | AE -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements helpers_A) ; Exists(SetVar.elements vars_B) ; Forall(SetVar.elements helpers_B)], f)
+  | EE -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements helpers_A) ; Exists(SetVar.elements vars_B) ; Forall(SetVar.elements helpers_B)], f)
+  | EA -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements helpers_A) ; Forall(SetVar.elements vars_B) ; Exists(SetVar.elements helpers_B)], f)
+  | EAA -> ([Exists(SetVar.elements vars_A) ;  Forall(SetVar.elements vars_B)], f)
+
 
 
 let generate_quantified_YN_formula desc k: quantified_formula =
   generate_quantified_YN_formula_aux desc k generate_unrolled_YN_desc    
 
+let generate_quantified_NY_formula desc k: quantified_formula =
+  generate_quantified_NY_formula_aux desc k generate_unrolled_NY_desc 
+
+let generate_quantified_YY_formula desc k: quantified_formula =
+  generate_quantified_YY_formula_aux desc k generate_unrolled_YY_desc 
+ 

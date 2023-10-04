@@ -41,15 +41,15 @@ let fprint_circuit ch qphi : unit =
   match !Args.format with
   | Some QCIR    ->
      let get_body () =
-       let _ = pr_time "calling nnf" in
+       (* let _ = pr_time "calling nnf" in *)
        let nphi = to_nnf phi in
-       let _ = pr_time "calling formula_to_circuit" in
+       (* let _ = pr_time "calling formula_to_circuit" in *)
        let b = to_circuit nphi in
        b
      in
      let body = get_body ()
      in
-     let _ = pr_time "printing circuit" in
+     (* let _ = pr_time "printing circuit" in *)
      let _ =
        if !Args.toNum then   Circuit.fprint_quantified_num_circuit ch (quants,body)
        else                  Circuit.fprint_quantified_circuit     ch (quants,body)
@@ -79,8 +79,8 @@ let fprint_circuit ch qphi : unit =
       (match !Args.newencoding_form with
         | Some NN -> QBF.generate_quantified_formula desc k
         | Some YN -> QBF.generate_quantified_YN_formula desc k
-        | Some NY -> QBF.generate_quantified_YN_formula desc k
-        | Some YY -> QBF.generate_quantified_YN_formula desc k
+        | Some NY -> QBF.generate_quantified_NY_formula desc k
+        | Some YY -> QBF.generate_quantified_YY_formula desc k
         | None    -> raise(ArgsError("error, wrong form of applying new encoding.")))
     else if !Args.is_exists_num then
       QBF.generate_quantified_ES_formula desc k n_exists

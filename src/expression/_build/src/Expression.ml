@@ -92,7 +92,7 @@ let disjunctive_formula_toexpr (d:disjunctive_formula) : expression =
       []   -> False
     | [a]  -> Literal(a)
     | a::[b] -> Or(Literal(a),Literal(b))
-    | ls     ->  MOr(List.map (fun l -> Literal(l)) ls)
+    | ls     -> MOr(List.map (fun l -> Literal(l)) ls)
 
 let conjunctive_formula_toexpr (c:conjunctive_formula) : expression =
   match c with
@@ -176,6 +176,13 @@ let build_implies (f:formula) (g:formula) : formula =
   let op x y = Implies(x,y) in
   builder f g op
     
+(* let build_mand (lst:formula list) : formula =
+  let op x y = And(x,y) in
+  builder f g op
+
+let build_mor (lst:formula) : formula =
+  let op x y = Or(x,y) in
+  builder f g op   *)
     
 (* SIMPLIFIERS *)
 let is_same_literal (l1:literal) (l2:literal) : bool =
@@ -300,12 +307,12 @@ let rec expression_to_str_aux (op:logic_op_t) (phi:expression) : string =
                   else
 		    sprintf "(%s %s %s)" (tostr AndOp a) andSym (tostr AndOp b)
   | Or(a,b)      -> if op = OrOp then
-		    sprintf  "%s %s %s" (tostr OrOp a) andSym (tostr OrOp b)
+		    sprintf  "%s %s %s" (tostr OrOp a) orSym (tostr OrOp b)
                   else
-		    sprintf "(%s %s %s)" (tostr OrOp a) andSym (tostr OrOp b)    
+		    sprintf "(%s %s %s)" (tostr OrOp a) orSym (tostr OrOp b)    
   | MOr(ls)      -> let body = String.concat orSym (List.map (expression_to_str_aux OrOp) ls) in
 		    if op = OrOp then body else "(" ^ body ^ ")"
-  | MAnd(ls)      -> let body = String.concat orSym (List.map (expression_to_str_aux AndOp) ls) in
+  | MAnd(ls)      -> let body = String.concat andSym (List.map (expression_to_str_aux AndOp) ls) in
 		    if op = AndOp then body else "(" ^ body ^ ")"
   | Neg a        -> let s =  sprintf "%s %s" negSym (tostr NegOp a) in
                     if op = NegOp then s else "(" ^ s ^ ")"
@@ -489,8 +496,10 @@ let rec nnf_fast (phi:expression) : expression =
     | True  -> cont True
     | Or(e1,e2)    -> cont2 e1 e2 f_or
     | And(e1,e2)   -> cont2 e1 e2 f_and
-    | Implies(e1,e2) -> floop (Or(Neg(e1),e2)) cont
-    | Iff(e1,e2) -> floop (And(Implies(e1,e2),Implies(e2,e1))) cont
+    (* | Implies(e1,e2) -> floop (Or(Neg(e1),e2)) cont *)
+    | Implies(e1,e2)  -> floop (Or(e2, Neg(e1))) cont
+    (* | Iff(e1,e2)      -> floop (And(Implies(e1,e2),Implies(e2,e1))) cont *)
+    | Iff(e1,e2)      -> floop (And(Implies(e2,e1),Implies(e1,e2))) cont
     | MOr(ls)      -> cont (MOr(List.map nnf_fast ls))
     | MAnd(ls)     -> cont (MAnd(List.map nnf_fast ls))
     | Neg(Neg(e))  -> floop e cont
