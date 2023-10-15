@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
+// import java.util.Map.Entry;
 import java.util.*;
 
 public class util_mapvars{
@@ -193,7 +193,8 @@ public class util_mapvars{
 			}
 
 			writer2.close();
-
+			qcir_sc.close();
+			quabs_result_sc.close();
 
 		}
 
