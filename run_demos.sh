@@ -7,14 +7,25 @@
 ###   1. Before running, please make sure Docker is installed: (https://docs.docker.com/get-docker/)
 ###   2. Apple Chop Macs might need to use: --platform linux/amd64
 
+HYPERQB="./hyperqb2.0.sh"
 ### DEMOS, see README for detailed explination
 
 ### [demo 1: run bakery algorithm with symmetry property]
-# ./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes
-### [dem0 2: run SNARK algorithm with linearizability propoerty]
-# ./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes
-### [demo 3: run simple_krip with simple_krip_formula]
-# ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 1 -pes -hops -find
-# ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
-# ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
+# ${HYPERQB} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -debug
+
+### [demo 2: run SNARK algorithm with linearizability propoerty, bug1]
+# ${HYPERQB} demo/snark1_conc.smv demo/snark1_seq.smv demo/lin.hq 18 -pes -debug
+
+### [demo 3: run info-flow example]
+# ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
+# ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow.smv demo/infoflow2.hq 5 -pes -debug
+
+### [demo 4: run simple_krip with simple_krip_formula]
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
+
+# ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
+
+
 

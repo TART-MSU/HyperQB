@@ -1,22 +1,22 @@
 exists A. forall B. forall C. exists D. exists E.
-G ((*pr*_A & !*ps*_A & !*qr*_A & *qs*_A) | (!*pr*_A & *ps*_A & *qr*_A & !*qs*_A))
+G (({pr}_A & !{ps}_A & !{qr}_A & {qs}_A) | (!{pr}_A & {ps}_A & {qr}_A & !{qs}_A))
 &
 (G (
-      ((*pr*_A) -> ((*atom_p*_B) -> (*atom_r*_C))) &
-      ((*ps*_A) -> ((*atom_p*_B) -> (*atom_s*_C))) &
-      ((*qr*_A) -> ((*atom_q*_B) -> (*atom_r*_C))) &
-      ((*qs*_A) -> ((*atom_q*_B) -> (*atom_s*_C))) &
-      (!*FAIL*_B & !*FAIL*_C)
+      (({pr}_A) -> (({atom_p}_B) -> ({atom_r}_C))) &
+      (({ps}_A) -> (({atom_p}_B) -> ({atom_s}_C))) &
+      (({qr}_A) -> (({atom_q}_B) -> ({atom_r}_C))) &
+      (({qs}_A) -> (({atom_q}_B) -> ({atom_s}_C))) &
+      (!{FAIL}_B & !{FAIL}_C)
 )
 ->
 (
-  G ( ((*pr*_A) -> ((*atom_p*_D) -> (*atom_r*_E))) &
-      ((*ps*_A) -> ((*atom_p*_D) -> (*atom_s*_E))) &
-      ((*qr*_A) -> ((*atom_q*_D) -> (*atom_r*_E))) &
-      ((*qs*_A) -> ((*atom_q*_D) -> (*atom_s*_E))) &
-      (!*FAIL*_D & !*FAIL*_E)
+  G ( (({pr}_A) -> (({atom_p}_D) -> ({atom_r}_E))) &
+      (({ps}_A) -> (({atom_p}_D) -> ({atom_s}_E))) &
+      (({qr}_A) -> (({atom_q}_D) -> ({atom_r}_E))) &
+      (({qs}_A) -> (({atom_q}_D) -> ({atom_s}_E))) &
+      (!{FAIL}_D & !{FAIL}_E)
   )
   &
-  G ((*atom_p*_B) -> (!*atom_p*_D))
+  G (({atom_p}_B) -> (!{atom_p}_D))
 )
 )

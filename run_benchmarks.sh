@@ -7,7 +7,7 @@
 ### 2. Apple Chip Macs might need to use: --platform linux/amd64
 
 ### HyperQB Tool Parameters
-HyperQB=./hyperqb_2.0.sh
+HyperQB=./hyperqb2.0.sh
 # HyperQB2=./hyperqb_2.0.sh
 # HyperQB_v=./run_versions.sh
 PES='-pes' # default value
@@ -30,7 +30,6 @@ PROJ="1_bakery"
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_S1_3proc.hq 7 ${PES} ${FIND}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_S2_3proc.hq 12 ${PES} ${FIND}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_S3_3proc.hq 20 ${OPT} ${FIND}
-
 ### [1.1-1.4 BAKERY]
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_sym1_3proc.hq 10 ${PES} ${BUGHUNT}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_sym2_3proc.hq 10 ${PES} ${BUGHUNT}
@@ -49,10 +48,12 @@ PROJ="3_ni"
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/NI_incorrect.smv ${CASEFOLDER}/${PROJ}/NI_incorrect.smv ${CASEFOLDER}/${PROJ}/NI_formula.hq 57 ${HPES} ${BUGHUNT}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/NI_correct.smv ${CASEFOLDER}/${PROJ}/NI_correct.smv ${CASEFOLDER}/${PROJ}/NI_formula.hq 57 ${HOPT} ${BUGHUNT}
 
+
 PROJ="4_nrp"
 ### [4.1-4.2 Non-repudiation Protocol]
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/NRP_incorrect.smv ${CASEFOLDER}/${PROJ}/NRP_incorrect.smv ${CASEFOLDER}/${PROJ}/NRP_formula.hq 15 ${HPES} ${BUGHUNT}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/NRP_correct.smv ${CASEFOLDER}/${PROJ}/NRP_correct.smv ${CASEFOLDER}/${PROJ}/NRP_formula.hq 15 ${HOPT}  ${BUGHUNT}
+
 
 PROJ="5_planning"
 ### [5.1 Robotic planning: Shortest Path]
@@ -60,25 +61,27 @@ PROJ="5_planning"
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_sp_400.smv ${CASEFOLDER}/${PROJ}/robotic_sp_400.smv ${CASEFOLDER}/${PROJ}/robotic_sp_formula.hq 40 ${PES} ${FIND}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_sp_1600.smv ${CASEFOLDER}/${PROJ}/robotic_sp_1600.smv ${CASEFOLDER}/${PROJ}/robotic_sp_formula.hq 80 ${PES} ${FIND}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_sp_3600.smv ${CASEFOLDER}/${PROJ}/robotic_sp_3600.smv ${CASEFOLDER}/${PROJ}/robotic_sp_formula.hq 120 ${PES} ${FIND}
-
 ### [5.2 Robotic planning: Initial State Robustness]
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_100.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_100.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 20 ${PES} ${FIND}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_400.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_400.smv  ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 40 ${PES} ${FIND}
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_1600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_1600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 80 ${PES} ${FIND}
-${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_3600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_3600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 120 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_3600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_3600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 120 ${PES} ${FIND}
 
 
 PROJ="6_mutation"
 ### [6.1 Mutation Testing]
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/mutation_testing.smv ${CASEFOLDER}/${PROJ}/mutation_testing.smv ${CASEFOLDER}/${PROJ}/mutation_testing.hq 10 ${HOPT} ${FIND}
 
+
 PROJ="7_coterm"
 ### [7.1 Coterm]
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/coterm1.smv ${CASEFOLDER}/${PROJ}/coterm2.smv ${CASEFOLDER}/${PROJ}/coterm.hq 102 ${OPT} ${BUGHUNT}
 
+
 PROJ="8_deniability"
 ### [8.1 Deniability]
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/electronic_wallet.smv ${CASEFOLDER}/${PROJ}/electronic_wallet.smv ${CASEFOLDER}/${PROJ}/electronic_wallet.smv ${CASEFOLDER}/cav_deniability/den.hq 20 ${OPT} ${BUGHUNT}
+
 
 PROJ="9_buffer"
 ### [9.1 - 9.3 Intransitive]
@@ -96,6 +99,14 @@ PROJ="10_NIexp"
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/ni_example.smv ${CASEFOLDER}/${PROJ}/ni_example.smv ${CASEFOLDER}/${PROJ}/tsni.hq 10 ${OPT} ${BUGHUNT}
 
 
-PROJ="11_continuity"
+PROJ="11_continuity" 
 ### [11.1 K-safety]
 # ${HyperQB} ${CASEFOLDER}/${PROJ}/doubleSquare.smv ${CASEFOLDER}/${PROJ}/doubleSquare.smv ${CASEFOLDER}/${PROJ}/doubleSquare1.hq 64 ${PES} ${BUGHUNT}
+
+
+
+
+
+
+# echo "------(AutoHyper Starts)------"
+# time ${AUTOHYPER} -nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO} -v 4

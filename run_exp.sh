@@ -15,25 +15,11 @@ QSFILE=${OUTFOLDER}QS
 SEM="PES"
 QUABS=./exec/quabs
 GENQBF=src/expression/bin/genqbf
-
-### [demo 1: run bakery algorithm with symmetry property]
-# ./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 5 -pes
-### [dem0 2: run SNARK algorithm with linearizability propoerty]
-# ./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes
-### [demo 3: run simple_krip with simple_krip_formula]
-# ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 1 -pes -hops -find
-# ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
-# ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
-# ./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/temp.hq 1 -pes -find
-# ./hyperqb.sh demo/cmu1.smv demo/cmu1.smv demo/cmu1.smv demo/cmu1.hq 5 -pes -find
-
-
 k=18
 NUM="-n"
 # NUM=""
 QS="EA"
 NEW="NN"
-# ./hyperqb.sh demo/nway.smv demo/nway.smv demo/nway.hq ${k} -pes -find 
 
 # NEW="YY"
 # ./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq ${k} -pes -find
@@ -52,10 +38,9 @@ NEW="NN"
 # ./hyperqb.sh demo/robotic_sp20.smv demo/robotic_sp20.smv demo/robotic_sp.hq ${k} -pes -find 
 # ./hyperqb.sh demo/robotic_sp.smv demo/robotic_sp.smv demo/robotic_sp.hq ${k} -pes -find 
 
-# exit()
-
+### build new genqbf
 cd src/expression
-# make clean
+make clean
 make 
 echo "\n(run HyperQB)"
 cd ..
@@ -70,6 +55,8 @@ echo "File size: "
 stat -f%z ${QCIR_OUT}
 time ${QUABS} --partial-assignment ${QCIR_OUT}
 
+
+### New encoding, under development ###
 
 # echo "\n===new encoding:" ${NEW} "==="
 # QCIR_OUT=${OUTFOLDER}HQ_new.qcir

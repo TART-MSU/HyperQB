@@ -7,8 +7,8 @@ MODULE main
 -- 4:   LOW=HIGH
 --
 VAR
-  HIGH: 0..10;
-  LOW: 0..10;
+  HIGH: 0..12;
+  LOW: 0..12;
   PC: 1..4;
 ASSIGN
   -- Initial Conditions
@@ -19,13 +19,13 @@ ASSIGN
   -- Transition Relations
   next(HIGH):=
     case
-      (PC=2): {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+      (PC=2): {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
       TRUE: HIGH;
     esac;
 
   next(LOW) :=
     case
-      ((PC=3) & (HIGH>5)): HIGH;
+      ((PC=3) & (HIGH>7)): HIGH;
       TRUE: LOW;
     esac;
   next(PC) :=

@@ -1,2 +1,0 @@
-forall A. exists B.
-G((p1-TOKEN[A]<->p2-TOKEN[B])/\(p1-TOKEN[A]<->p2-TOKEN[B]))

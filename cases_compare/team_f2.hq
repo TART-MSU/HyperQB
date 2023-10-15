@@ -1,2 +1,2 @@
 exists A. exists B. forall C.
-G(*GOALA*_A <-> *GOALA*_C) | G(*GOALB*_B <-> *GOALB*_C)
+G({GOALA}_A <-> {GOALA}_C) | G({GOALB}_B <-> {GOALB}_C)

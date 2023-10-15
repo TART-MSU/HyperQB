@@ -1,4 +1,4 @@
 forall A. exists B.
-F!(*HIGH*_A = *HIGH*_B)
+F!({HIGH}_A = {HIGH}_B)
 &
-G(*LOW*_A = *LOW*_B)
+G({LOW}_A = {LOW}_B)

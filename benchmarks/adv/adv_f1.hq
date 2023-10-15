@@ -1,0 +1,8 @@
+forall A. exists B.
+(G~(WALL[A]))
+->
+(
+  ((G~(WALL[B])) /\ (F(GOAL[B])))
+  /\
+  (G(~((*x-axis[A] = x-axis[B]*) /\ (*y-axis[A] = y-axis[B]*))))
+)

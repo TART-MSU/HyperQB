@@ -1,8 +1,8 @@
 forall A. exists B.
-(G!(*WALL*_A))
+(G!({WALL}_A))
 ->
 (
-  ((G!(*WALL*_B)) & (F(*GOAL*_B)))
+  ((G!({WALL}_B)) & (F({GOAL}_B)))
   &
-  (G(!((*x-axis*_A = *x-axis*_B) & (*y-axis*_A = *y-axis*_B))))
+  (G(!(({x-axis}_A = {x-axis}_B) & ({y-axis}_A = {y-axis}_B))))
 )

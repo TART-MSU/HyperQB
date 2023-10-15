@@ -1,1 +1,0 @@
-exists A. forall B. F(halt[A])

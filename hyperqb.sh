@@ -1,5 +1,6 @@
 #!/bin/bash
 TIMEFORMAT="%Rs"
+
 ### Parameters
 MULTI_PARSER=exec/model_parser.py
 ARBITRARY_PARSER=exec/parser.py
@@ -75,7 +76,6 @@ do
   let COUNTER++
 done
 
-
 ### Check which <mode> is used (-bughunt or -find) ###
 if echo $* | grep -e "-find" -q
 then
@@ -87,7 +87,6 @@ else
   echo "*mode is not specified, default to (-bughunt)"
   FLAG="-bughunt"
 fi
-
 
 ### check which bunded semantics is used ###
 if echo $* | grep -e "-pes" -q
@@ -112,7 +111,6 @@ else
   echo "  (pessimistic / optimistic / halting-pessimistic / halting-optimistic)"
   exit 1
 fi
-
 
 ### parse the NuSMV models and the given formula ###
 

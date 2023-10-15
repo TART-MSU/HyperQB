@@ -1,27 +1,27 @@
 exists A. forall B. forall C. exists D. exists E.
 (G (
-      ((*ABs_SRs*_A) -> ((*Alice_Bob_sec*_B) -> (*S_R_sec*_C))) &
-      ((*ABs_SRp*_A) -> ((*Alice_Bob_sec*_B) -> (*S_R_pub*_C))) &
-      ((*BEp_SRs*_A) -> ((*Bob_Eve_pub*_B) -> (*S_R_sec*_C))) &
-      ((*BEp_SRp*_A) -> ((*Bob_Eve_pub*_B) -> (*S_R_pub*_C))) &
-      ((*Bs_Rp*_A) -> ((*Bob_sec*_B) -> (*R_pub*_C))) &
-      ((*Bs_Rs*_A) -> ((*Bob_sec*_B) -> (*R_sec*_C))) &
-      ((*Es_Rp*_A) -> ((*Eve_secisnotempty*_B) -> (*R_pub*_C))) &
-      ((*Es_Rs*_A) -> ((*Eve_secisnotempty*_B) -> (*R_sec*_C)))
+      (({ABs_SRs}_A) -> (({Alice_Bob_sec}_B) -> ({S_R_sec}_C))) &
+      (({ABs_SRp}_A) -> (({Alice_Bob_sec}_B) -> ({S_R_pub}_C))) &
+      (({BEp_SRs}_A) -> (({Bob_Eve_pub}_B) -> ({S_R_sec}_C))) &
+      (({BEp_SRp}_A) -> (({Bob_Eve_pub}_B) -> ({S_R_pub}_C))) &
+      (({Bs_Rp}_A) -> (({Bob_sec}_B) -> ({R_pub}_C))) &
+      (({Bs_Rs}_A) -> (({Bob_sec}_B) -> ({R_sec}_C))) &
+      (({Es_Rp}_A) -> (({Eve_secisnotempty}_B) -> ({R_pub}_C))) &
+      (({Es_Rs}_A) -> (({Eve_secisnotempty}_B) -> ({R_sec}_C)))
 )
 ->
 (
   G (
-      ((*ABs_SRs*_A) -> ((*Alice_Bob_sec*_D) -> (*S_R_sec*_E))) &
-      ((*ABs_SRp*_A) -> ((*Alice_Bob_sec*_D) -> (*S_R_pub*_E))) &
-      ((*BEp_SRs*_A) -> ((*Bob_Eve_pub*_D) -> (*S_R_sec*_E))) &
-      ((*BEp_SRp*_A) -> ((*Bob_Eve_pub*_D) -> (*S_R_pub*_E))) &
-      ((*Bs_Rp*_A) -> ((*Bob_sec*_D) -> (*R_pub*_E))) &
-      ((*Bs_Rs*_A) -> ((*Bob_sec*_D) -> (*R_sec*_E))) &
-      ((*Es_Rp*_A) -> ((*Eve_secisnotempty*_D) -> (*R_pub*_E))) &
-      ((*Es_Rs*_A) -> ((*Eve_secisnotempty*_D) -> (*R_sec*_E)))
+      (({ABs_SRs}_A) -> (({Alice_Bob_sec}_D) -> ({S_R_sec}_E))) &
+      (({ABs_SRp}_A) -> (({Alice_Bob_sec}_D) -> ({S_R_pub}_E))) &
+      (({BEp_SRs}_A) -> (({Bob_Eve_pub}_D) -> ({S_R_sec}_E))) &
+      (({BEp_SRp}_A) -> (({Bob_Eve_pub}_D) -> ({S_R_pub}_E))) &
+      (({Bs_Rp}_A) -> (({Bob_sec}_D) -> ({R_pub}_E))) &
+      (({Bs_Rs}_A) -> (({Bob_sec}_D) -> ({R_sec}_E))) &
+      (({Es_Rp}_A) -> (({Eve_secisnotempty}_D) -> ({R_pub}_E))) &
+      (({Es_Rs}_A) -> (({Eve_secisnotempty}_D) -> ({R_sec}_E)))
   )
   &
-  G ( !(*secret*_B = *secret*_D) & (*Eve_secisnotempty*_B = *Eve_secisnotempty*_D))
+  G ( !({secret}_B = {secret}_D) & ({Eve_secisnotempty}_B = {Eve_secisnotempty}_D))
 )
 )
