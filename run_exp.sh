@@ -102,13 +102,6 @@ time ${QUABS} --partial-assignment ${QCIR_OUT}
 # time ${QUABS} ${QCIR_OUT}
 
 
-
-
-
-
-
-
-
 # src/expression/bin/genqbf -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast --debug -new "YN"
 
 # ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 2 -pes -find

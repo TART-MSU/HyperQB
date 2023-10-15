@@ -12,17 +12,28 @@ ERROR="(!) HyperQB error"
 
 ### setup output folder
 # \THH_TODO: put this back before submission.
-# DATE=`date +"%Y-%m-%d@%T"`
-DATE="today"
-
+DATE=`date +"%Y-%m-%d@%T"`
+# DATE="today"
 OUTFOLDER="build_"${DATE}"/"
-rm -f -R ${OUTFOLDER}
+if [ ! -d "${OUTFOLDER}" ]; then
+    mkdir -p "${OUTFOLDER}"
+    echo "Directory '${OUTFOLDER}' created."
+else
+    echo "Directory '${OUTFOLDER}' already exists."
+    rm -f -R ${OUTFOLDER}
+fi
+
 
 CEXFOLDER="build_cex/"
-# rm -f -R ${CEXFOLDER}
+mkdir ${CEXFOLDER}
+if [ ! -d "${CEXFOLDER}" ]; then
+    mkdir -p "${CEXFOLDER}"
+    echo "Directory '${CEXFOLDER}' created."
+else
+    echo "Directory '${CEXFOLDER}' already exists."
+    rm -f -R ${CEXFOLDER}
+fi
 
-mkdir ${OUTFOLDER}
-# mkdir ${CEXFOLDER}
 
 QUABS_OUT=${OUTFOLDER}HQ.quabs
 MAP_OUT1=${OUTFOLDER}_byName.cex
@@ -35,7 +46,6 @@ S=${OUTFOLDER}R_2.bool
 P=${OUTFOLDER}P.hq
 QSFILE=${OUTFOLDER}QS
 FORMULA=""
-
 
 # output files
 # \THH_TODO: add this before submission
