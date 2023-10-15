@@ -1,95 +1,101 @@
 #!/bin/sh
-#####################################################################################################
-#  This script runs ALL experiments (0.1-11.1) we provided in Table 3 of our tool paper submission  #
-#####################################################################################################
+##################################################
+#  This script runs ALL experiments (0.1-11.1)   #
+##################################################
+### Requirements:
+### 1. Before running, please make sure Docker is installed: (https://docs.docker.com/get-docker/)
+### 2. Apple Chip Macs might need to use: --platform linux/amd64
 
 ### HyperQB Tool Parameters
-HyperQB=./hyperqb.sh
+HyperQB=./hyperqb_2.0.sh
+# HyperQB2=./hyperqb_2.0.sh
+# HyperQB_v=./run_versions.sh
 PES='-pes' # default value
 OPT='-opt'
 HPES='-hpes'
 HOPT='-hopt'
-# SINGLE='-single'
-# MULTI='-multi'
-BUGHUNT="-bughunt" # default value
+BUGHUNT="-bughunt" # default value is -bughunt
 FIND="-find"
 
-### Requirements:
-###   1. Before running, please make sure Docker is installed: (https://docs.docker.com/get-docker/)
-###   2. Apple Chop Macs might need to use: --platform linux/amd64
+###################
+# All Experiments #
+###################
 
-##################################################
-# All Experiments in CAV23 tool paper submission #
-##################################################
-### (1) Previous cases in TACAS21 submission:
+### (1) experiments from set1 :
 
+
+CASEFOLDER="benchmarks"
+PROJ="1_bakery"
 ### [0.1-0.3 BAKERY]
-#### example to try #######
-# ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_S1_3proc.hq 7 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_S2_3proc.hq 12 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_S3_3proc.hq 20 ${OPT} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_S1_3proc.hq 7 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_S2_3proc.hq 12 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_S3_3proc.hq 20 ${OPT} ${FIND}
+
 ### [1.1-1.4 BAKERY]
-# ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_sym1_3proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_3procs.smv cases_bmc/tacas_bakery/bakery_formula_sym2_3proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_sym1_3proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_3procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_sym2_3proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_5procs.smv ${CASEFOLDER}/${PROJ}/bakery_5procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/bakery_5procs.smv ${CASEFOLDER}/${PROJ}/bakery_5procs.smv ${CASEFOLDER}/${PROJ}/bakery_phi_sym2_5proc.hq 10 ${PES} ${BUGHUNT}
 
 
-# ${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_formula_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_5procs.smv cases_bmc/tacas_bakery/bakery_formula_sym2_5proc.hq 10 ${PES} ${BUGHUNT}
-
+PROJ="2_snark"
 ### [2.1-2.2 SNARK 2.1-2.2]
-## example to try  ######
-# ${HyperQB} cases_bmc/tacas_snark/snark1_M1_concurrent.smv cases_bmc/tacas_snark/snark1_M2_sequential.smv  cases_bmc/tacas_snark/snark1_formula.hq 18 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_snark/snark2_new_M1_concurrent.smv  cases_bmc/tacas_snark/snark2_new_M2_sequential.smv cases_bmc/tacas_snark/snark2_formula.hq 30 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/snark1_M1_concurrent.smv ${CASEFOLDER}/${PROJ}/snark1_M2_sequential.smv  ${CASEFOLDER}/${PROJ}/snark1_formula.hq 18 ${PES} ${FIND} 
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/snark2_new_M1_concurrent.smv  ${CASEFOLDER}/${PROJ}/snark2_new_M2_sequential.smv ${CASEFOLDER}/${PROJ}/snark2_formula.hq 30 ${PES} ${FIND}
 
+
+PROJ="3_ni"
 ### [3.1-3.2 3-Thread]
-### EXAMPLE TO TRY ####
-# ${HyperQB} cases_bmc/tacas_multi_threaded/NI_incorrect.smv cases_bmc/tacas_multi_threaded/NI_incorrect.smv cases_bmc/tacas_multi_threaded/NI_formula.hq 57 ${HPES} ${BUGHUNT}
-# ${HyperQB} cases_bmc/tacas_multi_threaded/NI_correct.smv cases_bmc/tacas_multi_threaded/NI_correct.smv cases_bmc/tacas_multi_threaded/NI_formula.hq 57 ${HOPT} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/NI_incorrect.smv ${CASEFOLDER}/${PROJ}/NI_incorrect.smv ${CASEFOLDER}/${PROJ}/NI_formula.hq 57 ${HPES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/NI_correct.smv ${CASEFOLDER}/${PROJ}/NI_correct.smv ${CASEFOLDER}/${PROJ}/NI_formula.hq 57 ${HOPT} ${BUGHUNT}
 
+PROJ="4_nrp"
 ### [4.1-4.2 Non-repudiation Protocol]
-# ${HyperQB} cases_bmc/tacas_nrp/NRP_incorrect.smv cases_bmc/tacas_nrp/NRP_incorrect.smv cases_bmc/tacas_nrp/NRP_formula.hq 15 ${HPES} ${BUGHUNT}
-# ${HyperQB} cases_bmc/tacas_nrp/NRP_correct.smv cases_bmc/tacas_nrp/NRP_correct.smv cases_bmc/tacas_nrp/NRP_formula.hq 15 ${HOPT}  ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/NRP_incorrect.smv ${CASEFOLDER}/${PROJ}/NRP_incorrect.smv ${CASEFOLDER}/${PROJ}/NRP_formula.hq 15 ${HPES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/NRP_correct.smv ${CASEFOLDER}/${PROJ}/NRP_correct.smv ${CASEFOLDER}/${PROJ}/NRP_formula.hq 15 ${HOPT}  ${BUGHUNT}
 
-### -------------------------Table 5-----------------------------------
+PROJ="5_planning"
 ### [5.1 Robotic planning: Shortest Path]
-# ${HyperQB} cases_bmc/tacas_robotic/robotic_sp_100.smv  cases_bmc/tacas_robotic/robotic_sp_100.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 20 ${PES} ${FIND}
-${HyperQB} cases_bmc/tacas_robotic/robotic_sp_400.smv cases_bmc/tacas_robotic/robotic_sp_400.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 40 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_robotic/robotic_sp_1600.smv cases_bmc/tacas_robotic/robotic_sp_1600.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 80 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_robotic/robotic_sp_3600.smv cases_bmc/tacas_robotic/robotic_sp_3600.smv cases_bmc/tacas_robotic/robotic_sp_formula.hq 120 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_sp_100.smv  ${CASEFOLDER}/${PROJ}/robotic_sp_100.smv ${CASEFOLDER}/${PROJ}/robotic_sp_formula.hq 20 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_sp_400.smv ${CASEFOLDER}/${PROJ}/robotic_sp_400.smv ${CASEFOLDER}/${PROJ}/robotic_sp_formula.hq 40 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_sp_1600.smv ${CASEFOLDER}/${PROJ}/robotic_sp_1600.smv ${CASEFOLDER}/${PROJ}/robotic_sp_formula.hq 80 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_sp_3600.smv ${CASEFOLDER}/${PROJ}/robotic_sp_3600.smv ${CASEFOLDER}/${PROJ}/robotic_sp_formula.hq 120 ${PES} ${FIND}
 
 ### [5.2 Robotic planning: Initial State Robustness]
-# ${HyperQB} cases_bmc/tacas_robotic/robotic_robustness_100.smv cases_bmc/tacas_robotic/robotic_robustness_100.smv cases_bmc/tacas_robotic/robotic_robustness_formula.hq 20 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_robotic/robotic_robustness_400.smv cases_bmc/tacas_robotic/robotic_robustness_400.smv  cases_bmc/tacas_robotic/robotic_robustness_formula.hq 40 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_robotic/robotic_robustness_1600.smv cases_bmc/tacas_robotic/robotic_robustness_1600.smv cases_bmc/tacas_robotic/robotic_robustness_formula.hq 80 ${PES} ${FIND}
-# ${HyperQB} cases_bmc/tacas_robotic/robotic_robustness_3600.smv cases_bmc/tacas_robotic/robotic_robustness_3600.smv cases_bmc/tacas_robotic/robotic_robustness_formula.hq 120 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_100.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_100.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 20 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_400.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_400.smv  ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 40 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_1600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_1600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 80 ${PES} ${FIND}
+${HyperQB} ${CASEFOLDER}/${PROJ}/robotic_robustness_3600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_3600.smv ${CASEFOLDER}/${PROJ}/robotic_robustness_formula.hq 120 ${PES} ${FIND}
 
-### --------------------------Table 5----------------------------------
 
+PROJ="6_mutation"
 ### [6.1 Mutation Testing]
-# ${HyperQB} cases_bmc/tacas_mutation_testing/mutation_testing.smv cases_bmc/tacas_mutation_testing/mutation_testing.smv cases_bmc/tacas_mutation_testing/mutation_testing.hq 10 ${HOPT} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/mutation_testing.smv ${CASEFOLDER}/${PROJ}/mutation_testing.smv ${CASEFOLDER}/${PROJ}/mutation_testing.hq 10 ${HOPT} ${FIND}
 
-
-### (2) New cases in CAV23 submission compare to TACAS21 submission:
-
+PROJ="7_coterm"
 ### [7.1 Coterm]
-# ${HyperQB} cases_bmc/cav_coterm/coterm1.smv cases_bmc/cav_coterm/coterm2.smv cases_bmc/cav_coterm/coterm.hq 102 ${OPT} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/coterm1.smv ${CASEFOLDER}/${PROJ}/coterm2.smv ${CASEFOLDER}/${PROJ}/coterm.hq 102 ${OPT} ${BUGHUNT}
 
+PROJ="8_deniability"
 ### [8.1 Deniability]
-# ${HyperQB} cases_bmc/cav_deniability/electronic_wallet.smv cases_bmc/cav_deniability/electronic_wallet.smv cases_bmc/cav_deniability/electronic_wallet.smv cases_bmc/cav_deniability/den.hq 20 ${OPT} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/electronic_wallet.smv ${CASEFOLDER}/${PROJ}/electronic_wallet.smv ${CASEFOLDER}/${PROJ}/electronic_wallet.smv ${CASEFOLDER}/cav_deniability/den.hq 20 ${OPT} ${BUGHUNT}
 
+PROJ="9_buffer"
 ### [9.1 - 9.3 Intransitive]
 ### first, it violates classic_OD (PES, SAT)
-# ${HyperQB} cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/unscheduled_buffer.smv cases_bmc/cav_shared_buffer/classic_OD.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/unscheduled_buffer.smv ${CASEFOLDER}/${PROJ}/unscheduled_buffer.smv ${CASEFOLDER}/${PROJ}/classic_OD.hq 10 ${PES} ${BUGHUNT}
 ### however, with scheduler involves, it satisfies intransitive_OD (OPT, UNSAT)
-# ${HyperQB} cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/intrans_OD.hq 10 ${OPT} ${BUGHUNT}
-### next, it violates
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/scheduled_buffer.smv ${CASEFOLDER}/${PROJ}/scheduled_buffer.smv ${CASEFOLDER}/${PROJ}/intrans_OD.hq 10 ${OPT} ${BUGHUNT}
 ### same, the scheduler guarantees GMNI
-# ${HyperQB} cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/scheduled_buffer.smv cases_bmc/cav_shared_buffer/intrans_GMNI.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/scheduled_buffer.smv ${CASEFOLDER}/${PROJ}/scheduled_buffer.smv ${CASEFOLDER}/${PROJ}/intrans_GMNI.hq 10 ${PES} ${BUGHUNT}
 
+
+PROJ="10_NIexp"
 ### [10.1 - 10.2 TINI and TSNI]
-# ${HyperQB} cases_bmc/cav_tini/ni_example.smv cases_bmc/cav_tini/ni_example.smv cases_bmc/cav_tini/tini.hq 10 ${OPT}  ${BUGHUNT}
-# ${HyperQB} cases_bmc/cav_tsni/ni_example.smv cases_bmc/cav_tsni/ni_example.smv cases_bmc/cav_tsni/tsni.hq 10 ${OPT} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/ni_example.smv ${CASEFOLDER}/${PROJ}/ni_example.smv ${CASEFOLDER}/${PROJ}/tini.hq 10 ${OPT}  ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/ni_example.smv ${CASEFOLDER}/${PROJ}/ni_example.smv ${CASEFOLDER}/${PROJ}/tsni.hq 10 ${OPT} ${BUGHUNT}
 
+
+PROJ="11_continuity"
 ### [11.1 K-safety]
-### doubleSquare
-# ${HyperQB} cases_bmc/cav_ksafety/doubleSquare.smv cases_bmc/cav_ksafety/doubleSquare.smv cases_bmc/cav_ksafety/doubleSquare1.hq 64 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${PROJ}/doubleSquare.smv ${CASEFOLDER}/${PROJ}/doubleSquare.smv ${CASEFOLDER}/${PROJ}/doubleSquare1.hq 64 ${PES} ${BUGHUNT}

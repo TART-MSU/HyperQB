@@ -1,0 +1,2 @@
+exists A. forall B.
+F(~GOAL[A])

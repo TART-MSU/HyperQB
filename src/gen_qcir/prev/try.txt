@@ -1,0 +1,16 @@
+#QCIR-G14
+
+forall(5,6)
+output(18)
+
+# Generate transition steps
+12 = or(5,-6)
+17 = or(-5,6)
+# Transitions for single time step 
+18 = and(12,17)
+
+
+# exists exists
+# 7 = and(18)
+
+

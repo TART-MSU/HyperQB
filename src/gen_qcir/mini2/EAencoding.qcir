@@ -1,0 +1,74 @@
+#QCIR-G14
+exists(16,17,18)
+forall(1,2)
+forall(60,61,62)
+exists(35,36)
+output(79)
+
+#one step transition of trace A
+12 = or(2,-2)
+11 = or(-1,12)
+14 = or(2,-2)
+13 = or(1,14)
+10 = and(11,13)
+#one step transition of trace A is: 10
+
+# T(0,1) of trace A
+19 = or(-16,1)
+20 = or(16,-1)
+21 = and(19,20)
+22 = or(-17,2)
+23 = or(17,-2)
+24 = and(22,23)
+25 = and(21,24)
+# T(1,2) of trace A
+26 = or(-17,1)
+27 = or(17,-1)
+28 = and(26,27)
+29 = or(-18,2)
+30 = or(18,-2)
+31 = and(29,30)
+32 = and(28,31)
+# Disjunct all T(0,2) for trace A
+33 = or(25,32)
+# All time steps for trace A implies transition
+34 = or(-33,10)
+# A trans: 34
+
+#one step transition of trace B
+56 = and(-36,36)
+55 = and(35,56)
+58 = and(-36,36)
+57 = and(-35,58)
+54 = or(55,57)
+#one step transition of trace B is: 54
+
+# T(0,1) of trace B
+63 = or(-60,35)
+64 = or(60,-35)
+65 = and(63,64)
+66 = or(-61,36)
+67 = or(61,-36)
+68 = and(66,67)
+69 = and(65,68)
+# T(1,2) of trace B
+70 = or(-61,35)
+71 = or(61,-35)
+72 = and(70,71)
+73 = or(-62,36)
+74 = or(62,-36)
+75 = and(73,74)
+76 = and(72,75)
+# Disjunct all T(0,2) for trace B
+77 = or(69,76)
+# All time steps for trace B implies transition
+78 = or(-77,54)
+# B trans: 78
+
+
+#build EA phi 
+80 = or(1,-1)
+81 = or(78,80)
+82 = and(34,81)
+# final output
+79 = and(82) 

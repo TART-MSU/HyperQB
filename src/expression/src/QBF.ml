@@ -1,11 +1,10 @@
 open Printf
 open Expression
+open Model
 module EParser = ExprParser
 module ELexer  = ExprLexer
-module Pr=Property
-open Model
-
-module SetVar = Set.Make(String)
+module Pr      = Property
+module SetVar  = Set.Make(String)
 
 type temporal = G | F | X | U | R
 
@@ -116,9 +115,13 @@ let generate_EAA_problem (desc:unrolled_problem_desc) : formula =
   build_and m (build_implies (build_and n o) desc.property) (* implication ??? *)
 
 let generate_EA_problem (desc:unrolled_problem_desc) : formula =
-  let m =build_and desc.init_A desc.tr_A in
-  let n =build_and desc.init_B desc.tr_B in
+  (* let m =build_and desc.init_A desc.tr_A in *)
+  (* let n =build_and desc.init_B desc.tr_B in *)
+  let m =build_and (dnf_formula desc.init_A) desc.tr_A in
+  let n =build_and (dnf_formula desc.init_B) desc.tr_B in
   build_and m (build_implies n desc.property)
+  (* build_and m desc.property *)
+  
 
 let generate_problem (desc:unrolled_problem_desc) : formula =
   match desc.quants with
@@ -154,11 +157,11 @@ let unroll_property prop k (desc:problem_desc) : formula =
 
     
 let generate_unrolled_desc (desc:problem_desc) (k:int): unrolled_problem_desc =
-  { init_A = unroll_name  desc.init_A 0 "A" ;
+  { init_A = unroll_name  (dnf_formula desc.init_A) 0 "A" ;
     tr_A   = unroll_uptok desc.tr_A   k "A" ;
-    init_B = unroll_name  desc.init_B 0 "B" ; 
+    init_B = unroll_name  (dnf_formula desc.init_B) 0 "B" ; 
     tr_B   = unroll_uptok desc.tr_B   k "B" ; 
-    init_C = unroll_name  desc.init_C 0 "C" ; 
+    init_C = unroll_name  (dnf_formula desc.init_C) 0 "C" ; 
     tr_C   = unroll_uptok desc.tr_C   k "C" ; 
     property = unroll_property desc.property k desc;
     quants = desc.quants;
@@ -317,19 +320,22 @@ let get_var_set lst =
   List.fold_left (fun set elem -> SetVar.add elem set) SetVar.empty lst
   
 
-(* Attempt to build YN problem *)
+(* problems of new encodings *)
 (* build YN problem *)
 let generate_YN_problem (desc:unrolled_YN_problem_desc) : formula =
-  (* let m =build_and desc.init_A desc.tr_A in *)
-  let init_m  =desc.init_A in
+  (* let init_m  =desc.init_A in *)
+  let init_m  =(dnf_formula desc.init_A) in
   let match_m =desc.match_helper_A in
   let tr_m    =desc.helper_tr_A in
-  (* let m =(build_and init_m (build_implies match_m tr_m))in *)
-  let m =(build_and init_m (build_implies match_m tr_m))in
-  let n =build_and desc.init_B desc.tr_B in
+  (* let m =(build_and (build_implies match_m tr_m) init_m )in *)
+  let m =(build_and init_m (build_and match_m tr_m))in
+  let init_n =desc.init_B in
+  let n =build_and init_n desc.tr_B in
   match desc.quants with
   | EE -> build_and m (build_and n desc.property)
-  | EA -> build_and m (build_implies n desc.property)
+  (* | EE -> build_and m desc.property *)
+  | EA -> build_and (build_implies n desc.property) m
+  (* | EA -> build_and m desc.property  *)
   | AE -> build_implies m (build_and n desc.property) 
   | AA -> build_implies (build_and m n) desc.property
   | EAA -> build_and m (build_implies n desc.property) (*TODO*)
@@ -349,11 +355,11 @@ let generate_NY_problem (desc:unrolled_NY_problem_desc) : formula =
   | EAA -> build_and m (build_implies n desc.property) (*TODO*)
 
 let generate_YY_problem (desc:unrolled_YY_problem_desc) : formula =
-  let init_m  =desc.init_A in
+  let init_m  =(dnf_formula desc.init_A) in
   let match_m =desc.match_helper_A in
   let tr_m    =desc.helper_tr_A in
   let m =(build_and init_m (build_implies match_m tr_m))in
-  let init_n  =desc.init_B in
+  let init_n  =(dnf_formula desc.init_B) in
   let match_n =desc.match_helper_B in
   let tr_n    =desc.helper_tr_B in
   let n =(build_and init_n (build_implies match_n tr_n))in
@@ -366,12 +372,7 @@ let generate_YY_problem (desc:unrolled_YY_problem_desc) : formula =
 
   
 
-(* let generate_encode_problem (desc:unrolled_YN_problem_desc) : formula =
-  match desc.encode with
-  | YY -> generate_YN_problem desc
-  | YN -> generate_YN_problem desc
-  | NY -> generate_NY_problem desc
-  | NN -> generate_YN_problem desc *)
+
 
 let generate_YN_encode_problem (desc:unrolled_YN_problem_desc) : formula =
   generate_YN_problem desc
@@ -390,28 +391,46 @@ let trim (var: string) (len: int): string =
   else
     var
 
-let build_match_f (lst: variable list) =
+(* let build_match_f (lst: variable list) =
   let lst_len = List.length lst in
+  let helper_suf = "_helper'"   in
   let rec exp l i =
-    if (i == (lst_len-1)) then 
-      (l ^ "(" ^ (trim (List.nth lst i) (String.length (List.nth lst i))) ^ " <-> " ^ (trim (List.nth lst i) (String.length (List.nth lst i)))  ^ "_helper'" ^ "))" ) 
+    let curr_var = (trim (List.nth lst i) (String.length (List.nth lst i))) in
+    let curr_helper = curr_var ^ helper_suf in
+    let matching = curr_var ^ " <-> " ^ curr_helper in
+    if i == (lst_len-1) then 
+      (l ^ "(" ^ matching ^ ")" ) 
     else 
       exp 
-      (l ^ "(" ^ (trim (List.nth lst i) (String.length (List.nth lst i))) ^ " <-> " ^ (trim (List.nth lst i) (String.length (List.nth lst i)))  ^ "_helper'" ^ ")" ^ "/\\" ) 
+      (l ^ "(" ^ matching ^ ")" ^ "/\\" )
       (i+1) 
     in
-  exp "(" 0
+  exp "" 0     *)
 
-let build_match_expr (vars: variable list): formula =
-    let str = (build_match_f vars) in
-    (* let str = "(a <-> a_helper') /\\ (b <-> b_helper')" in *)
-    let f = Parser.parse_str str (EParser.letclause ELexer.norm) in f        
+let str_to_formula (str: string) = 
+  Parser.parse_str str (EParser.letclause ELexer.norm) 
+
+let build_match_f (lst: variable list): formula =
+  let lst_len = List.length lst in
+  let helper_suf = "_helper'"   in
+  let rec iter l i =
+    let curr_var = (trim (List.nth lst i) (String.length (List.nth lst i))) in
+    let curr_helper = curr_var ^ helper_suf in
+    let matching = str_to_formula (curr_var ^ " <-> " ^ curr_helper ) in
+    if i == (lst_len-1) then 
+      matching  
+    else 
+      build_and matching (iter [] (i+1))
+    in
+  (iter [] 0)
+
 
 (* generate unroll YN *)
 let generate_unrolled_YN_desc (desc:problem_desc) (k:int): unrolled_YN_problem_desc =
   { init_A = unroll_name  desc.init_A 0 "A" ;
     helper_tr_A     = unroll_uptok desc.tr_A   1 "helper_A" ;
-    match_helper_A  = unroll_match_uptok (build_match_expr (get_vars desc.init_A)) k "A" ;
+    (* match_helper_A  = unroll_match_uptok (build_match_expr (get_vars desc.init_A)) k "A" ; *)
+    match_helper_A  = unroll_match_uptok (build_match_f (get_vars desc.init_A)) k "A" ;
     init_B = unroll_name  desc.init_B 0 "B" ; 
     tr_B   = unroll_uptok desc.tr_B   k "B" ;
     property = unroll_property desc.property k desc;
@@ -426,7 +445,7 @@ let generate_unrolled_NY_desc (desc:problem_desc) (k:int): unrolled_NY_problem_d
     tr_A   = unroll_uptok desc.tr_A   k "A" ;
     init_B = unroll_name  desc.init_B 0 "B" ;
     helper_tr_B     = unroll_uptok desc.tr_B   1 "helper_B" ;
-    match_helper_B  = unroll_match_uptok (build_match_expr (get_vars desc.init_B)) k "B" ;
+    match_helper_B  = unroll_match_uptok (build_match_f (get_vars desc.init_B)) k "B" ;
     property = unroll_property desc.property k desc;
     quants = desc.quants;
     encode = desc.encode
@@ -436,10 +455,10 @@ let generate_unrolled_YY_desc (desc:problem_desc) (k:int): unrolled_YY_problem_d
   { 
     init_A = unroll_name  desc.init_A 0 "A" ;
     helper_tr_A     = unroll_uptok desc.tr_A   1 "helper_A" ;
-    match_helper_A  = unroll_match_uptok (build_match_expr (get_vars desc.init_A)) k "A" ;
+    match_helper_A  = unroll_match_uptok (build_match_f (get_vars desc.init_A)) k "A" ;
     init_B = unroll_name  desc.init_B 0 "B" ;
     helper_tr_B     = unroll_uptok desc.tr_B   1 "helper_B" ;
-    match_helper_B  = unroll_match_uptok (build_match_expr (get_vars desc.init_B)) k "B" ;
+    match_helper_B  = unroll_match_uptok (build_match_f (get_vars desc.init_B)) k "B" ;
     property = unroll_property desc.property k desc;
     quants = desc.quants;
     encode = desc.encode
@@ -460,7 +479,8 @@ let generate_YY_formula (desc:problem_desc) (k:int): formula =
 let generate_quantified_YN_formula_aux desc k unroller : quantified_formula =
   let udesc  = unroller desc k in
   let f      = generate_YN_problem udesc in
-  let _ = print_endline (Printf.sprintf "var: %s" (build_match_f (get_vars udesc.init_A))) in
+  (* let _ = print_endline (Printf.sprintf "var: %s" (build_match_f (get_vars udesc.init_A))) in *)
+  (* let _ = print_endline (Printf.sprintf "var: %s" (build_match_f (get_vars udesc.init_A))) in *)
   let varinitA    = get_vars udesc.init_A in
   let varhelperA  = get_vars udesc.helper_tr_A in
   let varsA       = get_vars udesc.match_helper_A in 
@@ -474,7 +494,9 @@ let generate_quantified_YN_formula_aux desc k unroller : quantified_formula =
   (* | AE -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements helpers_A) ; Exists(SetVar.elements vars_B)], f) *)
   | AE -> ([Forall(SetVar.elements vars_A) ; Exists(SetVar.elements (SetVar.union helpers_A vars_B)) ], f)
   | EE -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements helpers_A) ; Exists(SetVar.elements vars_B)], f)
+  (* | EE -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements helpers_A)], f) *)
   | EA -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements helpers_A) ; Forall(SetVar.elements vars_B)], f)
+  (* | EA -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements helpers_A)], f) *)
   (* | EA -> ([Exists(SetVar.elements vars_A) ; Forall(SetVar.elements (SetVar.union vars_B helpers_A ))], f) *)
   | EAA -> ([Exists(SetVar.elements vars_A) ;  Forall(SetVar.elements vars_B)], f)
 

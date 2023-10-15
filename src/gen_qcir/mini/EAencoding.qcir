@@ -1,0 +1,30 @@
+#QCIR-G14
+exists(1,2)
+forall(14,15)
+output(30)
+
+
+# old encoding for trace A
+9 = or(2,-2)
+8 = or(-1,9)
+11 = or(2,-2)
+10 = or(1,11)
+7 = and(8,10)
+6 = and(1,7)
+# A trans: 6
+
+# old encoding for trace B
+27 = and(-15,15)
+26 = and(14,27)
+29 = and(-15,15)
+28 = and(-14,29)
+25 = or(26,28)
+24 = or(-14,25)
+# B trans: 24
+
+#build EA phi 
+31 = or(1,-1)
+32 = or(24,31)
+33 = and(6,32)
+# final output
+30 = and(33) 

@@ -24,8 +24,9 @@ let rec unroll_expr_suf (now:string) (next:string) (trel:expression) : expressio
   | Implies(x,y) -> Implies(rename x, rename y)
   | Iff(x,y)     -> Iff(rename x, rename y)
   | MOr(ls)      -> MOr(List.map rename ls)
-  | MAnd(ls)     -> MAnd(List.map rename ls)
-  
+  | MAnd(ls)     -> MAnd(List.map rename ls)  
+
+
 let unroll_df_suf (now:string) (next:string) (df:disjunctive_formula) : disjunctive_formula =
   match df with
   | Disj(ls) -> Disj(List.map (rename_literal now next) ls)
@@ -36,16 +37,61 @@ let unroll_cf_suf (now:string) (next:string) (cf:conjunctive_formula) : conjunct
   | Conj(ls) -> Conj(List.map (rename_literal now next) ls)
   | _        -> cf
 
-let rec unroll_suf (now:string) (next:string) (f:formula) : formula =
+(* let rec unroll_suf (now:string) (next:string) (f:formula) : formula =
   let rename_expr    = unroll_expr_suf now next in
   let rename_formula = unroll_suf now next in
   let rename_var = rename_variable now next in
+  (* let _ = print_endline (Printf.sprintf "var: %s" (expression_to_str (build_pre_post now next rename_expr)) ) in *)
   match f with
   | Let(n,a,b) -> Let(rename_var n, rename_expr a, rename_formula b)
   | CNF(dfs) -> CNF(List.map (unroll_df_suf now next) dfs)
   | DNF(cfs) -> DNF(List.map (unroll_cf_suf now next) cfs)
-  | General(e) -> General(rename_expr e)
+  | General(e) -> General(rename_expr e) *)
 
+let rec build_tr_formula (f:formula) = 
+  let expr = get_exp f in
+    match expr with
+    | And(x,y)           -> build_and (build_tr_formula (General(x))) (build_tr_formula (General(y)))
+    | Implies(pre, post) -> build_implies (CNF(cnf pre)) (DNF(dnf post))                       
+    | _ -> f
+
+let check_flist (lst: formula list)=
+  let lst_len = List.length lst in
+  let _ = print_endline (Printf.sprintf "flist length: %d" lst_len) in
+  for i = 0 to lst_len-1 do
+    print_endline (Printf.sprintf "expr %d: %s \n" i (expression_to_str (get_exp (List.nth lst i) )))
+  done
+
+(* TR is a conjunct of implications *)
+let build_tr_list (f: formula) : formula list = 
+  let expr = get_exp f in
+  let rec unfold expr : formula list =
+    match expr with
+    | And(e1, e2) -> unfold(e1) @ unfold(e2)
+    | Implies(pre, post) -> General(Implies(pre, post)) :: []
+    | _ -> []
+  in
+  (unfold expr)  
+
+
+
+let rec unroll_suf (now:string) (next:string) (f:formula) : formula =
+  let rename_expr    = unroll_expr_suf now next in
+  let rename_formula = unroll_suf now next in
+  let rename_var = rename_variable now next in
+  (* let flist = build_tr_list (build_tr_formula f) in
+  let _ = check_flist (flist) in *)
+  (* let _ = print_endline (Printf.sprintf "now: %s" now) in *)
+  (* let _ = print_endline (Printf.sprintf "next: %s" next) in *)
+  match f with
+  | Let(n,a,b) -> Let(rename_var n, rename_expr a, rename_formula b)
+  | CNF(dfs) -> CNF(List.map (unroll_df_suf now next) dfs)
+  | DNF(cfs) -> DNF(List.map (unroll_cf_suf now next) cfs)
+  | General(e) -> General(rename_expr e)  
+  | ConjF(fs) -> ConjF(List.map (rename_formula) fs)
+  | DisjF(fs) -> DisjF(List.map (rename_formula) fs) 
+
+          
 
 let suffix (k:int) (name:string) : (string*string) =
   let now  = Printf.sprintf "%s[%d]" name k in
@@ -56,6 +102,8 @@ let suffix (k:int) (name:string) : (string*string) =
 let unroll (f:formula) (k:int): formula =
   let (now,next) = suffix k "" in
   unroll_suf now next f
+  (* unroll_suf now next (build_tr_formula f) *)
+  (* unroll_suf now next (dnf_formula f) *)
   
 let unroll_expr (trel:expression) (k:int): expression =
   let (now,next) = suffix k "" in
@@ -70,8 +118,6 @@ let unroll_expr_name (trel:expression) (k:int) (name:string) : expression  =
   let str = if (String.length name) =0 then "" else "_" ^ name in
   let (now,next) = suffix k str  in
   unroll_expr_suf now next trel
-    
-
 
     
 (* assumes it uses v_A and v_B as the model unrolling generates *)
@@ -96,14 +142,25 @@ let unroll_expr_uptok (r:expression) (k:int) (name:string) : expression =
 
 
 let unroll_uptok (r:formula) (k:int) (name:string) : formula =
+  (* new formulated TR wilt multi-gate *)
+  let r = ConjF(build_tr_list (build_tr_formula r)) in
+  (* let rec unroll_from n =
+    let r_n = (unroll_name r n name) in
+    if n==k-1 
+      then  [r_n] 
+    else  [r_n] @ (unroll_from (n+1))
+  in
+  ConjF(unroll_from 0) *)
+  
+  (* prev implementation with binary-gate *)
   let rec unroll_from n =
-    let r_n = unroll_name r n name in
-    if n==k-1 then r_n
+    let r_n = (unroll_name r n name) in
+    if n==k-1 then  r_n
     else  build_and r_n (unroll_from (n+1))
   in
-  unroll_from 0
+  (unroll_from 0)
 
-(* new encodings: unroll the match with helpers *)
+(* NEW encodings: unroll the match with helpers *)
 let unroll_match_name (f:formula) (k:int) (name:string) : formula =
   let str = if (String.length name) = 0 then "" 
             else "_helper_" ^ name
@@ -148,6 +205,10 @@ let rec unroll_match_suf (now:string) (next:string) (f:formula) : formula =
   | CNF(dfs) -> CNF(List.map (unroll_df_suf now next) dfs)
   | DNF(cfs) -> DNF(List.map (unroll_cf_suf now next) cfs)
   | General(e) -> General(rename_expr e)
+  | ConjF(fs)  -> ConjF(fs)
+  | DisjF(fs)  -> DisjF(fs)
+
+  (* | TR(pre,post) -> TR(List.map (unroll_df_suf now next) pre, List.map (unroll_df_suf now next) post) *)
 
 let suffix_match_now (k:int) (name:string) : (string*string) =
   let now  = Printf.sprintf "%s[%d]" name k in
@@ -161,12 +222,13 @@ let suffix_match_next (k:int) (name:string) : (string*string) =
 
 let unroll_match_now (f:formula) (k:int) (name:string) : formula =
   let str = if (String.length name) =0 then "" else "_" ^ name in
-  let (now,now_helper) = suffix_match_now k str in
+  let (now, now_helper) = suffix_match_now k str in
   unroll_match_suf now now_helper f
+  
 
 let unroll_match_next (f:formula) (k:int) (name:string) : formula =
   let str = if (String.length name) =0 then "" else "_" ^ name in
-  let (next,next_helper) = suffix_match_next k str in
+  let (next, next_helper) = suffix_match_next k str in
   unroll_match_suf next next_helper f
 
 let unroll_match_uptok (r:formula) (k:int) (name:string)  : formula =
@@ -174,10 +236,10 @@ let unroll_match_uptok (r:formula) (k:int) (name:string)  : formula =
     let r_n_now  = unroll_match_now  r n name in
     let r_n_next = unroll_match_next r (n+1) name in
     if (n == k-1) 
-      then  build_and r_n_now r_n_next
+      then  (build_and r_n_now r_n_next)
     else    build_or (build_and r_n_now r_n_next)  (unroll_from (n+1))
   in
-  unroll_from 0
+  (unroll_from 0)
 
 
 

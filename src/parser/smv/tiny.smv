@@ -1,0 +1,30 @@
+MODULE main
+ VAR
+    a: boolean;
+    b: boolean; 
+    PC: 0..2;
+ ASSIGN
+    -- Initial Conditions
+    init(a):= FALSE; 
+    init(b):= TRUE;
+    init(PC):= 0;
+
+    -- Transition Relations
+    next(a) :=
+      case
+        (!a): a&b;
+        TRUE: a;
+      esac;
+    next(b) :=
+      case
+        (b): TRUE;
+        TRUE: b;
+      esac;
+    next(PC) :=
+      case
+        (PC=2): 1 ;
+        TRUE: (PC+1);
+      esac
+
+-- init:  ~a /\ b
+-- trans: (~a /\ b) -> (~a' /\ b')

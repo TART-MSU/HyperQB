@@ -1,0 +1,58 @@
+
+MODULE main
+ VAR
+    public:   boolean;
+    secret:   boolean;
+    outone:  boolean;
+    outtwo:  boolean;
+    PC: 1..5;
+
+
+ ASSIGN
+    -- Initial Conditions
+    init(public)  := FALSE;
+    init(secret)  := FALSE;
+    init(outone) := FALSE;
+    init(outtwo) := FALSE;
+    init(PC)      := 1;
+
+
+    -- Transition Relations
+    next(PC) :=
+      case
+        (PC<5): PC+1;
+        TRUE: PC;
+      esac;
+
+    next(public) :=
+      case
+        (PC=1): FALSE;
+        TRUE: public;
+      esac;
+
+    next(secret) :=
+      case
+        (PC=2): {TRUE, FALSE};
+        TRUE: secret;
+      esac;
+
+    next(outone) :=
+      case
+        (PC=3): public;
+        TRUE: outone;
+      esac;
+
+    next(outtwo) :=
+      case
+        (PC=4): secret;
+        TRUE: outtwo;
+      esac;
+ 
+-- DEFINE
+  -- s0 := (!low & !high & !halt & (PC=1));
+  -- s1 := (!low &  high & !halt & (PC=2));
+  -- s2 := ( low &  high & !halt & (PC=3));
+  -- s3 := (!low & !high & !halt & (PC=2));
+  -- s4 := (!low & !high &  halt & (PC=3));
+  -- s5 := (!low & !high &  halt & (PC=4));
+  -- s6 := (!low & !high &  halt & (PC=4));

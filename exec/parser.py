@@ -196,8 +196,8 @@ def conjunct_trans(list):
 	return output + list[len(list)-1]
 
 def trans(pre, post):
-	# return "(("+pre+")"+IMPLIES+"("+post+"))"
-	return "(~("+pre+")"+OR+"("+post+"))"
+	return "(("+pre+")"+IMPLIES+"("+post+"))"
+	# return "(~("+pre+")"+OR+"("+post+"))"
 
 
 

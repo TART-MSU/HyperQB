@@ -81,7 +81,9 @@ let fprint_circuit ch qphi : unit =
         | Some YN -> QBF.generate_quantified_YN_formula desc k
         | Some NY -> QBF.generate_quantified_NY_formula desc k
         | Some YY -> QBF.generate_quantified_YY_formula desc k
-        | None    -> raise(ArgsError("error, wrong form of applying new encoding.")))
+        | None    -> QBF.generate_quantified_formula desc k
+        (* | None    -> raise(ArgsError("error, wrong form of applying new encoding.")) *)
+      )
     else if !Args.is_exists_num then
       QBF.generate_quantified_ES_formula desc k n_exists
     else if !Args.is_forall_num then
@@ -169,6 +171,7 @@ let parse_separate_files () : QBF.problem_desc =
                     | None -> raise(ArgsError("must provide semantics of unrolling")));
       encode     = (match !Args.newencoding_form with
                     | Some encode -> encode
+                    (* | None -> encode *)
                     | None -> raise(ArgsError("must provide forms of new encodings")));              
     }
   | None -> raise(ArgsError("must provide filenames"))

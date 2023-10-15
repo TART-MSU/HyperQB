@@ -1,0 +1,52 @@
+#QCIR-G14
+exists(3,4,5)
+forall(30,31)
+forall(1,2)
+output(13)
+10 = or(2,-2)
+9 = or(-1,10)
+12 = or(2,-2)
+11 = or(1,12)
+8 = and(9,11)
+7 = and(1,8)
+#one step transition I/\TS is: 7
+
+# Match helper variables to time step variables
+# Matching for trace A
+# T(0,1) of trace A
+14 = or(-3,1)
+15 = or(3,-1)
+16 = and(14,15)
+17 = or(-4,2)
+18 = or(4,-2)
+19 = and(17,18)
+20 = and(16,19)
+# T(1,2) of trace A
+21 = or(-4,1)
+22 = or(4,-1)
+23 = and(21,22)
+24 = or(-5,2)
+25 = or(5,-2)
+26 = and(24,25)
+27 = and(23,26)
+# Disjunct all T(0,2) for trace A
+28 = or(20,27)
+# All time steps for trace A implies transition
+29 = or(-28,7)
+# A trans: 29
+
+# old encoding for trace B
+46 = or(33,-33)
+45 = or(-32,46)
+48 = or(33,-33)
+47 = or(32,48)
+44 = and(45,47)
+43 = and(32,44)
+# B trans: 43
+
+#build EA phi 
+49 = and(3,4,5)
+50 = or(-43,49)
+51 = and(29,50)
+# final output
+13 = and(50) 

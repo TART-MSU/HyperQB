@@ -1,0 +1,51 @@
+#QCIR-G14
+# exists exists
+exists(1,2)
+exists(3,4)
+# helpers
+forall(5,6)
+output(7)
+
+# Generate transition steps
+8  = or(6,-6)
+12 = or(5,-6)
+17 = or(-5,8)
+# Transitions for single time step 
+18 = and(12,17)
+
+# Match helper variables
+
+# trace 0
+# T(0,1) trace A
+19 = or(-1, 5)
+20 = or(1, -5)
+21 = and(19, 20) # [0]
+22 = or(-2, 6)
+23 = or(2, -6)
+24 = and(22, 23) # [1]
+25 = and(21,24)  # Match all variables for T(0,1) trace A
+26 = or(25) # Combined time steps T(0,1) for trace A
+27 = or(-26,18) # All time steps for trace A implies transition
+
+# trace 1
+# T(0,1) trace B
+28 = or(-3, 5)
+29 = or(3, -5)
+30 = and(28, 29)
+31 = or(-4, 6)
+32 = or(4, -6)
+33 = and(31, 32) 
+34 = and(30,33) # Match all variables for T(0,1) trace B
+35 = or(34) # Combined time steps T(0,1) for trace B
+36 = or(-35,18) # All time steps for trace 1 implies transition
+
+# Conjunct initial condition and all traces
+
+# models
+37 = and(-1,27)
+38 = and(-3,36)
+39 = and(2,4) 
+
+# exists exists
+7 = and(37,38,39)
+

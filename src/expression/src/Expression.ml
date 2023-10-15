@@ -40,6 +40,8 @@ type formula =
 | CNF of disjunctive_formula list
 | DNF of conjunctive_formula list
 | General of expression
+| ConjF of formula list
+| DisjF of formula list
 
 type quantifier =
 | Forall of variable list
@@ -93,6 +95,7 @@ let disjunctive_formula_toexpr (d:disjunctive_formula) : expression =
     | [a]  -> Literal(a)
     | a::[b] -> Or(Literal(a),Literal(b))
     | ls     -> MOr(List.map (fun l -> Literal(l)) ls)
+    
 
 let conjunctive_formula_toexpr (c:conjunctive_formula) : expression =
   match c with
@@ -110,27 +113,60 @@ let cnf_to_expression (ds:disjunctive_formula list) : expression =
   match ds with
     []  -> False
   | [a] -> dtoexpr a
-  | a::[b] -> Or(dtoexpr a,dtoexpr b)
-  | ls     -> MOr(List.map dtoexpr ls)
+  (* | a::[b] -> Or(dtoexpr a,dtoexpr b) *)
+  (* | ls     -> MOr(List.map dtoexpr ls) *)
+  (* change to the following: *)
+  | a::[b] -> And(dtoexpr a,dtoexpr b)
+  | ls     -> MAnd(List.map dtoexpr ls)  
 
 let dnf_to_expression (cs:conjunctive_formula list) : expression =
   let ctoexpr = conjunctive_formula_toexpr in
   match cs with
     []  -> True
   | [a] -> ctoexpr a
-  | a::[b] -> And(ctoexpr a,ctoexpr b)
-  | ls     -> MAnd(List.map ctoexpr ls)
+  (* | a::[b] -> And(ctoexpr a,ctoexpr b) *)
+  (* | ls     -> MAnd(List.map ctoexpr ls) *)
+  (* (change to the following: *)
+  | a::[b] -> Or(ctoexpr a,ctoexpr b)
+  | ls     -> MOr(List.map ctoexpr ls)    
 
-  
-(* Merge formulas, with Let, etc into a single formula *)
 
-    
+(* Merge formulas, with Let, etc into a single formula *)   
 let rec get_exp (f:formula): expression =
   match f with
     Let(n,a,b) -> get_exp b
   | CNF(ds)    -> cnf_to_expression ds
   | DNF(cs)    -> dnf_to_expression cs
   | General(e) -> e
+  | ConjF(fs)  -> 
+    let ftoexpr = get_exp in
+    match fs with
+      []  -> False
+    | [a] -> ftoexpr a
+    | a::[b] -> And(ftoexpr a,ftoexpr b)
+    | ls     -> MAnd(List.map ftoexpr ls) 
+  (* | DisjF(fs)  -> 
+    let ftoexpr = get_exp in
+    match fs with
+      []  -> False
+    | [a] -> ftoexpr a
+    | a::[b] -> Or(ftoexpr a,ftoexpr b)
+    | ls     -> MOr(List.map ftoexpr ls)  *)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 let rec get_lets (f:formula) : let_clause list =
   match f with
@@ -144,8 +180,7 @@ let compare (fs: let_clause list) (gs:let_clause list) : bool =
   List.for_all compare_one fs
 
 let id (a:let_clause) = match a with (n,_) -> n
-let body (a:let_clause) = match a with (_,b) -> b
-    
+let body (a:let_clause) = match a with (_,b) -> b 
 let merge (fs:let_clause list) (gs:let_clause list) : let_clause list =
   let not_in_gs x = not (List.exists (fun y->id x = id y) gs) in
   let newfs = List.filter not_in_gs fs in
@@ -163,7 +198,8 @@ let builder (f:formula) (g:formula) (op:expression->expression->expression) : fo
     | (n,a)::tl -> Let(n,a,build tl) in
   if not (compare fs gs) then raise ErrorMergingLets 
   else build (merge fs gs)
-      
+
+  
 let build_and (f:formula) (g:formula) : formula =
   let op x y = And(x,y) in
   builder f g op
@@ -176,13 +212,6 @@ let build_implies (f:formula) (g:formula) : formula =
   let op x y = Implies(x,y) in
   builder f g op
     
-(* let build_mand (lst:formula list) : formula =
-  let op x y = And(x,y) in
-  builder f g op
-
-let build_mor (lst:formula) : formula =
-  let op x y = Or(x,y) in
-  builder f g op   *)
     
 (* SIMPLIFIERS *)
 let is_same_literal (l1:literal) (l2:literal) : bool =
@@ -256,6 +285,8 @@ let rec simplify_formula (f:formula) : formula =
   | CNF e -> CNF (simplify_cnf e)
   | DNF e -> DNF (simplify_dnf e)
   | General e -> General e
+  (* | TR(pre, post) -> TR(pre, post) *)
+
 
 (* PRETTY PRINTERS *)
 let var_to_str (v:variable) : string = v
@@ -329,6 +360,7 @@ let rec formula_to_str(phi : formula): string =
   | CNF(e)     -> cnf_to_str e
   | DNF(e)     -> dnf_to_str e
   | General(e) -> expression_to_str e
+  (* | TR(pre, post) -> (cnf_to_str pre)^(cnf_to_str post) *)
 
 
 (* OUTPUT FUNCTIONS *)
@@ -410,6 +442,7 @@ let rec fprint_formula ch phi =
   | CNF(e)     -> fprint_cnf ch e
   | DNF(e)     -> fprint_dnf ch e
   | General(e) -> fprint_expression ch e
+  (* | TR(pre,post)-> (fprint_cnf ch pre) ; (fprint_cnf ch post) *)
 
 
 
@@ -444,7 +477,6 @@ let rec normalize (e:expression) : expression =
   | Literal(a)     -> e
   | Iff(e1,e2)     -> Iff(normalize e1,normalize e2)
   | Implies(e1,e2) -> Implies(normalize e1, normalize e2)
-
   | MAnd(ls) -> let newls = List.flatten (List.map and_list (List.map normalize ls)) in
 		MAnd(newls)
   | MOr (ls) -> let newls = List.flatten (List.map or_list (List.map normalize ls)) in
@@ -461,7 +493,7 @@ let rec nnf (phi:expression) : expression =
     match phi with
     | False -> False
     | True -> True
-    | Iff (e1,e2)    -> And (nnf (Implies(e1,e2)),nnf (Implies(e2,e1)))
+    | Iff (e1,e2)    -> And (nnf (Implies(e2,e1)),nnf (Implies(e1,e2)))
     | Implies(e1,e2) -> Or (nnf (Neg e1),nnf e2)
     | And (e1,e2)    -> And (nnf e1, nnf e2)
     | MAnd(ls)       -> MAnd(List.map nnf ls)
@@ -496,10 +528,10 @@ let rec nnf_fast (phi:expression) : expression =
     | True  -> cont True
     | Or(e1,e2)    -> cont2 e1 e2 f_or
     | And(e1,e2)   -> cont2 e1 e2 f_and
-    (* | Implies(e1,e2) -> floop (Or(Neg(e1),e2)) cont *)
-    | Implies(e1,e2)  -> floop (Or(e2, Neg(e1))) cont
-    (* | Iff(e1,e2)      -> floop (And(Implies(e1,e2),Implies(e2,e1))) cont *)
-    | Iff(e1,e2)      -> floop (And(Implies(e2,e1),Implies(e1,e2))) cont
+    | Implies(e1,e2) -> floop (Or(Neg(e1),e2)) cont
+    (* | Implies(e1,e2)  -> floop (Or(e2, Neg(e1))) cont *)
+    | Iff(e1,e2)      -> floop (And(Implies(e1,e2),Implies(e2,e1))) cont
+    (* | Iff(e1,e2)      -> floop (And(Implies(e2,e1),Implies(e1,e2))) cont *)
     | MOr(ls)      -> cont (MOr(List.map nnf_fast ls))
     | MAnd(ls)     -> cont (MAnd(List.map nnf_fast ls))
     | Neg(Neg(e))  -> floop e cont
@@ -544,24 +576,24 @@ let cnf (phi:expression) : disjunctive_formula list =
       | (x,[TrueDisj])  -> x
       | (lx,ly) -> lx @ ly
     and or_to_cnf (c1:disjunctive_formula list) (c2:disjunctive_formula list) : disjunctive_formula list =
-	match (c1, c2) with
-	  ([TrueDisj],_) -> [TrueDisj]
-          | (_,[TrueDisj]) -> [TrueDisj]
-          | ([FalseDisj],x)  -> x
-          | (x,[FalseDisj])  -> x
-          | (e1_cnf, e2_cnf) ->
-	    let get_disjuncts d =
-	      match d with
-	      | Disj l -> l
-	      | _ -> raise(ErrorInNNF)
-	    in
-	    let add_to_all_in_e2 final_list x1 =
-	      let lx1 = get_disjuncts x1 in
-              let add_x1 l2 x2 = l2 @ [Disj(lx1 @ (get_disjuncts x2))] in
-              let lst = List.fold_left add_x1 [] e2_cnf in
-              final_list @ lst
-            in
-            List.fold_left add_to_all_in_e2 [] e1_cnf
+	    match (c1, c2) with
+	    ([TrueDisj],_) -> [TrueDisj]
+        | (_,[TrueDisj]) -> [TrueDisj]
+        | ([FalseDisj],x)  -> x
+        | (x,[FalseDisj])  -> x
+        | (e1_cnf, e2_cnf) ->
+        let get_disjuncts d =
+          match d with
+          | Disj l -> l
+          | _ -> raise(ErrorInNNF)
+        in
+        let add_to_all_in_e2 final_list x1 =
+          let lx1 = get_disjuncts x1 in
+                let add_x1 l2 x2 = l2 @ [Disj(lx1 @ (get_disjuncts x2))] in
+                let lst = List.fold_left add_x1 [] e2_cnf in
+                final_list @ lst
+              in
+              List.fold_left add_to_all_in_e2 [] e1_cnf
     in
     match nnfphi with
     | Or(e1,e2)  -> or_to_cnf  (cnf_nnf e1) (cnf_nnf e2)
@@ -573,7 +605,6 @@ let cnf (phi:expression) : disjunctive_formula list =
     | False      -> [FalseDisj]
     | _          -> raise(ErrorInNNF)
   in
-(* simplify_cnf (cnf_nnf (nnf phi)) *)
   cnf_nnf (nnf phi)
 
     
@@ -620,19 +651,23 @@ let dnf (phi:expression): conjunctive_formula list =
   dnf_nnf (nnf phi)
 
 
+
+
 let rec cnf_formula f =
   match f with
     CNF(_) -> f
   | Let(n,a,b) -> Let(n,a,cnf_formula b)
   | General(e) -> CNF(cnf e)
   | DNF(cs) -> CNF(cnf (dnf_to_expression cs))
+  (* | TR(pre,post) -> DNF(dnf (cnf_to_expression pre)) *)
 
 let rec dnf_formula f =
   match f with
-    DNF(_) -> f
+    DNF(_) -> f 
   | Let(n,a,b) -> Let(n,a,dnf_formula b)
   | General(e) -> DNF(dnf e)
   | CNF(ds) -> DNF(dnf (cnf_to_expression ds))
+  (* | TR(pre,post) -> DNF(dnf (cnf_to_expression pre)) *)
     
     
 
@@ -697,13 +732,14 @@ let remove_from ls xs =
 
 let get_vars_disjunctive_formula (d:disjunctive_formula) : variable list =
   match d with
-    Disj(ls) -> List.map (fun l -> match l with Atom(v) -> v | NegAtom(v) -> v) ls
+  Disj(ls) -> List.map (fun l -> match l with Atom(v) -> v | NegAtom(v) -> v) ls
   | _ -> []
 let get_vars_conjunctive_formula (c:conjunctive_formula) : variable list =
   match c with 
   Conj(ls) -> List.map (fun l -> match l with Atom(v) -> v | NegAtom(v) -> v) ls
   | _ -> []
   
+
 let rec get_vars2 (f:formula) : variable list =
   let lets = get_let_ids f in
   let vars = remove_dup (get_vars_aux2 f) in
@@ -716,6 +752,9 @@ and get_vars_aux2 (f:formula) : variable list =
   | CNF(ls) -> List.flatten (List.map get_vars_disjunctive_formula ls)
   | DNF(ls) -> List.flatten (List.map get_vars_conjunctive_formula ls)
   | General(e) -> get_vars_expr2 e
+  | ConjF(fs) -> List.flatten (List.map get_vars_aux2 fs)
+  | DisjF(fs) -> List.flatten (List.map get_vars_aux2 fs)
+  
 and get_vars_expr_aux2 (e:expression) : variable list=
   match e with
   | Literal(Atom(v)) -> [v]
@@ -741,6 +780,9 @@ and get_vars_aux (f:formula) : variable list =
   | CNF(ls) -> List.flatten (List.map get_vars_disjunctive_formula ls)
   | DNF(ls) -> List.flatten (List.map get_vars_conjunctive_formula ls)
   | General(e) -> get_vars_expr e
+  | ConjF(fs) -> List.flatten (List.map get_vars2 fs)
+  | DisjF(fs) -> List.flatten (List.map get_vars2 fs)
+  
 and get_vars_expr_aux (acc:variable list) (e:expression) : variable list=
   let get2 x y = get_vars_expr_aux (get_vars_expr_aux acc x) y in
   match e with
@@ -811,6 +853,7 @@ let formula_to_expression (phi:formula) : expression =
   | DNF(cs)    -> MOr(List.map conjunct_to_expression cs)
   | General(e) -> e
 
+
 let rec size_expr_aux n e =
   let size2 acc x y  = size_expr_aux (size_expr_aux acc x) y in
   let sizels acc ls  = List.fold_left size_expr_aux acc ls in 
@@ -833,5 +876,7 @@ let size f =
     | CNF(ls) -> List.length ls
     | DNF(ls) -> List.length ls
     | General(e)  -> size_expr_aux n e
+    | ConjF(fs)  -> List.length fs
+    | DisjF(fs)  -> List.length fs
   in
   size_aux 0 f

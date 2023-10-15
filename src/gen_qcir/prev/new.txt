@@ -1,0 +1,78 @@
+#QCIR-G14
+exists(1,2,3,4,5,6,7,8)
+forall(9,10,11,12)
+output(13)
+# Generate transition steps
+14 = and(-9,-10)
+15 = and(-11,-12)
+16 = and(-11,12)
+17 = and(11,-12)
+18 = and(11,12)
+19 = or(15,16,17,18)
+20 = or(-14,19)
+21 = and(-9,10)
+22 = and(-11,-12)
+23 = and(-11,12)
+24 = and(11,-12)
+25 = and(11,12)
+26 = or(22,23,24,25)
+27 = or(-21,26)
+28 = and(9,-10)
+29 = and(-11,-12)
+30 = and(-11,12)
+31 = and(11,-12)
+32 = and(11,12)
+33 = or(29,30,31,32)
+34 = or(-28,33)
+35 = and(9,10)
+36 = and(-11,-12)
+37 = and(-11,12)
+38 = and(11,-12)
+39 = and(11,12)
+40 = or(36,37,38,39)
+41 = or(-35,40)
+# Transitions for single time step 
+42 = and(20,27,34,41)
+# Match helper variables to time step variables
+# Matching for trace 0
+# T(0,1) trace 0
+43 = or(-1, 9)
+44 = or(1, -9)
+45 = and(43, 44)
+46 = or(-3, 11)
+47 = or(3, -11)
+48 = and(46, 47)
+49 = or(-2, 10)
+50 = or(2, -10)
+51 = and(49, 50)
+52 = or(-4, 12)
+53 = or(4, -12)
+54 = and(52, 53)
+# Match all variables for T(0,1) trace 0
+55 = and(45,48,51,54)
+# Combined time steps T(0,1) for trace 0
+56 = or(55)
+# All time steps for trace 0 implies transition
+57 = or(-56,42)
+# Matching for trace 1
+# T(0,1) trace 1
+58 = or(-5, 9)
+59 = or(5, -9)
+60 = and(58, 59)
+61 = or(-7, 11)
+62 = or(7, -11)
+63 = and(61, 62)
+64 = or(-6, 10)
+65 = or(6, -10)
+66 = and(64, 65)
+67 = or(-8, 12)
+68 = or(8, -12)
+69 = and(67, 68)
+# Match all variables for T(0,1) trace 1
+70 = and(60,63,66,69)
+# Combined time steps T(0,1) for trace 1
+71 = or(70)
+# All time steps for trace 1 implies transition
+72 = or(-71,42)
+# Conjunct initial condition and all traces
+13 = and(-1,-2,-5,-6,57,72)

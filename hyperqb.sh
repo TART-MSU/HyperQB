@@ -1,17 +1,13 @@
 #!/bin/bash
-# TIMEFORMAT="%Rs"
+TIMEFORMAT="%Rs"
 ### Parameters
-# SINGLE_PARSER=exec/single_model_parser.py
 MULTI_PARSER=exec/model_parser.py
 ARBITRARY_PARSER=exec/parser.py
 
 # HyperQB parameters
-# GENQBF=exec/genqbf
-# GENQBF=src/cplusplus/genqbf
 QUABS=exec/quabs
 MAP=exec/util_mapvars
 PARSE_BOOL=exec/util_parsebools
-
 ERROR="(!) HyperQB error"
 
 ### setup output folder
@@ -20,14 +16,18 @@ ERROR="(!) HyperQB error"
 DATE="today"
 
 OUTFOLDER="build_"${DATE}"/"
-rm -f -R "build_today/"
-mkdir ${OUTFOLDER}
+rm -f -R ${OUTFOLDER}
 
-# QCIR_OUT=${OUTFOLDER}HQ.qcir
+CEXFOLDER="build_cex/"
+# rm -f -R ${CEXFOLDER}
+
+mkdir ${OUTFOLDER}
+mkdir ${CEXFOLDER}
+
 QUABS_OUT=${OUTFOLDER}HQ.quabs
 MAP_OUT1=${OUTFOLDER}_byName.cex
 MAP_OUT2=${OUTFOLDER}_byTime.cex
-PARSE_OUT=${OUTFOLDER}_formatted.cex
+PARSE_OUT=${CEXFOLDER}formatted.cex
 I=${OUTFOLDER}I_1.bool
 R=${OUTFOLDER}R_1.bool
 J=${OUTFOLDER}I_2.bool
@@ -45,11 +45,9 @@ while getopts "proj:" arg; do
   esac
 done
 
-
-
 ## updated Jan.28:merge parse and bmc
 echo ""
-echo "------( HyperQB START! )------"
+echo "-------( HyperQB START! )-------"
 ## get current location and arguments
 PWD=$(pwd)
 ALLARG=$@
@@ -118,9 +116,10 @@ fi
 
 ### parse the NuSMV models and the given formula ###
 
-printf "NuSMV models and HyperLTL formula parsing..."
+printf "NuSMV models parsing...\n" 
+printf "HyperLTL formula parsing...\n"
 # RUN PARSER on Docker
-echo "(using docker for parsing, parsing could become slower)"
+# echo "(using docker for parsing, parsing could become slower)"
 TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 
 # RUN PARSER locally, if the setup on your local machine is successful
@@ -145,14 +144,15 @@ source "${QSFILE}" # instantiate QS
 # diskutil erasevolume apfs "RAMDisk" `hdiutil attach -nomount ram://20000000`
 # touch /Volumes/RAMDisk/HQ.qcir
 # QCIR_OUT=/Volumes/RAMDisk/HQ.qcir
-printf "BMC unrolling with genqbf..................."
+printf "BMC unrolling with genqbf...\n"
 
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 n=${#QS}
 if [ ${n} -eq 2 ]
 then
-  GENQBF=exec/genqbf # classic 1 quants
-  TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast)
+  # GENQBF=exec/genqbf # classic 1 quants
+  GENQBF=src/expression/bin/genqbf_bingate # classic 1 quants
+  TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast -new "NN" )
 else
   lst_NEW_QUANTS="AAE EAA EEA AEA EEE AEE AAAE EAAE AAAE AAEE EAAEE AAAEEE" #special cases we investigate
   if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then
@@ -164,9 +164,7 @@ else
     GENQBF=src/cplusplus/genqbf # with arbitrary quantifiers
     TIME_GENQBF=$(time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${FORMULA})
     time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${P}
-    # printf "-I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n"
-
-    
+    # printf "-I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n" 
   fi
 fi
 
@@ -175,7 +173,7 @@ if [ ! -s ${QCIR_OUT} ]; then
         echo "(!) HyperQB error: .qcir file is empty. check if errors are reported."
         exit 1
 fi
-printf "QBF solving with QuAbS......................"
+printf "QBF solving with QuAbS...\n"
 # time ${QUABS}  --partial-assignment ${QCIR_OUT} 2>&1 | tee ${QUABS_OUT}
 TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
@@ -185,32 +183,43 @@ OUTCOME=$(grep "r " ${QUABS_OUT})
 
 
 
-echo "--------------- Summary of HyperQB ---------------"
-echo "|  Models:     " ${MODELS[*]}
+echo "------ Summary of HyperQB ------"
+# echo "|  Models:     " ${MODELS[@]} 
+printf '|  Model:       %s\n' "${MODELS[@]}"
 echo "|  Formula:    " ${FORMULA}
-echo "|  Quantifiers:" ${QS}
-echo "|  QBF solving:" ${OUTCOME}
+echo "|  Quants:     " ${QS}
+echo "|  QBFsolving: " ${OUTCOME}
 echo "|  Semantics:  " ${SEM}
-echo "|  #states:    " ${TIME_PARSE}
+echo "|  #States:    " ${TIME_PARSE}
 echo "|  Bound k:    " ${k}
 echo "|  Mode:       " ${FLAG}
-echo "----------------------------------------------------"
-echo "------(END HyperQB)------"
+echo "--------------------------------"
+echo "--------( HyperQB END )---------"
 
-echo ""
 echo ""
 
 # exit 1
 
 # ## TODO: update these two scripts using python
-echo "=== Get Nice-formatted Output if witness/counterexample is found ==="
-if [ ! -f "$QCIR_OUT" ]; then
-    echo "$QCIR_OUT does not exists"
-    exit 1
+echo "=== witness/counterexample ==="
+echo "Given "${QS} "with" ${OUTCOME} "result: "
+if grep -q UNSAT "${QUABS_OUT}"; 
+then
+  echo "no witness/counterexample."
+else
+  echo "witness/counterexample available!"
+  # echo "parsing into well-formatted file..."
+  ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+  ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
 fi
-echo "parsing into readable format..."
-${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
+
+# if [ ! -f "$QCIR_OUT" ]; then
+#     echo "$QCIR_OUT does not exists"
+#     exit 1
+# fi
+# echo "parsing into readable format..."
+# ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+# ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
 
 
 
