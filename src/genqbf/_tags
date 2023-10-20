@@ -1,0 +1,6 @@
+# Directories
+true: -traverse
+<src/**>: include
+
+# Options
+#<src/**/*.ml{,i}>: warnings

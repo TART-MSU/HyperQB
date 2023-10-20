@@ -7,7 +7,7 @@
 ###   1. Before running, please make sure Docker is installed: (https://docs.docker.com/get-docker/)
 ###   2. Apple Chop Macs might need to use: --platform linux/amd64
 
-HYPERQB="./hyperqb2.0.sh"
+HYPERQB="./hyperqb.sh"
 ### DEMOS, see README for detailed explination
 
 ### [demo 1: run bakery algorithm with symmetry property]
@@ -24,8 +24,8 @@ HYPERQB="./hyperqb2.0.sh"
 # ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find
 # ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
 # ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
-
 # ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
+
 
 
 

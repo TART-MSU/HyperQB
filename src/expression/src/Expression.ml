@@ -285,7 +285,9 @@ let rec simplify_formula (f:formula) : formula =
   | CNF e -> CNF (simplify_cnf e)
   | DNF e -> DNF (simplify_dnf e)
   | General e -> General e
-  (* | TR(pre, post) -> TR(pre, post) *)
+  | ConjF e -> ConjF e
+  | DisjF e -> DisjF e
+
 
 
 (* PRETTY PRINTERS *)
@@ -360,7 +362,6 @@ let rec formula_to_str(phi : formula): string =
   | CNF(e)     -> cnf_to_str e
   | DNF(e)     -> dnf_to_str e
   | General(e) -> expression_to_str e
-  (* | TR(pre, post) -> (cnf_to_str pre)^(cnf_to_str post) *)
 
 
 (* OUTPUT FUNCTIONS *)
@@ -442,9 +443,6 @@ let rec fprint_formula ch phi =
   | CNF(e)     -> fprint_cnf ch e
   | DNF(e)     -> fprint_dnf ch e
   | General(e) -> fprint_expression ch e
-  (* | TR(pre,post)-> (fprint_cnf ch pre) ; (fprint_cnf ch post) *)
-
-
 
 
     
@@ -659,7 +657,6 @@ let rec cnf_formula f =
   | Let(n,a,b) -> Let(n,a,cnf_formula b)
   | General(e) -> CNF(cnf e)
   | DNF(cs) -> CNF(cnf (dnf_to_expression cs))
-  (* | TR(pre,post) -> DNF(dnf (cnf_to_expression pre)) *)
 
 let rec dnf_formula f =
   match f with
@@ -667,8 +664,6 @@ let rec dnf_formula f =
   | Let(n,a,b) -> Let(n,a,dnf_formula b)
   | General(e) -> DNF(dnf e)
   | CNF(ds) -> DNF(dnf (cnf_to_expression ds))
-  (* | TR(pre,post) -> DNF(dnf (cnf_to_expression pre)) *)
-    
     
 
 let rec identity (a:expression) (b:expression) : bool=
@@ -852,6 +847,7 @@ let formula_to_expression (phi:formula) : expression =
   | CNF(ds)    -> MAnd(List.map disjunct_to_expression ds)
   | DNF(cs)    -> MOr(List.map conjunct_to_expression cs)
   | General(e) -> e
+
 
 
 let rec size_expr_aux n e =

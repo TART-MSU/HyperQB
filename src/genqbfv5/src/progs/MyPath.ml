@@ -1,0 +1,1 @@
+let mypath = "/Users/cesar/.poetry/bin:/usr/local/opt/python/libexec/bin:/Users/cesar/.opam/4.10.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/Users/cesar/public/bin:/sbin/Users/cesar/.opam/system/bin:/user/local/bin:/usr/texbin:/Users/cesar/public/bin:/usr/texbin:/usr/local/sbin:/bin:/Users/cesar/go/bin:/Users/cesar/go/local/bin:/Users/cesar/.local/bin"

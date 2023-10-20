@@ -14,7 +14,6 @@ QSFILE=${OUTFOLDER}QS
 
 SEM="PES"
 QUABS=./exec/quabs
-GENQBF=src/expression/bin/genqbf
 k=18
 NUM="-n"
 # NUM=""
@@ -46,6 +45,7 @@ echo "\n(run HyperQB)"
 cd ..
 cd ..
 
+GENQBF=src/expression/bin/genqbf
 echo "formula quantification: " ${QS}
 # src/expression/bin/genqbf -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast --debug -new "YN"
 echo "\n=== old unrolling (NN) ===" 

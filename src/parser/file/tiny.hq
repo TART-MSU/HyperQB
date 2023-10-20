@@ -1,0 +1,2 @@
+exists A. forall B. forall C.
+F(a[A])
