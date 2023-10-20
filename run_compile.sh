@@ -28,6 +28,7 @@
 # cd ../..
 
 cd src/parser
-g++ -std=c++17 -Wall -o parser parser.cpp;
+# g++ -std=c++17 -Wall -o parser parser.cpp
+g++ parser.cpp -o parser 
 cp parser ../../exec/parser 
 cd ../..
