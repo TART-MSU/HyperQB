@@ -182,8 +182,6 @@ def binary_eq(var_l, var_r,  num_bits):
 	for i in range(num_bits):
 		left = var_l[0] + "_"+str(i) +var_l[1]
 		right = var_r[0] + "_"+str(i) +var_r[1]
-		# print(left + " <-> " + right)
-		# result.append("("+left + IFF + right+")")
 		result.append("((~"+left + OR + right+")/\\(~" + right + OR + left + "))");
 	return conjunct(result)
 
@@ -223,7 +221,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 	Quants=""
 	for char in text:
 		if (char == 'f'):
-			# print("forall")
 			if(To_Negate_formula):
 				Quants+="E"
 			else:
@@ -318,7 +315,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 				dict_r=DICTIONARIES[int(Mindex.index(var_r[1]))]
 				num_bits_right=dict_r[var_r[0]]
 			except KeyError as ke:
-			    	# print('Key Not Found in Employee Dictionary:', ke)
 					error_exit("incorrect arithmetic assignment. please check:"+ str(ke))
 
 
@@ -360,7 +356,6 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 #      Main	    #
 #################
 ARGS=(sys.argv)
-# print("ARGS: ", ARGS)
 OUTPUT_LOCATION=ARGS[1]
 DICTIONARIES = []
 SUCCESS_OUT=""
@@ -378,7 +373,7 @@ else:
 # print("\nparsing models... ")
 PARSE_INDEX=0
 for i in range(0, len(ARGS)):
-	print(ARGS[i])
+	# print(ARGS[i])
 	if (".smv" in str(ARGS[i])):
 		smv_name = str(ARGS[i]);
 		PARSE_INDEX = PARSE_INDEX + 1

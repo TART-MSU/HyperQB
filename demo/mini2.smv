@@ -12,19 +12,19 @@ MODULE main
     
 
     -- Transition Relations
-    next(a) :=
-      case
-        TRUE: {TRUE, FALSE};
+    next(a) := {TRUE, FALSE};
+      -- case
+        -- TRUE: {TRUE, FALSE};
         -- a: FALSE;
         -- !a: TRUE;
-      esac;
+      -- esac;
     next(b) :=
       case
-        b: FALSE;
-        !b: TRUE;
+        (b): FALSE;
+        (!b): TRUE;
       esac;
     next(c) :=
       case
-        c: FALSE;
-        !c: TRUE;
+        (c): FALSE;
+        (!c): TRUE;
       esac;

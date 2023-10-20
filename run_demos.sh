@@ -13,8 +13,7 @@ HYPERQB="./hyperqb.sh"
 ### DEMOS, see README for detailed explination
 
 ### [demo 0: run simple_krip with simple_krip_formula]
-${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find
-# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
+${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
 # ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
 # ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 

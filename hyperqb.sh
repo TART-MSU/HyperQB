@@ -1,43 +1,23 @@
 #!/bin/bash
-TIMEFORMAT="%Rs"
-### Parameters
-ARBITRARY_PARSER=exec/parser.py
+TIMEFORMAT="%Rs"s
 
-### Select which genqbf to use
+### which genqbf ###
 GENQBF=exec/genqbf_partialmulti # new - multigate 
-echo "(hyperqb with new genqbf)"
+echo "(hyperqb with updated genqbf)"
 
-# HyperQB parameters
+### HyperQB parameters ###
+ARBITRARY_PARSER=exec/parser.py
 QUABS=exec/quabs
 MAP=exec/util_mapvars
 PARSE_BOOL=exec/util_parsebools
-ERROR="(!) HyperQB error"
+ERROR="(!) HyperQB error: "
 
-### setup output folder
+### Output file names ###
 # \THH_TODO: put this back before submission.
 # DATE=`date +"%Y-%m-%d@%T"`
 DATE="today"
 OUTFOLDER="build_"${DATE}"/"
-if [ ! -d "${OUTFOLDER}" ]; then
-    mkdir -p "${OUTFOLDER}"
-    echo "Directory '${OUTFOLDER}' created."
-else
-    # echo "Directory '${OUTFOLDER}' already exists."
-    rm -f -R ${OUTFOLDER}
-    mkdir -p "${OUTFOLDER}"
-fi
-
-
 CEXFOLDER="build_cex/"
-if [ ! -d "${CEXFOLDER}" ]; then
-    mkdir -p "${CEXFOLDER}"
-    echo "Directory '${CEXFOLDER}' created."
-else
-    # echo "Directory '${CEXFOLDER}' already exists."
-    rm -f -R ${CEXFOLDER}
-    mkdir -p "${CEXFOLDER}"
-fi
-
 MAP_OUT1=${OUTFOLDER}_byName.cex
 MAP_OUT2=${OUTFOLDER}_byTime.cex
 PARSE_OUT=${CEXFOLDER}formatted_2.0.cex
@@ -51,15 +31,31 @@ FORMULA=""
 QUABS_OUT=${OUTFOLDER}HQ.quabs
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 
-# output files
-# \TODO: add this
+
+if [ ! -d "${OUTFOLDER}" ]; then
+    mkdir -p "${OUTFOLDER}"
+    echo "Directory '${OUTFOLDER}' created."
+else
+    # echo "Directory '${OUTFOLDER}' already exists."
+    rm -f -R ${OUTFOLDER}
+    mkdir -p "${OUTFOLDER}"
+fi
+if [ ! -d "${CEXFOLDER}" ]; then
+    mkdir -p "${CEXFOLDER}"
+    echo "Directory '${CEXFOLDER}' created."
+else
+    # echo "Directory '${CEXFOLDER}' already exists."
+    rm -f -R ${CEXFOLDER}
+    mkdir -p "${CEXFOLDER}"
+fi
+
+### name output files, TODO ###
 while getopts "proj:" arg; do
   case $arg in
     n) PROJ=$OPTARG;;
   esac
 done
 
-## updated Jan.28:merge parse and bmc
 echo ""
 echo "-------( HyperQB START! )-------"
 ## get current location and arguments
@@ -96,8 +92,7 @@ elif echo $* | grep -e "-bughunt" -q
 then
   FLAG="-bughunt"
 else
-  echo "default to mode (-bughunt)"
-  FLAG="-bughunt"
+  echo "default to mode (-bughunt)"; FLAG="-bughunt"
 fi
 
 
@@ -115,31 +110,28 @@ elif echo $* | grep -e "-hopt" -q
 then
   SEM="TER_OPT"
 else
-  echo "(!) HyperQB error: incorrect semantic input."
-  echo "please use { -pes | -opt | -hpes | -hopt } semantics of the unrolling from one of the follows:"
-  echo "(pessimistic / optimistic / halting-pessimistic / halting-optimistic)"
+  echo ${ERROR} "incorrect semantic input."
+  echo "please use { -pes | -opt | -hpes | -hopt } semantics of the unrolling."
   exit 1
 fi
 
 
 ### parse the NuSMV models and the given formula ###
 
-printf "NuSMV and HyperLTL parsing...\n" 
-# printf "HyperLTL formula parsing...\n"
-# RUN PARSER on Docker
-echo "(using docker for parsing)"
-TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
+# printf "NuSMV and HyperLTL parsing...\n" 
+# echo "(using docker for parsing)"
+# TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 
-# RUN PARSER locally, if the setup on your local machine is successful
+
+echo "(c++ parsing)"
+TRANSLATE="exec/translate.py"
+python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
+
+
+
+# echo "(using docker with pip-built)"
 # TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
 
-# TRANSLATE="exec/translate.py"
-# python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
-
-# SMVPARSER="./exec/parser"
-# TIME_PARSE=${SMVPARSER} 
-
-# exit 1
 
 # if any error happens in parsing, exit HyperQB
 if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
@@ -149,16 +141,13 @@ fi
 
 ### check what is the quantifier selection
 if [ ! -f "${QSFILE}" ]; then
-  echo "(!) HyperQB error: no ${QSFILE} exists."
+  echo ${ERROR} "no ${QSFILE} exists."
   echo "please check the formula see if the quantifers are corretly specified. "
   exit 1
 fi
 source "${QSFILE}" # instantiate QS
 
 
-# diskutil erasevolume apfs "RAMDisk" `hdiutil attach -nomount ram://20000000`
-# touch /Volumes/RAMDisk/HQ.qcir
-# QCIR_OUT=/Volumes/RAMDisk/HQ.qcir
 printf "BMC unrolling with genqbf...\n"
 n=${#QS}
 if [ ${n} -eq 2 ]
@@ -179,15 +168,13 @@ fi
 
 
 if [ ! -s ${QCIR_OUT} ]; then
-        echo "(!) HyperQB error: .qcir file is empty. check if errors are reported."
+        echo ${ERROR} ".qcir file is empty, please check if genqbf error is reported."
         exit 1
 fi
+
 printf "QBF solving with QuAbS...\n"
 TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
-
-# diskutil unmount /Volumes/RAMDisk
-
 
 echo "------ Summary of HyperQB ------"
 printf '|  Model:       %s\n' "${MODELS[@]}"
@@ -200,23 +187,21 @@ echo "|  Bound k:    " ${k}
 echo "|  Mode:       " ${FLAG}
 echo "--------------------------------"
 echo "--------( HyperQB END )---------"
-
 echo ""
 
 # exit 1
-
 ## TODO: update these two scripts using python
-echo "=== witness/counterexample ==="
-echo "Given "${QS} "with" ${OUTCOME} "result: "
-if grep -q V "${QUABS_OUT}"; 
-then
-  echo "witness/counterexample available!"
-  # echo "parsing into well-formatted file..."
-  ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-  ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
-else
-  echo "no witness/counterexample."
-fi
+# echo "=== witness/counterexample ==="
+# echo "Given "${QS} "with" ${OUTCOME} "result: "
+# if grep -q V "${QUABS_OUT}"; 
+# then
+#   echo "witness/counterexample available!"
+#   # echo "parsing into well-formatted file..."
+#   ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+#   ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
+# else
+#   echo "no witness/counterexample."
+# fi
 
 
 

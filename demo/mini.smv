@@ -11,6 +11,6 @@ MODULE main
     -- Transition Relations
     next(a) :=
       case
-        a: {FALSE};
-        !a: {TRUE};
+        (a): {FALSE};
+        (!a): {TRUE};
       esac;
