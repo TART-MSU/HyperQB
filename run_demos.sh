@@ -8,7 +8,15 @@
 ###   2. Apple Chop Macs might need to use: --platform linux/amd64
 
 HYPERQB="./hyperqb.sh"
+
+
 ### DEMOS, see README for detailed explination
+
+### [demo 0: run simple_krip with simple_krip_formula]
+${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
+# ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 
 ### [demo 1: run bakery algorithm with symmetry property]
 # ${HYPERQB} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -debug
@@ -19,12 +27,6 @@ HYPERQB="./hyperqb.sh"
 ### [demo 3: run info-flow example]
 # ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
 # ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow.smv demo/infoflow2.hq 5 -pes -debug
-
-### [demo 4: run simple_krip with simple_krip_formula]
-# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find
-# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.smv  demo/mini_try.hq 10 -pes -find
-# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
-# ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 
 
 

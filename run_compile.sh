@@ -8,6 +8,7 @@
 # make clean
 # make 
 # cp bin/genqbf ../../exec/genqbf_partialmulti
+# make clean
 # cd ../..
 
 ### genqbf with binary gate ###
@@ -15,6 +16,7 @@
 # make clean
 # make
 # cp bin/genqbf ../../exec/genqbf_bingate
+# make clean
 # cd ../..
 
 ### genqbf with specpfic cases ###
@@ -22,8 +24,10 @@
 # make clean
 # make
 # cp bin/genqbf ../../exec/genqbf_v5
+# make clean
 # cd ../..
 
-# cd src/parser
-# ./build.sh
-# cd ../..
+cd src/parser
+g++ -std=c++17 -Wall -o parser parser.cpp;
+cp parser ../../exec/parser 
+cd ../..

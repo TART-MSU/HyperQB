@@ -1,7 +1,6 @@
 #!/bin/bash
 TIMEFORMAT="%Rs"
 ### Parameters
-MULTI_PARSER=exec/model_parser.py
 ARBITRARY_PARSER=exec/parser.py
 
 ### Select which genqbf to use
