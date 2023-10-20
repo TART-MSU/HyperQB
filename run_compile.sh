@@ -4,12 +4,12 @@
 ######################################
 
 ### new genqbf with partial multi-gate ###
-# cd src/expression/
-# make clean
-# make 
-# cp bin/genqbf ../../exec/genqbf_partialmulti
-# make clean
-# cd ../..
+cd src/expression/
+make clean
+make 
+cp bin/genqbf ../../exec/genqbf_partialmulti
+make clean
+cd ../..
 
 ### genqbf with binary gate ###
 # cd src/genqbf/
