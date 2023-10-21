@@ -8,6 +8,19 @@
 #include <set>
 using namespace std;
 
+// GLOBAL SETTING
+string AND="/\\";
+string OR="\\/";
+string IMPLIES="->";
+string IFF="<->";
+string NOT="~";
+string OPEN_PARAN="(";
+string CLOSE_PARAN=")";
+string COMMENT="--";
+string PRIME="'";
+string NEWL="\n";
+
+
 
 vector<string> to_binary(int n, string var, int max)
 {
@@ -275,7 +288,7 @@ string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type
                 values.pop();
                 string op = ops.top();
                 ops.pop();
-                cout << "??? EVAL: " << val1 << op << val2 << endl;
+                // cout << "??? EVAL: " << val1 << op << val2 << endl;
                 values.push(applyOp(val1, val2, op, var_type));
             }
             // pop opening brace.
@@ -381,11 +394,8 @@ vector<vector<pair<string,string>>> create_init_map (map<string, vector<string>>
 
         state_vec.push_back(possible_states);
     }
-
     state_vec = cart_product(state_vec);
-
     return state_vec;
-
 }
 
 
@@ -514,8 +524,11 @@ string prime_expr(string expr){
             }
         }
     }
-    // cout << rt << endl;
     return rt;
+}
+
+string primed(string var){
+    return var+PRIME;
 }
 
 bool is_digit(const std::string& s)
@@ -531,10 +544,10 @@ void debug_out(string s){
 
 /* Clean up the comments with '--' */
 void cleanup(string &line){
-    string comments = "--";
+    // string comments = "--";
     line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
-    if (line.find(comments)!=string::npos) {
-                line = line.substr(0, line.find(comments));
+    if (line.find(COMMENT)!=string::npos) {
+                line = line.substr(0, line.find(COMMENT));
                 // std::cout << "line: " <<line << endl;
     }
 }
@@ -568,7 +581,7 @@ int main(int argc, char** argv) {
     if (myfile.is_open())
     {
         // collect variables and their types
-        while ( getline(myfile,line))
+        while(getline(myfile,line))
         {
             cleanup(line);
             if (line.find("MODULE") != string::npos) { }
@@ -590,14 +603,14 @@ int main(int argc, char** argv) {
                         && line.find("DEFINE") == string::npos 
                         && line.find("MODULE") == string::npos) {
                     cleanup(line);
+                    // contains(line, "DEI");
 
                     size_t found_next = line.find("next(");
                     // find lines defined like "next(some_var) := some_next"
-                    if (found_next != string::npos && line.find(";") != string::npos) {
+                    if (line.find("next(") != string::npos && line.find(";") != string::npos) 
+                    {
                         found_next += 5;
                         char ch = line[found_next];
-
-                        // cout << "test" << ch << endl;
                         string next_var;
                         while (ch != ')') {
                             next_var += ch;
@@ -606,10 +619,11 @@ int main(int argc, char** argv) {
                         }
 
                         vector<string> next_state_list = {"TRUE"};
-                        line.pop_back();
+                        
                         size_t found_colon = line.find(":=");
                         size_t found_bracket = line.find("{");
                         if (found_bracket != string::npos) {
+                            line.pop_back(); // pop "}"
                             string lst = line.substr(found_bracket+1);
                             lst.pop_back();
                             stringstream ss (lst); //create string stream from the string
@@ -621,7 +635,6 @@ int main(int argc, char** argv) {
                         } else {
                             next_state_list.push_back(line.substr(found_colon+2));
                         }
-
                         
                         next[next_var].push_back(next_state_list);
                     // find lines defined with "next(some_var)" and "esac;"
@@ -679,7 +692,8 @@ int main(int argc, char** argv) {
                             }
                         }
                     // find init lines
-                    } else if (line.find("init") != string::npos) {
+                    } 
+                    else if (line.find("init") != string::npos) {
                         init_state(vars, var_type, init, line);
                         all_init_states = create_init_map(init);
                     } else {
@@ -688,100 +702,6 @@ int main(int argc, char** argv) {
                     }
 
 
-                    // // find lines defined like "next(some_var) := some_next"
-                    // if (found_next != string::npos && line.find(";") != string::npos) {
-                    //     found_next += 5;
-                    //     char ch = line[found_next];
-                    //     // cout << "test" << ch << endl;
-                    //     string next_var;
-                    //     while (ch != ')') {
-                    //         next_var += ch;
-                    //         found_next += 1;
-                    //         ch = line[found_next];
-                    //     }
-
-                    //     vector<string> next_state_list = {"TRUE"};
-                    //     // next[next_var].first = "TRUE";
-                    //     line.pop_back();
-                    //     size_t found_colon = line.find(":=");
-                    //     size_t found_bracket = line.find("{");
-                    //     if (found_bracket != string::npos) {
-                    //         string lst = line.substr(found_bracket+1);
-                    //         lst.pop_back();
-                            
-                    //         stringstream ss (lst); //create string stream from the string
-                    //         while(ss.good()) {
-                    //             string substring;
-                                
-                    //             getline(ss, substring, ','); //get first string delimited by comma
-                    //             next_state_list.push_back(substring);
-                    //         }
-                    //     } else {
-                    //         next_state_list.push_back(line.substr(found_colon+2));
-                    //     }
-
-                        
-                    //     next[next_var].push_back(next_state_list);
-                    // // find lines defined with "next(some_var)" and "esac;"
-                    // } else if (found_next != string::npos && line.find(";") == string::npos) {
-                    //     found_next += 5;
-                    //     char ch = line[found_next];
-                    //     // cout << "test" << ch << endl;
-                    //     string next_var;
-                    //     while (ch != ')') {
-                    //         next_var += ch;
-                    //         found_next += 1;
-                    //         ch = line[found_next];
-                    //     }
-                    //     // debug_out(line);
-                    //     // debugging
-                    //     // std::cout << "next var chars: " << next_var << endl;
-                    //     getline (myfile, line);
-                    //     line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
-                    //     if (line.find("--")!=string::npos) {
-                    //         line = line.substr(0, line.find("--"));
-                    //         std::cout << "line: " <<line << endl;
-                    //     }
-                    //     if (line == "case") {
-                                    
-                    //         getline(myfile, line);
-                    //         line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
-                    //         if (line.find("--")!=string::npos) {
-                    //             line = line.substr(0, line.find("--"));
-                    //             std::cout << "line: " <<line << endl;
-                    //         }
-                    //         while (line.find("esac") == string::npos){
-
-                    //             // skip over blank lines and comments
-                    //             while (line == "" or line.find("--") != string::npos) {
-                    //                 getline(myfile, line);
-                    //                 line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
-                    //                 if (line.find("--")!=string::npos) {
-                    //                     line = line.substr(0, line.find("--"));
-                    //                     std::cout << "line: " <<line << endl;
-                    //                 }
-                    //             }
-                    //             // debugging
-                    //             // cout << "next line: " << line << endl;
-                    //             next_state(vars, init, next, next_var, line);
-                                        
-                    //             getline(myfile, line);
-                    //             line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
-                    //             if (line.find("--")!=string::npos) {
-                    //                 line = line.substr(0, line.find("--"));
-                    //                 std::cout << "line: " <<line << endl;
-                    //             }
-                            
-                    //         }
-                    //     }
-                    // // find init lines
-                    // } else if (line.find("init") != string::npos) {
-                    //     init_state(vars, var_type, init, line);
-                    //     all_init_states = create_init_map(init);
-                    // // deal with comments and white space
-                    // } else {
-                    //     // continue;
-                    // }
                 }
             cleanup(line);
             } if (line == "DEFINE") {
@@ -866,15 +786,20 @@ int main(int argc, char** argv) {
     std::cout << "\nNEXT MAP:" << endl;
     for(const auto& elem : next)
     {
-        std::cout << elem.first << " transition: " << endl;
-        for (auto x : elem.second) {
-            // std::cout << "_________" << endl;
+        std::cout << elem.first << " trans: " << endl;
+
+        for (auto x :elem.second) {
             for (auto z: x) {
                 std::cout << z << ", ";
             }
+            std::cout << "\n";
         }
         std::cout << "\n";
     }
+
+
+
+
 
     // output initial conditions *********************************
     ofstream init_file;
@@ -921,14 +846,15 @@ int main(int argc, char** argv) {
         debug_out("VARNAME: " + var_name);
         string cases;
         string rest_cases = "~(";
+        // int offset = 1;
         for (const auto& x: var.second) {
-            for (int i = 0; i < x.size() ; i+=2) {
-                string LS = x[i];
-                string RS = x[i+1];
-                string LS_expr;
-                string RS_expr;
-                
-                if(LS == "TRUE"){
+            // parse pre-condition
+            string LS = x[0];
+            string LS_expr;
+            if(LS == "TRUE"){
+                if (var.second.size()==1){
+                    LS_expr = "TRUE";
+                }else{
                     if(rest_cases == "~("){
                         LS_expr = "";
                     }
@@ -938,30 +864,28 @@ int main(int argc, char** argv) {
                         LS_expr = rest_cases + ")";
                     }
                 }
-                else{
-                    cout << LS << endl;
-                    LS_expr = evaluate(condition_tokenizer(LS), var_type);
-                    rest_cases = rest_cases + LS_expr + "\\/";
-                }
+            }else{
+                LS_expr = evaluate(condition_tokenizer(LS), var_type);
+                rest_cases = rest_cases + LS_expr + "\\/";
+            }    
 
-
-
-
-
-                string PRIME = "'";
-                string NOT   = "~";
-                string EQ    = "=";
-
+            string PRIME = "'";
+            string NOT   = "~";
+            string EQ    = "=";
+            string RS_expr;
+            for (int i = 1; i < x.size() ; i+=1) {
+                // parse pos-condition
+                string RS = x[i];
                 if (RS == "TRUE"){
-                    RS_expr = var_name + PRIME;
+                    RS_expr += var_name + PRIME;
                 }
                 else if (RS == "FALSE"){
-                    RS_expr = NOT + var_name + PRIME;
+                    RS_expr += NOT + var_name + PRIME;
                 }
                 // small trick
                 else if (is_digit(RS)){
                     RS = var_name + EQ + RS;
-                    RS_expr = prime_expr(evaluate(condition_tokenizer(RS), var_type));
+                    RS_expr += prime_expr(evaluate(condition_tokenizer(RS), var_type));
                 }
                 else if (RS.find('+') != string::npos || RS.find('-') != string::npos){
                     string var_range = var_type[var_name];
@@ -974,30 +898,26 @@ int main(int argc, char** argv) {
                         temp_R = prime_expr(evaluate(condition_tokenizer(var_name+"="+to_string(i+1)), var_type));
                         RS_expr += "(("+temp_L+") -> ("+temp_R+"))/\\\n";
                     }
-                    RS_expr =  RS_expr.substr(0, RS_expr.size()-3);
-                    RS_expr += ")";
-                    debug_out(RS_expr);
-                }
-                else{
-                    RS_expr = evaluate(condition_tokenizer(RS), var_type);
-                    RS_expr = "(" + var_name + PRIME + " <-> " + RS_expr + ")";
-                } 
-                
-
-                if (LS_expr != ""){
-                    cases = "((" + LS_expr + ") -> (" + RS_expr + "))/\\"; 
+                    RS_expr +=  RS_expr.substr(0, RS_expr.size()-3);
+                    RS_expr += ")";                
+                }else{   
+                    string expr = evaluate(condition_tokenizer(RS), var_type);
+                    RS_expr += OPEN_PARAN + primed(var_name) + IFF + expr + CLOSE_PARAN;
+                }     
+                RS_expr += "\\/" ; 
+            }
+            RS_expr.pop_back();
+            RS_expr.pop_back();
+            if (LS_expr != ""){
+                cases = "((" + LS_expr + ") -> (" + RS_expr + ")) /\\"; 
                 }
                 else{
                     cases = RS_expr + "/\\";
                 }
-                
-
-                debug_out(cases);
-                trans_file << cases << endl;
-                
-            }
+            trans_file << cases << endl;  
         }
     }
+
     trans_file << "TRUE" << endl;
 
 
@@ -1006,8 +926,8 @@ int main(int argc, char** argv) {
     for(const auto& elem : define_map)
     {
         string condition = evaluate(condition_tokenizer(elem.second), var_type);
-        // trans_file << elem.first << endl;
-        define_ss << elem.first << " <-> " << condition << " /\\ " << elem.first << "' <-> " <<  condition <<  " /\\ \n";
+        define_ss << elem.first << IFF << condition << AND << primed(elem.first) << IFF <<  condition << AND << NEWL;
+        // define_ss << elem.first << " <-> " << condition << " /\\ " << elem.first << "' <-> " <<  condition <<  " /\\ \n";
     }
     trans_file << define_ss.str().substr(0, define_ss.str().size()-4);
     trans_file.close();    
