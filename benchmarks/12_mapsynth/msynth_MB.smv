@@ -33,7 +33,6 @@ ASSIGN
       (PC=3): 3;
       TRUE: PC+1;
     esac;
-
-
+    
 DEFINE
   FAIL := (atom_r & atom_s);

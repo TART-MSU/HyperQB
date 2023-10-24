@@ -12,7 +12,7 @@ MODULE main
     
 
     -- Transition Relations
-    next(a) := {TRUE, FALSE};
+    next(a) := {FALSE, TRUE};
       -- case
         -- TRUE: {TRUE, FALSE};
         -- a: FALSE;

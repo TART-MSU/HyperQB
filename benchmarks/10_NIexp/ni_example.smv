@@ -16,17 +16,21 @@ MODULE main
 	location: 1..7;
 	x: 0..10;
 	nondet: boolean;
-
- FROZENVAR
 	high: boolean;
 	low: 0..5;
+
+--  FROZENVAR
+	-- high: boolean;
+	-- low: 0..5;
 
  ASSIGN
 	init(location) := 1 ;
 	init(nondet) := {TRUE, FALSE};
 	init(x) := {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	init(low) := {0, 1, 2, 3, 4, 5};
+	next(low) := low;
 	init(high) := {TRUE, FALSE};
+	next(high) := high;
 
 	next(location) := case
 		(location = 1 & high): 2;

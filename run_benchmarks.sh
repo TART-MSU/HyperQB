@@ -1,129 +1,624 @@
-#!/bin/sh
-##################################################
-#  This script runs ALL experiments (0.1-11.1)   #
-##################################################
+#!/bin/bash
+TIMEFORMAT="TOTAL: %Rs"
+# HyperQB driver
+HYPERQB="./hyperqb.sh"
+# AH and AHQ bins
+AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
+AUTOHYPERQ='/Users/tzuhan/install/autohyperq/app/AutoHyperQ'
+# Timeout
+TIMEOUT="timeout 1200s"
+echo ${TIMEOUT}
 
-### Requirements:
-### 1. Before running, please make sure Docker is installed: (https://docs.docker.com/get-docker/)
-### 2. Apple Chip Macs might need to use: --platform linux/amd64
+CASEFOLDER="benchmarks/"
+AHFORMULAS="AH_formulas/"
 
-### HyperQB Tool Parameters
-HyperQB=./hyperqb.sh
-PES='-pes' # default value
-OPT='-opt'
-HPES='-hpes'
-HOPT='-hopt'
-BUGHUNT="-bughunt" # default value is -bughunt
-FIND="-find"
+HQ="FALSE"
+COMPAH="FALSE"
+COMPAHQ="FALSE"
+RUNALL="FALSE"
 
-###################
-# All Experiments #
-###################
-
-### EXPERIMENTS FROM TACAS'21 PAPER ###
-
-CASEFOLDER="benchmarks"
-CASE="1_bakery"
-### [0.1-0.3 BAKERY] 
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S1_3proc.hq 7 ${PES} ${FIND}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S2_3proc.hq 12 ${PES} ${FIND}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S3_3proc.hq 20 ${OPT} ${FIND}
-### [1.1-1.4 BAKERY]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym1_3proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym2_3proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_5procs.smv ${CASEFOLDER}/${CASE}/bakery_5procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_5procs.smv ${CASEFOLDER}/${CASE}/bakery_5procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym2_5proc.hq 10 ${PES} ${BUGHUNT}
+if (echo $* | grep -e "-AH" -q) then 
+    COMPAH="TRUE" 
+fi
+if (echo $* | grep -e "-QAH" -q) then 
+    COMPAHQ="TRUE"
+fi
 
 
-CASE="2_snark"
-### [2.1-2.2 SNARK 2.1-2.2]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/snark1_M1_concurrent.smv ${CASEFOLDER}/${CASE}/snark1_M2_sequential.smv  ${CASEFOLDER}/${CASE}/snark1_formula.hq 18 ${PES} ${FIND} 
-# ${HyperQB} ${CASEFOLDER}/${CASE}/snark2_new_M1_concurrent.smv  ${CASEFOLDER}/${CASE}/snark2_new_M2_sequential.smv ${CASEFOLDER}/${CASE}/snark2_formula.hq 30 ${PES} ${FIND}
+### TACAS21 EXPERIMENTS ###
 
-
-CASE="3_ni"
-### [3.1-3.2 3-Thread]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/NI_incorrect.smv ${CASEFOLDER}/${CASE}/NI_incorrect.smv ${CASEFOLDER}/${CASE}/NI_formula.hq 57 ${HPES} ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/NI_correct.smv ${CASEFOLDER}/${CASE}/NI_correct.smv ${CASEFOLDER}/${CASE}/NI_formula.hq 57 ${HOPT} ${BUGHUNT}
-
-
-CASE="4_nrp"
-### [4.1-4.2 Non-repudiation Protocol]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/NRP_incorrect.smv ${CASEFOLDER}/${CASE}/NRP_incorrect.smv ${CASEFOLDER}/${CASE}/NRP_formula.hq 15 ${HPES} ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/NRP_correct.smv ${CASEFOLDER}/${CASE}/NRP_correct.smv ${CASEFOLDER}/${CASE}/NRP_formula.hq 15 ${HOPT}  ${BUGHUNT}
-
-
-CASE="5_planning"
-### [5 Robotic planning: Initial State Robustness]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/robotic_robustness_100.smv ${CASEFOLDER}/${CASE}/robotic_robustness_100.smv ${CASEFOLDER}/${CASE}/robotic_robustness_formula.hq 20 ${PES} ${FIND}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/robotic_robustness_400.smv ${CASEFOLDER}/${CASE}/robotic_robustness_400.smv  ${CASEFOLDER}/${CASE}/robotic_robustness_formula.hq 40 ${PES} ${FIND}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/robotic_robustness_1600.smv ${CASEFOLDER}/${CASE}/robotic_robustness_1600.smv ${CASEFOLDER}/${CASE}/robotic_robustness_formula.hq 80 ${PES} ${FIND}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/robotic_robustness_3600.smv ${CASEFOLDER}/${CASE}/robotic_robustness_3600.smv ${CASEFOLDER}/${CASE}/robotic_robustness_formula.hq 120 ${PES} ${FIND}
-
-
-CASE="6_mutation"
-### [6.1 Mutation Testing]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/mutation_testing.smv ${CASEFOLDER}/${CASE}/mutation_testing.smv ${CASEFOLDER}/${CASE}/mutation_testing.hq 10 ${HOPT} ${FIND}
-
+if ((echo $* | grep -e "0.1" -q) || (echo $* | grep -e "-all" -q)) then
+CASE="Case 0.1:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    HQ=${CASEFOLDER}'1_bakery/bakery_phi_S1_3proc.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.1.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 7 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "0.2" -q) || (echo $* | grep -e "-all" -q)) then
+CASE="Case 0.2:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    HQ=${CASEFOLDER}'1_bakery/bakery_phi_S2_3proc.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.2.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 12 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then 
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} --witness
+    fi
+fi
+if ((echo $* | grep -e "0.3" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 0.3:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    HQ=${CASEFOLDER}'1_bakery/bakery_phi_S3_3proc.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.3.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 20 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then 
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} --witness
+    fi
+fi
+if ((echo $* | grep -e "1.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 1.1:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym1_3proc.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.1.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "1.2" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 1.2:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym2_3proc.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.2.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "1.3" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 1.3:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'1_bakery/bakery_5procs.smv'
+    HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym1_5proc.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.3.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "1.4" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 1.4:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'1_bakery/bakery_5procs.smv'
+    HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym2_5proc.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.4.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "2.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 2.1:" 
+    echo ${CASE}
+#     SMV1=${CASEFOLDER}'2_snark/snark1_M1_concurrent.smv'
+#     SMV2=${CASEFOLDER}'2_snark/snark1_M2_sequential.smv'
+#     HQ=${CASEFOLDER}'2_snark/snark1.hq'
+#     HQAUTO=${CASEFOLDER}${AHFORMULAS}'2.1.hq'
+#     ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 10 -pes -find
+#     echo ""
+#     if (${COMPAH} -eq "TRUE") then
+#     echo "------(AutoHyper Starts)------"
+#     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
+#     fi
+#     if (${COMPAHQ} -eq "TRUE") then
+#     echo "------(AutoHyperQ Starts)------"
+#     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
+#     fi
+fi
+if ((echo $* | grep -e "3.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 3.1:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'3_ni/NI_incorrect.smv'
+    HQ=${CASEFOLDER}'3_ni/NI_formula.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'3.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 57 -hpes -bughunt
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "3.2" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 3.2:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'3_ni/NI_correct.smv'
+    HQ=${CASEFOLDER}'3_ni/NI_formula.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'3.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 57 -hopt -bughunt
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "4.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 4.1:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'4_nrp/NRP_incorrect.smv'
+    HQ=${CASEFOLDER}'4_nrp/NRP_formula.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'4.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 15 -hpes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "4.2" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 4.2:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'4_nrp/NRP_correct.smv'
+    HQ=${CASEFOLDER}'4_nrp/NRP_formula.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'4.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 15 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "5.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 5.1:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'5_planning/robotic_robustness_100.smv'
+    HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 20 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "5.2" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 5.2:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'5_planning/robotic_robustness_400.smv'
+    HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 40 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "5.3" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 5.3:" 
+    echo ${CASE}
+    # SMV=${CASEFOLDER}'5_planning/robotic_robustness_1600.smv'
+    # HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
+    # HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
+    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 80 -hopt -find
+    # echo ""
+    # if (${COMPAH} -eq "TRUE") then
+    # echo "------(AutoHyper Starts)------"
+    # echo "formula: " ${HQAUTO}
+    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    # fi
+    # if (${COMPAHQ} -eq "TRUE") then
+    # echo "------(AutoHyperQ Starts)------"
+    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    # fi
+fi
+if ((echo $* | grep -e "5.4" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 5.4:" 
+    echo ${CASE}
+    # SMV=${CASEFOLDER}'5_planning/robotic_robustness_3600.smv'
+    # HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
+    # HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
+    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 120 -hopt -find
+    # echo ""
+    # if (${COMPAH} -eq "TRUE") then
+    # echo "------(AutoHyper Starts)------"
+    # echo "formula: " ${HQAUTO}
+    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    # fi
+    # if (${COMPAHQ} -eq "TRUE") then
+    # echo "------(AutoHyperQ Starts)------"
+    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    # fi
+fi
+if ((echo $* | grep -e "6.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 6.1:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'6_mutation/mutation_testing.smv'
+    HQ=${CASEFOLDER}'6_mutation/mutation_testing.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'6.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
 
 ### NEW ADDED EXPERIMENTS ###
+if ((echo $* | grep -e "7.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 7.1:" 
+    echo ${CASE}
+    SMV1=${CASEFOLDER}'7_coterm/coterm1.smv'
+    SMV2=${CASEFOLDER}'7_coterm/coterm2.smv'
+    HQ=${CASEFOLDER}'7_coterm/coterm.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'7.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 102 -hopt -bughunt
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "8.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 8.1:" 
+    echo ${CASE}
+    SMV=${CASEFOLDER}'8_deniability/den_small.smv'
+    HQ=${CASEFOLDER}'8_deniability/den_f1.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'8.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 10 -hopt -debug
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "8.2" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 8.2:"
+    echo ${CASE}
+    # SMV=${CASEFOLDER}'8_deniability/den.smv'
+    # HQ=${CASEFOLDER}'8_deniability/den_f1.hq'
+    # HQAUTO=${CASEFOLDER}${AHFORMULAS}'8.hq' 
+    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 20 -hopt -debug
+    # echo ""
+    # if (${COMPAH} -eq "TRUE") then
+    # echo "------(AutoHyper Starts)------"
+    # echo "formula: " ${HQAUTO}
+    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    # fi
+    # if (${COMPAHQ} -eq "TRUE") then
+    # echo "------(AutoHyperQ Starts)-----"
+    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    # fi
+fi
+if ((echo $* | grep -e "9.1" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 9.1:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'9_buffer/unscheduled_buffer.smv'
+    HQ=${CASEFOLDER}'9_buffer/classic_OD.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'9.1.hq' 
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "9.2" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 9.2:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'9_buffer/scheduled_buffer.smv'
+    HQ=${CASEFOLDER}'9_buffer/intrans_OD.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'9.2.hq' 
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "9.3" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 9.3:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'9_buffer/scheduled_buffer.smv'
+    HQ=${CASEFOLDER}'9_buffer/intrans_GMNI.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'9.2.hq' 
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then 
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "10.1" -q)|| (echo $* | grep -e "-all" -q)) then 
+# Case 10: NIexp
+CASE="Case 10.1:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'10_NIexp/ni_example.smv'
+    HQ=${CASEFOLDER}'10_NIexp/tini.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'10.1.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
+    fi
+fi
+if ((echo $* | grep -e "10.2" -q)|| (echo $* | grep -e "-all" -q)) then 
+CASE="Case 10.2:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'10_NIexp/ni_example.smv'
+    HQ=${CASEFOLDER}'10_NIexp/tsni.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'10.2.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
+    fi
+fi
+if ((echo $* | grep -e "11.1" -q)|| (echo $* | grep -e "-all" -q)) then 
+# Case 11: ksafety
+CASE="Case 11:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'11_ksafety/doubleSquare.smv'
+    HQ=${CASEFOLDER}'11_ksafety/doubleSquare.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'11.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 64 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
+    fi
 
-CASE="7_coterm"
-### [7.1 Coterm]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/coterm1.smv ${CASEFOLDER}/${CASE}/coterm2.smv ${CASEFOLDER}/${CASE}/coterm.hq 102 ${OPT} ${BUGHUNT}
+fi
+if ((echo $* | grep -e "12.1" -q)|| (echo $* | grep -e "-all" -q)) then 
+# Case 12: Mappying Synthesis
+CASE="Case 12.1:"
+    echo ${CASE}
+    SMV_A=${CASEFOLDER}'12_mapsynth/msynth_MA.smv'
+    SMV_B=${CASEFOLDER}'12_mapsynth/msynth_MB.smv'
+    SMV_M=${CASEFOLDER}'12_mapsynth/msynth_MM.smv'
+    HQ=${CASEFOLDER}'12_mapsynth/msynth.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'12.1.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO}
+    fi
 
+fi
+if ((echo $* | grep -e "12.2" -q)|| (echo $* | grep -e "-all" -q)) then 
+CASE="Case 12.2:"
+    echo ${CASE}
+    SMV_A=${CASEFOLDER}'12_mapsynth/msynth2_MA.smv'
+    SMV_B=${CASEFOLDER}'12_mapsynth/msynth2_MB.smv'
+    SMV_M=${CASEFOLDER}'12_mapsynth/msynth2_MM.smv'
+    HQ=${CASEFOLDER}'12_mapsynth/msynth2.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'12.2.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -hopt -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO}
+    fi
 
-CASE="8_deniability"
-### [8.1 - 8.2 Deniability]
-# time ${HyperQB} ${CASEFOLDER}/${CASE}/den_small.smv ${CASEFOLDER}/${CASE}/den_small.smv ${CASEFOLDER}/${CASE}/den_small.smv ${CASEFOLDER}/${CASE}/den_f1.hq 10 ${OPT} ${BUGHUNT}
-# time ${HyperQB} ${CASEFOLDER}/${CASE}/den.smv ${CASEFOLDER}/${CASE}/den.smv ${CASEFOLDER}/${CASE}/den.smv ${CASEFOLDER}/${CASE}/den_f1.hq 20 ${OPT} ${BUGHUNT}
+fi
+if ((echo $* | grep -e "13.1" -q)|| (echo $* | grep -e "-all" -q)) then 
+# Case 13: TeamLTL
+CASE="Case 13.1:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'13_teamltl/team.smv'
+    HQ=${CASEFOLDER}'13_teamltl/team.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'13.1.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 10 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then 
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
+    fi
 
+fi
+if ((echo $* | grep -e "13.2" -q)|| (echo $* | grep -e "-all" -q)) then 
+CASE="Case 13.2:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'13_teamltl/team2.smv'
+    HQ=${CASEFOLDER}'13_teamltl/team.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'13.2.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 20 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
+    fi
 
-CASE="9_buffer"
-### [9.1 - 9.3 Intransitive]
-${HyperQB} ${CASEFOLDER}/${CASE}/unscheduled_buffer.smv ${CASEFOLDER}/${CASE}/unscheduled_buffer.smv ${CASEFOLDER}/${CASE}/classic_OD.hq 10 ${PES} ${BUGHUNT}
-${HyperQB} ${CASEFOLDER}/${CASE}/scheduled_buffer.smv ${CASEFOLDER}/${CASE}/scheduled_buffer.smv ${CASEFOLDER}/${CASE}/intrans_OD.hq 10 ${OPT} ${BUGHUNT}
-${HyperQB} ${CASEFOLDER}/${CASE}/scheduled_buffer.smv ${CASEFOLDER}/${CASE}/scheduled_buffer.smv ${CASEFOLDER}/${CASE}/intrans_GMNI.hq 10 ${PES} ${BUGHUNT}
+fi
+if ((echo $* | grep -e "14.1" -q)|| (echo $* | grep -e "-all" -q)) then 
+# case 14.1: input non-determinism (overhead: inclusion check)
+CASE="Case 14.1:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'14_ndet/NI_v2.smv'
+    HQ=${CASEFOLDER}'14_ndet/NI.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'14.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 5 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
+    fi
 
-
-CASE="10_NIexp"
-### [10.1 - 10.2 TINI and TSNI]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/ni_example.smv ${CASEFOLDER}/${CASE}/ni_example.smv ${CASEFOLDER}/${CASE}/tini.hq 10 ${OPT}  ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/ni_example.smv ${CASEFOLDER}/${CASE}/ni_example.smv ${CASEFOLDER}/${CASE}/tsni.hq 10 ${OPT} ${BUGHUNT}
-
-
-CASE="11_ksafety" 
-### [11.1 K-safety]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/doubleSquare.smv ${CASEFOLDER}/${CASE}/doubleSquare.smv ${CASEFOLDER}/${CASE}/doubleSquare1.hq 64 ${PES} ${BUGHUNT}
-
-
-
-CASE="12_mapsynth"
-# SMV_A=benchmarks/12_mapsynth/msynth_MA.smv
-# SMV_B=benchmarks/12_mapsynth/msynth_MB.smv
-# SMV_M=benchmarks/12_mapsynth/msynth_MM.smv
-# HQ=benchmarks/12_mapsynth/msynth_f1.hq
-# time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -pes -find
-# time ${HYPERQB} ${CASEFOLDER}/${CASE}/msynth_MM.smv ${CASEFOLDER}/${CASE}/msynth_MA.smv ${CASEFOLDER}/${CASE}/msynth_MB.smv ${CASEFOLDER}/${CASE}/msynth_f1.hq 5 -pes -find
-
-# time ${HYPERQB} benchmarks/12_mapsynth/msynth_MM.smv benchmarks/12_mapsynth/msynth_MA.smv benchmarks/12_mapsynth/msynth_MB.smv benchmarks/12_mapsynth/msynth_f1.hq 5 -pes -find
-
-# SMV_A='benchmarks/12_mapsynth/msynth2_MA.smv'
-# SMV_B='benchmarks/12_mapsynth/msynth2_MB.smv'
-# SMV_M='benchmarks/12_mapsynth/msynth2_MM.smv'
-# HQ='cases_compare/msynth2_f1.hq'
-# time ${HYPERQB} ${CASEFOLDER}/${CASE}/msynth_MM.smv ${CASEFOLDER}/${CASE}/msynth_MA.smv ${CASEFOLDER}/${CASE}/msynth_MB.smv ${CASEFOLDER}/${CASE}/msynth_f1.hq 8 -pes -find
-
-# time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 8 -pes -find
-
-
-CASE="13_teamltl"
-# echo ${CASE}
-# time ${HyperQB} ${CASEFOLDER}/${CASE}/team.smv ${CASEFOLDER}/${CASE}/team.smv ${CASEFOLDER}/${CASE}/team.smv ${CASEFOLDER}/${CASE}/team_f1.hq 10 ${PES} ${BUGHUNT}
-# time ${HyperQB} ${CASEFOLDER}/${CASE}/team2.smv ${CASEFOLDER}/${CASE}/team2.smv ${CASEFOLDER}/${CASE}/team2.smv ${CASEFOLDER}/${CASE}/team_f1.hq 20 ${PES} ${BUGHUNT}
-
-
-CASE="14_ndet"
-# time ${HyperQB} ${CASEFOLDER}/${CASE}/NI_v1.smv ${CASEFOLDER}/${CASE}/NI_v1.smv ${CASEFOLDER}/${CASE}/NI_v1.smv ${CASEFOLDER}/${CASE}/NI_f1.hq 5 ${PES} ${BUGHUNT}
-# time ${HyperQB} ${CASEFOLDER}/${CASE}/NI_v2.smv ${CASEFOLDER}/${CASE}/NI_v2.smv  ${CASEFOLDER}/${CASE}/NI_f1.hq 5 ${PES} ${BUGHUNT}
-# time ${HyperQB} ${CASEFOLDER}/${CASE}/NI_v3.smv ${CASEFOLDER}/${CASE}/NI_v3.smv  ${CASEFOLDER}/${CASE}/NI_f1.hq 5 ${PES} ${BUGHUNT}
+fi
+if ((echo $* | grep -e "14.2" -q)|| (echo $* | grep -e "-all" -q)) then 
+# case 14.2: transition non-determinism (overhead: inclusion check)
+CASE="Case 14.2:"
+    echo ${CASE}
+    SMV=${CASEFOLDER}'14_ndet/NI_v3.smv'
+    HQ=${CASEFOLDER}'14_ndet/NI.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'14.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 5 -pes -find
+    echo ""
+    if (${COMPAH} -eq "TRUE") then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
+    fi
+    if (${COMPAHQ} -eq "TRUE") then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
+    fi
+fi

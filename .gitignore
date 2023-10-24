@@ -1,2 +1,6 @@
 .DS_Store
 build_*
+*.ova
+*.zip
+*.hoa
+_build*

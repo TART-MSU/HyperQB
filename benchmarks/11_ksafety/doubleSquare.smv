@@ -14,15 +14,17 @@ MODULE main
 	location: 1..7;
 	y: 0..50;
 	z: 0..20;
-
- FROZENVAR
 	h: boolean;
 	x: 0..10;
 
  ASSIGN
 	init(location) := 1 ;
 	init(h) := {TRUE, FALSE} ;
-	init(x) := 0..5;
+	next(h) := h;
+
+	init(x) := {0,1,2,3,4,5};
+	next(x) := x;
+
 	init(y) := 0;
 	init(z) := 0;
 

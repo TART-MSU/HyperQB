@@ -4,12 +4,12 @@
 ######################################
 
 ### new genqbf with partial multi-gate ###
-cd src/expression/
-make clean
-make 
-cp bin/genqbf ../../exec/genqbf_partialmulti
-make clean
-cd ../..
+# cd src/expression/
+# make clean
+# make 
+# cp bin/genqbf ../../exec/genqbf_partialmulti
+# make clean
+# cd ../..
 
 ### genqbf with binary gate ###
 # cd src/genqbf/
@@ -28,7 +28,7 @@ cd ../..
 # cd ../..
 
 cd src/parser
-# g++ -std=c++17 -Wall -o parser parser.cpp
-g++ parser.cpp -o parser 
+g++ -std=c++17 -Wall -o parser parser.cpp
+# g++ parser.cpp -o parser 
 cp parser ../../exec/parser 
 cd ../..

@@ -1,0 +1,4 @@
+forall A. forall B.
+G(({P2_unclass_in}_A={P2_unclass_in}_B)
+->
+({P2_unclass_out}_A={P2_unclass_out}_B))

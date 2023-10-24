@@ -15,7 +15,6 @@ Our code is under MIT license as presented in LICENSE.tex,
 while the existing tool, QuAbs, is under AGPL license.  
 
 
-
 ## Get Started
 You can start using HyperQB in 2 simple steps:
 1. First install [docker](https://docs.docker.com/get-docker/). 
@@ -26,8 +25,6 @@ HyperQB will automatically pull the image and execute the scripts to avoid possi
 - ```cd HyperQB```
 
 You are now ready to run HyperQB!:D
-
-
 
 ## How to Use
 To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
@@ -40,19 +37,18 @@ To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
 RUN HyperQB in the following format:
     ```./hyperqube <list of models> <formula> <k> <sem> <mode>```
 
-To observe the tool outputs (i.e., counterexample or witness) 
-    See ```*_OUTPUT_formatted.cex``` for parsed outputs have variables, time stamps, and values neatly presented.
+
     
 Demo Examples:
 1. [demo 1: run bakery algorithm with symmetry property]
-```./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes```
+```./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -bughunt```
 
 2. [dem0 2: run SNARK algorithm with linearizability propoerty]
-```./hyperqb.sh demo/SNARK_conc.smv demo/SNARK_seq.smv demo/lin.hq 18 -pes```    
+```./hyperqb.sh demo/SNARK1_conc.smv demo/SNARK2_seq.smv demo/lin.hq 18 -pes -bughunt```    
 
 
 ## Experiments
-(all models and formulas are in directory cases_bmc)
+(all models and formulas are in directory benchmarks)
 
 Our evaluations include the following cases,<br/>
 - Case #1.1-#1.4: Symmetry in the Bakery Algorithm<br/>
@@ -71,16 +67,19 @@ Our evaluations include the following cases,<br/>
 - Case #9.1 - #9.3: Intransitive Non-interference<br/>
 - Case #10.1 - #10.2: TINI and TSNI
 - Case #11.1: K-safety
+- Case #12.1: MapSynth
+- Case #12.2: MapSynth
+- Case #13.1: TeamLTL
+- Case #13.2: TeamLTL
+- Case #14.1: Non-deterministic init
+- Case #14.2: Non-deterministic trans
 
 
 ## One-click Scripts
 We provide several convenient scripts for executing exeperiments. 
+- ```./run_demos.sh``` to run demo examples
+- ```./run_table <{case#, -all}> ``` to run either a specific case, or all cases. (additional flags -AH and -QAH provides comparisons with other model checkers.)
 
-- run ```./run_demos.sh``` to run demo examples
-- run ```./run_tacas21.sh``` to run all experiments for TACAS21
-- run ```./run_cav23.sh``` to run all experiments for CAV23 
-
-We also provide all the command lines needed for each experiment in the document *RUN.txt*
 
 
 ## People
@@ -89,6 +88,6 @@ Authors:
 - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University.
 - [César Sánchez](https://software.imdea.org/~cesar/), IMDEA Software Institute.
 
-Publication:
+## Publication
 - [Bounded Model Checking for Hyperproperties (TACAS'21)](https://link.springer.com/content/pdf/10.1007/978-3-030-72016-2_6.pdf)
 

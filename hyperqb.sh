@@ -1,5 +1,5 @@
 #!/bin/bash
-TIMEFORMAT="%Rs"s
+TIMEFORMAT="%Rs"
 
 ### which genqbf ###
 GENQBF=exec/genqbf_partialmulti # new - multigate 
@@ -118,15 +118,15 @@ fi
 
 ### parse the NuSMV models and the given formula ###
 
-# printf "NuSMV and HyperLTL parsing...\n" 
-# echo "(using docker for parsing)"
+printf "NuSMV and HyperLTL parsing...\n" 
+
+# echo "(docker for stable parsing)"
 # TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 
 
-echo "(c++ parsing)"
+# echo "(c++ parsing)"
 TRANSLATE="exec/translate.py"
 python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
-
 
 
 # echo "(using docker with pip-built)"
@@ -153,6 +153,16 @@ n=${#QS}
 if [ ${n} -eq 2 ]
 then
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast -new "NN" )
+elif [ ${n} -eq 5 ]
+then
+  Q=${OUTFOLDER}I_3.bool
+  W=${OUTFOLDER}R_3.bool
+  Z=${OUTFOLDER}I_4.bool
+  X=${OUTFOLDER}R_4.bool
+  C=${OUTFOLDER}I_5.bool
+  V=${OUTFOLDER}R_5.bool
+  GENQBF=exec/genqbf_v5 # updated genqbf
+  TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${Q} -W ${W} -Z ${Z} -X ${X} -C ${C} -V ${V} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n )
 else
   lst_NEW_QUANTS="AAE EAA EEA AEA EEE AEE AAAE EAAE AAAE AAEE EAAEE AAAEEE" #special cases we investigate
   if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then

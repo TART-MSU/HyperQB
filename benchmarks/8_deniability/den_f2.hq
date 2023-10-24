@@ -1,8 +1,8 @@
 forall A. exists B. exists C.
 G(
-  (*debits_amount*_A=*debits_amount*_B)
+  ({debits_amount}_A={debits_amount}_B)
   &
-  (*debits_amount*_A=*debits_amount*_C)
+  ({debits_amount}_A={debits_amount}_C)
   &
-  !(*init_balance*_B=*init_balance*_C)
+  !({init_balance}_B={init_balance}_C)
 )

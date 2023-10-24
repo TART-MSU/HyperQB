@@ -1,6 +1,6 @@
 #!/bin/bash
 TIMEFORMAT="TOTAL: %Rs"
-HYPERQB="./hyperqb2.0.sh"
+HYPERQB="./hyperqb.sh"
 AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 
 # case 1:
@@ -52,15 +52,15 @@ AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 # time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} -v 4
 
 # # Mappying Synthesis - examples
-# SMV_A='cases_compare/msynth_MA.smv'
-# SMV_B='cases_compare/msynth_MB.smv'
-# SMV_M='cases_compare/msynth_MM.smv'
-# HQ='cases_compare/msynth_f1.hq'
-# HQAUTO='cases_compare/msynth_f2.hq'
-# # time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -pes -find
-# echo ""
-# echo "------(AutoHyper Starts)------"
-# time ${AUTOHYPER} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO} -v 4
+SMV_A='cases_compare/msynth_MA.smv'
+SMV_B='cases_compare/msynth_MB.smv'
+SMV_M='cases_compare/msynth_MM.smv'
+HQ='cases_compare/msynth_f1.hq'
+HQAUTO='cases_compare/msynth_f2.hq'
+time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -pes -find
+echo ""
+echo "------(AutoHyper Starts)------"
+time ${AUTOHYPER} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO} -v 4
 
 
 # # Mappying Synthesis - Alice and Bob with non-interference
@@ -123,18 +123,18 @@ AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 # echo "------(AutoHyper Starts)------"
 # time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} -v 4
 
-SMV='cases_compare/ni_example.smv'
-HQ='cases_compare/tini.hq'
-HQAUTO='cases_compare/tini_f2.hq'
-time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
-echo ""
-echo "------(AutoHyper Starts)------"
-time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} -v 4
+# SMV='cases_compare/ni_example.smv'
+# HQ='cases_compare/tini.hq'
+# HQAUTO='cases_compare/tini_f2.hq'
+# time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
+# echo ""
+# echo "------(AutoHyper Starts)------"
+# time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} -v 4
 
-SMV='cases_compare/ni_example.smv'
-HQ='cases_compare/tsni.hq'
-HQAUTO='cases_compare/tsni_f2.hq'
-time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
-echo ""
-echo "------(AutoHyper Starts)------"
-time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} -v 4
+# SMV='cases_compare/ni_example.smv'
+# HQ='cases_compare/tsni.hq'
+# HQAUTO='cases_compare/tsni_f2.hq'
+# time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
+# echo ""
+# echo "------(AutoHyper Starts)------"
+# time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} -v 4

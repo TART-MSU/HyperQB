@@ -13,7 +13,7 @@ HYPERQB="./hyperqb.sh"
 ### DEMOS, see README for detailed explination
 
 ### [demo 0: run simple_krip with simple_krip_formula]
-${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
 # ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes
 # ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 
@@ -25,7 +25,10 @@ ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
 
 ### [demo 3: run info-flow example]
 # ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
-# ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow.smv demo/infoflow2.hq 5 -pes -debug
+${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow.smv demo/infoflow2.hq 5 -pes -debug
+
+
+
 
 
 

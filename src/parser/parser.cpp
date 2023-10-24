@@ -19,7 +19,20 @@ string CLOSE_PARAN=")";
 string COMMENT="--";
 string PRIME="'";
 string NEWL="\n";
+string EQ    = "=";
 
+
+bool is_digit(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+
+
+void debug_out(string s){
+    cout << s << endl;
+}
 
 
 vector<string> to_binary(int n, string var, int max)
@@ -39,7 +52,6 @@ vector<string> to_binary(int n, string var, int max)
         n/=2;
         bit_order++;
     }
-
     while(max!=0) {
         max_r = (max%2==0 ?"0":"1");
         max_bit=(max%2==0 ?"0":"1") + max_bit; 
@@ -52,13 +64,13 @@ vector<string> to_binary(int n, string var, int max)
         bit_vector.push_back("~" + var + "_" + to_string(bit_order));
         bit_order++;
     }
-
     reverse(bit_vector.begin(), bit_vector.end());
     // for (auto x: bit_vector){
     //     // cout << "bit:    " << x <<endl;
     // }
     return bit_vector;
 }
+
 
 // ********* handle conditions ***************************************
 vector<pair<string,string> > condition_tokenizer (string condition) {
@@ -94,9 +106,10 @@ vector<pair<string,string> > condition_tokenizer (string condition) {
             i+=1;
         } else if (condition[i] == ' '){
             i+=1;
-        } else if (condition[i] == '!'){
-            condition_vec.push_back({"op", "!"});
-            i+=1;
+        // BUG
+        // } else if (condition[i] == '!'){
+            // condition_vec.push_back({"op", "!"});
+            // i+=1;
         } else if (condition[i] == '=') {
             condition_vec.push_back({"op", "="});
             i+=1;
@@ -167,7 +180,6 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
     } else if (op == "="){
         string max_num = var_type[a_val];
         size_t found_char = max_num.find("..");
-        
         max_num = max_num.substr(found_char + 2);
         vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
         string blasted_var;
@@ -260,18 +272,16 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
  
 // Function that returns value of expression after evaluation.
 string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type){
-    // cout << tokens.size() << endl;
+    // cout << "size:" << tokens.size() << endl;
     // cout << tokens[0].second << endl;
     if (tokens.size() == 1) { 
         return tokens[0].second;      
     }
-    else if (tokens.size() == 2){
-        return "~"+tokens[1].second;
-    } 
 
     stack <string> values; // stack to store vars and vals
     stack <string> ops; // stack to store operators
     for(int i = 0; i < tokens.size(); i++){
+        // cout << tokens[i].second << endl;
         // Current token is an opening brace, push it to 'ops'
         if(tokens[i].second == "("){
             ops.push("(");
@@ -280,8 +290,7 @@ string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type
             values.push(tokens[i].second);
         // Closing brace encountered, solve entire brace.
         } else if(tokens[i].second == ")"){
-            while(!ops.empty() && ops.top() != "(")
-            {
+            while(!ops.empty() && ops.top() != "("){
                 string val2 = values.top();
                 values.pop();
                 string val1 = values.top();
@@ -308,12 +317,10 @@ string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type
                 values.pop();
                  
                 string op = ops.top();
-                ops.pop();
-                 
+                ops.pop();    
                 // cout << "EVAL: " << val1 << op << val2 << endl;
                 values.push(applyOp(val1, val2, op, var_type));
             }
-             
             // Push current token to 'ops'.
             ops.push(tokens[i].second);
         }
@@ -531,16 +538,6 @@ string primed(string var){
     return var+PRIME;
 }
 
-bool is_digit(const std::string& s)
-{
-    std::string::const_iterator it = s.begin();
-    while (it != s.end() && std::isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
-}
-
-void debug_out(string s){
-    cout << s << endl;
-}
 
 /* Clean up the comments with '--' */
 void cleanup(string &line){
@@ -558,6 +555,40 @@ bool is_comment(string line){
 }
 
 
+vector<string> match_bits(string v1, string v2, int max)
+{
+    vector<string> bit_vector;
+    bit_vector.push_back("(");
+    int max_bit = (max%2)+1;
+    // debug_out(v1);
+    debug_out(to_string(max_bit));
+    while(max_bit > (-1)) {
+        bit_vector.push_back("(" + v1 + "_" + to_string(max_bit) + "<->" + v2 + "_" + to_string(max_bit) + "')");
+        bit_vector.push_back("/\\");
+        max_bit = max_bit-1;
+    }
+    bit_vector.pop_back();
+    bit_vector.push_back(")");
+    return bit_vector;
+}
+
+
+size_t get_maxnum(string v1, map<string,string> &var_type){
+    string max_num = var_type[v1];
+    size_t found_char = max_num.find("..");
+    return stoi(max_num.substr(found_char + 2));
+}
+
+
+string match_nums(string v1, string v2, map<string,string> &var_type){
+    size_t max = get_maxnum(v2, var_type);
+    // size_t v2_max = get_maxnum(v2, var_type);
+    vector<string> matches = match_bits(v1, v2, max);
+    std::string s;
+    for (const auto &piece : matches) s += piece;
+    return s;
+    // return str(matches.begin(), matches.end());
+}
 
 
 int main(int argc, char** argv) {
@@ -609,6 +640,7 @@ int main(int argc, char** argv) {
                     // find lines defined like "next(some_var) := some_next"
                     if (line.find("next(") != string::npos && line.find(";") != string::npos) 
                     {
+
                         found_next += 5;
                         char ch = line[found_next];
                         string next_var;
@@ -760,43 +792,42 @@ int main(int argc, char** argv) {
         terminate();
     }
     
-    // debugging
-    std::cout << "\nVAR TYPE MAP:" << endl;
-    for(const auto& elem : var_type)
-    {
-        std::cout << elem.first << " " << elem.second << "\n";
-    }
+    // DEBUG
+    // std::cout << "\nVAR TYPE MAP:" << endl;
+    // for(const auto& elem : var_type)
+    // {
+    //     std::cout << elem.first << " " << elem.second << "\n";
+    // }
 
-    std::cout << "\nDEFINE MAP:" << endl;
-    for(const auto& elem : define_map)
-    {
-        std::cout << elem.first << " " << elem.second << "\n";
-    }
+    // std::cout << "\nDEFINE MAP:" << endl;
+    // for(const auto& elem : define_map)
+    // {
+    //     std::cout << elem.first << " " << elem.second << "\n";
+    // }
 
-    std::cout << "\nINIT MAP:" << endl;
-    for(const auto& elem : init)
-    {
-        std::cout << elem.first << " ";
-        for (auto x : elem.second) {
-            std::cout << x << " ";
-        }
-        std::cout << "\n";
-    }
+    // std::cout << "\nINIT MAP:" << endl;
+    // for(const auto& elem : init)
+    // {
+    //     std::cout << elem.first << " ";
+    //     for (auto x : elem.second) {
+    //         std::cout << x << " ";
+    //     }
+    //     std::cout << "\n";
+    // }
 
-    std::cout << "\nNEXT MAP:" << endl;
-    for(const auto& elem : next)
-    {
-        std::cout << elem.first << " trans: " << endl;
+    // std::cout << "\nNEXT MAP:" << endl;
+    // for(const auto& elem : next)
+    // {
+    //     std::cout << elem.first << " trans: " << endl;
 
-        for (auto x :elem.second) {
-            for (auto z: x) {
-                std::cout << z << ", ";
-            }
-            std::cout << "\n";
-        }
-        std::cout << "\n";
-    }
-
+    //     for (auto x :elem.second) {
+    //         for (auto z: x) {
+    //             std::cout << z << ", ";
+    //         }
+    //         std::cout << "\n";
+    //     }
+    //     std::cout << "\n";
+    // }
 
 
 
@@ -846,15 +877,14 @@ int main(int argc, char** argv) {
         debug_out("VARNAME: " + var_name);
         string cases;
         string rest_cases = "~(";
-        // int offset = 1;
         for (const auto& x: var.second) {
             // parse pre-condition
             string LS = x[0];
-            string LS_expr;
+            string LS_expr;   
             if(LS == "TRUE"){
                 if (var.second.size()==1){
                     LS_expr = "TRUE";
-                }else{
+                } else {
                     if(rest_cases == "~("){
                         LS_expr = "";
                     }
@@ -864,27 +894,30 @@ int main(int argc, char** argv) {
                         LS_expr = rest_cases + ")";
                     }
                 }
-            }else{
+            }else {
                 LS_expr = evaluate(condition_tokenizer(LS), var_type);
                 rest_cases = rest_cases + LS_expr + "\\/";
             }    
 
-            string PRIME = "'";
-            string NOT   = "~";
-            string EQ    = "=";
+
             string RS_expr;
             for (int i = 1; i < x.size() ; i+=1) {
                 // parse pos-condition
                 string RS = x[i];
+                
                 if (RS == "TRUE"){
                     RS_expr += var_name + PRIME;
                 }
                 else if (RS == "FALSE"){
                     RS_expr += NOT + var_name + PRIME;
                 }
-                // small trick
-                else if (is_digit(RS)){
+                else if (var_type[RS].find("..") != string::npos){
+                    
+                    RS_expr = match_nums(RS, var_name, var_type);
+                }
+                else if (is_digit(RS)) {
                     RS = var_name + EQ + RS;
+                    
                     RS_expr += prime_expr(evaluate(condition_tokenizer(RS), var_type));
                 }
                 else if (RS.find('+') != string::npos || RS.find('-') != string::npos){
@@ -908,18 +941,17 @@ int main(int argc, char** argv) {
             }
             RS_expr.pop_back();
             RS_expr.pop_back();
+
             if (LS_expr != ""){
                 cases = "((" + LS_expr + ") -> (" + RS_expr + ")) /\\"; 
-                }
-                else{
-                    cases = RS_expr + "/\\";
-                }
+            }
+            else{
+                cases = RS_expr + "/\\";
+            }
             trans_file << cases << endl;  
         }
     }
-
     trans_file << "TRUE" << endl;
-
 
     // DEFINE
     stringstream define_ss;

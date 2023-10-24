@@ -38,3 +38,4 @@ DEFINE
   STARTED := !((x-axis=0) & (y-axis=0));
   GOALA := (x-axis=0) & (y-axis=7);
   GOALB := (x-axis=7) & (y-axis=0);
+  GOALC := (x-axis=7) & (y-axis=7);
