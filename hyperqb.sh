@@ -1,11 +1,8 @@
 #!/bin/bash
 TIMEFORMAT="%Rs"
-
 echo "(hyperqb with updated genqbf)"
-### HyperQB parameters ###
-# BINLOCATION="exec_mac"
-# BINLOCATION="exec_linux"
 
+### HyperQB parameters ###
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   BINLOCATION="exec_linux"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -15,17 +12,12 @@ else
   exit 1 
 fi
 
+### executables
 ARBITRARY_PARSER=${BINLOCATION}/parser.py
 GENQBF=${BINLOCATION}/genqbf_partialmulti # new - multigate 
 QUABS=${BINLOCATION}/quabs
 
-# MAP=exec/util_mapvars
-# PARSE_BOOL=exec/util_parsebools
-
-ERROR="(!) HyperQB error: "
 ### Output file names ###
-# \THH_TODO: put this back before submission.
-# DATE=`date +"%Y-%m-%d@%T"`
 DATE="today"
 OUTFOLDER="build_"${DATE}"/"
 CEXFOLDER="build_cex/"
@@ -41,6 +33,7 @@ QSFILE=${OUTFOLDER}QS
 FORMULA=""
 QUABS_OUT=${OUTFOLDER}HQ.quabs
 QCIR_OUT=${OUTFOLDER}HQ.qcir
+ERROR="(!) HyperQB error: "
 
 
 if [ ! -d "${OUTFOLDER}" ]; then
@@ -60,12 +53,6 @@ else
     mkdir -p "${CEXFOLDER}"
 fi
 
-### name output files, TODO ###
-while getopts "proj:" arg; do
-  case $arg in
-    n) PROJ=$OPTARG;;
-  esac
-done
 
 echo ""
 echo "-------( HyperQB START! )-------"
@@ -93,7 +80,6 @@ do
   fi
   let COUNTER++
 done
-
 
 ### Check which <mode> is used (-bughunt or -find) ###
 if echo $* | grep -e "-find" -q
@@ -128,12 +114,10 @@ fi
 
 
 ### parse the NuSMV models and the given formula ###
-
 printf "NuSMV and HyperLTL parsing...\n" 
 
 echo "(docker for stable parsing)"
 TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
-
 
 # echo "(local parsing)"
 # TRANSLATE="exec/translate.py"
@@ -142,7 +126,7 @@ TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqub
 # TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
 
 
-# if any error happens in parsing, exit HyperQB
+### if any error happens in parsing, exit HyperQB
 if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
   echo ${TIME_PARSE}
   exit 1
@@ -155,7 +139,6 @@ if [ ! -f "${QSFILE}" ]; then
   exit 1
 fi
 source "${QSFILE}" # instantiate QS
-
 
 printf "BMC unrolling with genqbf...\n"
 n=${#QS}
@@ -207,20 +190,3 @@ echo "|  Mode:       " ${FLAG}
 echo "--------------------------------"
 echo "--------( HyperQB END )---------"
 echo ""
-
-# exit 1
-## TODO: update these two scripts using python
-# echo "=== witness/counterexample ==="
-# echo "Given "${QS} "with" ${OUTCOME} "result: "
-# if grep -q V "${QUABS_OUT}"; 
-# then
-#   echo "witness/counterexample available!"
-#   # echo "parsing into well-formatted file..."
-#   ${MAP} ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
-#   ${PARSE_BOOL} ${MAP_OUT2} ${PARSE_OUT}
-# else
-#   echo "no witness/counterexample."
-# fi
-
-
-
