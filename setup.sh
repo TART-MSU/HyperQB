@@ -2,8 +2,10 @@
 
 echo "HyperQB setup starts"
 
+sudo apt update
+
 echo "[ setup docker and a helper image... ]"
-sudo apt install docker.io
+sudo snap install docker.io
 sudo docker pull tzuhanmsu/hyperqube:latest
 
 echo "[ setpup dotnet for comparison with AH and AHQ... ]"
@@ -17,7 +19,7 @@ echo "check docker: "
 docker --version
 
 echo "check dotnet: "
-donet --version
+dotnet --version
 
 
 echo "HyperQB setup success!"

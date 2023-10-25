@@ -218,12 +218,4 @@ CASE="Case 14.1:"
     time ${HYPERQB} ${SMV} ${SMV} ${HQ} 5 -pes -find
 
 
-# case 14.2: transition non-determinism (overhead: inclusion check)
-CASE="Case 14.2:"
-    echo ${CASE}
-    SMV=${CASEFOLDER}'14_ndet/NI_v3.smv'
-    HQ=${CASEFOLDER}'14_ndet/NI.hq'
-    HQAUTO=${CASEFOLDER}${AHFORMULAS}'14.hq'
-    time ${HYPERQB} ${SMV} ${SMV} ${HQ} 5 -pes -find
-
 
