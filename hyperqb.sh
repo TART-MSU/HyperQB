@@ -116,7 +116,7 @@ fi
 ### parse the NuSMV models and the given formula ###
 printf "NuSMV and HyperLTL parsing...\n" 
 
-echo "(docker for stable parsing)"
+# echo "(docker for stable parsing)"
 TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 
 # echo "(local parsing)"
