@@ -3,9 +3,21 @@ TIMEFORMAT="%Rs"
 
 echo "(hyperqb with updated genqbf)"
 ### HyperQB parameters ###
-ARBITRARY_PARSER=exec/parser.py
-GENQBF=exec/genqbf_partialmulti # new - multigate 
-QUABS=exec/quabs
+# BINLOCATION="exec_mac"
+# BINLOCATION="exec_linux"
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  BINLOCATION="exec_linux"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  BINLOCATION="exec_mac"
+else
+  echo "sorry, current OS not supported yet."
+  exit 1 
+fi
+
+ARBITRARY_PARSER=${BINLOCATION}/parser.py
+GENQBF=${BINLOCATION}/genqbf_partialmulti # new - multigate 
+QUABS=${BINLOCATION}/quabs
 
 # MAP=exec/util_mapvars
 # PARSE_BOOL=exec/util_parsebools
@@ -158,12 +170,12 @@ then
   X=${OUTFOLDER}R_4.bool
   C=${OUTFOLDER}I_5.bool
   V=${OUTFOLDER}R_5.bool
-  GENQBF=exec/genqbf_v5 # updated genqbf
+  GENQBF=${BINLOCATION}/genqbf_v5 # updated genqbf
   TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${Q} -W ${W} -Z ${Z} -X ${X} -C ${C} -V ${V} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n )
 else
   lst_NEW_QUANTS="AAE EAA EEA AEA EEE AEE AAAE EAAE AAAE AAEE EAAEE AAAEEE" #special cases we investigate
   if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then
-    GENQBF=exec/genqbf_v5 # updated genqbf
+    GENQBF=${BINLOCATION}/genqbf_v5 # updated genqbf
     TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
   else
     ALL_I_R=$(find ${OUTFOLDER}*.bool )

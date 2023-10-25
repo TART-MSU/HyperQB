@@ -18,7 +18,7 @@ HYPERQB="./hyperqb.sh"
 # ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 
 ### [demo 1: run bakery algorithm with symmetry property]
-# ${HYPERQB} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -debug
+${HYPERQB} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -debug
 
 ### [demo 2: run SNARK algorithm with linearizability propoerty, bug1]
 # ${HYPERQB} demo/snark1_conc.smv demo/snark1_seq.smv demo/lin.hq 18 -pes -debug
