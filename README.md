@@ -37,14 +37,12 @@ To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
 RUN HyperQB in the following format:
     ```./hyperqube <list of models> <formula> <k> <sem> <mode>```
 
-
-    
 Demo Examples:
 1. [demo 1: run bakery algorithm with symmetry property]
 ```./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -bughunt```
 
 2. [dem0 2: run SNARK algorithm with linearizability propoerty]
-```./hyperqb.sh demo/SNARK1_conc.smv demo/SNARK2_seq.smv demo/lin.hq 18 -pes -bughunt```    
+```./hyperqb.sh demo/snark_conc.smv demo/snark1_seq.smv demo/lin.hq 18 -pes -bughunt```    
 
 
 ## Experiments
