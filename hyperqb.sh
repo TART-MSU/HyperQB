@@ -11,7 +11,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   BINLOCATION="exec_mac"
 else
-  echo "sorry, current OS not supported yet."
+  echo "sorry, current OS not supported yet :("
   exit 1 
 fi
 
