@@ -1,27 +1,25 @@
 # README for TACAS24 Tool Papaer Artifact Evaluation
-Title:  HyperQB: A QBF-Based Bounded Model Checker for Hyperproperties
-Paper#: 7708
-AE#:    2082
+Title:      HyperQB: A QBF-Based Bounded Model Checker for Hyperproperties
+Authors:    Tzu-Han Hsu, Borzoo Bonakdarpour, César Sánchez
+Paper:      #7708
+Artifact:   #2082
 
 ## A hyperlink to the artifact
-
-
+https://github.com/HyperQB/TACAS24-AE
 
 ## Additional requirements for the artifact
-
 To provide the best evaluating experiemnce for the reviewers, 
 we have tested this artifact on the provided virtual machine
 tacas23-AEC.ova (reused in 2024). 
 Each bin executable are pre-compiled by us, so they are garanteed
 to work as expected on the same VM. 
 
+By running the all-in-one ```setup.sh```, all required setup will be done. 
+
 Following the state from this year's instruction 
 "...allow reasonable network access from the VM...", 
 our submission is partially using Docker image
 to reduce the reviewer's burden on the dependencies installation.
-
-By running the all-in-one ```setup.sh```, all required setup will be done. 
-
 Note:   The core technical parts of HyperQB BMC algorithm
         (i.e., encoding, unrolling, QBF-solving, etc.),
         are still self-contained in this artifact. 
@@ -102,7 +100,3 @@ Step 5. Experiments Replication
 
 
 Thank you for using HyperQB!
-
-
-
-
