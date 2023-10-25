@@ -9,6 +9,12 @@ easychair artifact#
 
 ## Additional requirements for the artifact
 
+To provide the best evaluating experiemnce for the reviewers, 
+we have tested this artifact on the provided virtual machine
+tacas23-AEC.ova (reused in 2024). 
+Each bin executable are pre-compiled by us, so they are garanteed
+to work as expected on the same VM. 
+
 Following the state from this year's instruction 
 "...allow reasonable network access from the VM...", 
 our submission is partially using Docker image
@@ -67,7 +73,7 @@ We marked here those cases that would take longer time to execute for reviewers 
 
 
 
-
+Thank you for using HyperQB!
 
 
 
