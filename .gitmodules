@@ -1,0 +1,6 @@
+[submodule "submodules/AutoHyper"]
+	path = submodules/AutoHyper
+	url = https://github.com/AutoHyper/AutoHyper
+[submodule "submodules/AutoHyperQ"]
+	path = submodules/AutoHyperQ
+	url = https://github.com/AutoHyper/AutoHyperQ
