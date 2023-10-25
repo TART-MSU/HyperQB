@@ -5,8 +5,9 @@ HYPERQB="./hyperqb.sh"
 # AH and AHQ bins
 AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 AUTOHYPERQ='/Users/tzuhan/install/autohyperq/app/AutoHyperQ'
+
 # Timeout
-TIMEOUT="timeout 1200s"
+TIMEOUT="timeout 1200s" # feel free to change this!:)
 echo ${TIMEOUT}
 
 CASEFOLDER="benchmarks/"
