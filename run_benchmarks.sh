@@ -35,12 +35,12 @@ CASE="Case 0.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.1.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 7 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -53,12 +53,12 @@ CASE="Case 0.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.2.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 12 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then 
+    if [ "${COMPAH}" = "TRUE" ]; then 
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} --witness
     fi
@@ -71,12 +71,12 @@ CASE="Case 0.3:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.3.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 20 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then 
+    if [ "${COMPAH}" = "TRUE" ]; then 
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} --witness
     fi
@@ -89,12 +89,12 @@ CASE="Case 1.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.1.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -107,12 +107,12 @@ CASE="Case 1.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.2.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -125,12 +125,12 @@ CASE="Case 1.3:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.3.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -143,12 +143,12 @@ CASE="Case 1.4:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.4.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -162,11 +162,11 @@ CASE="Case 2.1:"
 #     HQAUTO=${CASEFOLDER}${AHFORMULAS}'2.1.hq'
 #     ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 10 -pes -find
 #     echo ""
-#     if (${COMPAH} -eq "TRUE") then
+#     if [ "${COMPAH}" = "TRUE" ]; then
 #     echo "------(AutoHyper Starts)------"
 #     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
 #     fi
-#     if (${COMPAHQ} -eq "TRUE") then
+#     if [ "${COMPAHQ}" = "TRUE" ]; then
 #     echo "------(AutoHyperQ Starts)------"
 #     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
 #     fi
@@ -179,12 +179,12 @@ CASE="Case 3.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'3.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 57 -hpes -bughunt
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -197,12 +197,12 @@ CASE="Case 3.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'3.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 57 -hopt -bughunt
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -215,12 +215,12 @@ CASE="Case 4.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'4.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 15 -hpes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -233,12 +233,12 @@ CASE="Case 4.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'4.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 15 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -251,12 +251,12 @@ CASE="Case 5.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 20 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -269,12 +269,12 @@ CASE="Case 5.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 40 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -287,12 +287,12 @@ CASE="Case 5.3:"
     # HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
     # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 80 -hopt -find
     # echo ""
-    # if (${COMPAH} -eq "TRUE") then
+    # if [ "${COMPAH}" = "TRUE" ]; then
     # echo "------(AutoHyper Starts)------"
     # echo "formula: " ${HQAUTO}
     # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     # fi
-    # if (${COMPAHQ} -eq "TRUE") then
+    # if [ "${COMPAHQ}" = "TRUE" ]; then
     # echo "------(AutoHyperQ Starts)------"
     # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     # fi
@@ -305,12 +305,12 @@ CASE="Case 5.4:"
     # HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
     # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 120 -hopt -find
     # echo ""
-    # if (${COMPAH} -eq "TRUE") then
+    # if [ "${COMPAH}" = "TRUE" ]; then
     # echo "------(AutoHyper Starts)------"
     # echo "formula: " ${HQAUTO}
     # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     # fi
-    # if (${COMPAHQ} -eq "TRUE") then
+    # if [ "${COMPAHQ}" = "TRUE" ]; then
     # echo "------(AutoHyperQ Starts)------"
     # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     # fi
@@ -323,12 +323,12 @@ CASE="Case 6.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'6.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -344,12 +344,12 @@ CASE="Case 7.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'7.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 102 -hopt -bughunt
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
     fi
@@ -362,12 +362,12 @@ CASE="Case 8.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'8.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 10 -hopt -debug
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)------"
     ${TIMEOUT} ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -380,12 +380,12 @@ CASE="Case 8.2:"
     # HQAUTO=${CASEFOLDER}${AHFORMULAS}'8.hq' 
     # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 20 -hopt -debug
     # echo ""
-    # if (${COMPAH} -eq "TRUE") then
+    # if [ "${COMPAH}" = "TRUE" ]; then
     # echo "------(AutoHyper Starts)------"
     # echo "formula: " ${HQAUTO}
     # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     # fi
-    # if (${COMPAHQ} -eq "TRUE") then
+    # if [ "${COMPAHQ}" = "TRUE" ]; then
     # echo "------(AutoHyperQ Starts)-----"
     # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     # fi
@@ -398,12 +398,12 @@ CASE="Case 9.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'9.1.hq' 
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -416,12 +416,12 @@ CASE="Case 9.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'9.2.hq' 
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -434,12 +434,12 @@ CASE="Case 9.3:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'9.2.hq' 
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then 
+    if [ "${COMPAH}" = "TRUE" ]; then 
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
     fi
@@ -453,12 +453,12 @@ CASE="Case 10.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'10.1.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
     fi
@@ -471,12 +471,12 @@ CASE="Case 10.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'10.2.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
     fi
@@ -490,12 +490,12 @@ CASE="Case 11:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'11.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 64 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
     fi
@@ -512,12 +512,12 @@ CASE="Case 12.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'12.1.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO}
     fi
@@ -533,12 +533,12 @@ CASE="Case 12.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'12.2.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} 5 -hopt -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B}  ${HQAUTO}
     fi
@@ -553,12 +553,12 @@ CASE="Case 13.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'13.1.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 10 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then 
+    if [ "${COMPAH}" = "TRUE" ]; then 
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
     fi
@@ -572,12 +572,12 @@ CASE="Case 13.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'13.2.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 20 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
     fi
@@ -592,12 +592,12 @@ CASE="Case 14.1:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'14.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 5 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
     fi
@@ -612,12 +612,12 @@ CASE="Case 14.2:"
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'14.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 5 -pes -find
     echo ""
-    if (${COMPAH} -eq "TRUE") then
+    if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
     echo "formula: " ${HQAUTO}
     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO}
     fi
-    if (${COMPAHQ} -eq "TRUE") then
+    if [ "${COMPAHQ}" = "TRUE" ]; then
     echo "------(AutoHyperQ Starts)-----"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO}
     fi
