@@ -1,17 +1,16 @@
 #!/bin/bash
 TIMEFORMAT="%Rs"
 
-### which genqbf ###
-GENQBF=exec/genqbf_partialmulti # new - multigate 
 echo "(hyperqb with updated genqbf)"
-
 ### HyperQB parameters ###
 ARBITRARY_PARSER=exec/parser.py
+GENQBF=exec/genqbf_partialmulti # new - multigate 
 QUABS=exec/quabs
-MAP=exec/util_mapvars
-PARSE_BOOL=exec/util_parsebools
-ERROR="(!) HyperQB error: "
 
+# MAP=exec/util_mapvars
+# PARSE_BOOL=exec/util_parsebools
+
+ERROR="(!) HyperQB error: "
 ### Output file names ###
 # \THH_TODO: put this back before submission.
 # DATE=`date +"%Y-%m-%d@%T"`
@@ -120,16 +119,14 @@ fi
 
 printf "NuSMV and HyperLTL parsing...\n" 
 
-# echo "(docker for stable parsing)"
-# TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
+echo "(docker for stable parsing)"
+TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 
 
-# echo "(c++ parsing)"
-TRANSLATE="exec/translate.py"
-python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
-
-
-# echo "(using docker with pip-built)"
+# echo "(local parsing)"
+# TRANSLATE="exec/translate.py"
+# python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
+# echo "(local pip-built)"
 # TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
 
 
