@@ -9,7 +9,7 @@ ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
 ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 
 ### [demo 1: run info-flow example]
-${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow.hq 5 -pes -debug
+${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
 # ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow.smv demo/infoflow2.hq 5 -pes -debug
 
 ### [demo 2: run bakery algorithm with symmetry property]
