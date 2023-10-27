@@ -138,7 +138,7 @@ the syntax of HyperQB vs AH/AHQ, are slightly different.
 Thank you for using HyperQB!
 
 
-(BELOW are old general README for last release, TACAS reviewers can ignore from here)
+(BELOW are old general README for last release, main TACAS24 AE infomation is at above)
 
 
 # Welcome to HyperQB!!!
