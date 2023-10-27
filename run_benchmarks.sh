@@ -231,7 +231,7 @@ CASE="Case 4.1:"
     SMV=${CASEFOLDER}'4_nrp/NRP_incorrect.smv'
     HQ=${CASEFOLDER}'4_nrp/NRP_formula.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'4.hq'
-    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 15 -hpes -find
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 15 -hpes -bughunt
     echo ""
     if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
@@ -249,7 +249,7 @@ CASE="Case 4.2:"
     SMV=${CASEFOLDER}'4_nrp/NRP_correct.smv'
     HQ=${CASEFOLDER}'4_nrp/NRP_formula.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'4.hq'
-    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 15 -hopt -find
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 15 -hpes -bughunt
     echo ""
     if [ "${COMPAH}" = "TRUE" ]; then
     echo "------(AutoHyper Starts)------"
@@ -300,38 +300,38 @@ fi
 if ((echo $* | grep -e "5.3" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 5.3:" 
     echo ${CASE}
-    # SMV=${CASEFOLDER}'5_planning/robotic_robustness_1600.smv'
-    # HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
-    # HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 80 -hopt -find
-    # echo ""
-    # if [ "${COMPAH}" = "TRUE" ]; then
-    # echo "------(AutoHyper Starts)------"
-    # echo "formula: " ${HQAUTO}
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
-    # fi
-    # if [ "${COMPAHQ}" = "TRUE" ]; then
-    # echo "------(AutoHyperQ Starts)------"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
-    # fi
+    SMV=${CASEFOLDER}'5_planning/robotic_robustness_1600.smv'
+    HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 80 -hopt -find
+    echo ""
+    if [ "${COMPAH}" = "TRUE" ]; then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if [ "${COMPAHQ}" = "TRUE" ]; then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
 fi
 if ((echo $* | grep -e "5.4" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 5.4:" 
     echo ${CASE}
-    # SMV=${CASEFOLDER}'5_planning/robotic_robustness_3600.smv'
-    # HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
-    # HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 120 -hopt -find
-    # echo ""
-    # if [ "${COMPAH}" = "TRUE" ]; then
-    # echo "------(AutoHyper Starts)------"
-    # echo "formula: " ${HQAUTO}
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
-    # fi
-    # if [ "${COMPAHQ}" = "TRUE" ]; then
-    # echo "------(AutoHyperQ Starts)------"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
-    # fi
+    SMV=${CASEFOLDER}'5_planning/robotic_robustness_3600.smv'
+    HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 120 -hopt -find
+    echo ""
+    if [ "${COMPAH}" = "TRUE" ]; then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if [ "${COMPAHQ}" = "TRUE" ]; then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
 fi
 if ((echo $* | grep -e "6.1" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 6.1:" 
@@ -393,20 +393,20 @@ fi
 if ((echo $* | grep -e "8.2" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 8.2:"
     echo ${CASE}
-    # SMV=${CASEFOLDER}'8_deniability/den.smv'
-    # HQ=${CASEFOLDER}'8_deniability/den_f1.hq'
-    # HQAUTO=${CASEFOLDER}${AHFORMULAS}'8.hq' 
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 20 -hopt -debug
-    # echo ""
-    # if [ "${COMPAH}" = "TRUE" ]; then
-    # echo "------(AutoHyper Starts)------"
-    # echo "formula: " ${HQAUTO}
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
-    # fi
-    # if [ "${COMPAHQ}" = "TRUE" ]; then
-    # echo "------(AutoHyperQ Starts)-----"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
-    # fi
+    SMV=${CASEFOLDER}'8_deniability/den.smv'
+    HQ=${CASEFOLDER}'8_deniability/den_f1.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'8.hq' 
+    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} 20 -hopt -debug
+    echo ""
+    if [ "${COMPAH}" = "TRUE" ]; then
+    echo "------(AutoHyper Starts)------"
+    echo "formula: " ${HQAUTO}
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    fi
+    if [ "${COMPAHQ}" = "TRUE" ]; then
+    echo "------(AutoHyperQ Starts)-----"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    fi
 fi
 if ((echo $* | grep -e "9.1" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 9.1:"
