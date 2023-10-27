@@ -37,14 +37,14 @@ Step 0. download and unzip tacas.zip, then
         ```cd tacas```
         ```cd HyperQB```
 
-Step 1. to complete the setup, run: 
+Step 1. to complete the setup in one-click, run: 
         ```sudo ./setup.sh```
         all required setup is now done! 
 
-Step 2. test a lighter subset of cases from our benchmark, run:
-        ```sudo ./run_lightway.sh``` 
-        Note: this script contains relatively smaller cases,
-        the expected time to execute this script is ~2 mins.
+Step 2. test on a "light subset" of cases from our benchmark, run:
+        ```sudo ./run_benchmarks.sh -light``` 
+        Note:   this script contains only relatively smaller cases,
+                the expected time is ~2 mins.
 
 ## detailed instructions for use of the artifact and replication of results in the paper, including estimated resource use if non-trivial
 Our goal is to present the experiments of Table 3 in the paper. 
@@ -65,7 +65,7 @@ Step 2. To test small models and simple formulas, run any line below:
         the reviewer can simply uncommand any case and execute it.
 
 Step 3. Run a subset of lighter cases to do a quick test on HyperQB, run:
-        ```sudo run_lightway.sh``` 
+        ```sudo ./run_benchmarks.sh -light```
 
 
 Step 4. Setup other tools for comparison: AutoHyper(AH) and AutoHyperQ(QAH)
@@ -73,8 +73,9 @@ Step 4. Setup other tools for comparison: AutoHyper(AH) and AutoHyperQ(QAH)
         of the following to complete this setup. 
 
         Option 1: 
-            Simply move tacas/ into the Home directry of tacas23 machine (home/tacas23/). 
-            You are good to go to Step 5!
+            Simply move tacas/ into the Home directry of tacas23 machine (home/tacas23/), and 
+            please do not change the reletive structure of HyperQB with AH or QAH. 
+            You are good to go to Step 5!:D
     
         Option 2:
             If you would like to put tacas/ at other location, then: 
@@ -86,9 +87,9 @@ Step 4. Setup other tools for comparison: AutoHyper(AH) and AutoHyperQ(QAH)
                 ``.../tacas/spot-2.11.5/bin/ltl2tgba``
             - next, open AutoHyperQ/app/paths.js
             - make sure in this file, the paths are also pointing to the right binaries.
-            Note: the default locations in the files are from our building process.
-            The actual absolute path depends on where the reviewers locate this artifact. 
-            Please do not change the reletive structure of HyperQB with AH or QAH.
+            Note:   the default locations in the files are from our building process.
+                    The actual absolute path depends on where this artifact is located. 
+            
          
 Step 5. Experiments Replication
         We provide a one-click script ```run_benchmarks.sh``` for replicating all results in the paper. For the reviewers convenienet, we provide several useful flags:
@@ -104,16 +105,32 @@ Step 5. Experiments Replication
         It runs case #9.2 (shared buffer) with HyperQB abd AutoHyperQ. 
         To replicate the entire table, including all comparisons run:
         ```sudo ./run_benchmarks.sh -all -AH -QAH``` 
-        The cases that take HyperQB longer than a minute are:
-        #2.1, #2.2, #8.2, #13.2
-        AutoHyper usually take longer than the timeout bound, to save time, 
+        The cases that take HyperQB longer than a minute are: #2.1, #2.2, #8.2, #13.2
+        AutoHyperQ usually take longer than the timeout bound, to save time, 
         the reviewer can change the parameter on line10 of ```run_bencmarks.sh```
 
 
 
 ## Additional Information on Displayed Outputs
+We add a remark that, the "SAT/UNSAT" outcome displayed from 
+HyperQB, AutoHyper, and AutoHyperQ, might not be same. 
+This is because, HyperQB provides `-find` and `-bughunt` which 
+checks `original` and `negated` formula, respectively 
+(which hunting the negation is the core idea of BMC). 
+However, AutoHyper and AutpHyperQ always check `original` formula.   
 
+We provide a quick lookup table for output conformance checking: 
+option      HyperQB     AutoHyper       AutoHyperQ
+-find       SAT         SAT             SAT
+-find       UNSAT       UNSAT           UNSAT
+-bughunt    SAT         UNSAT           UNSAT    
+-bughunt    UNSAT       SAT             SAT 
 
+For fair comparison, we also make sure the models used by 
+other tools are the same (all in NuSMV format). 
+The only difference is to use different .hq formula since 
+the syntax of HyperQB vs AH/AHQ, are slightly different. 
+(However, the semantics of formula still conform). 
 
 
 
