@@ -13,7 +13,7 @@ DOI:    https://doi.org/10.5281/zenodo.7851135
 To provide the best evaluating experience for the reviewers, 
 we have tested this artifact on the provided virtual machine
 tacas23-AEC.ova (reused in 2024). 
-Each bin executable are pre-compiled by us, so they are guaranteed
+Each bin executable are pre-compiled by us, so they are garanteed
 to work as expected on the same VM. 
 
 Following the state from this year's instruction 
@@ -31,7 +31,7 @@ Note:   The core technical parts of HyperQB BMC algorithm
 The light-weight review can be done in following steps
 for the reviewers to quickly install our tool and found 
 HyperQB is functional and runnable. 
-(The entire process should take less than ~20 mins.)  
+(The entire process should take less than 20 mins.)  
 
 Step 0. download and unzip tacas.zip, then
         ```cd tacas```
@@ -47,8 +47,9 @@ Step 2. test a lighter subset of cases from our benchmark, run:
         the expected time to execute this script is ~2 mins.
 
 ## detailed instructions for use of the artifact and replication of results in the paper, including estimated resource use if non-trivial
+
 Our goal is to present the experiments of Table 3 in the paper. 
-We here provide a easy step by step instructions: 
+We here provide a step by step instructions: 
 
 Step 0. unzip tacas.zip, then
         ```cd HyperQB```
@@ -73,7 +74,7 @@ Step 4. Setup other tools for comparison: AutoHyper(AH) and AutoHyperQ(QAH)
         of the following to complete this setup. 
 
         Option 1: 
-            Simply move tacas/ into the Home directry of tacas23 machine (home/tacas23/). 
+            Simply move tacas/ into the Home directry of tacas23 machine. 
             You are good to go to Step 5!
     
         Option 2:

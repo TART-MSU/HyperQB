@@ -7,7 +7,7 @@ AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 AUTOHYPERQ='/Users/tzuhan/install/autohyperq/app/AutoHyperQ'
 
 # Timeout
-TIMEOUT="timeout 1200s" # feel free to change this!:)
+TIMEOUT="timeout 1200s" # feel free to change here with shorter timeout
 echo ${TIMEOUT}
 
 CASEFOLDER="benchmarks/"
@@ -157,20 +157,37 @@ fi
 if ((echo $* | grep -e "2.1" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 2.1:" 
     echo ${CASE}
-#     SMV1=${CASEFOLDER}'2_snark/snark1_M1_concurrent.smv'
-#     SMV2=${CASEFOLDER}'2_snark/snark1_M2_sequential.smv'
-#     HQ=${CASEFOLDER}'2_snark/snark1.hq'
-#     HQAUTO=${CASEFOLDER}${AHFORMULAS}'2.1.hq'
-#     ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 10 -pes -find
-#     echo ""
-#     if [ "${COMPAH}" = "TRUE" ]; then
-#     echo "------(AutoHyper Starts)------"
-#     ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
-#     fi
-#     if [ "${COMPAHQ}" = "TRUE" ]; then
-#     echo "------(AutoHyperQ Starts)------"
-#     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
-#     fi
+    SMV1=${CASEFOLDER}'2_snark/snark1_M1_concurrent.smv'
+    SMV2=${CASEFOLDER}'2_snark/snark1_M2_sequential.smv'
+    HQ=${CASEFOLDER}'2_snark/snark1.hq'
+    HQAUTO=${CASEFOLDER}${AHFORMULAS}'2.1.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 18 -pes -find
+    echo ""
+    if [ "${COMPAH}" = "TRUE" ]; then
+    echo "------(AutoHyper Starts)------"
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
+    fi
+    if [ "${COMPAHQ}" = "TRUE" ]; then
+    echo "------(AutoHyperQ Starts)------"
+    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
+    fi
+fi
+if ((echo $* | grep -e "2.2" -q) || (echo $* | grep -e "-all" -q)) then 
+CASE="Case 2.2:" 
+    echo ${CASE}
+    SMV1=${CASEFOLDER}'2_snark/snark2_M1_concurrent.smv'
+    SMV2=${CASEFOLDER}'2_snark/snark2_M2_sequential.smv'
+    HQ=${CASEFOLDER}'2_snark/snark2.hq'
+    ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 30 -pes -find
+    echo ""
+    if [ "${COMPAH}" = "TRUE" ]; then
+    echo "------(AutoHyper Starts)------"
+    echo "model not available for AutoHyper"
+    fi
+    if [ "${COMPAHQ}" = "TRUE" ]; then
+    echo "------(AutoHyperQ Starts)------"
+    echo "model not available for AutoHyperQ"
+    fi
 fi
 if ((echo $* | grep -e "3.1" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 3.1:" 
