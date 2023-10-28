@@ -6,7 +6,7 @@ Artifact:   #2082
 
 ## A hyperlink to the artifact
 DOI:    https://doi.org/10.5281/zenodo.7851135
-(for the latest version of artifact)
+(Zenodo repo for the latest version of artifact)
 
 
 ## Additional requirements for the artifact
@@ -39,7 +39,11 @@ Step 0. download and unzip tacas.zip, then
 
 Step 1. to complete the setup in one-click, run: 
         ```sudo ./setup.sh```
-        all required setup is now done! 
+        all required setup is now done! (ps. authentication might be needed here)
+        Note:   in case any downloading issue happen in the VM, please run:
+                ```sudo snap install docker``
+                ```sudo docker pull tzuhanmsu/hyperqube:latest```
+                manually
 
 Step 2. test on a "light subset" of cases from our benchmark, run:
         ```sudo ./run_benchmarks.sh -light``` 
