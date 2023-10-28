@@ -174,20 +174,22 @@ CASE="Case 2.1:"
 fi
 if ((echo $* | grep -e "2.2" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 2.2:" 
-    echo ${CASE}
-    SMV1=${CASEFOLDER}'2_snark/snark2_M1_concurrent.smv'
-    SMV2=${CASEFOLDER}'2_snark/snark2_M2_sequential.smv'
-    HQ=${CASEFOLDER}'2_snark/snark2.hq'
-    ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 30 -pes -find
-    echo ""
-    if [ "${COMPAH}" = "TRUE" ]; then
-    echo "------(AutoHyper Starts)------"
-    echo "model not available for AutoHyper"
-    fi
-    if [ "${COMPAHQ}" = "TRUE" ]; then
-    echo "------(AutoHyperQ Starts)------"
-    echo "model not available for AutoHyperQ"
-    fi
+    echo "Case 2.2 is huge, is recommended to test separately"
+    echo "please go uncommand section "CASE2.2" in run_bencchmark.sh"
+    # echo ${CASE}
+    # SMV1=${CASEFOLDER}'2_snark/snark2_M1_concurrent.smv'
+    # SMV2=${CASEFOLDER}'2_snark/snark2_M2_sequential.smv'
+    # HQ=${CASEFOLDER}'2_snark/snark2.hq'
+    # ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} 30 -pes -find
+    # echo ""
+    # if [ "${COMPAH}" = "TRUE" ]; then
+    # echo "------(AutoHyper Starts)------"
+    # echo "model not available for AutoHyper"
+    # fi
+    # if [ "${COMPAHQ}" = "TRUE" ]; then
+    # echo "------(AutoHyperQ Starts)------"
+    # echo "model not available for AutoHyperQ"
+    # fi
 fi
 if ((echo $* | grep -e "3.1" -q) || (echo $* | grep -e "-all" -q) || (echo $* | grep -e "-light" -q)) then 
 CASE="Case 3.1:" 
@@ -299,39 +301,43 @@ CASE="Case 5.2:"
 fi
 if ((echo $* | grep -e "5.3" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 5.3:" 
-    echo ${CASE}
-    SMV=${CASEFOLDER}'5_planning/robotic_robustness_1600.smv'
-    HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
-    HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
-    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 80 -hopt -find
-    echo ""
-    if [ "${COMPAH}" = "TRUE" ]; then
-    echo "------(AutoHyper Starts)------"
-    echo "formula: " ${HQAUTO}
-    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
-    fi
-    if [ "${COMPAHQ}" = "TRUE" ]; then
-    echo "------(AutoHyperQ Starts)------"
-    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
-    fi
+    echo "Case5.3 is huge, is recommended to test separately"
+    echo "please go uncommand section "CASE5.3" in run_bencchmark.sh"
+    # echo ${CASE}
+    # SMV=${CASEFOLDER}'5_planning/robotic_robustness_1600.smv'
+    # HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
+    # HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
+    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 80 -hopt -find
+    # echo ""
+    # if [ "${COMPAH}" = "TRUE" ]; then
+    # echo "------(AutoHyper Starts)------"
+    # echo "formula: " ${HQAUTO}
+    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    # fi
+    # if [ "${COMPAHQ}" = "TRUE" ]; then
+    # echo "------(AutoHyperQ Starts)------"
+    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    # fi
 fi
 if ((echo $* | grep -e "5.4" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 5.4:" 
-    echo ${CASE}
-    SMV=${CASEFOLDER}'5_planning/robotic_robustness_3600.smv'
-    HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
-    HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
-    ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 120 -hopt -find
-    echo ""
-    if [ "${COMPAH}" = "TRUE" ]; then
-    echo "------(AutoHyper Starts)------"
-    echo "formula: " ${HQAUTO}
-    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
-    fi
-    if [ "${COMPAHQ}" = "TRUE" ]; then
-    echo "------(AutoHyperQ Starts)------"
-    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
-    fi
+    echo "Case 5.4 is huge, is recommended to test separately"
+    echo "please go uncommand section "CASE5.4" in run_bencchmark.sh"
+    # echo ${CASE}
+    # SMV=${CASEFOLDER}'5_planning/robotic_robustness_3600.smv'
+    # HQ=${CASEFOLDER}'5_planning/robotic_robustness_formula.hq'
+    # HQAUTO=${CASEFOLDER}${AHFORMULAS}'5.hq'
+    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 120 -hopt -find
+    # echo ""
+    # if [ "${COMPAH}" = "TRUE" ]; then
+    # echo "------(AutoHyper Starts)------"
+    # echo "formula: " ${HQAUTO}
+    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} 
+    # fi
+    # if [ "${COMPAHQ}" = "TRUE" ]; then
+    # echo "------(AutoHyperQ Starts)------"
+    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
+    # fi
 fi
 if ((echo $* | grep -e "6.1" -q) || (echo $* | grep -e "-all" -q) || (echo $* | grep -e "-light" -q)) then 
 CASE="Case 6.1:" 
