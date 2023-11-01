@@ -7,14 +7,17 @@ exception MoreThanOneInputFile
 exception No_file
 
 type convert_t = DNF | CNF | NNF
-val conversion :  convert_t option ref
+val  conversion :  convert_t option ref
 
 type output_format_t = QCIR | QDIMACS | AIGER 
-val format : output_format_t option ref
+val  format : output_format_t option ref
 
 val unrolling_format : QBF.quantifiers option ref
 val unrolling_semantics : QBF.semantics option ref
 
+
+val is_new_encoding  : bool ref
+val newencoding_form : QBF.newencoding option ref
 
 
 val is_unroll_num : bool ref

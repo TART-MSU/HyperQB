@@ -43,6 +43,12 @@ let parse (ch:Stdlib.in_channel) (the_parser:'a parser_t) : 'a =
     the_parser (Lexing.from_string (remove_comments ch))
   end
 
+let parse_str (ch:string) (the_parser:'a parser_t) : 'a =
+  begin
+    Global.reset_linenum();
+    the_parser (Lexing.from_string (ch))
+  end
+
  
 let open_and_parse (file_name:string) (the_parser:'a parser_t) : 'a =
   let input = try

@@ -22,6 +22,8 @@ val unroll_uptok_OPT_R_P : formula -> formula -> int -> formula
 val unroll_uptok_PES_U_P : formula -> formula -> int -> formula
 val unroll_uptok_PES_R_P : formula -> formula -> int -> formula
 
+val unroll_match_name      : formula -> int -> string -> formula 
+val unroll_match_uptok     : formula -> int -> string -> formula
 
 
 (* TODO: not working *)

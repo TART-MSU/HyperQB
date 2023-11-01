@@ -34,6 +34,8 @@ type formula =
 | CNF of disjunctive_formula list
 | DNF of conjunctive_formula list
 | General of expression
+| ConjF of formula list
+| DisjF of formula list
 
 type quantifier =
 | Forall of variable list
@@ -49,6 +51,10 @@ type quantified_formula = (quantifier list) * formula
 val build_and     : formula -> formula -> formula
 val build_or      : formula -> formula -> formula
 val build_implies : formula -> formula -> formula
+
+(* val build_mand : formula list -> formula *)
+(* val build_mor  : formula list -> formula *)
+
 
 val nnf: expression -> expression
 val nnf_fast: expression -> expression
@@ -86,6 +92,8 @@ val get_vars : formula -> variable list
 val get_vars_expr : expression -> variable list
 val get_vars_disjunctive_formula : disjunctive_formula -> variable list
 val get_vars_conjunctive_formula : conjunctive_formula -> variable list
+
+val get_exp : formula -> expression
 
 val size : formula -> int
 val size_expr : expression -> int

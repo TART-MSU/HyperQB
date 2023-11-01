@@ -39,7 +39,7 @@ let rec formula_to_circuit_fast (f:formula) : str_circuit =
     | NegAtom(v) -> Literal("-"^v,l) in
   let rec expression_to_circuit (name:string) (e:expression) : str_circuit =
     let convert = expression_to_circuit "" in
-    let f_or n cx cy  = Or(n,cx,cy) in
+    let f_or  n cx cy = Or(n,cx,cy) in
     let f_and n cx cy = And(n,cx,cy) in
     let f_ite n cx cy = Ite(n,cx,cy,cy) in
     let rec floop n (phi:expression) cont =
@@ -92,8 +92,6 @@ let rec formula_to_circuit_fast (f:formula) : str_circuit =
   | CNF e     -> cnf_to_circuit e
   | DNF e     -> dnf_to_circuit e
   | General e -> expression_to_circuit "" e
-
-
 let rec formula_to_circuit (f:formula) : str_circuit =
   let last_id = ref 1 in
   let get_new_symbol (unit): int =
@@ -147,11 +145,27 @@ let rec formula_to_circuit (f:formula) : str_circuit =
     let cb = formula_to_circuit y in
     Let(n,ca,cb)
   in
+  (* new!!! *)
+  let conjf_to_circuit (e: formula list) : str_circuit = 
+    match e with
+      [] -> True
+    | [l] -> formula_to_circuit_fast l
+    | ls  -> let ands = List.map formula_to_circuit_fast ls in MAnd(get_new_name(),ands)  
+  in
+  let disjf_to_circuit (e: formula list) : str_circuit = 
+    match e with
+      [] -> True
+    | [l] -> formula_to_circuit_fast l
+    | ls  -> let ors = List.map formula_to_circuit_fast ls in MAnd(get_new_name(),ors)  
+  in
+  (* new!!! *)
   match f with
   | Let (n,x,y) -> let_to_circuit n x y
   | CNF e     -> cnf_to_circuit e
   | DNF e     -> dnf_to_circuit e
   | General e -> expression_to_circuit "" e
+  | ConjF e   -> conjf_to_circuit e
+  | DisjF e   -> disjf_to_circuit e
                
 
 
@@ -226,9 +240,9 @@ let get_name (c:str_circuit) : string =
   | Literal(t,_) -> t
   | Let(t,_,_)   -> t
   | Or(t,_,_)    -> t
-  | MOr(t,_)   -> t
+  | MOr(t,_)     -> t
   | And(t,_,_)   -> t
-  | MAnd(t,_)   -> t
+  | MAnd(t,_)    -> t
   | Xor(t,_,_)   -> t
   | Ite(t,_,_,_) -> t
     
@@ -276,9 +290,7 @@ let quantified_circuit_to_str (qc:quantified_str_circuit) : string =
   in
   let quantifier_prefix =  String.concat "" (List.map quantifier_to_str qs) in
   "#QCIR-G14\n" ^ quantifier_prefix ^ (circuit_to_str c)
-
-
-  
+(*   
 let quantified_circuit_to_str (qc:quantified_str_circuit): string =
   let (qs,c) = qc in
   let quantifier_to_str q =
@@ -287,7 +299,7 @@ let quantified_circuit_to_str (qc:quantified_str_circuit): string =
     | Forall vs -> sprintf "forall(%s)\n" (String.concat ", " vs)
   in
   let quantifier_prefix =  String.concat "" (List.map quantifier_to_str qs) in
-  "#QCIR-G14\n" ^ quantifier_prefix ^ circuit_to_str c
+  "#QCIR-G14\n" ^ quantifier_prefix ^ circuit_to_str c *)
  
 
 let quantified_circuit_to_num_circuit (qc:quantified_str_circuit) (st:symbol_table)  : quantified_str_circuit =
