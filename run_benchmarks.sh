@@ -2,7 +2,7 @@
 TIMEFORMAT="TOTAL: %Rs"
 # HyperQB driver
 HYPERQB="./hyperqb.sh"
-# AH and AHQ bins
+# AH and AHQ bins --- has to be locally installed with absolute paths
 AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 AUTOHYPERQ='/Users/tzuhan/install/autohyperq/app/AutoHyperQ'
 
