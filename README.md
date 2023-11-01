@@ -24,9 +24,9 @@ You are now ready to run HyperQB!:D
 
 
 ## First Demo
-```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```
-```sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find```
-```sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug```
+```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```<br/>
+```sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find```<br/>
+```sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug```<br/>
 
 (The script ```run_demo.sh``` contains more small demo examples)
 
@@ -85,10 +85,6 @@ Our evaluations include the following cases:<br/>
 - Case #14.1: Non-deterministic init
 - Case #14.2: Non-deterministic trans
 
-
-## HyperQB DOI
-DOI:    https://doi.org/10.5281/zenodo.7851135
-(Zenodo repo for the latest version of artifact)
 
 ## People
 Authors:
