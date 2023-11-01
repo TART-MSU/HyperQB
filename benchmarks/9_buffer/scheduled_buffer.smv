@@ -1,0 +1,79 @@
+MODULE main
+VAR
+  P1_sec_in: 0..3;
+  P2_unclass_in: 0..3;
+  P1_sec_out: 0..3;
+  P2_unclass_out: 0..3;
+
+  shared_buffer: 0..3;
+
+  sec_write: boolean;
+  sec_read: boolean;
+
+  unclass_write: boolean;
+  unclass_read: boolean;
+
+  PC: 1..3;
+ASSIGN
+  -- Initial Conditions
+  init(P1_sec_in):= {0,1,2,3};
+  init(P1_sec_out):= 0;
+  init(P2_unclass_in):= {0,1,2,3};
+  init(P2_unclass_out):= 0;
+  init(shared_buffer) := 0;
+  init(sec_write):= {TRUE, FALSE};
+  init(sec_read):= {FALSE};
+  init(unclass_write):= {TRUE, FALSE};
+  init(unclass_read):= {FALSE};
+  init(PC) := 1;
+
+  -- Transition Relations
+  next(P1_sec_in) := P1_sec_in;
+  next(P2_unclass_in) := P2_unclass_in;
+  next(sec_write) := sec_write;
+  next(unclass_write) := unclass_write;
+
+  --scheduled
+  next(sec_read) :=
+    case
+      (sec_write): TRUE;
+      (unclass_write): FALSE;
+      TRUE: sec_read;
+    esac;
+  next(unclass_read) :=
+    case
+      (unclass_write): TRUE;
+      (sec_write): FALSE;
+      TRUE: unclass_read;
+    esac;
+
+  next(shared_buffer) :=
+    case
+      ((PC=2) & (sec_write)): P1_sec_in;
+      ((PC=2) & (unclass_write)): P2_unclass_in;
+      TRUE: shared_buffer;
+    esac;
+
+  next(P1_sec_out) :=
+    case
+      ((PC=3) & (sec_read)) : shared_buffer;
+      TRUE: P1_sec_out;
+    esac;
+
+  next(P2_unclass_out) :=
+    case
+      ((PC=3) & (unclass_read)) : shared_buffer;
+      TRUE: P2_unclass_out;
+    esac;
+
+  next(PC) :=
+    case
+      (PC=1): 2;
+      (PC=2): 3;
+      (PC=3): 3;
+      TRUE: PC;
+    esac;
+
+DEFINE
+  halt := PC = 3 ;
+  no_conflict := !(sec_read & unclass_read);

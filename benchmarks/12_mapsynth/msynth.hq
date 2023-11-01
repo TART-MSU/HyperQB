@@ -1,0 +1,31 @@
+exists A. forall B. forall C. exists D. exists E.
+G 
+(
+  (pr[A]/\~ps[A] /\ ~qr[A]/\qs[A]) 
+  \/ 
+  (~pr[A]/\ps[A] /\ qr[A]/\~qs[A])
+)
+/\
+(
+  G (
+      ((pr[A]) -> ((atom_p[B]) -> (atom_r[C]))) /\
+      ((ps[A]) -> ((atom_p[B]) -> (atom_s[C]))) /\
+      ((qr[A]) -> ((atom_q[B]) -> (atom_r[C]))) /\
+      ((qs[A]) -> ((atom_q[B]) -> (atom_s[C]))) /\
+      (~FAIL[B] /\ ~FAIL[C])
+  )
+  ->
+  (
+  G ( 
+      ((pr[A]) -> ((atom_p[D]) -> (atom_r[E]))) /\
+      ((ps[A]) -> ((atom_p[D]) -> (atom_s[E]))) /\
+      ((qr[A]) -> ((atom_q[D]) -> (atom_r[E]))) /\
+      ((qs[A]) -> ((atom_q[D]) -> (atom_s[E]))) /\
+      (~FAIL[D] /\ ~FAIL[E])
+  )
+  /\
+  G (
+      (atom_p[B]) -> (~atom_p[D])
+    )
+  )
+)

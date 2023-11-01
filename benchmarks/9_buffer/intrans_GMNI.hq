@@ -1,0 +1,8 @@
+forall A. exists B.
+(G((!(*P1_sec_in[A]=P1_sec_in[B]*)))
+/\
+(G(((sec_read[A]<->sec_read[B]) /\
+  (sec_write[A]<->sec_write[B])/\
+  (unclass_read[A]<->unclass_read[B])/\
+  (unclass_write[A]<->unclass_write[B]))\/
+(*P2_unclass_out[A]=P2_unclass_out[B]*))))

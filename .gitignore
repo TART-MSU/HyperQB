@@ -1,2 +1,4 @@
 local/
 build*
+*.DS_store
+

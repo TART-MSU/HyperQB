@@ -1,0 +1,45 @@
+MODULE main
+
+VAR
+  secret: 0..1;
+  Alice_Bob_sec: boolean;
+  Bob_Eve_pub: boolean;
+  Bob_sec: boolean;
+  Eve_secisnotempty: boolean;
+  STATE: 0..6;
+
+ASSIGN
+  -- Initial Conditions
+  init(secret) := {0,1};
+  init(Alice_Bob_sec):= FALSE;
+  init(Bob_Eve_pub):= FALSE;
+  init(Bob_sec):= FALSE;
+  init(Eve_secisnotempty):= FALSE;
+  init(STATE):= 0;
+
+  -- Transition Relations
+  next(secret) := secret;
+
+  next(Alice_Bob_sec) := {TRUE, FALSE};
+  next(Bob_Eve_pub) := {TRUE, FALSE};
+  next(Bob_sec):= {TRUE, FALSE};
+  next(Eve_secisnotempty) := {TRUE, FALSE};
+
+  next(STATE) :=
+    case
+      (STATE=0) : {1, 2};
+      (STATE=1) : {3, 4};
+      (STATE=2) : {2, 1};
+      (STATE=3) : {3, 4};
+      (STATE=4) : {5, 6};
+      TRUE: STATE;
+    esac;
+
+DEFINE
+    VALID :=    ((STATE=0) -> (!Alice_Bob_sec& !Bob_Eve_pub & !Bob_sec & !Eve_secisnotempty))
+              & ((STATE=1) -> (Alice_Bob_sec & !Bob_Eve_pub & !Bob_sec & !Eve_secisnotempty))
+              & ((STATE=2) -> (!Alice_Bob_sec & Bob_Eve_pub & !Bob_sec & !Eve_secisnotempty))
+              & ((STATE=3) -> (Alice_Bob_sec & !Bob_Eve_pub & Bob_sec & !Eve_secisnotempty))
+              & ((STATE=4) -> (!Alice_Bob_sec & Bob_Eve_pub & Bob_sec & !Eve_secisnotempty))
+              & ((STATE=5) -> (!Alice_Bob_sec & Bob_Eve_pub & Bob_sec & !Eve_secisnotempty & (secret=0)))
+              & ((STATE=6) -> (!Alice_Bob_sec & Bob_Eve_pub & Bob_sec &  Eve_secisnotempty & (secret=1)));

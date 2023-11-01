@@ -1,0 +1,7 @@
+forall A. exists B. exists C. 
+(F(*GOALA*_B)) & (F(*GOALB*_C))
+&
+G(
+  (*STARTED*_B & *STARTED*_C)
+  ->
+  (!((*x-axis*_B = *x-axis*_C) & (*y-axis*_B = *y-axis*_C))))
