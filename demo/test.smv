@@ -1,18 +1,23 @@
 MODULE main
  VAR
     a: boolean;
-    b: boolean;
+    PC: 1..2;
  ASSIGN
     -- Initial Conditions
     init(a):= FALSE;
-    init(b):= TRUE;
+    init(PC):= 1; -- program counter starts at 1.
 
     -- Transition Relations
     next(a) :=
       case
+        (PC=1): {FALSE};
+        (PC=2): {TRUE, FALSE};
         TRUE: a;
       esac;
-    next(b) :=
+
+    next(PC) :=
       case
-        TRUE: b;
+        (PC=1): 2;
+        (PC=2): 2;
+        TRUE: PC;
       esac;
