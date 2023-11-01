@@ -1,16 +1,17 @@
 
--- 1  high := {true, false}
--- 2  low := false
--- 3  if (high):
--- 4    low := true;
--- 5  halt
+-- [program]
+-- 1:  high := {true, false}
+-- 2:  low := false
+-- 3:  if (high):
+-- 4:    low := true;
+-- 5:  halt
+
 MODULE main
  VAR
     high: boolean;
     low:  boolean;
     PC: 1..5;
     halt: boolean;
-    test: 1..10;
  ASSIGN
     -- Initial Conditions, here are dummy values.
     init(high):= FALSE;

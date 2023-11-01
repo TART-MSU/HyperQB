@@ -132,7 +132,7 @@ MODULE main
 
 
 	DEFINE
-		STARTED := (p1_line!=0 | p2_line!=0 | p3_line!=0);
+		STARTED  := (p1_line!=0 | p2_line!=0 | p3_line!=0);
 		p1-TOKEN := STARTED & (p1_line=2) & ((p1_ticket <= p2_ticket) & (p1_ticket <= p3_ticket));
 		p2-TOKEN := STARTED & (p2_line=2) & ((((p2_ticket <= p1_ticket) & (p2_ticket <= p3_ticket))) | !p1-TOKEN);
 		p3-TOKEN := STARTED & (p3_line=2) & ((((p3_ticket <= p1_ticket) & (p3_ticket <= p2_ticket))) | !p1-TOKEN & !p2-TOKEN);
