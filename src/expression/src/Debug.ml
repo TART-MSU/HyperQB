@@ -21,4 +21,3 @@ let enable_debug () = debug_enabled := true
 let disable_debug () = debug_enabled := false
 let flush () = if !debug_enabled then  Stdlib.flush Stdlib.stderr
 let is_debug_enabled () : bool =  !debug_enabled
-      

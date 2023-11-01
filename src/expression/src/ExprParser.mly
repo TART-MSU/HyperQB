@@ -46,8 +46,7 @@ let get_line id = snd id
 %left DOT
 
 /* %start expression */
-%start expression letclause
-
+%start expression letclause 
 
 %type <Expression.expression> expression
 %type <Expression.formula> letclause
@@ -61,21 +60,22 @@ letclause :
  | LET IDENT EQUALS expression IN letclause
     { Expression.Let(get_name $2,$4,$6) }
  | expression { General($1) }
-  
+
+
 expression :
   | OPEN_PAREN expression CLOSE_PAREN
-      { $2 }
+      { $2 }           
   | LOGICAL_TRUE
       { Expression.True }
   | LOGICAL_FALSE
       { Expression.False }
   | LOGICAL_NOT expression
       {
-	let phi = $2 in
-	match phi with
-	| Expression.Literal(Expression.Atom(v)) -> Expression.Literal(Expression.NegAtom(v))
-	| _ -> Expression.Neg(phi)
-      }
+        let phi = $2 in
+        match phi with
+        | Expression.Literal(Expression.Atom(v)) -> Expression.Literal(Expression.NegAtom(v))
+        | _ -> Expression.Neg(phi)
+      }    
   | expression LOGICAL_AND expression
       { Expression.And ($1, $3) }
   | expression LOGICAL_OR expression
