@@ -22,8 +22,8 @@ HyperQB will automatically pull the image and execute the scripts to avoid possi
 
 You are now ready to run HyperQB!:D
 
-
 ## First Demo
+To check if HyperQB runs correctly, simply execute the following lines (in HyperQB/)
 ```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```<br/>
 ```sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find```<br/>
 ```sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug```<br/>
@@ -87,7 +87,6 @@ Our evaluations include the following cases:<br/>
 
 
 ## People
-Authors:
 - [Tzu-Han Hsu](https://tzuhancs.github.io/), Michigan State University.
 - [Borzoo Bonakdarpour](http://www.cse.msu.edu/~borzoo/), Michigan State University.
 - [César Sánchez](https://software.imdea.org/~cesar/), IMDEA Software Institute.
