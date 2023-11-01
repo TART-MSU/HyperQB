@@ -107,7 +107,6 @@ def assignVal(key, dict):
 	return var_name+IFF+dict[key]
 
 
-
 #####################################
 #  Transition Relation Construction #
 #####################################

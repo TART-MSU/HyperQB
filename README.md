@@ -18,7 +18,7 @@ to work as expected on the same VM.
 
 Following the state from this year's instruction 
 "...allow reasonable network access from the VM...", our submission 
-is partially using Docker image to reduce the reviewer's burden on 
+is *partially* using Docker image to reduce the reviewer's burden on 
 the dependencies installation.
 Note:   The core technical parts of HyperQB BMC algorithm
         (i.e., encoding, unrolling, QBF-solving, etc.),
@@ -39,6 +39,7 @@ Step 0. download and unzip tacas.zip, then
 
 Step 1. to complete the setup in one-click, run: 
         ```sudo ./setup.sh```
+        ```sudo docker pull tzuhanmsu/hyperqube:latest```
         all required setup is now done! (ps. authentication might be needed here)
         Note:   in case any downloading issue happen in the VM, please run:
                 ```sudo snap install docker``
@@ -59,6 +60,7 @@ Step 0. unzip tacas.zip, then
 
 Step 1. next, complete setup automatically, run: 
         ```sudo ./setup.sh```
+        ```sudo docker pull tzuhanmsu/hyperqube:latest```
 
 Step 2. To test small models and simple formulas, run any line below: 
         ```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```
