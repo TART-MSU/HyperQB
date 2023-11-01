@@ -1,0 +1,7 @@
+exists A. forall B.
+F(GOAL[A])
+/\ (G((*act[A]=1* <-> *act[B]=1*)
+/\(*act[A]=2* <-> *act[B]=2*)
+/\(*act[A]=3* <-> *act[B]=3*)
+/\(*act[A]=4* <-> *act[B]=4*))
+-> (F(GOAL[B])))

@@ -1,0 +1,2 @@
+exists A. exists B. forall C.
+G(GOALA[A] <-> GOALA[C]) \/ G(GOALB[B] <-> GOALB[C])

@@ -1,0 +1,14 @@
+forall A. exists B.
+!(
+    (F
+        ({GOAL}_A)
+    )
+&
+    (G
+        (
+            (! {GOAL}_A)
+            ->
+            (! {GOAL}_B)
+        )
+    )
+)
