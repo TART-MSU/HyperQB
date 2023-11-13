@@ -1,3 +1,4 @@
+-- (hand-craft)
 MODULE main
 -- A simple program that violates non-interference
 -- 1: LOW=0, HIGH={0....10}

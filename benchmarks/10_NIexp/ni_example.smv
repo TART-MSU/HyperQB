@@ -1,3 +1,5 @@
+--NI
+--(adpted from: Hiroshi Unno, Tachio Terauchi, and Eric Koskinen. Constraint-based relational verification. In Computer Aided Verification: 33rd International Conference, CAV 2021)
 MODULE main
 -- gniEx(bool high, int low) {
 --   1 if (high)

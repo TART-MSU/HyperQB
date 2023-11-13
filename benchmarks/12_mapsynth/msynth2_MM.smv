@@ -1,3 +1,5 @@
+--MAPSYNTH
+--(adopted from: Tzu-Han Hsu, Borzoo Bonakdarpour, Eunsuk Kang, and Stavros Tripakis. Mapping synthesis for hyperproperties. In 2022 IEEE 35th Computer Security Foundations Symposium (CSF))
 MODULE main
 
 VAR

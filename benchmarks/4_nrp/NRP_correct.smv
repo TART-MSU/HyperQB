@@ -1,5 +1,5 @@
 -- Non-repudiation Protocol
-
+-- (adopted from: Wojciech Jamroga, Sjouke Mauw, and Matthijs Melissen. Fairness in nonrepudiation protocols. In Proc. of the 7th Int’l Workshop on Security and Trust Management (STM’11))
 -- (1) skip until P->T: m ;
 -- (2) skip until P->T: NRO ;
 -- (3) T->Q: m ;

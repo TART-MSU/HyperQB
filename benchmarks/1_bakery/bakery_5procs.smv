@@ -1,11 +1,12 @@
 --BAKERY ALGORITHM
+--(adopted from the Bakery algorithm from: Norine Coenen, Bernd Finkbeiner, César Sánchez, and Leander Tentrup. Verifying hyperliveness. In Proc. of the 31st Int’l Conf. on Computer Aided Verification (CAV’19))
 MODULE main
 VAR
 	p1_ticket: 0..3; -- the ticket number of p1
 	p2_ticket: 0..3; -- the ticket number of p2
-	p3_ticket: 0..3; -- the ticket number of p2
-	p4_ticket: 0..3; -- the ticket number of p2
-	p5_ticket: 0..3; -- the ticket number of p2
+	p3_ticket: 0..3; -- the ticket number of p3
+	p4_ticket: 0..3; -- the ticket number of p4
+	p5_ticket: 0..3; -- the ticket number of p5
 
 	MAX_ticket: 0..3; -- let's say max ticket number is 3
 

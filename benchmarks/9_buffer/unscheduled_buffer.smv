@@ -1,3 +1,5 @@
+--BUFFER
+--(adopted from: Michael W Whalen, David A Greve, and Lucas G Wagner. Model checking information flow. In Design and verification of microprocessor systems for high-assurance applications)
 MODULE main
 VAR
   -- P1_Mode: 0..1; -- 0: secure, 1: unclassified
