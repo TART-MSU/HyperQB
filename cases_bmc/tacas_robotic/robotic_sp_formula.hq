@@ -1,2 +1,0 @@
-exists A. forall B.
-F(GOAL[A]) /\ (G((~GOAL[A])->(~GOAL[B])))
