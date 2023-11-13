@@ -1,3 +1,0 @@
-forall A. forall B.
-(F(halt[A]/\halt[B]))/\
-((F(*x[A] = x[B]*)) -> (G((halt[A]/\halt[B]) -> (*y[A] = y[B]*))))
