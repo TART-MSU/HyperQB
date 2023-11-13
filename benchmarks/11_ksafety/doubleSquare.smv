@@ -1,3 +1,5 @@
+--NI
+--(adpted from: Hiroshi Unno, Tachio Terauchi, and Eric Koskinen. Constraint-based relational verification. In Computer Aided Verification: 33rd International Conference, CAV 2021)
 MODULE main
 --  calculating 2^x
 --  doubleSquare(bool h, int x) {

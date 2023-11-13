@@ -1,4 +1,5 @@
-
+--ROBOTIC PLANNING
+--(adopted from: Yu Wang, Siddharta Nalluri, and Miroslav Pajic. Hyperproperties for robotics: Planning via HyperLTL. In 2020 IEEE Int’l Conf. on Robotics and Automation (ICRA’20))
  MODULE main
  VAR
     x_axis: 0..59;
