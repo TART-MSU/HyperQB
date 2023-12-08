@@ -7,7 +7,7 @@ HyperQB includes several parts:
 - QBF encoding of unfolding with bound k using bounded semantics,
 - QBF solving with QBF solver (currently QuAbs).  
 
-# Licence
+## Licence
 Our code is under MIT license as presented in LICENSE.tex,
 while the existing tool, QuAbs, is under AGPL license.  
 
