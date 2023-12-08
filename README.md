@@ -50,7 +50,7 @@ Examples from our benchmarks:
 ```./hyperqb.sh demo/snark_conc.smv demo/snark1_seq.smv demo/lin.hq 18 -pes -bughunt```    
 
 
-## Experiments
+## Benchmarks
 All models and formulas are located in directory `benchmarks/`.
 
 We provide a one-click script ```run_benchmarks.sh``` for running our benchmarks.
