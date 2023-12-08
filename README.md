@@ -85,6 +85,13 @@ Our evaluations include the following cases:<br/>
 - Case #14.1: Non-deterministic init
 - Case #14.2: Non-deterministic trans
 
+## Additional Information 
+
+# NuSMV Models 
+HyperQB supports most features/keywords of `NuSMV` for `VAR`, `ASSIGN`, `DEFINE`, etc. Currently, we do not support the keyword “`process`” for asynchronicity. However, this limitation can be easily resolved by having nondeterministic `next()` in `TRANS` (e.g., `next(proc_PC) := {0,1}`; for a nondeterministic movement of a process).
+
+# HyperLTL Formulas 
+We do not include `SPEC` keyword in `NuSMV` as the formula specification, since it does not cover HyperLTL. Instead, HyperQB takes formulas written in our own grammar. 
 
 ## People
 - [Tzu-Han Hsu](https://tzuhancs.github.io/), Michigan State University.
