@@ -23,8 +23,7 @@ HyperQB will automatically pull the image and execute the scripts to avoid possi
 You are now ready to run HyperQB!:D
 
 ## First Demo
-To check if HyperQB runs correctly, simply execute the following lines (in HyperQB/)
-
+To check if HyperQB runs correctly, simply execute the following lines (in HyperQB/): <br/>
 ```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```<br/>
 ```sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find```<br/>
 ```sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug```<br/>
@@ -40,14 +39,14 @@ To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
 - `<sem>` the semantics, which can be -pes, -opt, -hpes or -hopt, and
 - `<mode>` the mode of performing classic BMC (negating the formula) or not (original formula), which can be `-bughunt` or `-find` (we use `-bughunt` as default value).  
     
-In general, run HyperQB in the following format:
-    ```./hyperqube <list of models> <formula> <k> <sem> <mode>```
+In general, run HyperQB in the following format:<br/>
+```./hyperqube <list of models> <formula> <k> <sem> <mode>```
 
 Examples from our benchmarks:
-1. [demo 1: run bakery algorithm with symmetry property]
+1. [demo 1: run bakery algorithm with symmetry property]<br/>
 ```./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -bughunt```
 
-2. [dem0 2: run SNARK algorithm with linearizability propoerty]
+2. [dem0 2: run SNARK algorithm with linearizability propoerty]<br/>
 ```./hyperqb.sh demo/snark_conc.smv demo/snark1_seq.smv demo/lin.hq 18 -pes -bughunt```    
 
 
@@ -88,10 +87,10 @@ Our evaluations include the following cases:<br/>
 
 ## Additional Information 
 
-# NuSMV Models 
+### NuSMV Models 
 HyperQB supports most features/keywords of `NuSMV` for `VAR`, `ASSIGN`, `DEFINE`, etc. Currently, we do not support the keyword “`process`” for asynchronicity. However, this limitation can be easily resolved by having nondeterministic `next()` in `TRANS` (e.g., `next(proc_PC) := {0,1}`; for a nondeterministic movement of a process).
 
-# HyperLTL Formulas 
+### HyperLTL Formulas 
 We do not include `SPEC` keyword in `NuSMV` as the formula specification, since it does not cover HyperLTL. Instead, HyperQB takes formulas written in our own grammar. 
 
 ## People
