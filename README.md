@@ -16,7 +16,7 @@ You can start using HyperQB in 2 simple steps:
 1. First install [docker](https://docs.docker.com/get-docker/). 
 HyperQB will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies.
 
-2. Next, clone the repository and step into the repo:<br/>
+2. Next, clone the repository and step into the repo:
 - ```git clone https://github.com/TART-MSU/HyperQB.git```
 - ```cd HyperQB```
 
