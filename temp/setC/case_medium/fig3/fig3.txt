@@ -1,0 +1,34 @@
+[program]
+
+void main(int x, int n, int o) {
+    int c;
+
+    observe;
+
+    if * {
+        c = 0;
+
+        while (x < n) {
+            x = x + 1;
+            c = c + o;
+        }
+    } else {
+        @ c = 0;
+
+        while (x < n) {
+            x = x + 1;
+            c = c + o;
+        }
+    }
+
+    observe;
+}
+
+
+[formula]
+forall pi. forall pii.  {x_pi = x_pii & n_pi = n_pii & o_pi = o_pii} -> X {c_pi = c_pii}
+
+[depth]
+10
+
+[outputs]

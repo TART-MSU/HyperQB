@@ -1,0 +1,26 @@
+[program]
+/*
+(assuming int bound = 5)
+function(int secret):
+1:  int x := 0
+2:  if (secret != 0):
+3:    low := 5;
+4:  halt
+*/
+void main(int secret) {
+    int x;
+    x = 0;
+
+    if (secret != 0) {
+        x = 5;
+    }
+
+    observe;
+    return;
+}
+
+[formula]
+forall pi. forall pii. {x_pi = x_pii}
+
+
+[outputs]

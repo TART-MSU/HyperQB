@@ -1,0 +1,53 @@
+[program]
+void main(int secret) {
+    int public;
+    bool gotIt;
+
+    public = 42;
+    gotIt = false;
+
+    if (public > 30) {
+        if (secret == 0) {
+            gotIt = true;
+        }
+    }
+
+    observe;
+
+    return;
+}
+
+[formula]
+forall pi. forall pii. {gotIt_pi = gotIt_pii}
+
+
+[outputs]
+gotIt
+
+
+[comment]
+
+iflow/basicTests/NestedConditionals1.js
+
+(function() {
+
+    var utils = require("../TestUtils");
+
+    var secret = "secret";
+    secret = utils.source(secret, utils.HIGH_LEVEL, "test-source-secret");
+
+    var public = 42;
+    var gotIt = false;
+    if (public > 30) {
+        if (secret === "secret") {
+            gotIt = true;
+        }
+    }
+
+    utils.sink(gotIt); // PermUpViol
+
+})();
+
+
+
+

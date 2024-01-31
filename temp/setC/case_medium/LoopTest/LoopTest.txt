@@ -1,0 +1,38 @@
+[program]
+void main(int x) {
+    int y;
+
+    y = 0;
+
+    while(x < 20) {
+        x = x + 1;
+        @ y = y + 1;
+    }
+
+    observe;
+
+    return;
+}
+
+[formula]
+forall pi. forall pii. {y_pi = y_pii}
+
+
+[outputs]
+y
+
+
+[comment]
+
+iflow/basicTests/LoopTest.js
+
+var utils = require("../TestUtils");
+
+var x = utils.source(12, utils.HIGH_LEVEL, "test-source-x");
+var y = 0;
+for (; x < 20; x++) y++;
+utils.sink(y); // PermUpViol
+
+
+
+
