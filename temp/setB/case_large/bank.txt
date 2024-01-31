@@ -1,0 +1,106 @@
+[name]
+bank2
+[program]
+int main(string password, string username, string date,
+            int serverip, string serverport) {
+    
+    string  data;
+    string  loginfo;
+    string  match;
+    bool    loginsuccess;
+    string  username;
+    string  identity;
+
+    string protocol; 
+    string httppost;
+    string httppost2;
+    string httpclient;
+    string creds;
+    string result;
+    string startactivity;
+
+    loginsuccess= false;
+    match       = "MyPassword";
+    username    = "user";
+    date        = "today";
+    loginfo     = "(empty)";
+    identity    = "normal user";
+    creds       = "";
+    result      = "(unknown)";
+    httppost    = "";
+    httppost2   = "";
+    protocol    = "http://";
+
+    if (serverip == 0){
+        result = "server path/port not set!!";
+    }
+    else {
+        httppost = protocol str.++ ":" str.++ serverport str.++ "/login";
+        httppost2 = protocol str.++ ":" str.++ serverport str.++ "/devlogin";
+    } 
+
+    if (username == "devadmin"){
+        httpclient = httppost2;
+    } 
+    else {
+        httpclient = httppost;
+    }
+
+    if(password == match){
+        loginsuccess = true;
+        creds = username str.++ password;
+    } 
+    else {
+        loginsuccess = false;
+        creds = "(none)";
+    }
+
+    data = date;
+    data = data str.++ creds;
+    data = data str.++ identity; 
+
+    @ loginfo = data; // get log
+    observe;
+    
+    if (loginsuccess == true) {
+        loginfo = loginfo str.++ "successful login";
+        result = "PostLogin.class";
+        startactivity = result str.++ loginfo;
+    } else {
+        loginfo = loginfo;
+        result = "WrongLogin.class";
+        startactivity = result;
+    }
+
+    
+    observe;
+    return 0;
+}
+
+[formula]
+forall pi. forall pii. {loginfo_pi = loginfo_pii}
+
+[outputs]
+loginfo
+
+/*
+An insecure bank system that leaks the password(H) into LOG(L)
+<INPUT>
+    String: password
+<OUTPUT>
+    String: LOG
+<PSEUDOCODE>
+(cited from: https://github.com/dineshshetty/Android-InsecureBankv2/blob/master/InsecureBankv2/app/src/main/java/com/android/insecurebankv2/DoLogin.java)
+    0: RequestTask:
+    1:   OnCreate:
+    2:         data = "getIntent()"
+    3:   if (correct_credentials()):
+    4:      login = "success!"
+    5:   else:
+    6:      login = "fail."
+    7:   @ LOG = OnCreate()
+    8:   if (login = "success!"):
+    9:      LOG = "unsuccessful login";
+    10:  else:
+    11:     LOG = loginfo;
+*/

@@ -1,0 +1,45 @@
+-- [program]
+-- (assuming int bound = 5)
+-- function(int secret):
+-- 1:  int x := 0
+-- 2:  if (secret != 0):
+-- 3:    low := 5;
+-- 4:  halt
+
+MODULE main
+ VAR
+    high: 0..5;
+    low: 0..5;
+    PC: 1..5;
+    halt: boolean;
+ ASSIGN
+    -- Initial Conditions
+    init(low) := 0;
+    init(halt):= FALSE;
+    init(PC):= 1; -- but program counter starts at 1
+
+    -- Transition Relations
+    next(high) := high; -- FROZEN var
+
+    next(low) :=
+      case
+        (PC=1): 0; -- on line 1, x is set to 0
+        (PC=3 & (high != 0)): 5; -- on conditional line 3, x is set to 5
+        TRUE: low;
+      esac;
+
+    next(PC) :=
+      case
+        (PC=1): 2;
+        (PC=2 & (high != 0)): 3; -- the if condition on line 2
+        (PC=2 & (high = 0)): 4; -- the else on line 2, jump to 4
+        (PC=3): 4;
+        (PC=4): 4; -- loop here
+        TRUE: PC;
+      esac;
+
+    next(halt) :=
+      case
+        (PC=4): TRUE;
+        TRUE: halt;
+      esac;
