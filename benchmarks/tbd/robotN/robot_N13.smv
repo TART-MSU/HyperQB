@@ -1,0 +1,39 @@
+-- [ ROBOTIC PLANNING ]
+--  Adopted from: Yu Wang, Siddharta Nalluri, and Miroslav Pajic. 
+--  "Hyperproperties for robotics: Planning via HyperLTL." 
+--  In 2020 IEEE Intl Conf. on Robotics and Automation (ICRA2020)
+ MODULE main
+ VAR
+    x_axis: 0..13;
+    y_axis: 0..13;
+    DIR : 0..4; -- INIT, 1-LEFT, 2-RIGHT, 3-DOWN, 4-UP
+    TOKEN: 0..1;
+ASSIGN
+    init(TOKEN):= 0;
+    next(TOKEN):= {0,1};
+    init(DIR):= {1, 2, 3, 4};
+    next(DIR):= {1, 2, 3, 4};
+
+    init(x_axis) := {0};
+    next(x_axis) :=
+        case
+            (TOKEN=0) : x_axis;
+            (x_axis=0 & DIR=1 ) : {0};
+            (x_axis=13 & DIR=2 ) : {13};
+            (DIR=1) : x_axis - 1;
+            (DIR=2) : x_axis + 1;
+            TRUE: x_axis;
+        esac;
+    init(y_axis) := 0;
+    
+    next(y_axis) :=
+        case
+            (TOKEN=1) : y_axis;
+            (y_axis=0 & DIR=3 ) : {0};
+            (y_axis=13 & DIR=4 ) : {13};
+            (DIR=3) : y_axis - 1;
+            (DIR=4) : y_axis + 1;
+            TRUE: y_axis;
+        esac;
+DEFINE
+    GOAL := ((x_axis=3 & y_axis=3));
