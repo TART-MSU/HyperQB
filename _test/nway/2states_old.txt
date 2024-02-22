@@ -1,0 +1,60 @@
+#QCIR-G14
+exists(1,2,3,4)
+output(5)
+# Generate transition steps
+# Transitions for trace 0
+# Transitions for T((0, 1) trace 0)
+ # Transition from: 0
+6 = and(-1)
+7 = and(-2)
+8 = and(2)
+9 = or(7,8)
+10 = or(-6,9)
+
+ # Transition from: 1
+11 = and(1)
+12 = and(-2)
+13 = and(2)
+14 = or(12,13)
+15 = or(-11,14)
+
+# End transitions for T(0,1) trace 0
+16 = and(10,15)
+# Transitions for T((1, 2) trace 0)
+ # Transition from: 0
+17 = and(-2)
+18 = and(-3)
+19 = and(3)
+20 = or(18,19)
+21 = or(-17,20)
+
+ # Transition from: 1
+22 = and(2)
+23 = and(-3)
+24 = and(3)
+25 = or(23,24)
+26 = or(-22,25)
+
+# End transitions for T(1,2) trace 0
+27 = and(21,26)
+# Transitions for T((2, 3) trace 0)
+ # Transition from: 0
+28 = and(-3)
+29 = and(-4)
+30 = and(4)
+31 = or(29,30)
+32 = or(-28,31)
+
+ # Transition from: 1
+33 = and(3)
+34 = and(-4)
+35 = and(4)
+36 = or(34,35)
+37 = or(-33,36)
+
+# End transitions for T(2,3) trace 0
+38 = and(32,37)
+# Conjunct T(0,3)
+39 = and(16,27,38)
+# Conjunct initial condition and all traces
+5 = and(-1,39)

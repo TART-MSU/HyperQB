@@ -4,12 +4,14 @@
 ############################
 HYPERQB="./hyperqb.sh"
 
+${HYPERQB} benchmarks/tbd/robotN/robot_N20.smv benchmarks/tbd/robotN/robot_N20.smv benchmarks/tbd/robotN/robot_N.hq 10 -pes -find
+
 ### [demo 0: run simple_krip with simple_krip_formula]
-${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
-${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
+# ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 
 ### [demo 1: run info-flow example]
-${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
+# ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
 # ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow.smv demo/infoflow2.hq 5 -pes -debug
 
 ### [demo 2: run bakery algorithm with symmetry property]
