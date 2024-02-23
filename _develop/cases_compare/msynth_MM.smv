@@ -1,0 +1,22 @@
+MODULE main
+
+VAR
+  pr: boolean;
+  ps: boolean;
+  qr: boolean;
+  qs: boolean;
+
+ASSIGN
+  -- Initial Conditions is arbitrary in mapping synth
+  init(pr) := {TRUE, FALSE};
+  init(ps) := {TRUE, FALSE};
+  init(qr) := {TRUE, FALSE};
+  init(qs) := {TRUE, FALSE};
+
+  -- Transition Relations
+  next(pr) := pr;
+  next(ps) := ps;
+  next(qr) := qr;
+  next(qs) := qs;
+
+DEFINE
