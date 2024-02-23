@@ -1,0 +1,3 @@
+output(g1)
+g1 = and(-x0,-x1,-light)
+

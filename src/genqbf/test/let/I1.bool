@@ -1,0 +1,1 @@
+let a = (~x0 /\ ~x1 /\ ~light) in a
