@@ -21,5 +21,4 @@ docker --version
 echo "check dotnet: "
 dotnet --version
 
-
 echo "HyperQB setup success!"

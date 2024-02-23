@@ -2,6 +2,7 @@
 
 # remove all generated files
 clean:
+	@echo "cleaning up generated files..."
 	find . -name "*.bool" -delete
 	find . -name "*.cex" -delete
 	find . -name "*.quabs" -delete
