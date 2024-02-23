@@ -1,5 +1,3 @@
-#!/bin/sh
-
 # remove all generated files
 clean:
 	@echo "cleaning up generated files..."
