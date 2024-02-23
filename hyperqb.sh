@@ -125,7 +125,6 @@ TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqub
 # echo "(local pip-built)"
 # TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
 
-
 ### if any error happens in parsing, exit HyperQB
 if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
   echo ${TIME_PARSE}
