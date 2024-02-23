@@ -1,2 +1,0 @@
-forall A. forall B.
-G(low[A]<->low[B])
