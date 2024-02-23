@@ -1,0 +1,59 @@
+MODULE main
+--  calculating 2^x
+--  doubleSquare(bool h, int x) {
+--    INIT: int z, y=0;
+-- 1  if (h)
+-- 2     { z = 2 * x; }
+-- 3  else { z = x; }
+-- 4  while (z>0)
+-- 5     { z - - ; y = y+x; }
+-- 6  if (!h) { y = 2 * y; }
+-- 7  return y;
+--  }
+ VAR
+	location: 1..7;
+	y: 0..50;
+	z: 0..20;
+	h: boolean;
+	x: 0..10;
+
+ ASSIGN
+	init(location) := 1 ;
+	init(h) := {TRUE, FALSE} ;
+	next(h) := h;
+
+	init(x) := {0,1,2,3,4,5};
+	next(x) := x;
+
+	init(y) := 0;
+	init(z) := 0;
+
+	next(location) := case
+		(location = 1 & !h): 3;
+		(location = 1 & h): 2;
+		(location = 3) : 4;
+		(location = 2) : 4;
+		(location = 4 & z > 0) : 5;
+    (location = 4 & z = 0) : 6;
+    (location = 5) : 4; -- jump back
+		(location = 6): 7;
+		TRUE: location ;
+	esac;
+
+	next(y) :=
+  case
+	    (location = 5 & (y <= 50 - x) & z > 0) : y + x;
+	    (location = 6 & !h & (y <= 25)): 2 * y;
+	    TRUE: y;
+	esac;
+
+	next(z) :=
+  case
+		(h & location = 1) : 2 * x;
+		(!h & location = 1) : x;
+		(location = 5 & z > 0) : (z - 1);
+	  TRUE: z;
+	esac;
+
+DEFINE
+	halt := location = 7 ;

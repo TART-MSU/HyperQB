@@ -1,0 +1,3 @@
+forall A. exists B.
+F(halt[A]) ->
+G(((halt[B])->((~(high[A]<->high[B])) /\ (*x[A]=x[B]*))))
