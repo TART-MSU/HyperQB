@@ -1,6 +1,5 @@
--- 1: a
--- 2: (a -> ~a') /\ (~a -> a)
-
+-- curr: a
+-- next: (a -> ~a') /\ (~a -> a)
 MODULE main
  VAR
     a: boolean;
@@ -12,5 +11,6 @@ MODULE main
     next(a) :=
       case
         (a): {FALSE};
-        (!a): {TRUE};
+        -- (!a): {TRUE};
+        TRUE: a;
       esac;
