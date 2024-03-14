@@ -1,0 +1,127 @@
+#QCIR-G14
+exists(1,2,3,4)
+forall(5,6,7,8)
+exists(53,54,55,56)
+forall(57,58,59,60)
+output(105)
+
+# Generate transitions for trace A 
+# Match helper variables to time step variables for trace A
+# T(0,1)
+10 = or(-1, 5)
+11 = or(1, -5)
+12 = and(10, 11)
+13 = or(-3, 7)
+14 = or(3, -7)
+15 = and(13, 14)
+16 = or(-2, 6)
+17 = or(2, -6)
+18 = and(16, 17)
+19 = or(-4, 8)
+20 = or(4, -8)
+21 = and(19, 20)
+22 = and(12,15,18,21)
+# Generate one-step for trace A
+23 = and(-5,-6)
+24 = and(-7,-8)
+25 = and(-7,8)
+26 = and(7,-8)
+27 = and(7,8)
+28 = or(24,25,26,27)
+29 = or(-23,28)
+30 = and(-5,6)
+31 = and(-7,-8)
+32 = and(-7,8)
+33 = and(7,-8)
+34 = and(7,8)
+35 = or(31,32,33,34)
+36 = or(-30,35)
+37 = and(5,-6)
+38 = and(-7,-8)
+39 = and(-7,8)
+40 = and(7,-8)
+41 = and(7,8)
+42 = or(38,39,40,41)
+43 = or(-37,42)
+44 = and(5,6)
+45 = and(-7,-8)
+46 = and(-7,8)
+47 = and(7,-8)
+48 = and(7,8)
+49 = or(45,46,47,48)
+50 = or(-44,49)
+51 = and(29,36,43,50)
+52 = or(-22,51)
+# Final encoding for Trace A
+9 = and(-1,-2,52)
+
+# Match helper variables to time step variables for trace B
+# T(0,1)
+62 = or(-53, 57)
+63 = or(53, -57)
+64 = and(62, 63)
+65 = or(-55, 59)
+66 = or(55, -59)
+67 = and(65, 66)
+68 = or(-54, 58)
+69 = or(54, -58)
+70 = and(68, 69)
+71 = or(-56, 60)
+72 = or(56, -60)
+73 = and(71, 72)
+74 = and(64,67,70,73)
+# Generate transitions for trace B
+75 = and(-57,-58)
+76 = and(-59,-60)
+77 = and(-59,60)
+78 = and(59,-60)
+79 = and(59,60)
+80 = or(76,77,78,79)
+81 = or(-75,80)
+82 = and(-57,58)
+83 = and(-59,-60)
+84 = and(-59,60)
+85 = and(59,-60)
+86 = and(59,60)
+87 = or(83,84,85,86)
+88 = or(-82,87)
+89 = and(57,-58)
+90 = and(-59,-60)
+91 = and(-59,60)
+92 = and(59,-60)
+93 = and(59,60)
+94 = or(90,91,92,93)
+95 = or(-89,94)
+96 = and(57,58)
+97 = and(-59,-60)
+98 = and(-59,60)
+99 = and(59,-60)
+100 = and(59,60)
+101 = or(97,98,99,100)
+102 = or(-96,101)
+# Transitions for single time step for Trace B
+103 = and(81,88,95,102)
+104 = or(-74,103)
+61 = and(-53,-54,104)
+
+# Final
+105 = and(9,61)
+
+# 1: i_0_A[0]
+# 2: i_0_A[1]
+# 3: i_1_A[0]
+# 4: i_1_A[1]
+# 5: i_0_helper_A[0]
+# 6: i_0_helper_A[1]
+# 7: i_1_helper_A[0]
+# 8: i_1_helper_A[1]
+# 53: i_0_B[0]
+# 54: i_0_B[1]
+# 55: i_1_B[0]
+# 56: i_1_B[1]
+# 57: i_0_helper_B[0]
+# 58: i_0_helper_B[1]
+# 59: i_1_helper_B[0]
+# 60: i_1_helper_B[1]
+
+
