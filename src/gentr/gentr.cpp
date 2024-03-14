@@ -11,6 +11,8 @@
 using namespace std;
 
 /* GLOBAL SETTING */
+string TRUE     = "TRUE";
+string FALSE    = "FALSE";
 string AND      = "/\\";
 string OR       = "\\/";
 string IMPLIES  = "->";
@@ -35,24 +37,25 @@ bool is_digit(const std::string& s)
     return !s.empty() && it == s.end();
 }
 
-
+/* Get the highest bit number from a given num */
 unsigned int get_maxbit(unsigned int number){
    unsigned int count = 0;
    unsigned i;
-   //display the total 8-bit number
-//    cout<<"8-bit digits of "<<number<<" is: ";
-//    for (i = 1 << 7; i > 0; i = i / 2){
-    //   (number & i)? cout<<"1": cout<<"0";
-//    }
-   //calculate the total bits in a number
    while (number){
       count++;
       number >>= 1;
    }
    return (count-1);
-//    cout<<"\nCount of total bits in a number are: "<<count;
 }
 
+
+pair<int,int> get_range(string name, map<string, string> &var_type){
+    string range = var_type[name];
+    size_t found_char = range.find("..");
+    int min_num = stoi(range.substr(0,range.length()-(range.length()-found_char)));
+    int max_num = stoi(range.substr(found_char + 2));
+    return make_pair(min_num, max_num);
+}
 
 /* Bit-blasting a variable according to its max value */
 vector<string> to_binary(int n, string var, int max)
@@ -82,7 +85,6 @@ vector<string> to_binary(int n, string var, int max)
     }
 
     while (max_bit_order != bit_order) {
-       
         bit_vector.push_back("~" + var + "_" + to_string(bit_order));
         bit_order++;
     }
@@ -127,11 +129,12 @@ vector<pair<string,string> > condition_tokenizer (string condition) {
             i+=1;
         } else if (condition[i] == ' '){
             i+=1;
+        } 
         // BUG
-        // } else if (condition[i] == '!'){
-            // condition_vec.push_back({"op", "!"});
-            // i+=1;
-        } else if (condition[i] == '=') {
+        // else if (condition[i] == '!'){
+        //     condition_vec.push_back({"op", "!"});
+        //     i+=1;} 
+        else if (condition[i] == '=') {
             condition_vec.push_back({"op", "="});
             i+=1;
         } else {
@@ -148,7 +151,8 @@ vector<pair<string,string> > condition_tokenizer (string condition) {
                 && condition.substr(j, 2) != "<="
                 && condition.substr(j, 2) != ">=" 
                 && condition[j] != '>' 
-                && condition[j] != '<' && condition[j] != '(') 
+                && condition[j] != '<' 
+                && condition[j] != '(') 
             {
                 var += condition[j];
                 j+=1;
@@ -193,9 +197,9 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
     }
 
     if (op == "&") {
-        return "(" + a_val + " /\\ " + b_val + ")";
+        return "(" + a_val + AND + b_val + ")";
     } else if (op == "|") {
-        return "(" + a_val + " \\/ " + b_val + ")";
+        return "(" + a_val + OR + b_val + ")";
     
     
     } else if (op == "="){
@@ -205,7 +209,7 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
         vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
         string blasted_var;
         for (const auto& bit: bits) {
-            blasted_var += bit + " /\\ ";
+            blasted_var += bit + AND;
         }
         return "(" + blasted_var.substr(0, blasted_var.length()-4) + ")";
     } else if (op == "!=") {
@@ -215,7 +219,7 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
         vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
         string blasted_var;
         for (const auto& bit: bits) {
-            blasted_var += bit + " /\\ ";
+            blasted_var += bit + AND;
         }
         return "~(" + blasted_var.substr(0, blasted_var.length()-4) + ")";
     } else if (op == ">=") {
@@ -229,7 +233,7 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
             vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
             string blasted_var;
             for (const auto& bit: bits) {
-                blasted_var += bit + " /\\ ";
+                blasted_var += bit + AND;
             }
            all_vars += "(" + blasted_var.substr(0, blasted_var.length()-4) + ") /\\ ";
         }
@@ -247,9 +251,9 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
             vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
             string blasted_var;
             for (const auto& bit: bits) {
-                blasted_var += bit + " /\\ ";
+                blasted_var += bit + AND;
             }
-           all_vars += "(" + blasted_var.substr(0, blasted_var.length()-4) + ") /\\ ";
+           all_vars += "(" + blasted_var.substr(0, blasted_var.length()-4) + ")"+ AND;
         }
         return "(" + all_vars.substr(0,all_vars.length()-4) + ")";
     } else if (op == ">") {
@@ -264,34 +268,42 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
             vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
             string blasted_var;
             for (const auto& bit: bits) {
-                blasted_var += bit + " /\\ ";
+                blasted_var += bit + AND;
             }
            all_vars += "~(" + blasted_var.substr(0, blasted_var.length()-4) + ") /\\ ";
         }
         return "(" + all_vars.substr(0,all_vars.length()-4) + ")";
     } else if (op == "<") {
+        // BUG TO FIX
         string all_vars;
-        string max_num = var_type[a_val];
+        // debug_out(var_type[a_val]);
+        // string max_num = var_type[a_val];
+        // size_t found_char = max_num.find("..");
+        // int min = stoi(max_num.substr(0,max_num.length()-(max_num.length()-found_char)));
+        // int max = stoi(max_num.substr(found_char + 2));
+        int min_num = (get_range(a_val, var_type).first);
+        int max_num = (get_range(a_val, var_type).second);
+        debug_out(to_string(min_num));
+        debug_out(to_string(max_num));
+        debug_out(b_val);
         
-        size_t found_char = max_num.find("..");
-        int min_num = stoi(max_num.substr(0,max_num.length()-(max_num.length()-found_char)));
-        max_num = max_num.substr(found_char + 2);
-        for (int i=min_num; i < stoi(b_val); i++) {
-            // cout << "I: " << i << endl;
-            vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
+        int bound = stoi(b_val);
+
+        for (int i = min_num; i < bound; i++) {
+            vector<string> bits = to_binary(i, a_val, max_num); // BUG
             string blasted_var;
             for (const auto& bit: bits) {
-                blasted_var += bit + " /\\ ";
+                blasted_var += bit + AND;
             }
-           all_vars += "(" + blasted_var.substr(0, blasted_var.length()-4) + ") /\\ ";
+            debug_out(blasted_var);
+            all_vars +=  OPEN_PARAN + blasted_var + CLOSE_PARAN + AND;
         }
-        return "(" + all_vars.substr(0,all_vars.length()-4) + ")";
+        return all_vars.substr(0,all_vars.length()-CLOSE_PARAN.size()-1) ;
     } 
 
     return "FALSE";   
 }
  
-
 /* Returns value of expression after evaluation */
 string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type){
     // cout << "size:" << tokens.size() << endl;
@@ -299,7 +311,6 @@ string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type
     if (tokens.size() == 1) { 
         return tokens[0].second;      
     }
-
     stack <string> values; // stack to store vars and vals
     stack <string> ops; // stack to store operators
     for(int i = 0; i < tokens.size(); i++){
@@ -319,7 +330,6 @@ string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type
                 values.pop();
                 string op = ops.top();
                 ops.pop();
-                // cout << "??? EVAL: " << val1 << op << val2 << endl;
                 values.push(applyOp(val1, val2, op, var_type));
             }
             // pop opening brace.
@@ -387,23 +397,20 @@ vector<vector<pair<string,string>> > cart_product (const vector<vector<pair<stri
 /* create state map of initial conditions */
 vector<vector<pair<string,string>>> create_init_map (map<string, vector<string>> &init) {
     map<string, vector<string>> init_state_map;
-
     vector<vector<pair<string,string>>> state_vec;
 
-    for (auto x: init) {
+    for (auto var: init) {
         vector<pair<string,string>> possible_states;
-        for (auto y: x.second) {
-            if (y == "FALSE") {
-                string var = x.first;
-                possible_states.push_back({var, "FALSE"});
-            } else if (y == "TRUE") {
-                string var = x.first;
-                possible_states.push_back({var, "TRUE"});
+        string var_name = var.first;
+        for (auto var_inits: var.second) {
+            if (var_inits == "FALSE") {
+                possible_states.push_back({var_name, "FALSE"});
+            } else if (var_inits == "TRUE") {
+                possible_states.push_back({var_name, "TRUE"});
             } else {
-                possible_states.push_back({x.first, y});
+                possible_states.push_back({var_name, var_inits});
             }
         }
-
         state_vec.push_back(possible_states);
     }
     state_vec = cart_product(state_vec);
@@ -435,7 +442,7 @@ void init_state (set<string> &vars, map<string, string> &var_type, map<string, v
     }
     
     // debugging
-    // std::cout << "init_cond:  " << init_cond << endl;
+    std::cout << "init_cond:  " << init_state_list[2] << endl;
     init[var_str] = init_state_list;
 }
 
@@ -538,6 +545,7 @@ string prime_expr(string expr){
     return rt;
 }
 
+/* add prime to a string */
 string primed(string var){
     return var+PRIME;
 }
@@ -592,6 +600,14 @@ string match_nums(string v1, string v2, map<string,string> &var_type){
     // return str(matches.begin(), matches.end());
 }
 
+void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        size_t end_pos = start_pos + from.length();
+        str.replace(start_pos, end_pos, to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+}
 
 int main(int argc, char** argv) {
     set<string> vars;
@@ -635,13 +651,10 @@ int main(int argc, char** argv) {
                         && line.find("DEFINE") == string::npos 
                         && line.find("MODULE") == string::npos) {
                     cleanup(line);
-                    // contains(line, "DEI");
-
                     size_t found_next = line.find("next(");
                     // find lines defined like "next(some_var) := some_next"
                     if (line.find("next(") != string::npos && line.find(";") != string::npos) 
                     {
-
                         found_next += 5;
                         char ch = line[found_next];
                         string next_var;
@@ -652,7 +665,6 @@ int main(int argc, char** argv) {
                         }
 
                         vector<string> next_state_list = {"TRUE"};
-                        
                         size_t found_colon = line.find(":=");
                         size_t found_bracket = line.find("{");
                         if (found_bracket != string::npos) {
@@ -681,7 +693,6 @@ int main(int argc, char** argv) {
                             found_next += 1;
                             ch = line[found_next];
                         }
-                        // debug_out(line);
                         // debugging
                         // std::cout << "next var chars: " << next_var << endl;
                         getline(myfile, line);
@@ -693,7 +704,6 @@ int main(int argc, char** argv) {
                         //     // std::cout << "line: " <<line << endl;
                         // }
                         if (line == "case") {
-                                    
                             getline(myfile, line);
                             cleanup(line);
                             line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
@@ -830,7 +840,7 @@ int main(int argc, char** argv) {
     //     std::cout << "\n";
     // }
 
-    // output initial conditions *********************************
+    /* WRITE INIT */
     ofstream init_file;
     init_file.open(I_name);
     string to_file;
@@ -839,30 +849,32 @@ int main(int argc, char** argv) {
     // elem.second = vector of initial conditions
     {
         string output;
-        for (auto condition: elem.second) {
+        string varname = elem.first;
+        vector<string> inits = elem.second;
+        for (auto condition: inits) {
             if (condition == "FALSE") {
-                output += "~" + elem.first + " \\/ " ;
+                to_file += NOT + varname;
             } else if (condition == "TRUE") {
-                output += elem.first + " \\/ " ;
+                to_file += varname;
             } else {
                 // integers
-                string max_num = var_type[elem.first];
-                size_t found_char = max_num.find("..");
-                max_num = max_num.substr(found_char + 2);
-                // cout << "max_num: " << max_num << endl;
-                vector<string> bin_var = to_binary(stoi(condition), elem.first, stoi(max_num));
+                string max_num = var_type[varname];
+                max_num = max_num.substr(max_num.find("..") + 2);
+                vector<string> bin_var = to_binary(stoi(condition), varname, stoi(max_num));
                 for (auto bit: bin_var) {
-                    output += bit + " /\\ ";
+                    output += bit + AND;
                 }
+                to_file = output.substr(0, output.length()-AND.size());
+                break;
             }
-            to_file += output.substr(0, output.size()-4) + " /\\ \n";
         }
-        
+        to_file += AND + "\n";
     }
-    init_file << to_file.substr(0, to_file.length()-4);
+    init_file << to_file.substr(0, to_file.length()-AND.size()-1); // DANGEROUS
     init_file.close();
 
     std::cout << "\n(DEBUG) "  << endl;
+    
     // output transition relations ************************************************
     ofstream trans_file;
     trans_file.open(R_name);
@@ -894,6 +906,7 @@ int main(int argc, char** argv) {
                 }
             }else {
                 LS_expr = evaluate(condition_tokenizer(LS), var_type);
+                replaceAll(LS_expr, "!", "~");
                 rest_cases = rest_cases + LS_expr + "\\/";
             }    
 
@@ -910,7 +923,6 @@ int main(int argc, char** argv) {
                     RS_expr += NOT + var_name + PRIME;
                 }
                 else if (var_type[RS].find("..") != string::npos){
-                    
                     RS_expr = match_nums(RS, var_name, var_type);
                 }
                 else if (is_digit(RS)) {
@@ -931,9 +943,9 @@ int main(int argc, char** argv) {
                     }
                     RS_expr +=  RS_expr.substr(0, RS_expr.size()-3);
                     RS_expr += ")";                
-                }else{   
+                } else {   
                     string expr = evaluate(condition_tokenizer(RS), var_type);
-                    RS_expr += OPEN_PARAN + primed(var_name) + IFF + expr + CLOSE_PARAN;
+                    RS_expr += OPEN_PARAN + expr + IFF + primed(var_name) + CLOSE_PARAN;
                 }     
                 RS_expr += "\\/" ; 
             }
@@ -957,7 +969,6 @@ int main(int argc, char** argv) {
     {
         string condition = evaluate(condition_tokenizer(elem.second), var_type);
         define_ss << elem.first << IFF << condition << AND << primed(elem.first) << IFF <<  condition << AND << NEWL;
-        // define_ss << elem.first << " <-> " << condition << " /\\ " << elem.first << "' <-> " <<  condition <<  " /\\ \n";
     }
     trans_file << define_ss.str().substr(0, define_ss.str().size()-4);
     trans_file.close();    
