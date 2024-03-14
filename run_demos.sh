@@ -5,7 +5,12 @@
 HYPERQB="./hyperqb.sh"
 
 ### [demo 0: run simple_krip with simple_krip_formula]
-${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 5 -pes -bughunt
+
+${HYPERQB} demo/nway.smv demo/nway.smv demo/nway.hq 1 -pes -find
+
+# ${HYPERQB} test/coll_item_sym.smv test/coll_item_sym.smv test/infoflow1.hq 2 -pes -bughunt
+
 # ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 
 ### [demo 1: run info-flow example]

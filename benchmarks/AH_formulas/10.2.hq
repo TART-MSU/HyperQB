@@ -1,3 +1,0 @@
-forall A. exists B.
-F({halt}_A) ->
-G((({halt}_B)->((!({high}_A <-> {high}_B)) & ({x}_A={x}_B))))

@@ -1,8 +1,0 @@
-forall A. exists B.
-(G((!({P1_sec_in}A={P1_sec_in}_B)))
-/\
-(G((({sec_read}_A<->{sec_read}_B)&
-  ({sec_write}_A<->{sec_write}_B)&
-  ({unclass_read}_A<->{{unclass_read}_B)&
-  ({unclass_write}_A<->{{unclass_write}_B)) | 
-({P2_unclass_out}_A={{P2_unclass_out}_B))))

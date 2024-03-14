@@ -1,7 +1,0 @@
-forall A. exists B. exists C.
-(F(GOALA[B])) /\ (F(GOALB[C]))
-  /\
-G(
-  (STARTED[B]/\STARTED[C])
-  ->
-  (~((*x-axis[B] = x-axis[C]*) /\ (*y-axis[B] = y-axis[C]*))))

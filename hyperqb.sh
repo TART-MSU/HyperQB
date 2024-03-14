@@ -14,7 +14,8 @@ fi
 
 ### executables
 ARBITRARY_PARSER=${BINLOCATION}/parser.py
-GENQBF=${BINLOCATION}/genqbf_partialmulti # new - multigate 
+GENQBF=${BINLOCATION}/genqbf_partialmulti # new - multigate
+# GENQBF=${BINLOCATION}/genqbf # new - multigate 
 QUABS=${BINLOCATION}/quabs
 
 ### Output file names ###
@@ -115,10 +116,8 @@ fi
 
 ### parse the NuSMV models and the given formula ###
 printf "NuSMV and HyperLTL parsing...\n" 
-
 # echo "(docker for stable parsing)"
 TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
-
 # echo "(local parsing)"
 # TRANSLATE="exec/translate.py"
 # python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
@@ -144,7 +143,7 @@ printf "BMC unrolling with genqbf...\n"
 n=${#QS}
 if [ ${n} -eq 2 ]
 then
-  TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast -new "NN" )
+  TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast -new "YY" )
 elif [ ${n} -eq 5 ]
 then
   Q=${OUTFOLDER}I_3.bool
