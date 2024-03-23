@@ -22,7 +22,6 @@ type expression =
 | Implies of expression * expression
 | Iff of expression * expression
 
-
 type let_clause = (ident * expression)
     
 type disjunctive_formula =
@@ -289,7 +288,6 @@ let rec simplify_formula (f:formula) : formula =
   | DisjF e -> DisjF e
 
 
-
 (* PRETTY PRINTERS *)
 let var_to_str (v:variable) : string = v
 
@@ -512,13 +510,11 @@ let rec nnf (phi:expression) : expression =
   in
   normalize (nnf_aux phi)
 
-
-
-  
 (* tail recursive *)
 let rec nnf_fast (phi:expression) : expression =
   let f_or  x y = Or(x,y) in
   let f_and x y = And(x,y) in
+  let f_imply x y = Implies(x,y) in
   let rec floop psi cont =
     let cont2 e1 e2 f = floop e1 (fun res1 -> floop e2 (fun res2 -> cont (f res1 res2))) in
     match psi with
@@ -526,10 +522,10 @@ let rec nnf_fast (phi:expression) : expression =
     | True  -> cont True
     | Or(e1,e2)    -> cont2 e1 e2 f_or
     | And(e1,e2)   -> cont2 e1 e2 f_and
-    | Implies(e1,e2) -> floop (Or(Neg(e1),e2)) cont
-    (* | Implies(e1,e2)  -> floop (Or(e2, Neg(e1))) cont *)
-    | Iff(e1,e2)      -> floop (And(Implies(e1,e2),Implies(e2,e1))) cont
-    (* | Iff(e1,e2)      -> floop (And(Implies(e2,e1),Implies(e1,e2))) cont *)
+    (* patch: do not push negations in implications *)
+    (* | Implies(e1,e2) -> floop (Or(Neg(e1),e2)) cont *)
+    | Implies(e1,e2) -> cont2 e1 e2 f_imply
+    | Iff(e1,e2)   -> floop (And(Implies(e1,e2),Implies(e2,e1))) cont
     | MOr(ls)      -> cont (MOr(List.map nnf_fast ls))
     | MAnd(ls)     -> cont (MAnd(List.map nnf_fast ls))
     | Neg(Neg(e))  -> floop e cont
@@ -537,8 +533,9 @@ let rec nnf_fast (phi:expression) : expression =
     | Neg(Or(e1,e2))  -> cont2 (Neg e1) (Neg e2) f_and
     | Neg(MOr(ls))   -> cont (MAnd(List.map (fun x -> nnf_fast (Neg(x))) ls))
     | Neg(MAnd(ls))   -> cont (MOr(List.map (fun x -> nnf_fast (Neg(x))) ls))
-    | Neg(Implies(e1,e2)) -> floop (And(e1,Neg e2)) cont
-    | Neg(Iff(e1,e2))     -> floop (Or(Neg(Implies(e1,e2)),Neg(Implies(e2,e1)))) cont   | Neg Literal(Atom a) -> cont (Literal(NegAtom a))
+    | Neg(Implies(e1,e2)) -> floop (And(e1, Neg(e2))) cont
+    | Neg(Iff(e1,e2))     -> floop (Or(Neg(Implies(e1,e2)),Neg(Implies(e2,e1)))) cont   
+    | Neg Literal(Atom a) -> cont (Literal(NegAtom a))
     | Neg Literal(NegAtom a) -> cont (Literal(Atom a))
     | Neg True   -> cont False
     | Neg False  -> cont True

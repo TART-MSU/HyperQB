@@ -9,6 +9,7 @@ open Printf
   | Let of  't * ('t circuit) * ('t circuit)
   | Or   of 't * ('t circuit) * ('t circuit)
   | And  of 't * ('t circuit) * ('t circuit)
+  | Implies  of 't * ('t circuit) * ('t circuit)
   | MAnd of 't * ('t circuit list)
   | MOr  of 't * ('t circuit list)
   | Xor  of 't * ('t circuit) * ('t circuit)
@@ -41,6 +42,7 @@ let rec formula_to_circuit_fast (f:formula) : str_circuit =
     let convert = expression_to_circuit "" in
     let f_or  n cx cy = Or(n,cx,cy) in
     let f_and n cx cy = And(n,cx,cy) in
+    let f_implies n cx cy = Implies(n,cx,cy) in
     let f_ite n cx cy = Ite(n,cx,cy,cy) in
     let rec floop n (phi:expression) cont =
       let get_name () = if n="" then get_new_name() else n in
@@ -53,9 +55,9 @@ let rec formula_to_circuit_fast (f:formula) : str_circuit =
       | Neg(_)       -> print_endline (expression_to_str e) ; raise(ErrorInNNF)
       | Or(x,y)      -> cont2 x y (f_or (get_name()))
       | And(x,y)     -> cont2 x y (f_and (get_name()))
+      | Implies(x,y) -> cont2 x y (f_implies (get_name()))
       | MOr(ls)      -> cont (MOr (get_name(), List.map convert ls))
       | MAnd(ls)     -> cont (MAnd(get_name(), List.map convert ls))
-      | Implies(x,y) -> print_endline (expression_to_str e) ; raise(ErrorInNNF)
       | Iff(x,y)     -> cont2 x y (f_ite (get_name()))
     in
     floop name e (fun x->x)
@@ -113,6 +115,7 @@ let rec formula_to_circuit (f:formula) : str_circuit =
     | Neg(_)       -> print_endline (expression_to_str e) ; raise(ErrorInNNF)
     | Or(x,y)      -> let (cx,cy)=(convert x, convert y) in  Or(get_name(),cx,cy)
     | And(x,y)     -> let (cx,cy)=(convert x, convert y) in And(get_name(),cx,cy)
+    | Implies(x,y) -> let (cx,cy)=(convert x, convert y) in Implies(get_name(),cx,cy)
     | MOr(ls)      -> MOr (get_name(), List.map convert ls)
     | MAnd(ls)     -> MAnd(get_name(), List.map convert ls)
     | Implies(x,y) -> print_endline (expression_to_str e) ; raise(ErrorInNNF)
@@ -145,7 +148,7 @@ let rec formula_to_circuit (f:formula) : str_circuit =
     let cb = formula_to_circuit y in
     Let(n,ca,cb)
   in
-  (* new!!! *)
+  (* !!!new!!! *)
   let conjf_to_circuit (e: formula list) : str_circuit = 
     match e with
       [] -> True
@@ -167,8 +170,6 @@ let rec formula_to_circuit (f:formula) : str_circuit =
   | ConjF e   -> conjf_to_circuit e
   | DisjF e   -> disjf_to_circuit e
                
-
-
                
 let expression_to_circuit e = formula_to_circuit (General(e))
 let expression_to_circuit_fast e = formula_to_circuit_fast (General(e))
@@ -189,6 +190,7 @@ let rec tag_vars (e:str_circuit): symbol_table =
       | Let(a,x,y)    -> tag table a ; tag_expr x ; tag_expr y
       | Or(_,x,y)     -> tag_expr x ; tag_expr y
       | And(_,x,y)    -> tag_expr x ; tag_expr y
+      | Implies(_,x,y)    -> tag_expr x ; tag_expr y
       | MOr(_,ls)     -> List.iter tag_expr ls
       | MAnd(_,ls)    -> List.iter tag_expr ls
       | Xor(_,x,y)    -> tag_expr x ; tag_expr y
@@ -206,6 +208,7 @@ let tag_circuit (circ:str_circuit) : symbol_table =
     | Let(_,x,y)    -> tag_c x ; tag_c y
     | Or (t,x,y)    -> addtag t ; tag_c x ; tag_c y
     | And(t,x,y)    -> addtag t ; tag_c x ; tag_c y
+    | Implies(t,x,y)    -> addtag t ; tag_c x ; tag_c y
     | MOr(t,ls)     -> addtag t ; List.iter tag_c ls
     | MAnd(t,ls)    -> addtag t ; List.iter tag_c ls
     | Xor(t,x,y)    -> addtag t ; tag_c x ; tag_c y
@@ -223,6 +226,7 @@ let circuit_to_num_circuit (circ:str_circuit) (st:symbol_table) =
     | Let(n,x,y)   -> Let(get_tag n, trans x, trans y)
     | Or(t,x,y)    -> Or (get_tag t, trans x, trans y)
     | And(t,x,y)   -> And(get_tag t, trans x, trans y)
+    | Implies(t,x,y)   -> Implies(get_tag t, trans x, trans y)
     | MAnd(t,ls)   -> MAnd(get_tag t, List.map trans ls)
     | MOr(t,ls)    -> MOr(get_tag t, List.map trans ls) 
     | Xor(t,x,y)   -> Xor(get_tag t, trans x, trans y)
@@ -243,6 +247,7 @@ let get_name (c:str_circuit) : string =
   | MOr(t,_)     -> t
   | And(t,_,_)   -> t
   | MAnd(t,_)    -> t
+  | Implies(t,_,_)   -> t
   | Xor(t,_,_)   -> t
   | Ite(t,_,_,_) -> t
     
@@ -329,38 +334,46 @@ let quantified_num_circuit_to_str (qc:quantified_str_circuit) : string =
   str ^ (String.concat "" (List.map print_qs nqs))
 
 
-(* OUTPUT *)
+(* OUTPUT TO NUMBERs*)
 let rec fprint_circuit ch circ =
   let rec pr_circ circ =
     match circ with
-	True  -> output_string ch "and()\n"
-      | False -> output_string ch "or()\n"
-      | Literal(s,_) -> ()
-      | Let(n,cx,cy) -> pr_circ cx ; pr_circ cy
-      | Or(s,cx,cy)  ->
-	let me = sprintf "%s = or(%s,%s)\n" s (get_name cx) (get_name cy)in
-	pr_circ cx ; pr_circ cy ; output_string ch me 
-      | And(s,cx,cy)  ->
-	let me = sprintf "%s = and(%s,%s)\n" s (get_name cx) (get_name cy)in
-	pr_circ cx ; pr_circ cy ; output_string ch me 
-      | MOr(s,ls) ->
-	let args = String.concat "," (List.map get_name ls) in
-	let me = s ^ " = or(" ^ args ^ ")\n" in
-	List.iter (fun c -> pr_circ c) ls ; output_string ch me
-      | MAnd(s,ls) ->
-	let args = String.concat "," (List.map get_name ls) in
-	let me = s ^ " = and(" ^ args ^ ")\n" in
-	  List.iter (fun c -> pr_circ c) ls ; output_string ch me
-      | Xor(s,cx,cy)  ->
-	let me = sprintf "%s = xor(%s,%s)\n" s (get_name cx) (get_name cy)in
-	pr_circ cx ; pr_circ cy ; output_string ch me 
-      | Ite(s,cx,cy,cz)  ->
-	let me = sprintf "%s = ite(%s,%s,%s)\n" s (get_name cx) (get_name cy)(get_name cz) in
-	pr_circ cx ; pr_circ cy ; pr_circ cz ; output_string ch me
-  in
-  output_string ch (sprintf "output(%s)\n" (get_name circ)) ; pr_circ circ
+      True  -> output_string ch "and()\n"
+    | False -> output_string ch "or()\n"
+    | Literal(s,_) -> ()
+    | Let(n,cx,cy) -> pr_circ cx ; pr_circ cy
+    | Or(s,cx,cy)  ->
+        let me = sprintf "%s = or(%s,%s)\n" s (get_name cx) (get_name cy)in
+        pr_circ cx ; pr_circ cy ; output_string ch me 
+    | And(s,cx,cy)  ->
+        let me = sprintf "%s = and(%s,%s)\n" s (get_name cx) (get_name cy)in
+        pr_circ cx ; pr_circ cy ; output_string ch me 
+    (* patch, allowing non NNF *)
+    | Implies(s,cx,cy)  ->
+        let me = 
+          match cx with
+              Literal(t,Atom(v)) -> sprintf "%s = or(-%s,%s)\n" s v (get_name cy)
+            | Literal(t,NegAtom(v)) -> sprintf "%s = or(%s,%s)\n" s v (get_name cy)  
+            | _ -> sprintf "%s = or(-%s,%s)\n" s (get_name cx) (get_name cy)
+          in
+        pr_circ cx ; pr_circ cy ; output_string ch me 
+    | MOr(s,ls) ->
+        let args = String.concat "," (List.map get_name ls) in
+        let me = s ^ " = or(" ^ args ^ ")\n" in
+        List.iter (fun c -> pr_circ c) ls ; output_string ch me
+    | MAnd(s,ls) ->
+        let args = String.concat "," (List.map get_name ls) in
+        let me = s ^ " = and(" ^ args ^ ")\n" in
+        List.iter (fun c -> pr_circ c) ls ; output_string ch me
+    | Xor(s,cx,cy)  ->
+        let me = sprintf "%s = xor(%s,%s)\n" s (get_name cx) (get_name cy)in
+        pr_circ cx ; pr_circ cy ; output_string ch me 
+    | Ite(s,cx,cy,cz)  ->
+        let me = sprintf "%s = ite(%s,%s,%s)\n" s (get_name cx) (get_name cy)(get_name cz) in
+        pr_circ cx ; pr_circ cy ; pr_circ cz ; output_string ch me
+    in
+    output_string ch (sprintf "output(%s)\n" (get_name circ)) ; pr_circ circ
 
- 
   
 let fprint_quantified_circuit ch qc =
   let (qs,circ) = qc in

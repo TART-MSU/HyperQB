@@ -1,1 +1,1 @@
-exists A. forall B. G(b[A])
+exists A. forall B. G(a[A])

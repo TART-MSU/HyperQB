@@ -5,6 +5,7 @@
  | Let of  't * ('t circuit) * ('t circuit)
  | Or   of 't * ('t circuit) * ('t circuit)
  | And  of 't * ('t circuit) * ('t circuit)
+ | Implies  of 't * ('t circuit) * ('t circuit)
  | MAnd of 't * ('t circuit list)
  | MOr  of 't * ('t circuit list)
  | Xor  of 't * ('t circuit) * ('t circuit)

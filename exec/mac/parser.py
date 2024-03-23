@@ -277,20 +277,14 @@ def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, 
 	smv_file = open(smv_file_name, 'r')
 	lines = smv_file.readlines()
 	for line in lines:
-		# print(line)
 		if(re.findall("\.\.", line)):
 			# line = line.split("--") #remove comments
 			line = line.split("--", 1)[0].replace("\t","") #remove tail comments
-			# print(line.isspace())
 			line = line.strip()
 			if (line): # if it's not empty
 				key = re.findall(".*:", line)[0].replace(":","")
 				num = re.findall("[\d]*;", line)[0].replace(";","")
-				# print(line)
-				# print(key)
-				# print(num)
 				value = int(num).bit_length()
-				# bitblasting_dict[key] = value
 				for var in state_variables:
 					if(key.replace(" ", "") in var):
 						bitblasting_dict[var] = value

@@ -1,3 +1,6 @@
+// TODO: add the syntax checking 
+// TODO: add undefined variable checking (string seg fault)
+
 #include <iostream>
 #include <stack>
 #include <algorithm>
@@ -7,7 +10,6 @@
 #include <vector>
 #include <set>
 #include <cstdlib>
-// #include <stdlib.h>
 using namespace std;
 
 /* GLOBAL SETTING */
@@ -18,13 +20,16 @@ string OR       = "\\/";
 string IMPLIES  = "->";
 string IFF      = "<->";
 string NOT      = "~";
-string OPEN_PARAN   = "(";
-string CLOSE_PARAN  = ")";
-string COMMENT  = "--";
-string PRIME    = "'";
 string NEWL     = "\n";
 string EQ       = "=";
+string PLUS     = "+";
+string MINUS    = "-";
+string COMMENT  = "--";
+string PRIME    = "'";
+string OPEN_PARAN   = "(";
+string CLOSE_PARAN  = ")";
 
+/* DEBUG */
 void debug_out(string s){
     cout << s << endl;
 }
@@ -48,7 +53,7 @@ unsigned int get_maxbit(unsigned int number){
    return (count-1);
 }
 
-
+/* Get the range of a numerical variable <min, max>*/
 pair<int,int> get_range(string name, map<string, string> &var_type){
     string range = var_type[name];
     size_t found_char = range.find("..");
@@ -60,8 +65,7 @@ pair<int,int> get_range(string name, map<string, string> &var_type){
 /* Bit-blasting a variable according to its max value */
 vector<string> to_binary(int n, string var, int max)
 {
-    //TODO: what is n??
-
+    //TODO: what is n, OK N IS THE BOUND??
     int bit_order = 0;
     int max_bit_order = 0;
     vector<string> bit_vector;
@@ -146,13 +150,12 @@ vector<pair<string,string> > condition_tokenizer (string condition) {
                 && j < condition.length() 
                 && condition[j] != '=' 
                 && condition[j] != ')' 
-                && condition[j] != ')' 
+                && condition[j] != '(' 
                 && condition.substr(j, 2) != "!=" 
                 && condition.substr(j, 2) != "<="
                 && condition.substr(j, 2) != ">=" 
                 && condition[j] != '>' 
-                && condition[j] != '<' 
-                && condition[j] != '(') 
+                && condition[j] != '<') 
             {
                 var += condition[j];
                 j+=1;
@@ -197,11 +200,9 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
     }
 
     if (op == "&") {
-        return "(" + a_val + AND + b_val + ")";
+        return OPEN_PARAN + a_val + AND + b_val + CLOSE_PARAN;
     } else if (op == "|") {
-        return "(" + a_val + OR + b_val + ")";
-    
-    
+        return OPEN_PARAN + a_val + OR + b_val + CLOSE_PARAN;
     } else if (op == "="){
         string max_num = var_type[a_val];
         size_t found_char = max_num.find("..");
@@ -211,7 +212,7 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
         for (const auto& bit: bits) {
             blasted_var += bit + AND;
         }
-        return "(" + blasted_var.substr(0, blasted_var.length()-4) + ")";
+        return "(" + blasted_var.substr(0, blasted_var.length()-AND.size()) + ")";
     } else if (op == "!=") {
         string max_num = var_type[a_val];
         size_t found_char = max_num.find("..");
@@ -224,82 +225,87 @@ string applyOp(string a, string b, string op, map<string, string> &var_type){
         return "~(" + blasted_var.substr(0, blasted_var.length()-4) + ")";
     } else if (op == ">=") {
         string all_vars;
-        string max_num = var_type[a_val];
-        size_t found_char = max_num.find("..");
-        int min_num = stoi(max_num.substr(0,max_num.length()-(max_num.length()-found_char)));
-        
-        max_num = max_num.substr(found_char + 2);
-        for (int i=min_num; i <= stoi(b_val); i++) {
-            vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
-            string blasted_var;
-            for (const auto& bit: bits) {
-                blasted_var += bit + AND;
-            }
-           all_vars += "(" + blasted_var.substr(0, blasted_var.length()-4) + ") /\\ ";
-        }
-        return "~(" + all_vars.substr(0,all_vars.length()-4) + ")";
-
-    } else if (op == "<=") {
-        string all_vars;
-        string max_num = var_type[a_val];
-        size_t found_char = max_num.find("..");
-        int min_num = stoi(max_num.substr(0,max_num.length()-(max_num.length()-found_char)));
-        
-        max_num = max_num.substr(found_char + 2);
-        for (int i=min_num; i <= stoi(b_val); i++) {
-            // cout << "I: " << i << endl;
-            vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
-            string blasted_var;
-            for (const auto& bit: bits) {
-                blasted_var += bit + AND;
-            }
-           all_vars += "(" + blasted_var.substr(0, blasted_var.length()-4) + ")"+ AND;
-        }
-        return "(" + all_vars.substr(0,all_vars.length()-4) + ")";
-    } else if (op == ">") {
-        string all_vars;
-        string max_num = var_type[a_val];
-        size_t found_char = max_num.find("..");
-        int min_num = stoi(max_num.substr(0,max_num.length()-(max_num.length()-found_char)));
-        
-        max_num = max_num.substr(found_char + 2);
-        for (int i=min_num; i < stoi(b_val); i++) {
-            // cout << "I: " << i << endl;
-            vector<string> bits = to_binary(stoi(b_val), a_val, stoi(max_num)); // change to max_num
-            string blasted_var;
-            for (const auto& bit: bits) {
-                blasted_var += bit + AND;
-            }
-           all_vars += "~(" + blasted_var.substr(0, blasted_var.length()-4) + ") /\\ ";
-        }
-        return "(" + all_vars.substr(0,all_vars.length()-4) + ")";
-    } else if (op == "<") {
-        // BUG TO FIX
-        string all_vars;
-        // debug_out(var_type[a_val]);
-        // string max_num = var_type[a_val];
-        // size_t found_char = max_num.find("..");
-        // int min = stoi(max_num.substr(0,max_num.length()-(max_num.length()-found_char)));
-        // int max = stoi(max_num.substr(found_char + 2));
         int min_num = (get_range(a_val, var_type).first);
         int max_num = (get_range(a_val, var_type).second);
-        debug_out(to_string(min_num));
-        debug_out(to_string(max_num));
-        debug_out(b_val);
-        
         int bound = stoi(b_val);
-
-        for (int i = min_num; i < bound; i++) {
-            vector<string> bits = to_binary(i, a_val, max_num); // BUG
+        for (int i = max_num; i >= bound; i--) {
+            vector<string> bits = to_binary(i, a_val, max_num); // BUG: fixed
             string blasted_var;
             for (const auto& bit: bits) {
                 blasted_var += bit + AND;
             }
-            debug_out(blasted_var);
             all_vars +=  OPEN_PARAN + blasted_var + CLOSE_PARAN + AND;
         }
         return all_vars.substr(0,all_vars.length()-CLOSE_PARAN.size()-1) ;
-    } 
+    } else if (op == "<=") {
+        string all_vars;
+        int min_num = (get_range(a_val, var_type).first);
+        int max_num = (get_range(a_val, var_type).second);
+        if (is_digit(b_val)){
+            int bound = stoi(b_val);
+            for (int i = min_num; i <= bound; i++) {
+                vector<string> bits = to_binary(i, a_val, max_num); // BUG: fixed
+                string blasted_var;
+                for (const auto& bit: bits) {
+                    blasted_var += bit + AND;
+                }
+                all_vars +=  OPEN_PARAN + blasted_var + CLOSE_PARAN + AND;
+            }
+            return all_vars.substr(0,all_vars.length()-CLOSE_PARAN.size()-1);
+        } else {
+            int a_min = (get_range(a_val, var_type).first);
+            int a_max = (get_range(a_val, var_type).second);
+            int b_min = (get_range(b_val, var_type).first);
+            int b_max = (get_range(b_val, var_type).second);
+            if (get_maxbit(a_max) == get_maxbit(b_max)){
+                debug_out("work");
+                string expr = "";
+                string enumeration = "";
+                for (int a = a_min; a <= a_max; a++){
+                    for (int b = a; b <= b_max; b++){
+                        string left = (applyOp(a_val,to_string(a),"=", var_type));
+                        string right = (applyOp(b_val,to_string(b),"=", var_type));
+                        expr = OPEN_PARAN + left + AND + right + CLOSE_PARAN;
+                        enumeration += expr + OR;
+                    }
+                }
+                enumeration = enumeration.substr(0, enumeration.size()-OR.size());
+                return OPEN_PARAN + enumeration + CLOSE_PARAN;
+                // TODO: fix all other arithmetic operations!
+            } else {
+                debug_out("MODEL ERROR: two integers must have same number of bits for comparison");
+                exit(0);
+            }
+        }
+    } else if (op == ">") {
+        string all_vars;
+        int min_num = (get_range(a_val, var_type).first);
+        int max_num = (get_range(a_val, var_type).second);
+        int bound = stoi(b_val);
+        for (int i = max_num; i > bound; i--) {
+            vector<string> bits = to_binary(i, a_val, max_num); // BUG: fixed
+            string blasted_var;
+            for (const auto& bit: bits) {
+                blasted_var += bit + AND;
+            }
+            all_vars +=  OPEN_PARAN + blasted_var + CLOSE_PARAN + AND;
+        }
+        return all_vars.substr(0,all_vars.length()-CLOSE_PARAN.size()-1) ;
+    } else if (op == "<") {
+        string all_vars;
+        int min_num = (get_range(a_val, var_type).first);
+        int max_num = (get_range(a_val, var_type).second);
+        int bound = stoi(b_val);
+        for (int i = min_num; i < bound; i++) {
+            vector<string> bits = to_binary(i, a_val, max_num); // BUG: fixed
+            string blasted_var;
+            for (const auto& bit: bits) {
+                blasted_var += bit + AND;
+            }
+            all_vars +=  OPEN_PARAN + blasted_var.substr(0,blasted_var.length()-AND.size()) + CLOSE_PARAN + AND;
+        }
+        return all_vars.substr(0,all_vars.length()-AND.size()) ;
+    }
 
     return "FALSE";   
 }
@@ -344,10 +350,8 @@ string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type
                                 >= precedence(tokens[i].second)){
                 string val2 = values.top();
                 values.pop();
-                 
                 string val1 = values.top();
                 values.pop();
-                 
                 string op = ops.top();
                 ops.pop();    
                 // cout << "EVAL: " << val1 << op << val2 << endl;
@@ -363,17 +367,13 @@ string evaluate(vector<pair<string,string>> tokens, map<string,string> &var_type
     while(!ops.empty()){
         string val2 = values.top();
         values.pop();
-                 
         string val1 = values.top();
         values.pop();
-                 
         string op = ops.top();
         ops.pop();
-
         // cout << "EVAL: " << val1 << op << val2 << endl;   
         values.push(applyOp(val1, val2, op, var_type));
     }
-     
     // Top of 'values' contains result, return it.
     return values.top();
 }
@@ -442,7 +442,7 @@ void init_state (set<string> &vars, map<string, string> &var_type, map<string, v
     }
     
     // debugging
-    std::cout << "init_cond:  " << init_state_list[2] << endl;
+    // std::cout << "init_cond:  " << init_state_list[2] << endl;
     init[var_str] = init_state_list;
 }
 
@@ -488,14 +488,13 @@ void next_state (set<string> &vars, map<string, vector<string> > &init, map<stri
         } else {
             next_state_list.push_back(line.substr(found_colon+1));
         }
-    // conditional
+    // conditional transition
     } else {
         size_t open_paren = line.find("(");
         size_t closed_paren = line.find(")");
         condition = line.substr(open_paren + 1, closed_paren - (open_paren + 1));
         size_t found_colon = line.find(":");
         size_t found_bracket = line.find("{");
-
         if (found_bracket != string::npos) {
             string lst = line.substr(found_bracket+1);
             lst.pop_back();
@@ -511,11 +510,10 @@ void next_state (set<string> &vars, map<string, vector<string> > &init, map<stri
     }
 
     next_state_list.push_back(condition);
-
-    reverse(next_state_list.begin(), next_state_list.end());
-    for (auto x: next_state_list) {
+    reverse(next_state_list.begin(), next_state_list.end()); //TODO: why?
+    // for (auto x: next_state_list) {
         // cout << "BRO; " << x << endl;
-    }
+    // }
     next[next_var].push_back(next_state_list);
 }
 
@@ -565,7 +563,7 @@ bool is_comment(string line){
     return line[0] == '-' && line[1] == '-';
 }
 
-
+/* Match numerical values with each bit */
 vector<string> match_bits(string v1, string v2, int maxnum)
 {
     vector<string> bit_vector;
@@ -582,13 +580,11 @@ vector<string> match_bits(string v1, string v2, int maxnum)
     return bit_vector;
 }
 
-
 size_t get_maxnum(string v1, map<string,string> &var_type){
     string max_num = var_type[v1];
     size_t found_char = max_num.find("..");
     return stoi(max_num.substr(found_char + 2));
 }
-
 
 string match_nums(string v1, string v2, map<string,string> &var_type){
     size_t maxnum = get_maxnum(v2, var_type);
@@ -617,7 +613,6 @@ int main(int argc, char** argv) {
     vector<vector<pair<string,string> > > all_init_states;
     map<string, string> define_map; // variable : condition
 
-
     string line, input_file;
     string smv_name = argv[1];
     string I_name = argv[2];
@@ -625,7 +620,7 @@ int main(int argc, char** argv) {
 
     ifstream myfile (smv_name);
 
-    debug_out("Check file read.");
+    /* FILE READ */
     if (myfile.is_open())
     {
         // collect variables and their types
@@ -743,36 +738,36 @@ int main(int argc, char** argv) {
                         // comments and white space
                         // continue;
                     }
-
-
                 }
             cleanup(line);
+            // DEFINE section
             } if (line == "DEFINE") {
                 string define_condition;
                 string define_variable;
-                while (getline(myfile, line) &&  line.find("MODULE") == string::npos) {
-                    line.erase(std::remove_if(line.begin(), line.end(), ::isspace),line.end());
-                    if (line.find("--")!=string::npos) {
-                        line = line.substr(0, line.find("--"));
-                        std::cout << "line: " <<line << endl;
-                    }
+                while (getline(myfile, line)) {
+                    cleanup(line);
                     size_t find_var_end = line.find(":=");
                     if (find_var_end != string::npos) {
                         define_variable = line.substr(0,find_var_end);
-                        // cout << "define_var: " << define_variable;
                     }
+                    debug_out(line);
                     // string full_condition;
-
                     // size_t found_first_paren = line.find("(");
                     size_t found_semi = line.find(";");
+
+                    
+                    string condition = line.substr(0, found_semi);
+                    condition = condition.substr(find_var_end+2, condition.size()); // bad move
+
                     // std::cout << "FOUND: " << found_semi << endl;
                     if (find_var_end != string::npos) {
                         // one line define
                         if (found_semi != string::npos) {
-                            define_condition = line.substr(find_var_end + 2, (line.length()-(find_var_end+3)));
-                            if (define_condition[0] == '(' && define_condition[define_condition.length()-1] == ')') {
-                                define_condition = define_condition.substr(1,define_condition.length()-2);
-                            }
+                            define_condition = line.substr(find_var_end+2, (line.length()-(find_var_end+3)));
+                            // BE CAREFUL!! CHECK AGAIN!
+                            // if (define_condition[0] == '(' && define_condition[define_condition.length()-1] == ')') {
+                            //     define_condition = define_condition.substr(1,define_condition.length()-2);
+                            // }
                             define_map.insert({define_variable, define_condition});
                             define_condition = "";
                         // multiple line define
@@ -782,9 +777,9 @@ int main(int argc, char** argv) {
                     } else {
                         if (found_semi && define_map.find(define_variable) == define_map.end()) {
                             define_condition += line.substr(0,(line.length()-1));
-                            if (define_condition[0] == '(' && define_condition[define_condition.length()-1] == ')') {
-                                define_condition = define_condition.substr(1,define_condition.length()-2);
-                            }
+                            // if (define_condition[0] == '(' && define_condition[define_condition.length()-1] == ')') {
+                            //     define_condition = define_condition.substr(1,define_condition.length()-2);
+                            // }
                             define_map[define_variable] = define_condition;
                             define_condition = "";
                         } else {
@@ -795,8 +790,6 @@ int main(int argc, char** argv) {
             } 
         }
         myfile.close();
-
-
     }
     else{
         std::cout << "Error: Unable to open file";
@@ -810,11 +803,12 @@ int main(int argc, char** argv) {
     //     std::cout << elem.first << " " << elem.second << "\n";
     // }
 
-    // std::cout << "\nDEFINE MAP:" << endl;
-    // for(const auto& elem : define_map)
-    // {
-    //     std::cout << elem.first << " " << elem.second << "\n";
-    // }
+    std::cout << "\nDEFINE MAP:" << endl;
+    for(const auto& elem : define_map)
+    {
+        std::cout << elem.first  << "\n";
+        std::cout << elem.second << "\n";
+    }
 
     // std::cout << "\nINIT MAP:" << endl;
     // for(const auto& elem : init)
@@ -830,7 +824,6 @@ int main(int argc, char** argv) {
     // for(const auto& elem : next)
     // {
     //     std::cout << elem.first << " trans: " << endl;
-
     //     for (auto x :elem.second) {
     //         for (auto z: x) {
     //             std::cout << z << ", ";
@@ -840,57 +833,57 @@ int main(int argc, char** argv) {
     //     std::cout << "\n";
     // }
 
-    /* WRITE INIT */
+    /* WRITE INITIAL I.bool */
+    // TODO: ADD NonDeterministic Inputs
     ofstream init_file;
     init_file.open(I_name);
     string to_file;
     for(const auto& elem : init)
-    // elem.first = variable name
-    // elem.second = vector of initial conditions
     {
         string output;
         string varname = elem.first;
+        debug_out(varname);
         vector<string> inits = elem.second;
+        to_file += OPEN_PARAN;
         for (auto condition: inits) {
+            debug_out(condition);
             if (condition == "FALSE") {
                 to_file += NOT + varname;
             } else if (condition == "TRUE") {
                 to_file += varname;
             } else {
-                // integers
-                string max_num = var_type[varname];
-                max_num = max_num.substr(max_num.find("..") + 2);
-                vector<string> bin_var = to_binary(stoi(condition), varname, stoi(max_num));
+                // integer
+                int max_num = get_range(varname, var_type).second;
+                output = "";
+                vector<string> bin_var = to_binary(stoi(condition), varname, max_num);
                 for (auto bit: bin_var) {
                     output += bit + AND;
                 }
-                to_file = output.substr(0, output.length()-AND.size());
-                break;
+                to_file += output.substr(0, output.length()-AND.size());
             }
+            to_file += OR;
         }
+        to_file = to_file.substr(0, to_file.length()-OR.size()) + CLOSE_PARAN;
         to_file += AND + "\n";
     }
-    init_file << to_file.substr(0, to_file.length()-AND.size()-1); // DANGEROUS
+    to_file = to_file.substr(0, to_file.length()-AND.size()-1);
+    init_file << to_file; // DANGEROUS
     init_file.close();
-
-    std::cout << "\n(DEBUG) "  << endl;
     
-    // output transition relations ************************************************
+    /* WRITE TRANSITION RELATIONS R.bool */
     ofstream trans_file;
     trans_file.open(R_name);
     stringstream final_output;
-
-    // new
+    // THH: new code
     string var_name;
     for (const auto& var: next) {
         var_name = var.first;
-        debug_out("VARNAME: " + var_name);
         string cases;
         string rest_cases = "~(";
         for (const auto& x: var.second) {
             // parse pre-condition
             string LS = x[0];
-            string LS_expr;   
+            string LS_expr;
             if(LS == "TRUE"){
                 if (var.second.size()==1){
                     LS_expr = "TRUE";
@@ -904,18 +897,15 @@ int main(int argc, char** argv) {
                         LS_expr = rest_cases + ")";
                     }
                 }
-            }else {
+            } else {
                 LS_expr = evaluate(condition_tokenizer(LS), var_type);
-                replaceAll(LS_expr, "!", "~");
+                replaceAll(LS_expr, "!", "~"); // patch
                 rest_cases = rest_cases + LS_expr + "\\/";
             }    
-
-
+            // parse pos-condition
             string RS_expr;
             for (int i = 1; i < x.size() ; i+=1) {
-                // parse pos-condition
                 string RS = x[i];
-                
                 if (RS == "TRUE"){
                     RS_expr += var_name + PRIME;
                 }
@@ -927,50 +917,61 @@ int main(int argc, char** argv) {
                 }
                 else if (is_digit(RS)) {
                     RS = var_name + EQ + RS;
-                    
                     RS_expr += prime_expr(evaluate(condition_tokenizer(RS), var_type));
                 }
-                else if (RS.find('+') != string::npos || RS.find('-') != string::npos){
-                    string var_range = var_type[var_name];
-                    string var_max = var_range.substr(var_range.find(".")+2, var_range.size());
-                    string temp_L;
-                    string temp_R;
-                    RS_expr = "(";
-                    for (int i = 0; i < stoi(var_max) ; i++){
-                        temp_L = evaluate(condition_tokenizer(var_name+"="+to_string(i)), var_type);
-                        temp_R = prime_expr(evaluate(condition_tokenizer(var_name+"="+to_string(i+1)), var_type));
-                        RS_expr += "(("+temp_L+") -> ("+temp_R+"))/\\\n";
+                // RS contains arithmetic operations
+                // TODO: range might be another number
+                else if (RS.find('+') != string::npos){
+                    int var_max = get_range(var_name, var_type).second;
+                    string temp_L, temp_R;
+                    //TODO: increment with different number
+                    for (int k = 0; k < (var_max) ; k++){
+                        temp_L = evaluate(condition_tokenizer(var_name+"="+to_string(k)), var_type);
+                        temp_R = prime_expr(evaluate(condition_tokenizer(var_name+"="+to_string(k+1)), var_type));
+                        RS_expr += "(("+temp_L+") -> ("+temp_R+"))" + AND + "\n";
                     }
-                    RS_expr +=  RS_expr.substr(0, RS_expr.size()-3);
-                    RS_expr += ")";                
+                    RS_expr =  RS_expr.substr(0, RS_expr.size()-AND.size()-1); //BUG               
+                } else if (RS.find('-') != string::npos){
+                    int var_max = get_range(var_name, var_type).second;
+                    //TODO: increment with different number
+                    string temp_L, temp_R;
+                    for (int k = (var_max); k >= (0) ; k--){
+                        temp_L = evaluate(condition_tokenizer(var_name+"="+to_string(k)), var_type);
+                        temp_R = prime_expr(evaluate(condition_tokenizer(var_name+"="+to_string(k-1)), var_type));
+                        RS_expr += "(("+temp_L+") -> ("+temp_R+"))" + AND + "\n";
+                    }
+                    RS_expr =  RS_expr.substr(0, RS_expr.size()-AND.size()-1); //BUG               
                 } else {   
                     string expr = evaluate(condition_tokenizer(RS), var_type);
                     RS_expr += OPEN_PARAN + expr + IFF + primed(var_name) + CLOSE_PARAN;
                 }     
-                RS_expr += "\\/" ; 
+                RS_expr += OR; 
             }
-            RS_expr.pop_back();
-            RS_expr.pop_back();
+            RS_expr =  RS_expr.substr(0, RS_expr.size()-OR.size());
 
             if (LS_expr != ""){
-                cases = "((" + LS_expr + ") -> (" + RS_expr + ")) /\\"; 
+                cases = "((" + LS_expr + ") -> (" + RS_expr + "))" + AND; 
             }
             else{
-                cases = RS_expr + "/\\";
+                cases = RS_expr + AND;
             }
             trans_file << cases << endl;  
         }
     }
-    trans_file << "TRUE" << endl;
 
-    // DEFINE
+
+    
+    /* TODO: WRITE DEFINE */
     stringstream define_ss;
     for(const auto& elem : define_map)
     {
         string condition = evaluate(condition_tokenizer(elem.second), var_type);
-        define_ss << elem.first << IFF << condition << AND << primed(elem.first) << IFF <<  condition << AND << NEWL;
+        define_ss << OPEN_PARAN << elem.first << IFF << condition << CLOSE_PARAN << AND << NEWL;
+        // << AND << primed(elem.first) << IFF <<  condition << AND << NEWL; //wrong
     }
-    trans_file << define_ss.str().substr(0, define_ss.str().size()-4);
+    trans_file << define_ss.str().substr(0, define_ss.str().size());
+
+    trans_file << "TRUE" << endl; // closing R.bool
     trans_file.close();    
 
     return 0;

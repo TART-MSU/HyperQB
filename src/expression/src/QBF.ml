@@ -327,8 +327,7 @@ let generate_YN_problem (desc:unrolled_YN_problem_desc) : formula =
   let init_m  =(dnf_formula desc.init_A) in
   let match_m =desc.match_helper_A in
   let tr_m    =desc.helper_tr_A in
-  (* let m =(build_and (build_implies match_m tr_m) init_m )in *)
-  let m =(build_and init_m (build_and match_m tr_m))in
+  let m =(build_and init_m (build_implies match_m tr_m))in
   let init_n =desc.init_B in
   let n =build_and init_n desc.tr_B in
   match desc.quants with
