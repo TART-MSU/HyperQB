@@ -332,9 +332,7 @@ let generate_YN_problem (desc:unrolled_YN_problem_desc) : formula =
   let n =build_and init_n desc.tr_B in
   match desc.quants with
   | EE -> build_and m (build_and n desc.property)
-  (* | EE -> build_and m desc.property *)
-  | EA -> build_and (build_implies n desc.property) m
-  (* | EA -> build_and m desc.property  *)
+  | EA -> build_and m (build_implies n desc.property)
   | AE -> build_implies m (build_and n desc.property) 
   | AA -> build_implies (build_and m n) desc.property
   | EAA -> build_and m (build_implies n desc.property) (*TODO*)

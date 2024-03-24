@@ -106,7 +106,7 @@ elif echo $* | grep -e "-NY" -q
 then
   ENCODING="NY"  
 else
-  echo "default to encoding (-NN)";
+  echo "(default to encoding -NN)";
   ENCODING="NN"
 fi
 
@@ -132,8 +132,8 @@ fi
 
 
 ### parse the NuSMV models and the given formula ###
-printf "NuSMV and HyperLTL parsing...\n" 
-echo "(docker for stable parsing)"
+# echo "(docker for stable parsing)"
+printf "NuSMV and HyperLTL parsing..." 
 TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 
 
@@ -158,7 +158,7 @@ if [ ! -f "${QSFILE}" ]; then
 fi
 source "${QSFILE}" # instantiate QS
 
-printf "BMC unrolling with genqbf...\n"
+printf "BMC unrolling with genqbf...."
 n=${#QS}
 if [ ${n} -eq 2 ]
 then
@@ -192,14 +192,19 @@ if [ ! -s ${QCIR_OUT} ]; then
         exit 1
 fi
 
-printf "QBF solving with QuAbS...\n"
+
+printf "QBF solving with QuAbS......."
 TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
+
+# extracting the size of a file
+size=`du -k "$QCIR_OUT" | cut -f1`
 
 echo "------ Summary of HyperQB ------"
 printf '|  Model:       %s\n' "${MODELS[@]}"
 echo "|  Formula:    " ${FORMULA}
 echo "|  Quants:     " ${QS}
+echo "|  QCIR size:  " $size "KB"
 echo "|  QBFsolving: " ${OUTCOME}
 echo "|  Semantics:  " ${SEM}
 echo "|  #States:    " ${TIME_PARSE}

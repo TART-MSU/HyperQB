@@ -1,0 +1,1 @@
+forall A. exists B. F~((*PIN[2][A] = PIN[2][B]*) /\ (*PIN[1][A] = PIN[1][B]*) /\ (*PIN[0][A] = PIN[0][B]*)) /\ ( (~halt[A] \/ ~halt[B]) U ((halt[A] /\ halt[B]) /\ ((*RESULT[2][A] = RESULT[2][B]*) /\ (*RESULT[1][A] = RESULT[1][B]*) /\ (*RESULT[0][A] = RESULT[0][B]*))))
