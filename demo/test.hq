@@ -1,2 +1,2 @@
-exists A. forall B.
-F(~GOAL[A])
+forall A. forall B.
+F(~a[A]) \/ F(~a[B])

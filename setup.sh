@@ -15,10 +15,10 @@ sudo apt-get update && \
   sudo apt-get install -y aspnetcore-runtime-7.0
 sudo apt-get install -y dotnet-runtime-7.0
 
-echo "check docker: "
+echo "check docker installation: "
 docker --version
 
-echo "check dotnet: "
+echo "check dotnet installataion: "
 dotnet --version
 
 echo "HyperQB setup success!"

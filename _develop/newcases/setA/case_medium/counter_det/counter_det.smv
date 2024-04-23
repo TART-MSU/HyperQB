@@ -1,0 +1,68 @@
+-- [program]
+-- /*
+-- function (int x, int n):
+-- 1: observe := true
+--    if star = true:
+-- 2:      c = 0;
+-- 3:      while x < n:
+--             x = x + 1;
+--             c = c + 1;
+--   else: -- if star = false
+-- 4:      c = 1;
+-- 5:      while x < n:
+--             x = x + 1;
+--             c = c + 1;
+-- 6: observe := true
+-- */
+
+MODULE main
+VAR
+    x: 0..20;
+    n: 0..20;
+    c: 0..20;
+    star: boolean;
+    observe: boolean;
+    PC: 1..6;
+
+ASSIGN
+    -- init(x) := 0;
+    -- init(n) := 0;
+    init(c) := 0;
+    init(star) := FALSE;
+    init(observe) := TRUE;
+    init(PC) := 1;
+
+    next(n) := (n); -- FROZEN var
+
+    next(x) :=
+        case
+            (PC = 3 | PC = 5) & x < n: x + 1;
+            TRUE: x;
+        esac;
+
+    next(c) :=
+        case
+            (PC = 2): 0;
+            (PC = 4): 1;
+            (PC = 3 | PC = 5) & x < n & c < n: c + 1;
+            TRUE: c;
+        esac;
+
+    next(PC) :=
+        case
+            (PC = 1 & star): 2;
+            (PC = 1 & !star): 4;
+            (PC = 2): 3;
+            (PC = 4): 5;
+            (PC = 3 | PC = 5) & x >= n: 6; -- break out of loop (either)
+            (PC = 3) & x < n: 3; -- stay in first loop
+            (PC = 5) & x < n: 5; -- stay in second loop
+            (PC = 6): 6;
+            TRUE: PC;
+        esac;
+
+    next(observe) :=
+        case
+            (PC = 1 | PC = 6): TRUE;
+            TRUE: observe;
+        esac;

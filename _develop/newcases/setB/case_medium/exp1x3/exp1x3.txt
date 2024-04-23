@@ -23,6 +23,8 @@ void main(int x, int n) {
 [formula]
 forall pi. forall pii.  {x_pi = x_pii & n_pi = n_pii} -> X {x_pi = x_pii}
 
+forall A. forall B. G((*x[A] = x[B]* /\ *n[A] = x[B]*) -> (*x[A] = x[B]*))
+
 [depth]
 10
 

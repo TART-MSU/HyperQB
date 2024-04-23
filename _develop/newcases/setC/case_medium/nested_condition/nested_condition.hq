@@ -1,0 +1,2 @@
+forall A. forall B.
+G(*gotIt[A] = gotIt[B]*)

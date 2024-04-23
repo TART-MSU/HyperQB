@@ -522,9 +522,9 @@ let rec nnf_fast (phi:expression) : expression =
     | True  -> cont True
     | Or(e1,e2)    -> cont2 e1 e2 f_or
     | And(e1,e2)   -> cont2 e1 e2 f_and
-    (* patch: do not push negations in implications *)
-    (* | Implies(e1,e2) -> floop (Or(Neg(e1),e2)) cont *)
-    | Implies(e1,e2) -> cont2 e1 e2 f_imply
+    | Implies(e1,e2) -> floop (Or(Neg(e1),e2)) cont
+    (* patch non-NNF : do not push negations in implications *)
+    (* | Implies(e1,e2) -> cont2 e1 e2 f_imply *)
     | Iff(e1,e2)   -> floop (And(Implies(e1,e2),Implies(e2,e1))) cont
     | MOr(ls)      -> cont (MOr(List.map nnf_fast ls))
     | MAnd(ls)     -> cont (MAnd(List.map nnf_fast ls))

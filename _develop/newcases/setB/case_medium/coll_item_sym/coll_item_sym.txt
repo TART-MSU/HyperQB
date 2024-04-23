@@ -41,5 +41,5 @@ void main(int cs, int cr, int ci, int ct, int ccs, int ccr, int cci, int cct) {
 [formula]
 forall pi. forall pii.  {(cs_pi = ccs_pii) & (cr_pi = ccr_pii) & (ci_pi = cci_pii) & (ct_pi = cct_pii) & (ccs_pi = cs_pii) & (ccr_pi = cr_pii) & (cci_pi = ci_pii) & (cct_pi = ct_pii)} -> X {((res_pi = 0) & (res_pii = 0)) | ((res_pi < 0) & (res_pii > 0)) | ((res_pi > 0) & (res_pii < 0))}
 
-[outputs]
 
+[outputs]

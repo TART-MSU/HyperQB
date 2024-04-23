@@ -1,0 +1,60 @@
+--[program]
+--void main(int secret) {
+-- 1   int public;
+-- 2   bool gotIt;
+-- 3   public = 42;
+-- 4   gotIt = false;
+-- 5   if (public > 30) {
+-- 6       if (secret == 0) {
+-- 7           gotIt = true;
+-- 8       }
+-- 9   }
+-- 10   observe;
+-- 11   return;}
+
+-- Final result UNSAT
+
+MODULE main
+    VAR
+        public: 0..42;
+        secret: 0..50;
+        PC: 1..11;
+        gotIt: 0..1;
+        observe: boolean;
+
+    ASSIGN
+        init(gotIt):= 0;
+        init(observe):= FALSE;
+        init(PC):= 1;
+        init(public) := 42;
+
+        next(secret) := secret; -- user input & frozen var
+        next(public) := public;     -- frozen var
+
+        next(PC) := 
+            case
+                -- first if true
+                (PC=5 & (public > 30)): 6;
+                -- first if false
+                (PC=5 & (public <= 30)): 10;
+                -- second if true
+                (PC=6 & (secret = 0)): 7;
+                -- second if false
+                (PC=6 & (secret !=0)): 10;
+                (PC=11): 11;
+                TRUE: PC+1;
+            esac;
+
+        next(gotIt) :=
+            case
+                (PC=6 & secret = 0): 1;
+                TRUE: gotIt;
+            esac;
+
+        next(observe) :=
+            case
+                (PC=10): TRUE;
+                TRUE: observe;
+            esac;
+
+

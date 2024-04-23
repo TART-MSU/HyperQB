@@ -144,21 +144,13 @@ let unroll_expr_uptok (r:expression) (k:int) (name:string) : expression =
 let unroll_uptok (r:formula) (k:int) (name:string) : formula =
   (* new formulated TR wilt multi-gate *)
   let r = ConjF(build_tr_list (build_tr_formula r)) in
-  (* let rec unroll_from n =
-    let r_n = (unroll_name r n name) in
-    if n==k-1 
-      then  [r_n] 
-    else  [r_n] @ (unroll_from (n+1))
-  in
-  ConjF(unroll_from 0) *)
-  
-  (* prev implementation with binary-gate *)
-  let rec unroll_from n =
-    let r_n = (unroll_name r n name) in
-    if n==k-1 then  r_n
-    else  build_and r_n (unroll_from (n+1))
-  in
-  (unroll_from 0)
+    (* prev implementation with binary-gate *)
+    let rec unroll_from n =
+      let r_n = (unroll_name r n name) in
+      if n==k-1 then  r_n
+      else  build_and r_n (unroll_from (n+1))
+    in
+    (unroll_from 0)
 
 (* NEW encodings: unroll the match with helpers *)
 let unroll_match_name (f:formula) (k:int) (name:string) : formula =
@@ -207,7 +199,6 @@ let rec unroll_match_suf (now:string) (next:string) (f:formula) : formula =
   | General(e) -> General(rename_expr e)
   | ConjF(fs)  -> ConjF(fs)
   | DisjF(fs)  -> DisjF(fs)
-
   (* | TR(pre,post) -> TR(List.map (unroll_df_suf now next) pre, List.map (unroll_df_suf now next) post) *)
 
 let suffix_match_now (k:int) (name:string) : (string*string) =
@@ -220,28 +211,48 @@ let suffix_match_next (k:int) (name:string) : (string*string) =
   let next_helper = Printf.sprintf "%s[%d]" name 1 in
   (next,next_helper)  
 
+
+(* MATCH is a conjunct of IFFs *)
+let build_match_list (f: formula) : formula list = 
+  let expr = get_exp f in
+  let rec unfold expr : formula list =
+    match expr with
+    | And(e1, e2) -> unfold(e1) @ unfold(e2)
+    | Or(e1, e2) -> unfold(e1) @ unfold(e2)
+    | Iff(pre, post) ->  General(Iff(pre, post)) :: []
+    | _ -> []
+  in
+  (unfold expr) 
+
+let rec build_match_formula (f:formula) = 
+  let expr = get_exp f in
+    match expr with
+    | And(x,y)           -> build_and (build_match_formula (General(x))) (build_match_formula (General(y)))
+    | Implies(pre, post) -> build_implies (CNF(cnf pre)) (DNF(dnf post))                       
+    | _ -> f
+
+
 let unroll_match_now (f:formula) (k:int) (name:string) : formula =
   let str = if (String.length name) =0 then "" else "_" ^ name in
   let (now, now_helper) = suffix_match_now k str in
   unroll_match_suf now now_helper f
-  
 
 let unroll_match_next (f:formula) (k:int) (name:string) : formula =
   let str = if (String.length name) =0 then "" else "_" ^ name in
   let (next, next_helper) = suffix_match_next k str in
   unroll_match_suf next next_helper f
 
+
 let unroll_match_uptok (r:formula) (k:int) (name:string)  : formula =
   let rec unroll_from n =
-    let r_n_now  = unroll_match_now  r n name in
-    let r_n_next = unroll_match_next r (n+1) name in
+    (* matches are a conjunct of IFF *)
+    let r_n_now  = ConjF(build_match_list (unroll_match_now  r n name)) in
+    let r_n_next = ConjF(build_match_list (unroll_match_next r (n+1) name)) in
     if (n == k-1) 
       then  (build_and r_n_now r_n_next)
-    else    build_or (build_and r_n_now r_n_next)  (unroll_from (n+1))
+    else    build_or (build_and  r_n_now r_n_next)  (unroll_from (n+1))
   in
   (unroll_from 0)
-
-
 
 
 

@@ -15,7 +15,10 @@ fi
 ### executables
 ARBITRARY_PARSER=${BINLOCATION}/parser.py
 # GENQBF=${BINLOCATION}/genqbf_partialmulti # new - multigate
-GENQBF=${BINLOCATION}/genqbf_notNNF # test - not NNF
+# GENQBF=${BINLOCATION}/genqbf_notNNF # test - not NNF
+
+GENQBF=/Users/tzuhan/research/HyperQB/src/expression/bin/genqbf # test
+
 # GENQBF=${BINLOCATION}/genqbf # new - multigate 
 QUABS=${BINLOCATION}/quabs
 
@@ -162,7 +165,7 @@ printf "BMC unrolling with genqbf...."
 n=${#QS}
 if [ ${n} -eq 2 ]
 then
-  TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast -new ${ENCODING} )
+  TIME_GENQBF=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} --fast -new ${ENCODING} -n)
 elif [ ${n} -eq 5 ]
 then
   Q=${OUTFOLDER}I_3.bool

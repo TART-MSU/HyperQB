@@ -57,7 +57,7 @@ type unrolled_AS_problem_desc =
 
 type unrolled_YN_problem_desc = 
   { init_A     : formula ;
-    helper_tr_A       : formula ;
+    helper_tr_A      : formula ;
     match_helper_A   : formula ;
     init_B     : formula ;
     tr_B       : formula ;
@@ -70,7 +70,7 @@ type unrolled_NY_problem_desc =
   { init_A     : formula ;
     tr_A       : formula ;
     init_B     : formula ;
-    helper_tr_B       : formula ;
+    helper_tr_B      : formula ;
     match_helper_B   : formula ;
     property   : formula ;
     quants     : quantifiers ;
@@ -82,7 +82,7 @@ type unrolled_YY_problem_desc =
     helper_tr_A       : formula ;
     match_helper_A   : formula ;
     init_B     : formula ;
-    helper_tr_B       : formula ;
+    helper_tr_B      : formula ;
     match_helper_B   : formula ;
     property   : formula ;
     quants     : quantifiers ;
@@ -268,7 +268,7 @@ let generate_quantified_ES_formula_aux desc k n_exists unroller : quantified_for
   let f             = generate_ES_problem (unroller desc k n_exists) n_exists in
   let all_vars_list = build_ES udesc n_exists in
     ([Exists(SetVar.elements (all_vars_list))], f)
-
+(* generate ES formula *)
 let generate_ES_formula (desc:problem_desc) (k:int) (n_exists:int): formula =
   generate_ES_problem (generate_ES_unrolled_desc desc k n_exists) n_exists
 
@@ -320,7 +320,7 @@ let get_var_set lst =
   List.fold_left (fun set elem -> SetVar.add elem set) SetVar.empty lst
   
 
-(* problems of new encodings *)
+(* problems of applying new encodings *)
 (* build YN problem *)
 let generate_YN_problem (desc:unrolled_YN_problem_desc) : formula =
   (* let init_m  =desc.init_A in *)
@@ -369,8 +369,6 @@ let generate_YY_problem (desc:unrolled_YY_problem_desc) : formula =
 
   
 
-
-
 let generate_YN_encode_problem (desc:unrolled_YN_problem_desc) : formula =
   generate_YN_problem desc
   
@@ -406,6 +404,7 @@ let trim (var: string) (len: int): string =
 
 let str_to_formula (str: string) = 
   Parser.parse_str str (EParser.letclause ELexer.norm) 
+
 
 let build_match_f (lst: variable list): formula =
   let lst_len = List.length lst in

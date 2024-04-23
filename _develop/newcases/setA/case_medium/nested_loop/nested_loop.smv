@@ -1,0 +1,78 @@
+-- [program]
+-- /*
+-- function (int high):
+-- 1: observe := true;
+-- 2: x := 0;
+-- 3: y := 0;
+-- 4: low := 23;
+-- 5: while y < 4:
+--         low := x;
+-- 6:      if(y == 1):
+-- 7:           x := high;
+-- 8:           y := 9;
+-- 9:      x := x + 1;
+-- 10:     y := y + 1;
+-- 11: observe := true;
+-- */
+
+MODULE main
+VAR
+    x: 0..30;
+    y: 0..30;
+    low: 0..30;
+    high: 0..30;
+    observe: boolean;
+    PC: 1..11;
+
+ASSIGN
+    init(x) := 0;
+    init(y) := 0;
+    -- init(high) := 0;
+    init(low) := 0;
+    init(observe) := TRUE;
+    init(PC) := 1;
+
+    next(x) :=
+        case
+            (PC = 7): high;
+            (PC = 9) & x < 30: x + 1;
+            TRUE: x;
+        esac;
+
+    next(y) :=
+        case
+            (PC = 8): 9;
+            (PC = 10) & y < 30: y + 1;
+            TRUE: y;
+        esac;
+
+    next(low) :=
+        case
+            (PC = 4): 23;
+            (PC = 5) & y < 4: x;
+            TRUE: low;
+        esac;
+
+    next(PC) :=
+        case
+            (PC = 1): 2;
+            (PC = 2): 3;
+            (PC = 3): 4;
+            (PC = 4): 5;
+            (PC = 5) & y >= 4: 11; -- break out of loop
+            (PC = 5) & y < 4: 6; -- do if evaluation
+            (PC = 6) & y = 1: 7; -- go in if statement
+            (PC = 6) & y != 1: 9; -- go to "else" statement
+            (PC = 7): 8;
+            (PC = 8): 9;
+            (PC = 9): 10;
+            (PC = 10): 11;
+            (PC = 11): 11;
+            TRUE: PC;
+        esac;
+
+    next(observe) :=
+    case
+        (PC = 1 | PC = 11): TRUE;
+        TRUE: observe;
+    esac;

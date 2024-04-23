@@ -1,0 +1,65 @@
+-- [program]
+-- /*
+-- function (int x):
+-- 1: observe := true
+--    if star = true:
+-- 2:      y = 2 * x;
+-- 3:      while y > 0:
+--             y = y - 1;
+--             x = 2 * x;
+--   else: -- if star = false
+-- 4:      y = x;
+-- 5:      while y > 0:
+--             y = y - 1;
+--             x = 4 * x;
+-- 6: observe := true
+-- */
+
+MODULE main
+VAR
+    x: 0..100;
+    y: 0..100;
+    star: boolean;
+    observe: boolean;
+    PC: 1..6;
+
+ASSIGN
+    init(x) := 0;
+    init(y) := 0;
+    init(star) := FALSE;
+    init(observe) := TRUE;
+    init(PC) := 1;
+
+    next(x) :=
+        case
+            (PC = 3 & x < 50): 2 * x;
+            (PC = 5 & x < 25): 4 * x;
+            TRUE: x;
+        esac;
+
+    next(y) :=
+        case
+            (PC = 2 & x < 50 & y < 50): 2 * x;
+            (PC = 4 & x < 100 & y < 100): x;
+            (PC = 3 | PC = 5) & y > 0 & y < 100 & x < 100: y - 1;
+            TRUE: y;
+        esac;
+
+    next(PC) :=
+        case
+            (PC = 1 & star): 2;
+            (PC = 1 & !star): 4;
+            (PC = 2): 3;
+            (PC = 4): 5;
+            (PC = 3 | PC = 5) & y > 0: 6; -- break out of loop (either)
+            (PC = 3) & y < 0: 3; -- stay in loop (first)
+            (PC = 5) & y < 0: 5; -- stay in loop (second)
+            (PC = 6): 6;
+            TRUE: PC;
+        esac;
+
+    next(observe) :=
+        case
+            (PC = 1 | PC = 6): TRUE;
+            TRUE: observe;
+        esac;
