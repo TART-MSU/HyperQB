@@ -1,8 +1,15 @@
 #!/bin/bash
 TIMEFORMAT="%Rs"
-echo "(hyperqb with updated genqbf)"
+# echo "(hyperqb with updated genqbf)"
+echo ""
+echo "-------( HyperQB START! )-------"
+PWD=$(pwd)
+ALLARG=$@
 
+
+##########################
 ### HyperQB parameters ###
+##########################
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   BINLOCATION="exec/linux"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -12,14 +19,20 @@ else
   exit 1 
 fi
 
-### executables
+
+###################
+### executables ###
+###################
 ARBITRARY_PARSER=${BINLOCATION}/parser.py
 GENQBF=${BINLOCATION}/genqbf_partialmulti # new - multigate
 # GENQBF=src/expression/bin/genqbf # testing
 # GENQBF=${BINLOCATION}/genqbf # new - multigate 
 QUABS=${BINLOCATION}/quabs
 
+
+#########################
 ### Output file names ###
+#########################
 DATE="today"
 OUTFOLDER="build_"${DATE}"/"
 CEXFOLDER="build_cex/"
@@ -38,31 +51,28 @@ QCIR_OUT=${OUTFOLDER}HQ.qcir
 ERROR="(!) HyperQB error: "
 
 
+######################################
+### create output files containers ###
+######################################
 if [ ! -d "${OUTFOLDER}" ]; then
     mkdir -p "${OUTFOLDER}"
     echo "Directory '${OUTFOLDER}' created."
 else
-    # echo "Directory '${OUTFOLDER}' already exists."
     rm -f -R ${OUTFOLDER}
     mkdir -p "${OUTFOLDER}"
 fi
-if [ ! -d "${CEXFOLDER}" ]; then
-    mkdir -p "${CEXFOLDER}"
-    echo "Directory '${CEXFOLDER}' created."
-else
-    # echo "Directory '${CEXFOLDER}' already exists."
-    rm -f -R ${CEXFOLDER}
-    mkdir -p "${CEXFOLDER}"
-fi
+# if [ ! -d "${CEXFOLDER}" ]; then
+#     mkdir -p "${CEXFOLDER}"
+#     echo "Directory '${CEXFOLDER}' created."
+# else
+#     rm -f -R ${CEXFOLDER}
+#     mkdir -p "${CEXFOLDER}"
+# fi
 
 
-echo ""
-echo "-------( HyperQB START! )-------"
-## get current location and arguments
-PWD=$(pwd)
-ALLARG=$@
-
-### fetch model(s) and HP formula
+#####################################
+### fetch model(s) and HP formula ###
+#####################################
 HQFILE='.hq'
 COUNTER=1
 declare -a MODELS
@@ -83,7 +93,9 @@ do
   let COUNTER++
 done
 
+######################################################
 ### Check which <mode> is used (-bughunt or -find) ###
+######################################################
 if echo $* | grep -e "-find" -q
 then
   FLAG="-find"
@@ -94,8 +106,10 @@ else
   echo "default to mode (-bughunt)"; FLAG="-bughunt"
 fi
 
-ENCODING=""
+###########################################################
 ### Check which <encoding> is used (-NN, -YY, -YN, -NY) ###
+###########################################################
+ENCODING=""
 if echo $* | grep -e "-YY" -q
 then
   ENCODING="YY"
@@ -106,12 +120,12 @@ elif echo $* | grep -e "-NY" -q
 then
   ENCODING="NY"  
 else
-  echo "(default to encoding -NN)";
-  ENCODING="NN"
+  ENCODING="NN" # default to encoding -NN 
 fi
 
-
+############################################
 ### check which bunded semantics is used ###
+############################################
 if echo $* | grep -e "-pes" -q 
 then
   SEM="PES"
@@ -125,32 +139,30 @@ elif echo $* | grep -e "-hopt" -q
 then
   SEM="TER_OPT"
 else
-  echo ${ERROR} "incorrect semantic input."
-  echo "please use { -pes | -opt | -hpes | -hopt } semantics of the unrolling."
-  exit 1
+  SEM="PES" # default to semantics -pes
 fi
 
-
+####################################################
 ### parse the NuSMV models and the given formula ###
+####################################################
 # echo "(docker for stable parsing)"
 printf "NuSMV and HyperLTL parsing..." 
 TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
-
-
 # echo "(local parsing)"
 # TRANSLATE=${BINLOCATION}/"translate.py"
-
 # python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
 # echo "(local pip-built)"
 # TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
 
-### if any error happens in parsing, exit HyperQB
+### if any error happens in parsing, exit HyperQB ###
 if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
   echo ${TIME_PARSE}
   exit 1
 fi
 
-### check what is the quantifier selection
+##################################
+### check quantifier selection ###
+##################################
 if [ ! -f "${QSFILE}" ]; then
   echo ${ERROR} "no ${QSFILE} exists."
   echo "please check the formula see if the quantifers are corretly specified. "
@@ -158,6 +170,9 @@ if [ ! -f "${QSFILE}" ]; then
 fi
 source "${QSFILE}" # instantiate QS
 
+#####################
+### QBF unrolling ###
+#####################
 printf "BMC unrolling with genqbf...."
 n=${#QS}
 if [ ${n} -eq 2 ]
@@ -186,31 +201,34 @@ else
   fi
 fi
 
-
 if [ ! -s ${QCIR_OUT} ]; then
         echo ${ERROR} ".qcir file is empty, please check if genqbf error is reported."
         exit 1
 fi
+size=`du -k "$QCIR_OUT" | cut -f1` # extracting the size of QCIR 
 
 
+###################
+### QBF solving ###
+###################
 printf "QBF solving with QuAbS......."
 TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
 
-# extracting the size of a file
-size=`du -k "$QCIR_OUT" | cut -f1`
 
-echo "------ Summary of HyperQB ------"
+#############################
+### print HyperQB summary ###
+#############################
+echo " ------ Summary of HyperQB ------"
 printf '|  Model:       %s\n' "${MODELS[@]}"
-echo "|  Formula:    " ${FORMULA}
-echo "|  Quants:     " ${QS}
-echo "|  QCIR size:  " $size "KB"
-echo "|  QBFsolving: " ${OUTCOME}
-echo "|  Semantics:  " ${SEM}
-echo "|  #States:    " ${TIME_PARSE}
-echo "|  Bound k:    " ${k}
-echo "|  Mode:       " ${FLAG}
-echo "|  Encoding:   " ${ENCODING}
-echo "--------------------------------"
-echo "--------( HyperQB END )---------"
-echo ""
+echo   "|  Formula:    " ${FORMULA}
+echo   "|  Quantifiers:" ${QS}
+echo   "|  QCIR size:  " $size "KB"
+echo   "|  QBF solving:" ${OUTCOME}
+echo   "|  Semantics:  " ${SEM}
+echo   "|  #States:    " ${TIME_PARSE}
+echo   "|  Bound k:    " ${k}
+echo   "|  Mode:       " ${FLAG}
+echo   "|  Encoding:   " ${ENCODING}
+echo   " --------------------------------"
+echo   " --------( HyperQB END )---------"

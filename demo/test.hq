@@ -1,2 +1,0 @@
-forall A. forall B.
-F(~a[A]) \/ F(~a[B])

@@ -3,9 +3,14 @@
 #  Simple demos of HyperQB #
 ############################
 HYPERQB="./hyperqb.sh"
+HYPERQB2="./hyperqb2.sh"
+
+# exec/mac/genqbf -I src/gentr/I.bool -R src/gentr/R.bool -J src/gentr/I.bool -S src/gentr/R.bool -P src/gentr/P.hq -k 2 -F "EE" -f qcir -o src/gentr/out.qcir -sem "PES" -n --fast -new "NN" --debug
+
+# exec/mac/genqbf -I build_today/I_1.bool -R build_today/R_1.bool -J build_today/I_2.bool -S build_today/I_2.bool -P build_today/P.hq -k 2 -F "EE" -f qcir -o out.qcir -sem "PES" -n --fast -new "NN" --debug
 
 ### [demo 0: run simple_krip with simple_krip_formula]
-${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find -NN
 # ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
 
 ### [demo 1: run info-flow example]
