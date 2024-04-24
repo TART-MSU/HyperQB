@@ -1,2 +1,1 @@
-forall A. forall B.
-G(*low[A] = low[B]*)
+forall A. forall B. G(*x[A] = x[B]*)

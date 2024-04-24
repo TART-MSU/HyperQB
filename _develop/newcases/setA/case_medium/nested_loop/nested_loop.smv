@@ -14,7 +14,6 @@
 -- 10:     y := y + 1;
 -- 11: observe := true;
 -- */
-
 MODULE main
 VAR
     x: 0..30;
@@ -23,14 +22,15 @@ VAR
     high: 0..30;
     observe: boolean;
     PC: 1..11;
-
 ASSIGN
     init(x) := 0;
     init(y) := 0;
-    -- init(high) := 0;
-    init(low) := 0;
+    -- init(high) := 0; 
+    init(low) := 23;
     init(observe) := TRUE;
     init(PC) := 1;
+
+    next(high) := high;
 
     next(x) :=
         case
@@ -38,21 +38,18 @@ ASSIGN
             (PC = 9) & x < 30: x + 1;
             TRUE: x;
         esac;
-
     next(y) :=
         case
             (PC = 8): 9;
             (PC = 10) & y < 30: y + 1;
             TRUE: y;
         esac;
-
     next(low) :=
         case
             (PC = 4): 23;
-            (PC = 5) & y < 4: x;
+            (PC = 6) & y < 4: x;
             TRUE: low;
         esac;
-
     next(PC) :=
         case
             (PC = 1): 2;
@@ -66,13 +63,18 @@ ASSIGN
             (PC = 7): 8;
             (PC = 8): 9;
             (PC = 9): 10;
-            (PC = 10): 11;
+            -- (PC = 10): 11;
+            (PC = 10): 5; -- THH: this is the main error
             (PC = 11): 11;
             TRUE: PC;
         esac;
-
     next(observe) :=
     case
         (PC = 1 | PC = 11): TRUE;
         TRUE: observe;
     esac;
+
+-- 1. "high" is the input, so you should not initialize it, remove init(high)...
+-- 2. the main error is your while loop is not looping :) when PC=10, you should always go back to PC=5 and check if we are breaking out the loop or not. 
+-- 3. follow nested_loop.txt, the formula is asking forall A. forall B. G(*x[A] = x[B]*), not on low[A]=low[B]
+-- This program needs at least K=15 to reach to the buggy point (i.e., reaching PC=7, but taking the second iteration if while-loop)

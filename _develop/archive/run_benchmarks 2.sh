@@ -7,7 +7,7 @@ AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 AUTOHYPERQ='/Users/tzuhan/install/autohyperq/app/AutoHyperQ'
 
 # Timeout
-TIMEOUT="timeout 1200s" # change here with shorter timeout
+TIMEOUT="timeout 1200s" # feel free to change here with shorter timeout
 echo ${TIMEOUT}
 
 CASEFOLDER="benchmarks/"

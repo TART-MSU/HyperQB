@@ -1,0 +1,1 @@
+forall A. forall B. G(({password}_A = {password}_B) -> ({request}_A = {request}_B))

@@ -1,7 +1,6 @@
 #!/bin/bash
 TIMEFORMAT="%Rs"
 # echo "(hyperqb with updated genqbf)"
-echo ""
 echo "-------( HyperQB START! )-------"
 PWD=$(pwd)
 ALLARG=$@
@@ -225,10 +224,10 @@ echo   "|  Formula:    " ${FORMULA}
 echo   "|  Quantifiers:" ${QS}
 echo   "|  QCIR size:  " $size "KB"
 echo   "|  QBF solving:" ${OUTCOME}
+echo   "|  Mode:       " ${FLAG}
 echo   "|  Semantics:  " ${SEM}
 echo   "|  #States:    " ${TIME_PARSE}
 echo   "|  Bound k:    " ${k}
-echo   "|  Mode:       " ${FLAG}
 echo   "|  Encoding:   " ${ENCODING}
 echo   " --------------------------------"
 echo   " --------( HyperQB END )---------"

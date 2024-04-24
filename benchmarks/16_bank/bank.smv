@@ -38,9 +38,9 @@ MODULE main
     
     VAR
         --inputs
-        password: 1..2;
-        username: 1..2;
-        date: 1..2;
+        password: 1..3;
+        username: 1..3;
+        date: 1..3;
         serverip: 1..2;
         serverport: 1..2;
 
@@ -49,11 +49,11 @@ MODULE main
         httppost: 3..5;
         httppost2: 4..6;
         httpclient: 3..6;
-        creds: 0..4;
+        creds: 0..5;
         result: 1..4;
-        data: 1..7;
-        loginfo: 1..8;
-        startactivity: 1..12;
+        data: 1..9;
+        loginfo: 1..10;
+        startactivity: 1..14;
 
         --constants
         protocol: 0..1;
@@ -79,7 +79,7 @@ MODULE main
         init(protocol) :=1;
         init(match) :=1;
         init(identity) :=1;
-        init(startactivity) :=1;
+        init(startactivity) :=1; --to cut state space
 
         next(protocol) := protocol;
         next(match) := match;
@@ -182,9 +182,9 @@ MODULE main
 
         next(loginfo) := 
             case
-                (PC=16): data;
+                --(PC=16): data;
                 --(PC=18 & loginsuccess=TRUE): (loginfo * 10);
-                (PC=18 & loginsuccess=TRUE): data + 1;
+                (PC=18 & loginsuccess=TRUE): data +1;
                 (PC=21 & loginsuccess=FALSE): data;
                 TRUE: loginfo;
             esac;

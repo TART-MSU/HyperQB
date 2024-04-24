@@ -1,0 +1,4 @@
+forall A. forall B. 
+G({ErrorLog}_A = {ErrorLog}_B)
+
+

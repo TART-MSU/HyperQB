@@ -1,4 +1,2 @@
 forall A. forall B. 
 G(*ErrorLog[A] = ErrorLog[B]*)
-
-
