@@ -1,5 +1,4 @@
 --SNARK1
---(adopted from: Simon Doherty, David Detlefs, Lindsay Groves, Christine H. Flood, Victor Luchangco, Paul Alan Martin, Mark Moir, Nir Shavit, and Guy L. Steele Jr. DCAS is not a silver bullet for nonblocking algorithm design. In Proc. of the 16th Annual ACM Symposium on Parallelism in Algorithms and Architectures (SPAA’04),pages 216–224. ACM, 2004.)
 -- // SNARK structure (with some accelerations):
 -- // 0   ------- STAND BY: could go to line:1/ line:10/ line:19
 -- // 	  popRight() starts:

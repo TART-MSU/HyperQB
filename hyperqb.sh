@@ -215,6 +215,8 @@ TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
 
 
+# TOTAL=(( echo TIME_PARSE + TIME_QUABS | bc ))  
+
 #############################
 ### print HyperQB summary ###
 #############################

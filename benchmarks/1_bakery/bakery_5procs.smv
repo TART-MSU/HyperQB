@@ -1,5 +1,5 @@
 --BAKERY ALGORITHM
---(adopted from the Bakery algorithm from: Norine Coenen, Bernd Finkbeiner, César Sánchez, and Leander Tentrup. Verifying hyperliveness. In Proc. of the 31st Int’l Conf. on Computer Aided Verification (CAV’19))
+--(adopted from the Bakery algorithm from: Norine Coenen, Bernd Finkbeiner, Cesar Sanchez, and Leander Tentrup. Verifying hyperliveness. In Proc. of the 31st Int'l Conf. on Computer Aided Verification (CAV'19))
 MODULE main
 VAR
 	p1_ticket: 0..3; -- the ticket number of p1

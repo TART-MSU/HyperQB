@@ -1,4 +1,4 @@
-exists A. exists B.
+exists A. forall B.
 G(
     (p1-TOKEN[A] <-> p2-TOKEN[B])
     /\(p2-TOKEN[A] <-> p1-TOKEN[B])

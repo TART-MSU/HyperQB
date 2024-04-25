@@ -1,5 +1,5 @@
 --MULTI-THREADED PROGRAM
---(adopted from: Geoffrey Smith and Dennis M. Volpano. Secure information flow in a multithreaded imperative language. In Proc. of the 25th ACM Symposium on Principles of Programming Languages (POPL’98))
+--(adopted from: Geoffrey Smith and Dennis M. Volpano. Secure information flow in a multithreaded imperative language. (POPL'98))
 -- //// TRIGGER 0
 -- // 0   trigger0 loops if (mask != 0) else go to line25
 -- // 1        - while (trigger0 == 0) do nothing
