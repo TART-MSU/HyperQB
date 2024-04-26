@@ -1,0 +1,6 @@
+forall A. forall B.
+(
+    (F(*x[A] = x[B]*)) 
+    -> 
+    (G(*y[A] = y[B]*))
+)

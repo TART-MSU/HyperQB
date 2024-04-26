@@ -1,4 +1,4 @@
 forall A. forall B. 
-G({ErrorLog}_A = {ErrorLog}_B)
+F({balance}_A = {balance}_B) -> G({ErrorLog}_A = {ErrorLog}_B)
 
 

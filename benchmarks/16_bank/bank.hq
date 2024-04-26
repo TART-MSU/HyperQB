@@ -1,1 +1,4 @@
-forall A. forall B. G(*loginfo[A]=loginfo[B]*)
+forall A. forall B. 
+F(*username[A] = username[B]*) 
+-> 
+G(*loginfo[A]=loginfo[B]*)

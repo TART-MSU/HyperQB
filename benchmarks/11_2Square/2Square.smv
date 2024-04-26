@@ -1,0 +1,61 @@
+--NI
+--(adpted from: Hiroshi Unno, Tachio Terauchi, and Eric Koskinen. Constraint-based relational verification.(CAV 2021))
+-- doubleSquare(bool h, int x) {
+--    INIT: int z, y=0;
+-- 1:  if (h)
+-- 2:     { z = 2 * x; }
+-- 3:  else { z = x; }
+-- 4:  while (z>0)
+-- 5:     { z - - ; y = y+x; }
+-- 6:  if (!h) { y = 2 * y; }
+-- 7:  return y;
+--     }
+MODULE main
+ VAR
+	PC: 1..7;
+	h: 	boolean;
+	x: 	0..10;
+	y: 	0..50;
+	z: 	0..20;
+
+ ASSIGN
+	init(PC) := 1 ;
+	-- init(h) := {TRUE, FALSE} ;
+	-- init(x) := {0,1,2,3,4,5};
+	init(h) := {TRUE} ;
+	init(x) := 0;
+	init(y) := 0;
+	init(z) := 0;
+
+	next(h) := h;
+	next(PC) := 
+		case
+			(PC=1 & (!h)): 3;
+			(PC=1 & h): 2;
+			(PC=3) : 4;
+			(PC=2) : 4;
+			(PC=4) : 5;
+			(PC=4 & (z>0)) : 5;
+			(PC=4 & (z=0)) : 6;
+			(PC=5) : 4; -- jump back
+			(PC=6): 7;
+			TRUE: PC ;
+		esac;
+
+	next(x) := x;	
+	next(y) :=
+		case
+			((PC = 5) & (y <= (50 - x)) & (z > 0)) : (y + x);
+			((PC = 6) & (!h) & (y <= 25)): (2 * y);
+			TRUE: y;
+		esac;
+	next(z) :=
+		case
+			((PC=1) & h) : 2 + x;
+			((PC=1) & (!h)) : x;
+			((PC=5) & (z>0)) : (z - 1);
+		TRUE: z;
+		esac;
+
+-- DEFINE
+-- 	halt := (PC=7) ;

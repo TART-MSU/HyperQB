@@ -1,8 +1,11 @@
+-- A insecure Banking system that leaks the yser password through loginfo
+--
+-- [PROGRAM]
 --    fun(password, username, date, serverip, serverport)
 -- 1:  if (serverip == 0)
 -- 2:      result = "server path/port not set"
 --     else
--- 3:      httppost = protocol + ":" + serverport + "/login"
+-- 3:      httppost = protocol + ":" + serverport + "/l`ogin"
 -- 4:      httppost2 = protocol + ":" + serverport + "/devlogin"
 -- 5:  if (username == "devadmin")
 -- 6:      httpclient = httppost2
@@ -28,18 +31,11 @@
 -- 23:     startactivity = result;
 -- 24: halt
 
-
 MODULE main
-
-    -- DEFINE
-    --     protocol := 1;
-    --     match := 1;
-    --     idenity := 1;
-    
     VAR
         --inputs
-        password: 1..3;
-        username: 1..3;
+        password: 1..9;
+        username: 1..8;
         date: 1..3;
         serverip: 1..2;
         serverport: 1..2;
@@ -49,11 +45,11 @@ MODULE main
         httppost: 3..5;
         httppost2: 4..6;
         httpclient: 3..6;
-        creds: 0..5;
         result: 1..4;
-        data: 1..9;
-        loginfo: 1..10;
-        startactivity: 1..14;
+        startactivity:  1..19;
+        creds:          0..10;
+        data:           1..14;
+        loginfo:        1..15;
 
         --constants
         protocol: 0..1;
@@ -66,30 +62,32 @@ MODULE main
 
 
     ASSIGN
-        init(PC) := 1;
-        init(halt) := FALSE;
-
-        init(username) := 1; --user
-        init(date) := 1; --today
-        init(loginfo) := 1; -- (empty)
-        init(creds) := 0; --""
-        init(result) := 1; --(unknown)
-        init(httppost) := 4; --""
+        init(PC)        := 1;
+        init(data)      := 1;
+        init(halt)      := FALSE;
+        init(username)  := 1; --user
+        init(date)      := 1; --today
+        init(loginfo)   := 1; -- (empty)
+        init(creds)     := 0; --""
+        init(result)    := 1; --(unknown)
+        init(httppost)  := 4; --""
         init(httppost2) := 5; --""
-        init(protocol) :=1;
-        init(match) :=1;
-        init(identity) :=1;
+        init(httpclient):= 3; --""
+        init(protocol)  :=1;
+        init(match)     :=1;
+        init(identity)  :=1;
         init(startactivity) :=1; --to cut state space
+        init(loginsuccess) := FALSE;
 
-        next(protocol) := protocol;
-        next(match) := match;
-        next(identity) := identity;
-        next(password) := password;
-        next(username) := username;
-        next(date) := date;
-        next(serverip) := serverip;
-        next(serverport) := serverport;
 
+        next(protocol)  := protocol;
+        next(match)     := match;
+        next(identity)  := identity;
+        next(password)  := password;
+        next(username)  := username;
+        next(date)      := date;
+        next(serverip)  := serverip;
+        next(serverport):= serverport;
         next(PC) := 
             case
                 (PC=1 & serverip = 0): 2;
@@ -131,42 +129,42 @@ MODULE main
 
         next(httppost) :=
             case
-                (PC=3 & serverip != 0): protocol + 1 + serverport + 1;
+                (PC=3 & (serverip != 0) ): (protocol + 1 + serverport + 1);
                 TRUE: httppost;
             esac;
         
         next(httppost2) :=
             case
-                (PC=4 & serverip != 0): protocol + 1 + serverport + 2;
+                (PC=4 & (serverip != 0) ): (protocol + 1 + serverport + 2);
                 TRUE: httppost2;
             esac;
         
         next(result) :=
             case
-                (PC=2 & serverip = 0): 2;
-                (PC=19 & loginsuccess = TRUE): 3;
-                (PC=22 & loginsuccess = FALSE): 4;
+                (PC=2 & (serverip = 0) ): 2;
+                (PC=19 & (loginsuccess = TRUE) ): 3;
+                (PC=22 & (loginsuccess = FALSE) ): 4;
                 TRUE: result;
             esac;
         
         next(httpclient) :=
             case
-                (PC=6 & username = 2): httppost2;
-                (PC=7 & username != 2): httppost;
+                (PC=6 & (username = 2) ): httppost2;
+                (PC=7 & (username != 2) ): httppost;
                 TRUE: httpclient;
             esac;
         
         next(loginsuccess) :=
             case
-                (PC=9 & password = match): TRUE;
-                (PC=11 & password != match): FALSE;
+                (PC=9 & (password = match) ): TRUE;
+                (PC=11 & (password != match) ): FALSE;
                 TRUE: loginsuccess;
             esac;
         
         next(creds) :=
             case
-                (PC=10 & password = match): username + password;
-                (PC=12 & password != match): 1;
+                (PC=10 & (password = match) ): username + password;
+                (PC=12 & (password != match) ): 1;
                 TRUE: creds;
             esac;
         
@@ -184,15 +182,15 @@ MODULE main
             case
                 --(PC=16): data;
                 --(PC=18 & loginsuccess=TRUE): (loginfo * 10);
-                (PC=18 & loginsuccess=TRUE): data +1;
-                (PC=21 & loginsuccess=FALSE): data;
+                (PC=18 & (loginsuccess=TRUE) ): data +1;
+                (PC=21 & (loginsuccess=FALSE) ): data;
                 TRUE: loginfo;
             esac;
         
         next(startactivity) := 
             case
                 -- two cases here depending on how long loginfo is
-                (PC=20 & loginsuccess=TRUE ): result + loginfo;
-                (PC=23 & loginsuccess=FALSE): result;
+                (PC=20 & (loginsuccess=TRUE) ): result + loginfo;
+                (PC=23 & (loginsuccess=FALSE) ): result;
                 TRUE: startactivity;
             esac;

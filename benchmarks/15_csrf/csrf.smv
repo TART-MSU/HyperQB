@@ -22,26 +22,22 @@
 
 MODULE main
 VAR
-    browser: 0..1;
-    originA: boolean;  -- I couldn't seem to assign this to something like [web, success] so chose boolean instead
-    -- Did not put originE as appears not to be used later on
-    request: 0..2;  -- Range of requests from 0 to 2 in pseudocode
+    browser: 0..2;
+    originA: boolean;
+    request: 0..5;  -- Range of requests from 0 to 2 in pseudocode
     attack: boolean;
-    password: 366..367; -- Only checks if password is equal to 366 or not, so provided 366 and 367 
-    act1: 0..1;  -- Only checks if act1 is equal to 1 or not, so provided 0 and 1
-    observe: boolean;
+    password: 357..367; -- Possible passwords
+    act1: 0..12;  -- Only checks if act1 is equal to 1 or not
     PC: 1..10;
 
 ASSIGN
-    init(browser) := 0;  -- Not sure what to set this to so just set it to 0
-    init(originA) := TRUE;  -- See above comment, TRUE = web, FALSE = success
+    init(originA) := TRUE;
     init(request) := 0;  -- From pseudocode
-    init(attack) := TRUE;
-    init(password) := 366;
-    init(act1) := 1;
-    init(observe) := TRUE;
     init(PC) := 1;
-    
+
+    next(password) := password;
+    next(attack) := attack;
+    next(act1) := act1;
     next(browser) :=
         case
             (PC = 3): 1;
@@ -59,28 +55,21 @@ ASSIGN
             (PC = 5): 2; -- Where pseudocode comment "hiddenrequest(unsafe)" is
             (PC = 6): 1; -- Where pseudocode comment "userrequest(safe)" is
             (PC = 8): 0;
-            (PC = 7 | PC = 9): request;
             TRUE: request;
         esac;
 
     next(PC) :=
         case
             (PC = 1): 2;
-            (PC = 2 & act1 = 1): 3;
-            (PC = 2 & act1 != 1): 9;
-            (PC = 3 & password = 366): 4;
-            (PC = 3 & password != 366): 8;
-            (PC = 4 & browser = 1 & attack = TRUE): 5;
-            (PC = 4 & browser = 1 & attack != TRUE): 6;
-            (PC = 4 & browser != 1): 7;
+            (PC = 2 & (act1 = 1)): 3;
+            (PC = 2 & (act1 != 1)): 9;
+            (PC = 3 & (password = 366)): 4;
+            (PC = 3 & (password != 366)): 8;
+            (PC = 4 & (browser = 1) & (attack = TRUE)): 5;
+            (PC = 4 & (browser = 1) & (attack != TRUE)): 6;
+            (PC = 4 & (browser != 1)): 7;
             (PC = 5 | PC = 6 | PC = 7 | PC = 8): 9;  -- All the different settings of request ultimately go to 9
             (PC = 9): 10;
             (PC = 10): 10;  -- Loop
             TRUE: PC;
-        esac;
-
-    next(observe) :=
-        case
-            (PC = 10): TRUE;
-            TRUE: observe;
         esac;

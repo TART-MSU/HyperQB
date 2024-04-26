@@ -1,1 +1,4 @@
-forall A. forall B. G({loginfo}_A = {loginfo}_B)
+forall A. forall B. 
+F({username}_A = {username}_B) 
+-> 
+G({loginfo}_A = {loginfo}_B)

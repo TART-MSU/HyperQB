@@ -1,1 +1,4 @@
-forall A. forall B. G(({password}_A = {password}_B) -> ({request}_A = {request}_B))
+forall A. forall B. 
+F({act1}_A = {act1}_B) 
+-> 
+G({request}_A = {request}_B)

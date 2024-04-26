@@ -1,1 +1,6 @@
-forall A. forall B. G((*password[A] = password[B]*) -> (*request[A] = request[B]*))
+forall A. forall B. 
+(
+    F(*act1[A] = act1[B]*) 
+    -> 
+    G(*request[A] = request[B]*)
+)

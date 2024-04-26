@@ -1,0 +1,10 @@
+forall A. forall B.
+(
+    (F({x}_A = {x}_B)) 
+    -> 
+    (G  
+        (
+            ({y}_A = {y}_B)
+        ) 
+    )
+)
