@@ -6,7 +6,7 @@ AUTOHYPER='/Users/tzuhan/install/autohyper/app/AutoHyper'
 AUTOHYPERQ='/Users/tzuhan/install/autohyperq/app/AutoHyperQ'
 
 ### timeout setting ### 
-TIMEOUT='timeout 300s' # change here for timeout
+TIMEOUT='timeout 1200s' # change here for timeout
 
 ### A function for comparising instnaces on: ###
 #   - HyperQB (multi-gate)
@@ -198,11 +198,11 @@ function compare {
 ###################
 # 5.1 Planning-rb #
 ###################
-    # SMV='benchmarks/5_planning/rb_100.smv'
-    # HQ='benchmarks/5_planning/rb_formula.hq'
-    # HQAUTO='benchmarks/5_planning/AH/5.hq'
-    # K=20; SEM='-opt' ; MODE='-find'
-    # compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
+    SMV='benchmarks/5_planning/rb_100.smv'
+    HQ='benchmarks/5_planning/rb_formula.hq'
+    HQAUTO='benchmarks/5_planning/AH/5.hq'
+    K=20; SEM='-opt' ; MODE='-find'
+    compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 
 ###################
 # 5.2 Planning-rb #
@@ -248,22 +248,22 @@ function compare {
 ######################
 # 7.1 2Progs, coterm #
 ######################
-    # SMV1='benchmarks/7_coterm/coterm1.smv'
-    # SMV2='benchmarks/7_coterm/coterm2.smv'
-    # HQ='benchmarks/7_coterm/coterm.hq'
-    # HQAUTO='benchmarks/7_coterm/AH/7.hq'
+    # SMV1='benchmarks/7_2Progs/prog1.smv'
+    # SMV2='benchmarks/7_2Progs/prog2.smv'
+    # HQ='benchmarks/7_2Progs/coterm.hq'
+    # HQAUTO='benchmarks/7_2Progs/AH/7.hq'
     # K=102
     # SEM='-pes'
     # MODE='-find'
     # echo "[ HyperQB ]"
     # ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
     # sleep 1 # buffering for file R/W
-    # echo "[ OldHyperQB ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
+    # # echo "[ OldHyperQB ]"
+    # # ${TIMEOUT} time ${OLDHYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
     # echo "[ AutoHyper ]"
     # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
+    # # echo "[ AutoHyperQ ]"
+    # # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
 
 
 ############################
@@ -380,34 +380,34 @@ function compare {
 ##############
 # 10.2 NIexp #
 ##############
-    SMV='benchmarks/10_NIexp/NIexp2.smv'
-    HQ='benchmarks/10_NIexp/tsni.hq'
-    HQAUTO='benchmarks/10_NIexp/AH/10.2.hq'
-    K=10
-    SEM='-pes'
-    MODE='-find'
-    compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
+    # SMV='benchmarks/10_NIexp/NIexp2.smv'
+    # HQ='benchmarks/10_NIexp/tsni.hq'
+    # HQAUTO='benchmarks/10_NIexp/AH/10.2.hq'
+    # K=10
+    # SEM='-pes'
+    # MODE='-find'
+    # compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 
 
 
 ###############
 # 11.1 2Square #
 ###############
-# SMV='benchmarks/11_2Square/2Square.smv'
-# HQ='benchmarks/11_2Square/2Square.hq'
-# HQAUTO='benchmarks/11_2Square/AH/11.hq'
-# K=64
-# SEM='-pes'
-# MODE='-find'
-# compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
+    # SMV='benchmarks/11_2Square/2Square.smv'
+    # HQ='benchmarks/11_2Square/2Square.hq'
+    # HQAUTO='benchmarks/11_2Square/AH/11.hq'
+    # K=64
+    # SEM='-pes'
+    # MODE='-find'
+    # compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 
 
 
 
 
-###################################
+######################################
 # 12.1 Mappying Synthesis - examples #
-###################################
+######################################
     # SMV_A='benchmarks/12_mapsynth/msynth1_MA.smv'
     # SMV_B='benchmarks/12_mapsynth/msynth1_MB.smv'
     # SMV_M='benchmarks/12_mapsynth/msynth1_MM.smv'
@@ -428,9 +428,9 @@ function compare {
 
 
 
-#############################################################
-#  12.2 Mappying Synthesis - Alice and Bob with non-interference #
-#############################################################
+#################################################################
+# 12.2 Mappying Synthesis - Alice and Bob with non-interference #
+#################################################################
     # SMV_A='benchmarks/12_mapsynth/msynth2_MA.smv'
     # SMV_B='benchmarks/12_mapsynth/msynth2_MB.smv'
     # SMV_M='benchmarks/12_mapsynth/msynth2_MM.smv'
@@ -452,9 +452,9 @@ function compare {
 
 
 
-############
+#################
 # 13.1 TEAMLTL1 #
-############
+#################
     # SMV='benchmarks/13_teamltl/team1.smv'
     # HQ='benchmarks/13_teamltl/team.hq'
     # HQAUTO='benchmarks/13_teamltl/AH/13.1.hq'
@@ -472,9 +472,9 @@ function compare {
     # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${SMV} ${SMV} ${HQAUTO} 
 
 
-############
+#################
 # 13.2 TEAMLTL2 # 
-############
+#################
     # SMV='benchmarks/13_teamltl/team2.smv'
     # HQ='benchmarks/13_teamltl/team.hq'
     # HQAUTO='benchmarks/13_teamltl/AH/13.2.hq'
@@ -493,9 +493,9 @@ function compare {
 
 
 
-###############################################################
-# 14.1 Non-det1: input non-determinism (overhead: inclusion check) #
-###############################################################
+########################################
+# 14.1 Non-det1: input non-determinism #
+########################################
     # SMV='benchmarks/14_ndet/NI_v2.smv'
     # HQ='benchmarks/14_ndet/NI.hq'
     # HQAUTO='benchmarks/14_ndet/AH/14.hq'
@@ -504,9 +504,9 @@ function compare {
     # MODE='-find'
     # compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 
-#####################################################################
-# 14.2 Non-det2: transition non-determinism (overhead: inclusion  check) #
-#####################################################################
+#############################################
+# 14.2 Non-det2: transition non-determinism #
+#############################################
     # SMV='benchmarks/14_ndet/NI_v3.smv'
     # HQ='benchmarks/14_ndet/NI.hq'
     # HQAUTO='benchmarks/14_ndet/AH/14.hq'

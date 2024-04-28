@@ -2,12 +2,12 @@
 --(adopted from: Michael W Whalen, David A Greve, and Lucas G Wagner. Model checking information flow. In Design and verification of microprocessor systems for high-assurance applications)
 MODULE main
 VAR
-  P1_sec_in: 0..3;
-  P2_unclass_in: 0..3;
-  P1_sec_out: 0..3;
-  P2_unclass_out: 0..3;
+  P1_sec_in: 0..7;
+  P2_unclass_in: 0..7;
+  P1_sec_out: 0..7;
+  P2_unclass_out: 0..7;
 
-  shared_buffer: 0..3;
+  shared_buffer: 0..7;
 
   sec_write: boolean;
   sec_read: boolean;
@@ -18,9 +18,9 @@ VAR
   PC: 1..3;
 ASSIGN
   -- Initial Conditions
-  init(P1_sec_in):= {0,1,2,3};
+  -- init(P1_sec_in):= {0,1,2,3};
   init(P1_sec_out):= 0;
-  init(P2_unclass_in):= {0,1,2,3};
+  -- init(P2_unclass_in):= {0,1,2,3};
   init(P2_unclass_out):= 0;
   init(shared_buffer) := 0;
   init(sec_write):= {TRUE, FALSE};
