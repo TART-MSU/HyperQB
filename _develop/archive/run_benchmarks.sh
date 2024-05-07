@@ -25,14 +25,14 @@ FIND="-find"
 CASEFOLDER="benchmarks"
 CASE="1_bakery"
 ### [0.1-0.3 BAKERY] 
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S1_3proc.hq 7 ${PES} ${FIND}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S2_3proc.hq 12 ${PES} ${FIND}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S3_3proc.hq 20 ${OPT} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S1_3proc.hq 7 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S2_3proc.hq 12 ${PES} ${FIND}
+# ${HyperQB} ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_S3_3proc.hq 20 ${OPT} ${FIND}
 ### [1.1-1.4 BAKERY]
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym1_3proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym2_3proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_5procs.smv ${CASEFOLDER}/${CASE}/bakery_5procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
-# ${HyperQB} ${CASEFOLDER}/${CASE}/bakery_5procs.smv ${CASEFOLDER}/${CASE}/bakery_5procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym2_5proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym1_3proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/3procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym2_3proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${CASE}/5procs.smv ${CASEFOLDER}/${CASE}/5procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym1_5proc.hq 10 ${PES} ${BUGHUNT}
+# ${HyperQB} ${CASEFOLDER}/${CASE}/5procs.smv ${CASEFOLDER}/${CASE}/5procs.smv ${CASEFOLDER}/${CASE}/bakery_phi_sym2_5proc.hq 10 ${PES} ${BUGHUNT}
 
 
 CASE="2_snark"

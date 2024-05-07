@@ -8,28 +8,28 @@ CASEFOLDER="benchmarks/"
 
 CASE="Case 0.1:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_S1_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.1.hq'
     time ${HYPERQB} ${SMV} ${SMV} ${HQ} 7 -pes -find
 
 CASE="Case 0.2:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_S2_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.2.hq'
     time ${HYPERQB} ${SMV} ${SMV} ${HQ} 12 -pes -find
 
 CASE="Case 0.3:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_S3_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.3.hq'
     time ${HYPERQB} ${SMV} ${SMV} ${HQ} 20 -pes -find
 
 CASE="Case 1.1:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym1_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.1.hq'
     time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
@@ -37,21 +37,21 @@ CASE="Case 1.1:"
 
 CASE="Case 1.2:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym2_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.2.hq'
     time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
 
 CASE="Case 1.3:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_5procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/5procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym1_5proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.3.hq'
     time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
 
 CASE="Case 1.4:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_5procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/5procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym2_5proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.4.hq'
     time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt

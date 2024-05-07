@@ -31,7 +31,7 @@ fi
 if ((echo $* | grep -e "0.1" -q) || (echo $* | grep -e "-all" -q) || (echo $* | grep -e "-light" -q)) then
 CASE="Case 0.1:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_S1_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.1.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
@@ -49,7 +49,7 @@ fi
 if ((echo $* | grep -e "0.2" -q) || (echo $* | grep -e "-all" -q) || (echo $* | grep -e "-light" -q)) then
 CASE="Case 0.2:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_S2_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.2.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
@@ -67,7 +67,7 @@ fi
 if ((echo $* | grep -e "0.3" -q) || (echo $* | grep -e "-all" -q)|| (echo $* | grep -e "-light" -q)) then 
 CASE="Case 0.3:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_S3_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'0.3.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -find
@@ -85,7 +85,7 @@ fi
 if ((echo $* | grep -e "1.1" -q) || (echo $* | grep -e "-all" -q) || (echo $* | grep -e "-light" -q)) then 
 CASE="Case 1.1:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym1_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.1.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
@@ -103,7 +103,7 @@ fi
 if ((echo $* | grep -e "1.2" -q) || (echo $* | grep -e "-all" -q) || (echo $* | grep -e "-light" -q)) then 
 CASE="Case 1.2:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_3procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/3procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym2_3proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.2.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
@@ -121,7 +121,7 @@ fi
 if ((echo $* | grep -e "1.3" -q) || (echo $* | grep -e "-all" -q) || (echo $* | grep -e "-light" -q)) then 
 CASE="Case 1.3:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_5procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/5procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym1_5proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.3.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
@@ -139,7 +139,7 @@ fi
 if ((echo $* | grep -e "1.4" -q) || (echo $* | grep -e "-all" -q) || (echo $* | grep -e "-light" -q)) then 
 CASE="Case 1.4:" 
     echo ${CASE}
-    SMV=${CASEFOLDER}'1_bakery/bakery_5procs.smv'
+    SMV=${CASEFOLDER}'1_bakery/5procs.smv'
     HQ=${CASEFOLDER}'1_bakery/bakery_phi_sym2_5proc.hq'
     HQAUTO=${CASEFOLDER}${AHFORMULAS}'1.4.hq'
     ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} 10 -pes -bughunt
