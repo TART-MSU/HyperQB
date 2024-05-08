@@ -1,4 +1,4 @@
 {
-    "autfilt":"../spot/autfilt",
-    "ltl2tgba":"../spot/ltl2tgba"
+    "autfilt":"/home/artifact/HyperQB/exec/linux/spot/autfilt",
+    "ltl2tgba":"/home/artifact/HyperQB/exec/linux/spot/ltl2tgba"
 }
