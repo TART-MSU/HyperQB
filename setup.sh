@@ -1,25 +1,32 @@
 #!/bin/bash
 
-echo "HyperQB setup starts"
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  echo "HyperQB setup starts for $OSTYPE"
+  apt update
+  echo "[ setup docker and a helper image... ]"
+  snap refresh
+  snap install docker
+  docker pull tzuhanmsu/hyperqube:latest
 
-sudo apt update
+  echo "[ setpup dotnet for comparison with AH and AHQ... ]"
+  apt-get update && \
+    apt-get install -y dotnet-sdk-7.0
+  apt-get update && \
+    apt-get install -y aspnetcore-runtime-7.0
+  apt-get install -y dotnet-runtime-7.0
 
-echo "[ setup docker and a helper image... ]"
-sudo snap install docker
-sudo docker pull tzuhanmsu/hyperqube:latest
+  echo "check docker installation: "
+  docker --version
 
-echo "[ setpup dotnet for comparison with AH and AHQ... ]"
-sudo apt-get update && \
-  sudo apt-get install -y dotnet-sdk-7.0
-sudo apt-get update && \
-  sudo apt-get install -y aspnetcore-runtime-7.0
-sudo apt-get install -y dotnet-runtime-7.0
-
-echo "check docker installation: "
-docker --version
-
-echo "check dotnet installataion: "
-dotnet --version
+  echo "check dotnet installataion: "
+  dotnet --version
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  # echo "HyperQB setup starts for $OSTYPE"
+  # BINLOCATION="exec/mac"
+else
+  echo "sorry, current OS not supported yet :("
+  exit 1 
+fi
 
 echo "HyperQB setup success!"
 
@@ -27,8 +34,8 @@ echo "HyperQB setup success!"
 ######################################
 # compile all necessary executable   #
 ######################################
-
-### new genqbf with partial multi-gate ###
+# if (echo $* | grep -e "--compile" -q) then 
+# ## new genqbf with partial multi-gate ###
 # cd src/expression/
 # make clean
 # make 
@@ -36,7 +43,7 @@ echo "HyperQB setup success!"
 # make clean
 # cd ../..
 
-### genqbf with binary gate ###
+# ### genqbf with binary gate ###
 # cd src/genqbf/
 # make clean
 # make
@@ -44,7 +51,7 @@ echo "HyperQB setup success!"
 # make clean
 # cd ../..
 
-### genqbf with specpfic cases ###
+# ### genqbf with specpfic cases ###
 # cd src/genqbfv5/
 # make clean
 # make
