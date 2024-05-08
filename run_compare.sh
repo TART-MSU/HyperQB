@@ -21,24 +21,55 @@ AUTOHYPERQ="${BINLOCATION}/compare/AHQ/AutoHyperQ"
 ### timeout setting ### 
 TIMEOUT="timeout 600s" 
 
+
+for i in "$@" ; do
+    if [[ $i == "-HQB" ]] ; then
+        HQB=true
+    fi
+    if [[ $i == "-OLDHQB" ]] ; then
+        OLDHQB=true
+    fi
+    if [[ $i == "-AH" ]] ; then
+        AH=true
+    fi
+    if [[ $i == "-AHQ" ]] ; then
+        AHQ=true
+    fi
+    if [[ $i == "-allcases" ]] ; then
+        ALLCASES=true
+    fi
+done
+
 ### A function for comparising instnaces on: ###
 #   - HyperQB (multi-gate)
 #   - previous HyperQB (binary-gate) (binary-gate)
 #   - AutoHyper
 #   - AutoHyperQ
 function compare {
-    echo "[  HyperQB  ]"
-    ${TIMEOUT} time ${HYPERQB} $1 $1 $2 $3 $4 $5 
+    # echo "running benchmarks: $7"
+    if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
+        echo "[[ HyperQB ]]"
+        time ${HYPERQB} ${1} ${1} ${2} ${3} ${4} ${5} 
+    fi
     sleep 1 # buffering for file R/W
-    echo ""
-    echo "[  previous HyperQB (binary-gate)  ]"
-    ${TIMEOUT} time ${OLDHYPERQB} $1 $1 $2 $3 $4 $5
-    echo ""
-    echo "[  AutoHyper  ]"
-    ${TIMEOUT} time ${AUTOHYPER} --nusmv $1 $6 --debug
-    echo ""
-    echo "[  AutoHyperQ  ]"
-    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv $1 $6 
+
+    if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ OldHyperQB ]]"
+        ${TIMEOUT} time ${OLDHYPERQB} $1 $1 $2 $3 $4 $5
+    fi
+
+    if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ AutoHyper ]]"
+        ${TIMEOUT} time ${AUTOHYPER} --nusmv $1 $6 --debug
+    fi
+
+    if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ AutoHyperQ ]]"
+        ${TIMEOUT} time ${AUTOHYPERQ} --nusmv $1 $6 
+    fi
 }
 
 ###################
@@ -143,13 +174,13 @@ if ((echo $* | grep -e "2.1" -q) || (echo $* | grep -e "-all" -q)) then
     K=18
     SEM='-pes'
     MODE='-bughunt'
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE} "-NN"
+    echo "[ HyperQB ]"
+    ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE} "-NN"
     sleep 1 # buffering for file R/W
     echo "[ previous HyperQB (binary-gate) ]"
     ${TIMEOUT} time ${OLDHYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} --debug
+    echo "[ AutoHyper ]"
+    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} --debug
     echo "[ AutoHyperQ ]"
     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
 fi

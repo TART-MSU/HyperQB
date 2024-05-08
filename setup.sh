@@ -15,6 +15,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     apt-get install -y aspnetcore-runtime-7.0
   apt-get install -y dotnet-runtime-7.0
 
+  echo "[ checking installations ]"
   echo "check docker installation: "
   docker --version
 
