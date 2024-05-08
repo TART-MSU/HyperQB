@@ -17,7 +17,7 @@ AH=false
 AHQ=false
 ALLCASES=false
 ALLTOOLS=false
-COMPARE="false"
+COMPARE=false
 
 for i in "$@" ; do
     if [[ $i == "-HQB" ]] ; then

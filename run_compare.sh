@@ -14,13 +14,18 @@ else
   echo "sorry, current OS not supported yet :("
   exit 1 
 fi
-
 AUTOHYPER="${BINLOCATION}/compare/AH/AutoHyper" 
 AUTOHYPERQ="${BINLOCATION}/compare/AHQ/AutoHyperQ"
 
+HQB=false
+OLDHQB=false
+AH=false
+AHQ=false
+ALLCASES=false
+ALLTOOLS=false
+COMPARE=false
 ### timeout setting ### 
-TIMEOUT="timeout 600s" 
-
+TIMEOUT="timeout 20s" 
 
 for i in "$@" ; do
     if [[ $i == "-HQB" ]] ; then
