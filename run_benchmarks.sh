@@ -11,68 +11,65 @@ BENCHMARK="benchmarks/"
 TIMEOUT="timeout 10s" 
 echo ${TIMEOUT}
 ### argument setting ###
-HQ="false"
-OLDHQ=false
+HQB=false
+OLDHQB=false
 AH=false
 AHQ=false
-RUNALL=false
+ALLCASES=false
+ALLTOOLS=false
 COMPARE="false"
 
 for i in "$@" ; do
-    # if [ $i == "-HQ" ] ; then
-    #     HQ=false
-    # fi
-    # if [[ $i == "-OLDHQ" ]] ; then
-    #     OLDHQ=true
-    # fi
-    # if [[ $i == "-AH" ]] ; then
-    #     AH=true
-    # fi
-    # if [[ $i == "-AHQ" ]] ; then
-    #     AHQ=true
-    # fi
-    if [[ $i == "-runall" ]] ; then
-        RUNALL=true
+    if [[ $i == "-HQB" ]] ; then
+        HQB=true
+    fi
+    if [[ $i == "-OLDHQB" ]] ; then
+        OLDHQB=true
+    fi
+    if [[ $i == "-AH" ]] ; then
+        AH=true
+    fi
+    if [[ $i == "-AHQ" ]] ; then
+        AHQ=true
+    fi
+    if [[ $i == "-allcases" ]] ; then
+        ALLCASES=true
     fi
 done
 
 
 function run_case {
-    # echo ""
-    echo "$7"
-    echo ""
-    # sleep 1
-
-    # if (${HQ} -eq "true");  then
-        # echo "wtf"
-    #     # echo "[[ HyperQB ]]"
+    echo "running benchmarks: $7"
+    if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
+        echo "[[ HyperQB ]]"
         time ${HYPERQB} ${1} ${1} ${2} ${3} ${4} ${5} 
-    # fi
-    # sleep 1 # buffering for file R/W
+    fi
+    sleep 1 # buffering for file R/W
 
-    # if [ "$OLDHQ"=true ]; then
-    #     echo ""
-    #     echo "[[ OldHyperQB ]]"
-    #     ${TIMEOUT} time ${OLDHYPERQB} $1 $1 $2 $3 $4 $5
-    # fi
+    if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ OldHyperQB ]]"
+        ${TIMEOUT} time ${OLDHYPERQB} $1 $1 $2 $3 $4 $5
+    fi
 
-    # if [ "$AH"=true ]; then
-    #     echo ""
-    #     echo "[[ AutoHyper ]]"
-    #     ${TIMEOUT} time ${AUTOHYPER} --nusmv $1 $6 --debug
-    # fi
-    # if [ "$AHQ"=true ]; then
-    #     echo ""
-    #     echo "[[ AutoHyperQ ]]"
-    #     ${TIMEOUT} time ${AUTOHYPERQ} --nusmv $1 $6 
-    # fi
+    if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ AutoHyper ]]"
+        ${TIMEOUT} time ${AUTOHYPER} --nusmv $1 $6 --debug
+    fi
+
+    if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ AutoHyperQ ]]"
+        ${TIMEOUT} time ${AUTOHYPERQ} --nusmv $1 $6 
+    fi
 }
 
 
 ################
 ### 0.1--6.1 ###
 ################
-if (echo $* | grep -e "0.1" -q) || (${RUNALL} -eq "true") then 
+if (echo $* | grep -e "0.1" -q) || (${ALLCASES} -eq "true") then 
     CASE="Case-#0.1--Bakery"
     SMV='benchmarks/1_bakery/3procs.smv'
     HQ='benchmarks/1_bakery/S1_3procs.hq'
@@ -84,28 +81,28 @@ if (echo $* | grep -e "0.1" -q) || (${RUNALL} -eq "true") then
     run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO} ${CASE}
 fi
 
-# if [[ "$1" == "0.2" || $RUNALL ]]; then
-#     CASE="Case-#0.2--Bakery"
-#     SMV='benchmarks/1_bakery/3procs.smv'
-#     HQ='benchmarks/1_bakery/S2_3procs.hq'
-#     HQAUTO='benchmarks/1_bakery/AH/0.2.hq'
-#     K=10
-#     SEM='-pes'
-#     MODE='-find'
-#     run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO} ${CASE}
-# fi
+if [[ "$1" == "0.2" || $ALLCASES ]]; then
+    CASE="Case-#0.2--Bakery"
+    SMV='benchmarks/1_bakery/3procs.smv'
+    HQ='benchmarks/1_bakery/S2_3procs.hq'
+    HQAUTO='benchmarks/1_bakery/AH/0.2.hq'
+    K=10
+    SEM='-pes'
+    MODE='-find'
+    run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO} ${CASE}
+fi
 
 
-# if ((echo $* | grep -e "0.3" -q) || $RUNALL) then 
-# CASE="Case 0.3:" 
-#     SMV='benchmarks/1_bakery/3procs.smv'
-#     HQ='benchmarks/1_bakery/S3_3procs.hq'
-#     HQAUTO='benchmarks/1_bakery/AH/0.3.hq'
-#     K=10
-#     SEM='-pes'
-#     MODE='-find'
-#     # run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-# fi
+if ((echo $* | grep -e "0.3" -q) || $ALLCASES) then 
+CASE="Case 0.3:" 
+    SMV='benchmarks/1_bakery/3procs.smv'
+    HQ='benchmarks/1_bakery/S3_3procs.hq'
+    HQAUTO='benchmarks/1_bakery/AH/0.3.hq'
+    K=10
+    SEM='-pes'
+    MODE='-find'
+    # run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
+fi
 
 if ((echo $* | grep -e "1.1" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 1.1:" 
