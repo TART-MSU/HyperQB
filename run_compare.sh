@@ -1,5 +1,6 @@
 #!/bin/bash
-TIMEFORMAT='TOTAL TIME: %Rs'
+# TIMEFORMAT=%R
+TIMEFORMAT=">>> TOTAL TIME: %Rs <<<"
 HYPERQB="./hyperqb.sh"
 OLDHYPERQB="./hyperqb_old.sh"
 
@@ -25,7 +26,7 @@ ALLCASES=false
 ALLTOOLS=false
 COMPARE=false
 ### timeout setting ### 
-TIMEOUT="timeout 20s" 
+TIMEOUT="3s" 
 
 for i in "$@" ; do
     if [[ $i == "-HQB" ]] ; then
@@ -57,26 +58,26 @@ function compare {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[[ HyperQB ]]"
-        time ${HYPERQB} ${1} ${1} ${2} ${3} ${4} ${5} 
+        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${1} ${2} ${3} ${4} ${5} 
     fi
     sleep 1 # buffering for file R/W
 
     if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ OldHyperQB ]]"
-        ${TIMEOUT} time ${OLDHYPERQB} ${1} ${1} ${2} ${3} ${4} ${5}
+        time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${1} ${2} ${3} ${4} ${5}
     fi
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyper ]]"
-        ${TIMEOUT} time ${AUTOHYPER} --nusmv ${1} ${6} --debug
+        time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${6} --debug
     fi
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyperQ ]]"
-        ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${1} ${6} 
+        time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${6} 
     fi
 }
 
@@ -84,26 +85,25 @@ function compare2 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[[ HyperQB ]]"
-        time ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} 
+        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} 
     fi
     sleep 1 # buffering for file R/W
 
     if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
-        echo ""
         echo "[[ OldHyperQB ]]"
-        ${TIMEOUT} time ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6}
+        time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6}
     fi
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyper ]]"
-        ${TIMEOUT} time ${AUTOHYPER} --nusmv ${1} ${7} --debug
+        time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${7} --debug
     fi
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyperQ ]]"
-        ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${1} ${7} 
+        time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${7} 
     fi
 }
 
@@ -111,26 +111,26 @@ function compare3 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[[ HyperQB ]]"
-        time ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
+        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
     fi
     sleep 1 # buffering for file R/W
 
     if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ OldHyperQB ]]"
-        ${TIMEOUT} time ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
+        time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
     fi
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyper ]]"
-        ${TIMEOUT} time ${AUTOHYPER} --nusmv ${1} ${8} --debug
+        $time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${8} --debug
     fi
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyperQ ]]"
-        ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${1} ${8} 
+        time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${8} 
     fi
 }
 
@@ -368,15 +368,6 @@ if ((echo $* | grep -e "7.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SEM='-pes'
     MODE='-find'
     compare2 ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
 fi    
 
 ############################
@@ -391,14 +382,6 @@ if ((echo $* | grep -e "8.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     MODE='-find'
     echo "[ HyperQB ]"
     compare3 ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
 fi
 
 ############################
@@ -412,15 +395,6 @@ if ((echo $* | grep -e "8.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     SEM='-pes'
     MODE='-find'
     compare3 ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${HQAUTO} 
 fi
 
 ##################
@@ -432,15 +406,6 @@ if ((echo $* | grep -e "9.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     HQAUTO='benchmarks/9_buffer/AH/9.1.hq'
     K=10; SEM='-opt' ; MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${SMV} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${SMV} ${HQAUTO} 
 fi
 
 ##############################
@@ -452,15 +417,6 @@ if ((echo $* | grep -e "9.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     HQAUTO='benchmarks/9_buffer/AH/9.2.hq'
     K=10; SEM='-opt' ; MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${SMV} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${SMV} ${HQAUTO} 
 fi
 
 ##############################
@@ -472,15 +428,6 @@ if ((echo $* | grep -e "9.3" -q) || (echo $* | grep -e "-allcases" -q)) then
     HQAUTO='benchmarks/9_buffer/AH/9.3.hq'
     K=10; SEM='-opt' ; MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${SMV} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${SMV} ${HQAUTO} 
 fi
 
 ##############
@@ -579,15 +526,6 @@ if ((echo $* | grep -e "13.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SEM='-pes'
     MODE='-find'
     compare3 ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${SMV} ${SMV} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${SMV} ${SMV} ${HQAUTO} 
 fi
 
 #################
@@ -601,15 +539,6 @@ if ((echo $* | grep -e "13.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     SEM='-pes'
     MODE='-find'
     compare3 ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV} ${SMV} ${SMV} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV} ${SMV} ${SMV} ${HQAUTO} 
 fi
 
 ########################################
