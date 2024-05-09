@@ -17,7 +17,7 @@ AH=false
 AHQ=false
 ALLCASES=false
 ALLTOOLS=false
-COMPARE=false
+COMPARE="false"
 
 for i in "$@" ; do
     if [[ $i == "-HQB" ]] ; then
@@ -58,7 +58,7 @@ function run_case {
         ${TIMEOUT} time ${AUTOHYPER} --nusmv $1 $6 --debug
     fi
 
-    if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
+    if (${AHQ} == "true") || (${ALLTOOLS} -eq "true")then
         echo ""
         echo "[[ AutoHyperQ ]]"
         ${TIMEOUT} time ${AUTOHYPERQ} --nusmv $1 $6 
@@ -81,28 +81,28 @@ if (echo $* | grep -e "0.1" -q) || (${ALLCASES} -eq "true") then
     run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO} ${CASE}
 fi
 
-if [[ "$1" == "0.2" || $ALLCASES ]]; then
-    CASE="Case-#0.2--Bakery"
-    SMV='benchmarks/1_bakery/3procs.smv'
-    HQ='benchmarks/1_bakery/S2_3procs.hq'
-    HQAUTO='benchmarks/1_bakery/AH/0.2.hq'
-    K=10
-    SEM='-pes'
-    MODE='-find'
-    run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO} ${CASE}
-fi
+# if [[ "$1" == "0.2" || $ALLCASES ]]; then
+#     CASE="Case-#0.2--Bakery"
+#     SMV='benchmarks/1_bakery/3procs.smv'
+#     HQ='benchmarks/1_bakery/S2_3procs.hq'
+#     HQAUTO='benchmarks/1_bakery/AH/0.2.hq'
+#     K=10
+#     SEM='-pes'
+#     MODE='-find'
+#     run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO} ${CASE}
+# fi
 
 
-if ((echo $* | grep -e "0.3" -q) || $ALLCASES) then 
-CASE="Case 0.3:" 
-    SMV='benchmarks/1_bakery/3procs.smv'
-    HQ='benchmarks/1_bakery/S3_3procs.hq'
-    HQAUTO='benchmarks/1_bakery/AH/0.3.hq'
-    K=10
-    SEM='-pes'
-    MODE='-find'
-    # run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-fi
+# if ((echo $* | grep -e "0.3" -q) || $ALLCASES) then 
+# CASE="Case 0.3:" 
+#     SMV='benchmarks/1_bakery/3procs.smv'
+#     HQ='benchmarks/1_bakery/S3_3procs.hq'
+#     HQAUTO='benchmarks/1_bakery/AH/0.3.hq'
+#     K=10
+#     SEM='-pes'
+#     MODE='-find'
+#     # run_case ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
+# fi
 
 if ((echo $* | grep -e "1.1" -q) || (echo $* | grep -e "-all" -q)) then 
 CASE="Case 1.1:" 

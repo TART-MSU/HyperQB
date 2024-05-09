@@ -49,115 +49,118 @@ QUABS_OUT=${OUTFOLDER}HQ.quabs
 QCIR_OUT=${OUTFOLDER}HQ.qcir
 ERROR="(!) HyperQB error: "
 
+PARSE_TIME=0
 
 ######################################
 ### create output files containers ###
 ######################################
-if [ ! -d "${OUTFOLDER}" ]; then
-    mkdir -p "${OUTFOLDER}"
-    echo "Directory '${OUTFOLDER}' created."
-else
-    rm -f -R ${OUTFOLDER}
-    mkdir -p "${OUTFOLDER}"
-fi
-# if [ ! -d "${CEXFOLDER}" ]; then
-#     mkdir -p "${CEXFOLDER}"
-#     echo "Directory '${CEXFOLDER}' created."
-# else
-#     rm -f -R ${CEXFOLDER}
-#     mkdir -p "${CEXFOLDER}"
-# fi
+  if [ ! -d "${OUTFOLDER}" ]; then
+      mkdir -p "${OUTFOLDER}"
+      echo "Directory '${OUTFOLDER}' created."
+  else
+      rm -f -R ${OUTFOLDER}
+      mkdir -p "${OUTFOLDER}"
+  fi
+  # if [ ! -d "${CEXFOLDER}" ]; then
+  #     mkdir -p "${CEXFOLDER}"
+  #     echo "Directory '${CEXFOLDER}' created."
+  # else
+  #     rm -f -R ${CEXFOLDER}
+  #     mkdir -p "${CEXFOLDER}"
+  # fi
 
 
 #####################################
 ### fetch model(s) and HP formula ###
 #####################################
-HQFILE='.hq'
-COUNTER=1
-declare -a MODELS
-for var in "$@"
-do
-  if [[ "${var}" =~ ^[0-9]+$ ]]; then
-      k=${var}
-      break
-  elif [ ! -f "$var" ]; then
-      echo "error: the file $var does not exist" # check the file is there
-      exit 1
-  fi
-  if [[ "${var}" =~ .*"$HQFILE".* ]]; then
-    FORMULA=${var}
-  else
-    MODELS[${COUNTER}]=${var}
-  fi
-  let COUNTER++
-done
+  HQFILE='.hq'
+  COUNTER=1
+  declare -a MODELS
+  for var in "$@"
+  do
+    if [[ "${var}" =~ ^[0-9]+$ ]]; then
+        k=${var}
+        break
+    elif [ ! -f "$var" ]; then
+        echo "error: the file $var does not exist" # check the file is there
+        exit 1
+    fi
+    if [[ "${var}" =~ .*"$HQFILE".* ]]; then
+      FORMULA=${var}
+    else
+      MODELS[${COUNTER}]=${var}
+    fi
+    let COUNTER++
+  done
 
 ######################################################
 ### Check which <mode> is used (-bughunt or -find) ###
 ######################################################
-if echo $* | grep -e "-find" -q
-then
-  FLAG="-find"
-elif echo $* | grep -e "-bughunt" -q
-then
-  FLAG="-bughunt"
-else
-  echo "default to mode (-bughunt)"; FLAG="-bughunt"
-fi
+  if echo $* | grep -e "-find" -q
+  then
+    FLAG="-find"
+  elif echo $* | grep -e "-bughunt" -q
+  then
+    FLAG="-bughunt"
+  else
+    echo "default to mode (-bughunt)"; FLAG="-bughunt"
+  fi
 
 ###########################################################
 ### Check which <encoding> is used (-NN, -YY, -YN, -NY) ###
 ###########################################################
-ENCODING=""
-if echo $* | grep -e "-YY" -q
-then
-  ENCODING="YY"
-elif echo $* | grep -e "-YN" -q
-then
-  ENCODING="YN"
-elif echo $* | grep -e "-NY" -q
-then
-  ENCODING="NY"  
-else
-  ENCODING="NN" # default to encoding -NN 
-fi
+  ENCODING=""
+  if echo $* | grep -e "-YY" -q
+  then
+    ENCODING="YY"
+  elif echo $* | grep -e "-YN" -q
+  then
+    ENCODING="YN"
+  elif echo $* | grep -e "-NY" -q
+  then
+    ENCODING="NY"  
+  else
+    ENCODING="NN" # default to encoding -NN 
+  fi
 
 ############################################
 ### check which bunded semantics is used ###
 ############################################
-if echo $* | grep -e "-pes" -q 
-then
-  SEM="PES"
-elif echo $* | grep -e "-opt" -q
-then
-  SEM="OPT"
-elif echo $* | grep -e "-hpes" -q
-then
-  SEM="TER_PES"
-elif echo $* | grep -e "-hopt" -q
-then
-  SEM="TER_OPT"
-else
-  SEM="PES" # default to semantics -pes
-fi
+  if echo $* | grep -e "-pes" -q 
+  then
+    SEM="PES"
+  elif echo $* | grep -e "-opt" -q
+  then
+    SEM="OPT"
+  elif echo $* | grep -e "-hpes" -q
+  then
+    SEM="TER_PES"
+  elif echo $* | grep -e "-hopt" -q
+  then
+    SEM="TER_OPT"
+  else
+    SEM="PES" # default to semantics -pes
+  fi
+
 
 ####################################################
 ### parse the NuSMV models and the given formula ###
 ####################################################
 # echo "(docker for stable parsing)"
 printf "NuSMV and HyperLTL parsing..." 
+PARSE_OUTCOME=$(docker run --rm --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG};")
 
-TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG};")
+echo ${PARSE_OUTCOME}
 
 # echo "(local parsing)"
 # TRANSLATE=${BINLOCATION}/"translate.py"
 # python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
 # echo "(local pip-built)"
-# TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
+# PARSE_OUTCOME=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
 
 ### if any error happens in parsing, exit HyperQB ###
-if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
-  echo ${TIME_PARSE}
+if [[ "${PARSE_OUTCOME}" == *"$ERROR"* ]]; then
+  echo ${PARSE_OUTCOME}
   exit 1
 fi
 
@@ -217,9 +220,21 @@ TIME_QUABS=$(time ${QUABS}  --partial-assignment ${QCIR_OUT} > ${QUABS_OUT})
 OUTCOME=$(grep "r " ${QUABS_OUT})
 
 
-# TOTAL="$(( echo "$TIME_PARSE + $TIME_QUABS" | bc ))"  
-# echo "TOTAL: " ${TOTAL}
-
+# end=`date +%s`
+# duration=$(($end - $start))
+# printf "%0.2f\n" $start
+# printf "%0.2f\n" $end
+# echo run time is $(expr `date +%s` - $start_time) s
+# SECONDS
+# echo "TRY"
+# echo "TOTAL: " $(( ${TIME_QUABS} + ${TIME_GENQBF} ))
+# end=`date +%s`
+# duration=$(( ${end} - ${start} ))
+# printf '%.3f\n' $(echo $(( ${end} - ${start} )) | bc -l )
+# echo $end
+# $(( ($end - $start) / 1000000 ))
+# r_rounded=`printf "%.3f" $runtime`
+# echo ${r_rounded}
 #############################
 ### print HyperQB summary ###
 #############################
@@ -231,7 +246,7 @@ echo   "|  QCIR size:  " $size "KB"
 echo   "|  QBF solving:" ${OUTCOME}
 echo   "|  Mode:       " ${FLAG}
 echo   "|  Semantics:  " ${SEM}
-echo   "|  #States:    " ${TIME_PARSE}
+echo   "|  #States:    " ${PARSE_OUTCOME}
 echo   "|  Bound k:    " ${k}
 echo   "|  Encoding:   " ${ENCODING}
 echo   " --------------------------------"

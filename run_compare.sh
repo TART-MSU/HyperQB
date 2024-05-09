@@ -1,12 +1,11 @@
 #!/bin/bash
-# TIMEFORMAT=%R
 TIMEFORMAT=">>> TOTAL TIME: %Rs"
-HYPERQB="./hyperqb.sh"
-OLDHYPERQB="./hyperqb_old.sh"
+TIMEOUT="10s" 
+TIMEOUTMSG="(!) Timeout without results after ${TIMEOUT}"
 
-##########################
-### HyperQB parameters ###
-##########################
+#####################
+### OS parameters ###
+#####################
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   BINLOCATION="exec/linux"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -17,7 +16,12 @@ else
 fi
 AUTOHYPER="${BINLOCATION}/compare/AH/AutoHyper" 
 AUTOHYPERQ="${BINLOCATION}/compare/AHQ/AutoHyperQ"
+HYPERQB="./hyperqb.sh"
+OLDHYPERQB="./hyperqb_old.sh"
 
+#######################
+### Tool parameters ###
+#######################
 HQB=false
 OLDHQB=false
 AH=false
@@ -25,9 +29,7 @@ AHQ=false
 ALLCASES=false
 ALLTOOLS=false
 COMPARE=false
-### timeout setting ### 
-TIMEOUT="3s" 
-TIMEOUTMSG="(!) Timeout without results after ${TIMEOUT}"
+
 
 for i in "$@" ; do
     if [[ $i == "-HQB" ]] ; then
@@ -58,7 +60,7 @@ done
 function compare {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
-        echo "[[ HyperQB ]]"
+        echo "[  HyperQB  ]"
         time timeout ${TIMEOUT} ${HYPERQB} ${1} ${1} ${2} ${3} ${4} ${5} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -68,7 +70,7 @@ function compare {
 
     if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ OldHyperQB ]]"
+        echo "[  OldHyperQB  ]"
         time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${1} ${2} ${3} ${4} ${5}
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -77,7 +79,7 @@ function compare {
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ AutoHyper ]]"
+        echo "[  AutoHyper  ]"
         time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${6} --debug
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -86,7 +88,7 @@ function compare {
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ AutoHyperQ ]]"
+        echo "[  AutoHyperQ  ]"
         time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${6} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -97,7 +99,7 @@ function compare {
 function compare2 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
-        echo "[[ HyperQB ]]"
+        echo "[  HyperQB  ]"
         time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -106,7 +108,7 @@ function compare2 {
     sleep 1 # buffering for file R/W
 
     if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
-        echo "[[ OldHyperQB ]]"
+        echo "[  OldHyperQB  ]"
         time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6}
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -115,7 +117,7 @@ function compare2 {
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ AutoHyper ]]"
+        echo "[  AutoHyper  ]"
         time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${7} --debug
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -124,7 +126,7 @@ function compare2 {
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ AutoHyperQ ]]"
+        echo "[  AutoHyperQ  ]"
         time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${7} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -135,7 +137,7 @@ function compare2 {
 function compare3 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
-        echo "[[ HyperQB ]]"
+        echo "[  HyperQB  ]"
         time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -145,7 +147,7 @@ function compare3 {
 
     if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ OldHyperQB ]]"
+        echo "[  OldHyperQB  ]"
         time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -154,7 +156,7 @@ function compare3 {
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ AutoHyper ]]"
+        echo "[  AutoHyper  ]"
         $time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${8} --debug
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -163,7 +165,7 @@ function compare3 {
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ AutoHyperQ ]]"
+        echo "[  AutoHyperQ  ]"
         time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${8} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -174,7 +176,7 @@ function compare3 {
 function compare5 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
-        echo "[[ HyperQB ]]"
+        echo "[  HyperQB  ]"
         time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -184,7 +186,7 @@ function compare5 {
 
     if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ OldHyperQB ]]"
+        echo "[  OldHyperQB  ]"
         time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -193,7 +195,7 @@ function compare5 {
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ AutoHyper ]]"
+        echo "[  AutoHyper  ]"
         $time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${10} --debug
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -202,7 +204,7 @@ function compare5 {
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
-        echo "[[ AutoHyperQ ]]"
+        echo "[  AutoHyperQ  ]"
         time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${10} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
@@ -214,10 +216,13 @@ function compare5 {
 # 0.1 Bakery3, S1 #
 ###################
 if ((echo $* | grep -e "0.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 0.1, Bakery3, S1 ###"
+    echo "#####################################"
     SMV='benchmarks/1_bakery/3procs.smv'
     HQ='benchmarks/1_bakery/S1_3procs.hq'
     HQAUTO='benchmarks/1_bakery/AH/0.1.hq'
-    K=10
+    K=7
     SEM='-pes'
     MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
@@ -227,6 +232,9 @@ fi
 # 0.2 Bakery3, S2 #
 ###################
 if ((echo $* | grep -e "0.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 0.2, Bakery3, S2 ###"
+    echo "#####################################"
     SMV='benchmarks/1_bakery/3procs.smv'
     HQ='benchmarks/1_bakery/S2_3procs.hq'
     HQAUTO='benchmarks/1_bakery/AH/0.2.hq'
@@ -240,6 +248,9 @@ fi
 # 0.3 Bakery3, S3 #
 ###################
 if ((echo $* | grep -e "0.3" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 0.3, Bakery3, S3 ###"
+    echo "#####################################"
     SMV='benchmarks/1_bakery/3procs.smv'
     HQ='benchmarks/1_bakery/S3_3procs.hq'
     HQAUTO='benchmarks/1_bakery/AH/0.3.hq'
@@ -253,6 +264,9 @@ fi
 # 1.1 Bakery3, sym1 #
 #####################
 if ((echo $* | grep -e "1.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#######################################"
+    echo "### running case 1.1, Bakery3, sym1 ###"
+    echo "#######################################"
     SMV='benchmarks/1_bakery/3procs.smv'
     HQ='benchmarks/1_bakery/sym1_3procs.hq'
     HQAUTO='benchmarks/1_bakery/AH/1.1.hq'
@@ -266,6 +280,9 @@ fi
 # 1.2 Bakery3, sym2 #
 #####################
 if ((echo $* | grep -e "1.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#######################################"
+    echo "### running case 1.2, Bakery3, sym2 ###"
+    echo "#######################################"
     SMV='benchmarks/1_bakery/3procs.smv'
     HQ='benchmarks/1_bakery/sym2_3procs.hq'
     HQAUTO='benchmarks/1_bakery/AH/1.2.hq'
@@ -279,6 +296,9 @@ fi
 # 1.3 Bakery5, sym1 #
 #####################
 if ((echo $* | grep -e "1.3" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#######################################"
+    echo "### running case 1.3, Bakery5, sym3 ###"
+    echo "#######################################"
     SMV='benchmarks/1_bakery/5procs.smv'
     HQ='benchmarks/1_bakery/sym1_5procs.hq'
     HQAUTO='benchmarks/1_bakery/AH/1.3.hq'
@@ -292,6 +312,9 @@ fi
 # 1.4 Bakery5, sym2 #
 #####################
 if ((echo $* | grep -e "1.4" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#######################################"
+    echo "### running case 1.4, Bakery5, sym3 ###"
+    echo "#######################################"
     SMV='benchmarks/1_bakery/5procs.smv'
     HQ='benchmarks/1_bakery/sym2_5procs.hq'
     HQAUTO='benchmarks/1_bakery/AH/1.4.hq'

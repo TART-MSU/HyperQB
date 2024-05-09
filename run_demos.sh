@@ -5,12 +5,10 @@
 HYPERQB="./hyperqb.sh"
 
 ### [demo 0: run simple_krip with simple_krip_formula]
-${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find
-# ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
+# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -find
 
 ### [demo 1: run info-flow example]
-# ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
-# ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow.smv demo/infoflow2.hq 5 -pes -debug
+# ${HYPERQB} demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes 
 
 ### [demo 2: run bakery algorithm with symmetry property]
 # ${HYPERQB} demo/bakery.smv demo/bakery.smv demo/symmetry.hq 30 -pes -debug
