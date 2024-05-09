@@ -171,6 +171,45 @@ function compare3 {
     fi
 }
 
+function compare5 {
+    # echo "running benchmarks: $7"
+    if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
+        echo "[[ HyperQB ]]"
+        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
+    fi
+    sleep 1 # buffering for file R/W
+
+    if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ OldHyperQB ]]"
+        time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
+    fi
+
+    if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ AutoHyper ]]"
+        $time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${10} --debug
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
+    fi
+
+    if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
+        echo ""
+        echo "[[ AutoHyperQ ]]"
+        time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${10} 
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
+    fi
+}
+
 ###################
 # 0.1 Bakery3, S1 #
 ###################
@@ -274,15 +313,6 @@ if ((echo $* | grep -e "2.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SEM='-pes'
     MODE='-bughunt'
     compare2 ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
-    # echo "[ HyperQB ]"
-    # ${TIMEOUT} time ${HYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE} "-NN"
-    # sleep 1 # buffering for file R/W
-    # echo "[ previous HyperQB (binary-gate) ]"
-    # ${TIMEOUT} time ${OLDHYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
-    # echo "[ AutoHyper ]"
-    # ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV1} ${SMV2} ${HQAUTO} --debug
-    # echo "[ AutoHyperQ ]"
-    # ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV1} ${SMV2} ${HQAUTO} 
 fi
 
 
@@ -518,15 +548,7 @@ if ((echo $* | grep -e "12.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     K=5
     SEM='-pes'
     MODE='-find'
-    echo "[ HyperQB ]"
-    ${TIMEOUT} time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} ${K} ${SEM} ${MODE}
-    sleep 1 # buffering for file R/W
-    echo "[ previous HyperQB (binary-gate) ]"
-    ${TIMEOUT} time ${OLDHYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} ${K} ${SEM} ${MODE}
-    echo "[ AutoHyper ]"
-    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQAUTO} --debug
-    echo "[ AutoHyperQ ]"
-    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQAUTO} 
+    compare5 ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
 #################################################################
@@ -541,15 +563,7 @@ if ((echo $* | grep -e "12.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     K=8
     SEM='-pes'
     MODE='-find'
-    echo "[ HyperQB ]"
-    ${TIMEOUT} time ${HYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} ${K} ${SEM} ${MODE}
-    sleep 1 # buffering for file R/W
-    echo "[ previous HyperQB (binary-gate) ]"
-    ${TIMEOUT} time ${OLDHYPERQB} ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} ${K} ${SEM} ${MODE}
-    echo "[ AutoHyper ]"
-    ${TIMEOUT} time ${AUTOHYPER} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQAUTO} --debug
-    echo "[ AutoHyperQ ]"
-    ${TIMEOUT} time ${AUTOHYPERQ} --nusmv ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQAUTO} 
+    compare5 ${SMV_M} ${SMV_A} ${SMV_B} ${SMV_A} ${SMV_B} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
 #################
@@ -604,9 +618,9 @@ if ((echo $* | grep -e "14.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
-###########
+#############
 # 15.1 CSRF #
-###########
+#############
 if ((echo $* | grep -e "15.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/15_csrf/csrf.smv'
     HQ='benchmarks/15_csrf/csrf.hq'
@@ -617,9 +631,9 @@ if ((echo $* | grep -e "15.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
-###########
+#############
 # 16.1 Bank #
-###########
+#############
 if ((echo $* | grep -e "16.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/16_bank/bank.smv'
     HQ='benchmarks/16_bank/bank.hq'
@@ -630,9 +644,9 @@ if ((echo $* | grep -e "16.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO} 
 fi
 
-##########
+############
 # 17.1 ATM #
-##########
+############
 if ((echo $* | grep -e "17.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/17_atm/atm.smv'
     HQ='benchmarks/17_atm/atm.hq'
