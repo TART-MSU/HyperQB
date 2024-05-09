@@ -223,9 +223,9 @@ size=`du -k "$QCIR_OUT" | cut -f1` # extracting the size of QCIR
 printf "QBF solving with QuAbS......."
 START=$(date +%s.%N)
 QUABS_OUTPUT=$((time ${QUABS} --partial-assignment ${QCIR_OUT}) > ${QUABS_OUT})
-OUTCOME=$(grep "r " ${QUABS_OUT})
 END=$(date +%s.%N)
 TIME_QUABS=$(echo "$END - $START" | bc -l)
+OUTCOME=$(grep "r " ${QUABS_OUT})
 
 #############################
 ### print HyperQB summary ###
@@ -243,5 +243,5 @@ echo   "|  Bound k:    " ${k}
 echo   "|  Encoding:   " ${ENCODING}
 echo   " --------------------------------"
 echo -n "TOTAL TIME: "
-echo ${TIME_PARSE} + ${TIME_GENQBF} + ${TIME_QUABS} | bc -l
+echo -n ${TIME_PARSE} + ${TIME_GENQBF} + ${TIME_QUABS} | bc | awk '{printf "%.3fs \n", $0}'
 echo   " --------( HyperQB END )---------"
