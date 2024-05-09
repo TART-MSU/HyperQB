@@ -4,6 +4,8 @@ import string
 import re
 import os.path
 import os
+import time
+import math
 from os import path
 from pynusmv.model 			import *
 from pynusmv.fsm 			import BddTrans
@@ -531,14 +533,15 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 #      Main	    #
 #################
 ARGS=(sys.argv)
-# print("ARGS: ", ARGS)
 OUTPUT_LOCATION=ARGS[1]
 PARSE_INDEX=0
 DICTIONARIES = []
 SUCCESS_OUT=""
 smv_file_name=""
 
-# get the mode first
+start = time.time()
+
+# get the mode
 FLAG=""
 if ("-find" in ARGS):
 	FLAG="-find"
@@ -584,7 +587,9 @@ for i in range(0, len(ARGS)):
 		main_formula_construct(formula_file_name, DICTIONARIES, translated_formula_file_name, QS_file_name, To_Negate_formula)
 		break
 
-print(SUCCESS_OUT) # parsing successfully completed. return.
+end = time.time()
+print(str(round((end - start), 3)))
+print(":" + SUCCESS_OUT) # parsing successfully completed. return.
 
 
 

@@ -4,6 +4,8 @@ import string
 import re
 import os.path
 import os
+import time
+import math
 from os import path
 from pynusmv.model 			import *
 from pynusmv.fsm 			import BddTrans
@@ -105,7 +107,6 @@ def assignBin(key, dict, bitblasting_dict):
 def assignVal(key, dict):
 	var_name = remove_dot(key)
 	return var_name+IFF+dict[key]
-
 
 
 #####################################
@@ -278,20 +279,14 @@ def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, 
 	smv_file = open(smv_file_name, 'r')
 	lines = smv_file.readlines()
 	for line in lines:
-		# print(line)
 		if(re.findall("\.\.", line)):
 			# line = line.split("--") #remove comments
 			line = line.split("--", 1)[0].replace("\t","") #remove tail comments
-			# print(line.isspace())
 			line = line.strip()
 			if (line): # if it's not empty
 				key = re.findall(".*:", line)[0].replace(":","")
 				num = re.findall("[\d]*;", line)[0].replace(";","")
-				# print(line)
-				# print(key)
-				# print(num)
 				value = int(num).bit_length()
-				# bitblasting_dict[key] = value
 				for var in state_variables:
 					if(key.replace(" ", "") in var):
 						bitblasting_dict[var] = value
@@ -538,14 +533,15 @@ def main_formula_construct(formula_file_name, dictionaries, translated_formula_f
 #      Main	    #
 #################
 ARGS=(sys.argv)
-# print("ARGS: ", ARGS)
 OUTPUT_LOCATION=ARGS[1]
 PARSE_INDEX=0
 DICTIONARIES = []
 SUCCESS_OUT=""
 smv_file_name=""
 
-# get the mode first
+start = time.time()
+
+# get the mode
 FLAG=""
 if ("-find" in ARGS):
 	FLAG="-find"
@@ -591,6 +587,8 @@ for i in range(0, len(ARGS)):
 		main_formula_construct(formula_file_name, DICTIONARIES, translated_formula_file_name, QS_file_name, To_Negate_formula)
 		break
 
+end = time.time()
+print(str(round((end - start), 3)) + "s")
 print(SUCCESS_OUT) # parsing successfully completed. return.
 
 
