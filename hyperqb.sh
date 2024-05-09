@@ -224,7 +224,7 @@ printf "QBF solving with QuAbS......."
 START=$(date +%s.%N)
 QUABS_OUTPUT=$((time ${QUABS} --partial-assignment ${QCIR_OUT}) > ${QUABS_OUT})
 END=$(date +%s.%N)
-TIME_QUABS=$(echo "$END - $START" | bc -l)
+TIME_QUABS=$(echo "$END - $START" | bc)
 OUTCOME=$(grep "r " ${QUABS_OUT})
 
 #############################
