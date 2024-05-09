@@ -1,6 +1,6 @@
 #!/bin/bash
 # TIMEFORMAT=%R
-TIMEFORMAT=">>> TOTAL TIME: %Rs <<<"
+TIMEFORMAT=">>> TOTAL TIME: %Rs"
 HYPERQB="./hyperqb.sh"
 OLDHYPERQB="./hyperqb_old.sh"
 
@@ -27,6 +27,7 @@ ALLTOOLS=false
 COMPARE=false
 ### timeout setting ### 
 TIMEOUT="3s" 
+TIMEOUTMSG="(!) Timeout without results after ${TIMEOUT}"
 
 for i in "$@" ; do
     if [[ $i == "-HQB" ]] ; then
@@ -59,6 +60,9 @@ function compare {
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[[ HyperQB ]]"
         time timeout ${TIMEOUT} ${HYPERQB} ${1} ${1} ${2} ${3} ${4} ${5} 
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
     sleep 1 # buffering for file R/W
 
@@ -66,18 +70,27 @@ function compare {
         echo ""
         echo "[[ OldHyperQB ]]"
         time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${1} ${2} ${3} ${4} ${5}
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyper ]]"
         time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${6} --debug
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyperQ ]]"
         time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${6} 
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 }
 
@@ -86,24 +99,36 @@ function compare2 {
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[[ HyperQB ]]"
         time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} 
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
     sleep 1 # buffering for file R/W
 
     if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
         echo "[[ OldHyperQB ]]"
         time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6}
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyper ]]"
         time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${7} --debug
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyperQ ]]"
         time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${7} 
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 }
 
@@ -112,6 +137,9 @@ function compare3 {
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[[ HyperQB ]]"
         time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
     sleep 1 # buffering for file R/W
 
@@ -119,18 +147,27 @@ function compare3 {
         echo ""
         echo "[[ OldHyperQB ]]"
         time timeout ${TIMEOUT} ${OLDHYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyper ]]"
         $time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${8} --debug
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[[ AutoHyperQ ]]"
         time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${8} 
+        if [ $? -eq 124 ]; then
+            echo ${TIMEOUTMSG}
+        fi
     fi
 }
 
