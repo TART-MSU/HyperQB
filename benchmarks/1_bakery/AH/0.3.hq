@@ -1,5 +1,5 @@
-exists A. forall B.
-G(
+forall A. exists B.
+!(G(
     ({p1-TOKEN}_A <-> {p2-TOKEN}_B)
     &
     ({p2-TOKEN}_A <-> {p1-TOKEN}_B)
@@ -25,4 +25,4 @@ F(
     !({p1_line}_A = {p2_line}_B) 
     |
     !({p2_line}_A = {p1_line}_B)
-)
+))

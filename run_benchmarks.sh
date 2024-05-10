@@ -196,7 +196,7 @@ function compare5 {
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[  AutoHyper  ]"
-        $time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${10} --debug
+        $time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${2} ${3} ${4} ${5} ${10} --debug
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -205,7 +205,7 @@ function compare5 {
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[  AutoHyperQ  ]"
-        time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${10} 
+        time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${2} ${3} ${4} ${5} ${10} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -344,7 +344,7 @@ fi
 ##############
 # 2.2 SNARK2 #
 ##############
-if ((echo $* | grep -e "-2.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-2.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "################################"
     echo "### running case 2.2, SNARK2 ###"
     echo "################################"
@@ -355,6 +355,7 @@ if ((echo $* | grep -e "-2.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SEM='-pes'
     MODE='-bughunt'
     ${HYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
+    ${OLDHYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
 fi
 
 

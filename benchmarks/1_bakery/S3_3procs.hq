@@ -1,5 +1,5 @@
-exists A. forall B.
-G(
+forall A. exists B.
+~(G(
     (p1-TOKEN[A] <-> p2-TOKEN[B])
     /\(p2-TOKEN[A] <-> p1-TOKEN[B])
     /\(p1-TOKEN[A] <-> p3-TOKEN[B])
@@ -18,4 +18,4 @@ F(
     ~(*p1_line[A] = p2_line[B]*) 
     \/ 
     ~(*p2_line[A] = p1_line[B]*)
-)
+))

@@ -2,17 +2,19 @@
 Title:    HyperQB: A QBF-Based Bounded Model Checker for Hyperproperties
 Authors:  Tzu-Han Hsu, Borzoo Bonakdarpour, César Sánchez
 
-## A hyperlink to the artifact (Available Badge)
+
+## Hyperlink to the artifact
 DOI: 
-(Zenodo repo for the latest version of artifact)
+Zenodo link:
+checksum:
+
 
 ## Environment requirements for the artifact
 - To provide the best evaluating experience for the reviewers, 
-we have tested this artifact on the provided virtual machine 
-*Artifact_VM_Ubuntu_22.04.ova*
+we have tested this artifact on the provided VM *Artifact_VM_Ubuntu_22.04.ova*
 
-- Each binary executable is already pre-compiled by us!
-(i.e., no extra compilation needed from the AE reviewers).  
+- Each binary executable is already pre-compiled by us on the VM!:D
+(i.e., no further extra compilation needed from the reviewers).  
 
 - Our artifact is partially using Docker image to 
 reduce the reviewer's burden on the dependencies installation.
@@ -20,63 +22,55 @@ Note:   The core technical parts of HyperQB BMC algorithm
         (i.e., encoding, unrolling, QBF-solving, etc.),
         are still self-contained in this artifact. 
 
+
+## Structure 
+Our artifact is structured as follows:
+- `benchmarks/` contains benchmarks we used for evaluation.
+- `demo` contains small instances as demonstrative examples.
+- `exec` contains all pre-compiled executable (for different platforms).
+- `src/` contains the source code of HyperQB. 
+when running HyperQB the temp containers `build_today` and `build_cex` will also be created.
+
 ## Setting up the Artifact
-We provide a one clock shell script to setup everything on Ubuntu VM:
-
-```shell
-sudo ./setup.sh
-```
-This script installed all required elements including docker and dotnet 
-(for comparisons with other tools, as presented in our paper).
-
-
-## Quick Start for Smoke Test
-The smoke test review can be done in following steps
-to check if HyperQB is installable, functional and runnable.  
-
-Step 0. download and unzip *hyperqb-atva.zip*, then:
-```shell
-cd hyperqb-atva
-```
-```shell
-cd cd HyperQB
-```
-
-Step 1. we provide a one clock shell script to setup everything: 
-```shell
-sudo ./setup.sh
-```
-This script installed all required elements including docker and dotnet 
-(ps. authentication might be needed here, enter "artifact" in the VM)
-A succesful installation should shows the versions of docker and dotnet.
-Note: in very rare case if any downloading issue happen, please run:
-        ```sudo snap install docker``
-        ```sudo docker pull tzuhanmsu/hyperqube:latest```
-
-Step 2. test on a "light subset" of cases from our benchmark, run:
-```shell
-sudo ./run_benchmarks.sh -light
-```
-Note: it runs only relatively smaller cases (expected time is ~2 mins).
-
-
-## Detailed instructions for Full Review
-Our goal is to present the experiments in the paper. 
-We here provide a easy step by step instructions: 
-
-Step 0. unzip hyperqb-atva.zip, then
+We provide a one-click shell script to quickly setup everything on Ubuntu VM:
+First, download and unzip *hyperqb-atva.zip*, step into the root directory:
 ```shell
 cd hyperqb-atva/HyperQB/
 ```
-Step 1. next, complete setup automatically, run: 
+Next, run the shell script that to setup the environment on the VM:
 ```shell
 sudo ./setup.sh
 ```
+(ps. authentication might be needed here, enter "artifact" in the ATVA VM)
+This script installed all required elements including docker and dotnet.
+A succesful installation should shows the versions of docker and dotnet.
+
+Note: in some rare cases, if any downloading issue happen, please run:
+```sudo snap install docker``
+```sudo docker pull tzuhanmsu/hyperqube:latest```
+
+
+## Quick Start for Smoke Test
+(please make sure "Setting up the Artifact" was succesfully executed before continue!)
+The smoke test review can be done in following steps
+to check if HyperQB is installable, functional and runnable.  
+
+Run the following command for "light subset" test from our benchmark:
+```shell
+sudo ./run_benchmarks.sh -light -alltools
+```
+
+
+## Detailed instructions for Full Review
+(please make sure "Setting up the Artifact" was succesfully executed before continue!)
+Our goal is to present the experiments in the paper. 
+We here provide a easy step by step instructions: 
+
 
 ### Reproduce all HyperQB results in Table 3
-Please run all cases in Tables 3 using the following command:
+Please run all cases in Tables 3 using HyperQB with the following command:
 ```shell
-sudo ./run_benchmarks -allcases -AHQ
+sudo ./run_benchmarks -allcases -HQB
 ```
 
 ### Reproduce all Comparison results with other Tools in Table 3
@@ -87,21 +81,21 @@ sudo ./run_benchmarks -allcases -alltools
 
 
 ### Detailed Testing for Specific Cases or Totls
-To make comparison easier, we provide concenient flags. 
+To make comparison easier for reviewers, we also provide convenient flags: 
 ```shell
-sudo ./run_benchmarks '<-[case number]>' '<-[tool]]>'
+sudo ./run_benchmarks '<-[case number]>' '<-[selected tool]]>'
 ```
-[tool] ranges from [-HQB | -OLDHQB | -AH | -AHQ]
+which
+[selected tool] ranges from [-HQB | -OLDHQB | -AH | -AHQ]
 [case number] ranges from 0.1 -- 17.1 (please refer to Table 3 for case numbers)
 
-For example:
-
-To run case 9.1 using HyperQB(-HQB), Old-HyperQB(-OLDHQB), and AutoHyper(-AH), run:
+Here are some examples: 
+To run case 9.1 using HyperQB(-HQB), Old-HyperQB(-OLDHQB), and AutoHyper(-AH):
 ```shell
 sudo ./run_benchmarks -9.1 -HQB -OLDHQB -AH 
 ```
 
-To run case 13.2 using all tools: HyperQB(-HQB), Old-HyperQB(-OLDHQB), and AutoHyper(-AH), AutoHyperQ(-AHQ), run:
+To run case 13.2 using all tools (HyperQB(-HQB), Old-HyperQB(-OLDHQB), and AutoHyper(-AH), AutoHyperQ(-AHQ)):
 ```shell
 sudo ./run_benchmarks -13.2 -HQB -OLDHQB -AH 
 ```

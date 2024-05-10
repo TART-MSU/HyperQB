@@ -1,5 +1,5 @@
-exists A. exists B.
-G
+forall A. forall B.
+!(G
 (
     ({p1_line=0}_A <-> {p2_line=0}_B) 
     &
@@ -19,4 +19,4 @@ F
     !({p1_line}_A = {p2_line}_B) 
     |
     !({p2_line}_A = {p1_line}_B)
-)
+))
