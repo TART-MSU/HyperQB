@@ -380,7 +380,7 @@ fi
 ######################
 if ((echo $* | grep -e "-3.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "########################################"
-    echo "### running case 3.1, 3T_correct, NI ###"
+    echo "### running case 3.2, 3T_correct, NI ###"
     echo "########################################"
     SMV='benchmarks/3_ni/NI_correct.smv'
     HQ='benchmarks/3_ni/NI.hq'
@@ -534,6 +534,9 @@ fi
 # 9.1 Buffer, OD #
 ##################
 if ((echo $* | grep -e " 9.1 " -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 9.1, Buffer, OD  ###"
+    echo "#####################################"
     SMV='benchmarks/9_buffer/buffer.smv'
     HQ='benchmarks/9_buffer/OD.hq'
     HQAUTO='benchmarks/9_buffer/AH/9.1.hq'
@@ -545,6 +548,9 @@ fi
 # 9.2 Buffer_sched, OD_intra #
 ##############################
 if ((echo $* | grep -e "-9.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "###########################################"
+    echo "### running case 9.2, Buffer, OD_intra  ###"
+    echo "###########################################"
     SMV='benchmarks/9_buffer/buffer_sched.smv'
     HQ='benchmarks/9_buffer/OD_intra.hq'
     HQAUTO='benchmarks/9_buffer/AH/9.2.hq'
@@ -556,6 +562,9 @@ fi
 # 9.3 Buffer_sched, NI_intra #
 ##############################
 if ((echo $* | grep -e "-9.3" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "###########################################"
+    echo "### running case 9.3, Buffer, NI_intra  ###"
+    echo "###########################################"
     SMV='benchmarks/9_buffer/buffer_sched.smv'
     HQ='benchmarks/9_buffer/NI_intra.hq'
     HQAUTO='benchmarks/9_buffer/AH/9.3.hq'
@@ -615,6 +624,9 @@ fi
 # 12.1 Mappying Synthesis - examples #
 ######################################
 if ((echo $* | grep -e "-12.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 12.1, MapSynth1  ###"
+    echo "#####################################"
     SMV_A='benchmarks/12_mapsynth/msynth1_MA.smv'
     SMV_B='benchmarks/12_mapsynth/msynth1_MB.smv'
     SMV_M='benchmarks/12_mapsynth/msynth1_MM.smv'
@@ -630,6 +642,9 @@ fi
 # 12.2 Mappying Synthesis - Alice and Bob with non-interference #
 #################################################################
 if ((echo $* | grep -e "-12.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 12.2, MapSynth2  ###"
+    echo "#####################################"
     SMV_A='benchmarks/12_mapsynth/msynth2_MA.smv'
     SMV_B='benchmarks/12_mapsynth/msynth2_MB.smv'
     SMV_M='benchmarks/12_mapsynth/msynth2_MM.smv'
@@ -662,7 +677,7 @@ fi
 #################
 if ((echo $* | grep -e "-13.2" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "####################################"
-    echo "### running case 13.1, TEAMLTL1  ###"
+    echo "### running case 13.2, TEAMLTL2  ###"
     echo "####################################"
     SMV='benchmarks/13_teamltl/team2.smv'
     HQ='benchmarks/13_teamltl/team.hq'
@@ -678,7 +693,7 @@ fi
 ########################################
 if ((echo $* | grep -e "-14.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "####################################"
-    echo "### case 14.1: running Non-det1  ###"
+    echo "### case 14.1, Non-det1 , inputs ###"
     echo "####################################"
     SMV='benchmarks/14_ndet/NI_v2.smv'
     HQ='benchmarks/14_ndet/NI.hq'
@@ -694,7 +709,7 @@ fi
 #############################################
 if ((echo $* | grep -e "-14.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "####################################"
-    echo "### case 14.2: running Non-det2  ###"
+    echo "### case 14.2, Non-det2 , trans  ###"
     echo "####################################"
     SMV='benchmarks/14_ndet/NI_v3.smv'
     HQ='benchmarks/14_ndet/NI.hq'
@@ -725,6 +740,9 @@ fi
 # 16.1 Bank #
 #############
 if ((echo $* | grep -e "-16.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "########################"
+    echo "### case 16.1, Bank  ###"
+    echo "########################"
     SMV='benchmarks/16_bank/bank.smv'
     HQ='benchmarks/16_bank/bank.hq'
     HQAUTO='benchmarks/16_bank/AH/16.hq'
@@ -738,6 +756,9 @@ fi
 # 17.1 ATM #
 ############
 if ((echo $* | grep -e "-17.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#######################"
+    echo "### case 17.1, ATM  ###"
+    echo "#######################"
     SMV='benchmarks/17_atm/atm.smv'
     HQ='benchmarks/17_atm/atm.hq'
     HQAUTO='benchmarks/17_atm/AH/17.hq'
@@ -746,4 +767,3 @@ if ((echo $* | grep -e "-17.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
-

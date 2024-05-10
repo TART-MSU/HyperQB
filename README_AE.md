@@ -23,6 +23,12 @@ Note:   The core technical parts of HyperQB BMC algorithm
         are still self-contained in this artifact. 
 
 
+## Remarks on this Artifact
+1. We noted that while running our experiments on the ATVA provided VM, the overall runtime *increase* a lot (in comparison to our reported runtime obtained from a MacBook M1 locally).
+2. We noted that in several cases, AutoHyper or AutoHyperQ might report “Unexpected exit code by spot” when running on ATVA VM. This was not detected while running from a MacBook M1 locally, and since this is an issue from other tools probably due to a different platform (instead of HyperQB itself), we did not further debug on it. Please note this differences of the `error` cases we resported in Table 3.  
+3. For fair comparison, we also make sure the models used by other tools 
+are the same (all in NuSMV format). The only difference is to use different .hq formula since the syntax of HyperQB vs AH/AHQ, are slightly different (however, the semantics of formula still conform). 
+
 ## Structure 
 Our artifact is structured as follows:
 - `benchmarks/` contains benchmarks we used for evaluation.
@@ -30,6 +36,7 @@ Our artifact is structured as follows:
 - `exec` contains all pre-compiled executable (for different platforms).
 - `src/` contains the source code of HyperQB. 
 when running HyperQB the temp containers `build_today` and `build_cex` will also be created.
+
 
 ## Setting up the Artifact
 We provide a one-click shell script to quickly setup everything on Ubuntu VM:
@@ -55,10 +62,11 @@ Note: in some rare cases, if any downloading issue happen, please run:
 The smoke test review can be done in following steps
 to check if HyperQB is installable, functional and runnable.  
 
-Run the following command for "light subset" test from our benchmark:
+Run the following command for quick smoke testing our benchmarks:
 ```shell
 sudo ./run_benchmarks.sh -light -alltools
 ```
+(`-light` specify smaller instances, and `-alltools` runs over all tools presented in Table 3)
 
 
 ## Detailed instructions for Full Review
@@ -66,24 +74,20 @@ sudo ./run_benchmarks.sh -light -alltools
 Our goal is to present the experiments in the paper. 
 We here provide a easy step by step instructions: 
 
-
 ### Reproduce all HyperQB results in Table 3
 Please run all cases in Tables 3 using HyperQB with the following command:
 ```shell
 sudo ./run_benchmarks -allcases -HQB
 ```
-
 ### Reproduce all Comparison results with other Tools in Table 3
 For example, to compare all cases of all flags, execute:
 ```shell
 sudo ./run_benchmarks -allcases -alltools
 ```
-
-
-### Detailed Testing for Specific Cases or Totls
+### Detailed Testing for Specific Cases or Tools
 To make comparison easier for reviewers, we also provide convenient flags: 
-```shell
-sudo ./run_benchmarks '<-[case number]>' '<-[selected tool]]>'
+```
+sudo ./run_benchmarks '<-[case number]>' '<-[selected tool]>'
 ```
 which
 [selected tool] ranges from [-HQB | -OLDHQB | -AH | -AHQ]
@@ -101,29 +105,26 @@ sudo ./run_benchmarks -13.2 -HQB -OLDHQB -AH
 ```
 
 
-## Reusable 
-Step 2. To test small models and simple formulas, run any line below: 
-        ```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```
-        ```sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find```
-        ```sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug```
-
-        The script ```run_demo.sh``` contains more examples such that 
-        the reviewer can simply uncommand any case and execute it.
-
-
-## Additional Information on Displayed Outputs
-For fair comparison, we also make sure the models used by 
-other tools are the same (all in NuSMV format). 
-The only difference is to use different .hq formula since 
-the syntax of HyperQB vs AH/AHQ, are slightly different. 
-(However, the semantics of formula still conform). 
+## General Usage of HyperQB (Reusable Badge)
+In the main directory, run the shell script that to setup the environment on the VM:
+```shell
+sudo ./setup.sh
+```
+To test small models and simple formulas, run any line below: 
+```shell
+sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
+```
+```shell
+sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
+```
+```shell
+sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
+```
+The script ```run_demo.sh``` contains more examples such that 
+the reviewer can simply uncommand any case and execute it.
 
 
 Thank you for using HyperQB!
-
-
-(BELOW are old general README for HyperQB)
-
 
 # Welcome to HyperQB!!!
 HyperQB is a home-grown tool of Bounded Model Checking for Hyperproperties.
@@ -146,9 +147,12 @@ You can start using HyperQB in 2 simple steps:
 HyperQB will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies!
 
 2. Next, clone the repository and step into the repo:
-- ```git clone https://github.com/TART-MSU/HyperQB.git```
-- ```cd HyperQB```
-
+```shell
+git clone https://github.com/TART-MSU/HyperQB.git
+```
+```shell
+cd HyperQB
+```
 You are now ready to run HyperQB!:D
 
 ## How to Use
@@ -160,14 +164,20 @@ To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
 - `<mode>` to say performing classic BMC (i.e., negating the formula) or not, which can be -bughunt or -find (we use the former as default value).  
     
 RUN HyperQB in the following format:
-    ```./hyperqube <list of models> <formula> <k> <sem> <mode>```
+```
+./hyperqube <list of models> <formula> <k> <sem> <mode>
+```
 
 Demo Examples:
 1. [demo 1: run bakery algorithm with symmetry property]
-```./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -bughunt```
+```shell
+./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -bughunt
+```
 
 2. [dem0 2: run SNARK algorithm with linearizability propoerty]
-```./hyperqb.sh demo/snark_conc.smv demo/snark1_seq.smv demo/lin.hq 18 -pes -bughunt```    
+```shell
+./hyperqb.sh demo/snark_conc.smv demo/snark1_seq.smv demo/lin.hq 18 -pes -bughunt
+```    
 
 
 ## Experiments
@@ -188,14 +198,17 @@ Our evaluations include the following cases,<br/>
 - Case #7.1: Co-termination<br/>
 - Case #8.1: Deniability<br/>
 - Case #9.1 - #9.3: Intransitive Non-interference<br/>
-- Case #10.1 - #10.2: TINI and TSNI
-- Case #11.1: K-safety
-- Case #12.1: MapSynth
-- Case #12.2: MapSynth
-- Case #13.1: TeamLTL
-- Case #13.2: TeamLTL
-- Case #14.1: Non-deterministic init
-- Case #14.2: Non-deterministic trans
+- Case #10.1 - #10.2: TINI and TSNI<br/>
+- Case #11.1: K-safety<br/>
+- Case #12.1: MapSynth1<br/>
+- Case #12.2: MapSynth2<br/>
+- Case #13.1: TeamLTL1<br/>
+- Case #13.2: TeamLTL2<br/>
+- Case #14.1: Non-deterministic init<br/>
+- Case #14.2: Non-deterministic trans<br/>
+- Case #15.1: CSRF<br/>
+- Case #16.1: Bank<br/>
+- Case #17.1: ATM<br/>
 
 
 ## People
