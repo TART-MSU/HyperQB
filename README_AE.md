@@ -4,9 +4,10 @@ Authors:  Tzu-Han Hsu, Borzoo Bonakdarpour, César Sánchez
 
 
 ## Hyperlink to the artifact
-DOI: <br/>
-Zenodo link: <br/>
+DOI: [10.5281/zenodo.11170365](10.5281/zenodo.11170365) <br/>
+Zenodo link: [https://zenodo.org/records/11170365](https://zenodo.org/records/11170365)<br/>
 checksum: <br/>
+Public access:[https://github.com/TART-MSU/HyperQB](https://github.com/TART-MSU/HyperQB) 
 
 
 ## Environment requirements for the artifact
