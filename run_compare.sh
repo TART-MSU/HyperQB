@@ -61,7 +61,7 @@ function compare {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[  HyperQB  ]"
-        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${1} ${2} ${3} ${4} ${5} 
+        timeout ${TIMEOUT} ${HYPERQB} ${1} ${1} ${2} ${3} ${4} ${5} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -100,7 +100,7 @@ function compare2 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[  HyperQB  ]"
-        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} 
+        timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -138,7 +138,7 @@ function compare3 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[  HyperQB  ]"
-        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
+        timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7}
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -177,7 +177,7 @@ function compare5 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
         echo "[  HyperQB  ]"
-        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
+        timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi

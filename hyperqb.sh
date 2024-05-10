@@ -253,6 +253,6 @@ echo   "|  #States:    " ${STATENUM}
 echo   "|  Bound k:    " ${k}
 echo   "|  Encoding:   " ${ENCODING}
 echo   " --------------------------------"
-# echo -n "TOTAL TIME: "
-# echo -n ${TIME_PARSE} + ${TIME_GENQBF} + ${TIME_QUABS} | bc | awk '{printf "%.3fs \n", $0}'
+echo -n "TOTAL TIME: "
+echo -n ${TIME_PARSE} + ${TIME_GENQBF} + ${TIME_QUABS} | bc | awk '{printf "%.3fs \n", $0}'
 echo   " --------( HyperQB END )---------"
