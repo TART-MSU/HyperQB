@@ -47,9 +47,9 @@ are the same (all in NuSMV format). The only difference is the different .hq for
 For comparisons with other tools, we kindly ask the reviewers to extract the artifact in the *home* directory, i.e., with ${PWD} as /home/artifact/HyperQB... (this is due to AH and AHQ requiring absolute paths to spot).
 
 We provide a one-click shell script to quickly setup everything on ATVA VM.<br/>
-First, download and unzip *atva-artifact.zip*, step into the root directory:
+First, download and unzip *artifact.zip*, step into the root directory:
 ```shell
-cd atva-artifact/HyperQB/
+cd artifact/HyperQB/
 ```
 Next, run the shell script to setup the environment on the VM:
 ```shell
