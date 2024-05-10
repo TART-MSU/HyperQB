@@ -37,7 +37,7 @@ The goal of this artifact is to produce results of Table 3 in the paper, includi
 
 ## Remarks on this Artifact
 1. We notice that while running our experiments on the ATVA VM, the overall runtime *increase* a lot (in comparison to our reported runtime in Table 3, obtained from running on a MacBook M1 locally).
-2. We notice that in several cases, AH/AHQ might report *“Unexpected exit code by spot”* when running on ATVA VM. This was not detected while running from a MacBook M1 locally, and since this is an issue (probably due to a different platform) from other tools we used for comparisons, and is not about HyperQB itself, we did not further debug on it. Please note this differences of the `error` cases we resported in Table 3.  
+2. We notice that in several cases, AH/AHQ might report *“Unexpected exit code by spot”* when running on ATVA VM. This was not detected while running from a MacBook M1 locally, and since this is an issue (probably due to a different platform) from other tools we used for comparisons, and is not about HyperQB itself, we did not further debug on it. Please note this differences of the `error` cases we reported in Table 3.  
 3. For fair comparison, we also make sure the models used by other tools 
 are the same (all in NuSMV format). The only difference is the different .hq formula since the syntax of HyperQB vs AH/AHQ, are slightly different (however, the semantics of formula still conform). 
 
@@ -45,7 +45,7 @@ are the same (all in NuSMV format). The only difference is the different .hq for
 
 
 ## Setting up the Artifact
-We provide a one-click shell script to quickly setup everything on ATVA VM:<br/>
+We provide a one-click shell script to quickly setup everything on ATVA VM.<br/>
 First, download and unzip *hyperqb-atva.zip*, step into the root directory:
 ```shell
 cd hyperqb-atva/HyperQB/
@@ -64,7 +64,7 @@ Note: in some rare cases, if any downloading issue happen, please run:
 
 
 ## Quick Start for Smoke Test
-(please make sure "Setting up the Artifact" was succesfully executed before continue!)
+(please make sure "Setting up the Artifact" was succesfully executed before continue!)<br/>
 The smoke test review can be done in following steps
 to check if HyperQB is installable, functional and runnable.  
 
@@ -76,7 +76,7 @@ sudo ./run_benchmarks.sh -light -alltools
 
 
 ## Detailed instructions for Full Review
-(please make sure "Setting up the Artifact" was succesfully executed before continue!)
+(please make sure "Setting up the Artifact" was succesfully executed before continue!)<br/>
 Our goal is to present the experiments in the paper. 
 We here provide a easy step by step instructions: 
 
