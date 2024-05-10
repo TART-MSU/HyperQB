@@ -21,9 +21,9 @@ MODULE main
  ASSIGN
 	init(PC) := 1 ;
 	-- init(h) := {TRUE, FALSE} ;
-	-- init(x) := {0,1,2,3,4,5};
-	init(h) := {TRUE} ;
-	init(x) := 0;
+	init(x) := {0,1,2,3,4,5,6};
+	-- init(h) := {TRUE} ;
+	-- init(x) := 0;
 	init(y) := 0;
 	init(z) := 0;
 

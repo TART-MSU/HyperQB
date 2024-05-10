@@ -1,5 +1,5 @@
-forall A. forall B.
-(
+exists A. exists B.
+!(
     (F(*x[A] = x[B]*)) 
     -> 
     (G(*y[A] = y[B]*))

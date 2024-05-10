@@ -1,5 +1,5 @@
-forall A. forall B.
-(
+exists A. exists B.
+!(
     (F({x}_A = {x}_B)) 
     -> 
     (G  
