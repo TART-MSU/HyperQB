@@ -32,8 +32,8 @@ Our artifact is structured as follows:
 when running HyperQB the temp containers `build_today` and `build_cex` will also be created.
 
 The goal of this artifact is to produce results of Table 3 in the paper, including:
-1. Results produced by HyperQB
-2. Comparisons of HyperQB with [24], AutoHyper (AH[2]), and AutoHyperQ (AHQ[3])
+1. Results produced by HyperQB (HQB).
+2. Comparisons of HyperQB with [24], AutoHyper (AH)[2], and AutoHyperQ (AHQ) [3].
 
 ## Remarks on this Artifact
 1. We noted that while running our experiments on the ATVA VM, the overall runtime *increase* a lot (in comparison to our reported runtime in Table 3, obtained from a MacBook M1 locally).
