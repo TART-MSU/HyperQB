@@ -47,9 +47,9 @@ are the same (all in NuSMV format). The only difference is the different .hq for
 
 ## Setting up the Artifact
 We provide a one-click shell script to quickly setup everything on ATVA VM.<br/>
-First, download and unzip *hyperqb-atva.zip*, step into the root directory:
+First, download and unzip *atva-artifact.zip*, step into the root directory:
 ```shell
-cd hyperqb-atva/HyperQB/
+cd atva-artifact/HyperQB/
 ```
 Next, run the shell script to setup the environment on the VM:
 ```shell
