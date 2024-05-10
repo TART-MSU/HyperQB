@@ -93,7 +93,7 @@ For example, to compare all cases of all flags, execute:
 ```shell
 sudo ./run_benchmarks -allcases -alltools
 ```
-### Testing for Specific Cases or Tools
+### Test Specific Cases or Tools in Table 3
 To make comparison easier for reviewers, we also provide convenient flags: 
 ```
 sudo ./run_benchmarks '<-[case number]>' '<-[selected tool]>'
