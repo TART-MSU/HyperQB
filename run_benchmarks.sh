@@ -215,7 +215,7 @@ function compare5 {
 ###################
 # -0.1 Bakery3, S1 #
 ###################
-if ((echo $* | grep -e "-0.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-0.1" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "#####################################"
     echo "### running case 0.1, Bakery3, S1 ###"
     echo "#####################################"
@@ -231,7 +231,7 @@ fi
 ###################
 # 0.2 Bakery3, S2 #
 ###################
-if ((echo $* | grep -e "-0.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-0.2" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "#####################################"
     echo "### running case 0.2, Bakery3, S2 ###"
     echo "#####################################"
@@ -470,7 +470,7 @@ fi
 ##############
 # 6.1 Mutant #
 #############
-if ((echo $* | grep -e "-6.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-6.1" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "###########################################"
     echo "### running case 6.1, Mutation testing  ###"
     echo "###########################################"
@@ -484,7 +484,7 @@ fi
 ######################
 # 7.1 2Progs, coterm #
 ######################
-if ((echo $* | grep -e "-7.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-7.1" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "#########################################"
     echo "### running case 7.1, 2Progs, coterm  ###"
     echo "#########################################"
@@ -501,7 +501,7 @@ fi
 ############################
 # 8.1 Wallet1, deniability #
 ############################
-if ((echo $* | grep -e "-8.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-8.1" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "###############################################"
     echo "### running case 8.1, Wallet1, deniability  ###"
     echo "###############################################"
@@ -644,7 +644,7 @@ fi
 #################
 # 13.1 TEAMLTL1 #
 #################
-if ((echo $* | grep -e "-13.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-13.1" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "####################################"
     echo "### running case 13.1, TEAMLTL1  ###"
     echo "####################################"
@@ -660,7 +660,7 @@ fi
 #################
 # 13.2 TEAMLTL2 # 
 #################
-if ((echo $* | grep -e "-13.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-13.2" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "####################################"
     echo "### running case 13.1, TEAMLTL1  ###"
     echo "####################################"
