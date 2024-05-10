@@ -59,7 +59,7 @@ This script installed all required elements including docker and dotnet.
 A succesful installation should shows the versions of docker and dotnet.
 
 Note: in some rare cases, if any downloading issue happen, please run:
-```sudo snap install docker``
+```sudo snap install docker```
 ```sudo docker pull tzuhanmsu/hyperqube:latest```
 
 
