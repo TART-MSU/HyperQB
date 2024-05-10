@@ -588,8 +588,8 @@ for i in range(0, len(ARGS)):
 		break
 
 end = time.time()
-print(str(round((end - start), 3)) + "s")
-print(SUCCESS_OUT) # parsing successfully completed. return.
+print(str(round((end - start), 3)))
+print(":" + SUCCESS_OUT) # parsing successfully completed. return.
 
 
 
