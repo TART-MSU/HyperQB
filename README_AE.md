@@ -107,65 +107,6 @@ sudo ./run_benchmarks -13.2 -HQB -OLDHQB -AH
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Step 3. Setup other tools for comparison: AutoHyper(AH) and AutoHyperQ(QAH)
-        We have compiled both tool in advance, the reviewers can choose one 
-        of the following to complete this setup. 
-
-        Option 1: 
-            Simply move tacas/ into the Home directry of tacas23 machine (home/tacas23/), and 
-            please do not change the reletive structure of HyperQB with AH or QAH. 
-            You are good to go to Step 5!:D
-    
-        Option 2:
-            If you would like to put tacas/ at other location, then: 
-            - go to spot-2.11.5/bin, make sure there are two binarys named: 
-                autfilt, ltl2gba
-            - now, oepn AutoHyper/app/paths.js
-            - make sure paths are pointing to *correct absolute* path of the two binarys:
-                ``.../tacas/spot-2.11.5/bin/autfilt``
-                ``.../tacas/spot-2.11.5/bin/ltl2tgba``
-            - next, open AutoHyperQ/app/paths.js
-            - make sure in this file, the paths are also pointing to the right binaries.
-            Note:   the default locations in the files are from our building process.
-                    The actual absolute path depends on where this artifact is located. 
-            
-         
-Step 5. Experiments Replication
-        We provide a one-click script ```run_benchmarks.sh``` for replicating all results in the paper. For the reviewers convenienet, we provide several useful flags:
-        - ```sudo ./run_benchmarks.sh <case#>``` runs a specific case from the paper,
-        - ```sudo ./run_benchmarks.sh -all``` runs all cases from the paper
-        - addition flags ```-AH``` and ```-QAH``` runs one/all cases together with AutoHyper and AutoHyperQ, respectively, for the comparison presented in the paper. 
-        For example, run
-        ```sudo ./run_benchmarks.sh 0.3 -AH``` 
-        It runs case #1.3 from the table (i.e., Bakery) with HyperQB, 
-        accompany by the outcome of the exact same case run on AutoHyper. 
-        Similarly, run
-        ```sudo ./run_benchmarks.sh 9.2 -QAH``` 
-        It runs case #9.2 (shared buffer) with HyperQB abd AutoHyperQ. 
-        To replicate the entire table, including all comparisons run:
-        ```sudo ./run_benchmarks.sh -all -AH -QAH``` 
-        The cases that take HyperQB longer than a minute are: #2.1, #2.2, #8.2, #13.2
-        AutoHyperQ usually take longer than the timeout bound, to save time, 
-        the reviewer can change the parameter on line10 of ```run_bencmarks.sh```
-
-
 ## Reusable 
 Step 2. To test small models and simple formulas, run any line below: 
         ```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```
@@ -175,21 +116,8 @@ Step 2. To test small models and simple formulas, run any line below:
         The script ```run_demo.sh``` contains more examples such that 
         the reviewer can simply uncommand any case and execute it.
 
+
 ## Additional Information on Displayed Outputs
-We add a remark that, the "SAT/UNSAT" outcome displayed from 
-HyperQB, AutoHyper, and AutoHyperQ, might not be same. 
-This is because, HyperQB provides `-find` and `-bughunt` which 
-checks `original` and `negated` formula, respectively 
-(which hunting the negation is the core idea of BMC). 
-However, AutoHyper and AutpHyperQ always check `original` formula.   
-
-We provide a quick lookup table for output conformance checking: 
-option      HyperQB     AutoHyper       AutoHyperQ
--find       SAT         SAT             SAT
--find       UNSAT       UNSAT           UNSAT
--bughunt    SAT         UNSAT           UNSAT    
--bughunt    UNSAT       SAT             SAT 
-
 For fair comparison, we also make sure the models used by 
 other tools are the same (all in NuSMV format). 
 The only difference is to use different .hq formula since 
@@ -197,12 +125,10 @@ the syntax of HyperQB vs AH/AHQ, are slightly different.
 (However, the semantics of formula still conform). 
 
 
-
-
 Thank you for using HyperQB!
 
 
-(BELOW are old general README for last release, main TACAS24 AE infomation is at above)
+(BELOW are old general README for HyperQB)
 
 
 # Welcome to HyperQB!!!
