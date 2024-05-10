@@ -110,30 +110,12 @@ sudo ./run_benchmarks -9.1 -HQB -OLDHQB -AH
 
 To run `case 13.2` using all tools (`HyperQB(-HQB)`, `Old-HyperQB(-OLDHQB)`, and `AutoHyper(-AH)`, `AutoHyperQ(-AHQ)`):
 ```shell
-sudo ./run_benchmarks -13.2 -HQB -OLDHQB -AH 
+sudo ./run_benchmarks -13.2 -HQB -OLDHQB -AH -AHQ
 ```
-
-
-## General Usage of HyperQB (Reusable Badge)
-In the main directory, run the shell script that to setup the environment on the VM:
-```shell
-sudo ./setup.sh
-```
-To test small models and simple formulas, run any line below: 
-```shell
-sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
-```
-```shell
-sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
-```
-```shell
-sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
-```
-The script ```run_demo.sh``` contains more examples such that 
-the reviewer can simply uncommand any case and execute it.
-
 
 Thank you for using HyperQB!
+
+## General Usage of HyperQB (Reusable Badge)
 
 # Welcome to HyperQB!!!
 HyperQB is a home-grown tool of Bounded Model Checking for Hyperproperties.
@@ -164,6 +146,8 @@ cd HyperQB
 ```
 You are now ready to run HyperQB!:D
 
+
+
 ## How to Use
 To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
 - `<list of models>` written in NuSMV format (as .smv files),
@@ -177,16 +161,26 @@ RUN HyperQB in the following format:
 ./hyperqube <list of models> <formula> <k> <sem> <mode>
 ```
 
-Demo Examples:
-1. [demo 1: run bakery algorithm with symmetry property]
+## Demo Examples:
+In the main directory, run the shell script that to setup the environment on the VM:
 ```shell
-./hyperqb.sh demo/bakery.smv demo/bakery.smv demo/symmetry.hq 10 -pes -bughunt
+sudo ./setup.sh
 ```
-
-2. [dem0 2: run SNARK algorithm with linearizability propoerty]
+To test small models and simple formulas, run any line below: 
 ```shell
-./hyperqb.sh demo/snark_conc.smv demo/snark1_seq.smv demo/lin.hq 18 -pes -bughunt
-```    
+sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
+```
+```shell
+sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find
+```
+```shell
+sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug
+```
+The script ```run_demo.sh``` contains more examples such that 
+the reviewer can simply uncommand any case and execute it.
+
+
+
 
 
 ## Experiments

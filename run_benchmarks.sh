@@ -354,8 +354,14 @@ if ((echo $* | grep -e "-2.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     K=18
     SEM='-pes'
     MODE='-bughunt'
-    ${HYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
-    ${OLDHYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
+    if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
+        ${HYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
+    fi
+    sleep 1 # buffering for file R/W
+
+    if (${OLDHQB} == "true") || (${ALLTOOLS} -eq "true") then
+        ${OLDHYPERQB} ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE}
+    fi
 fi
 
 
@@ -427,6 +433,9 @@ fi
 # 5.1 Planning-rb #
 ###################
 if ((echo $* | grep -e "-5.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 5.1, Planning-rb ###"
+    echo "#####################################"
     SMV='benchmarks/5_planning/rb_100.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
@@ -438,6 +447,9 @@ fi
 # 5.2 Planning-rb #
 ###################
 if ((echo $* | grep -e "-5.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 5.2, Planning-rb ###"
+    echo "#####################################"
     SMV='benchmarks/5_planning/rb_400.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
@@ -449,6 +461,9 @@ fi
 # 5.3 Planning-rb #
 ###################
 if ((echo $* | grep -e "-5.3" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 5.3, Planning-rb ###"
+    echo "#####################################"
     SMV='benchmarks/5_planning/rb_1600.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
@@ -460,6 +475,9 @@ fi
 # 5.4 Planning-rb #
 ###################
 if ((echo $* | grep -e "-5.4" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#####################################"
+    echo "### running case 5.4, Planning-rb ###"
+    echo "#####################################"
     SMV='benchmarks/5_planning/rb_3600.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
