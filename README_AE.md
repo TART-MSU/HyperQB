@@ -77,20 +77,23 @@ sudo ./run_benchmarks.sh -light -alltools
 
 ## Detailed instructions for Full Review
 (please make sure "Setting up the Artifact" was succesfully executed before continue!)<br/>
-Our goal is to present the experiments in the paper. 
-We here provide a easy step by step instructions: 
+Our goal is to present the experiments in Table 3 of the paper. 
+We provide different comamnds to:
+1. run all cases using HyperQB,
+2. run all cases using HyperQB and all other tools (AH/AHQ),
+3. run specific case with selected tools.
 
-### Reproduce all HyperQB results in Table 3
+### Run all cases using HyperQB in Table 3
 Please run all cases in Tables 3 using HyperQB with the following command:
 ```shell
 sudo ./run_benchmarks -allcases -HQB
 ```
-### Reproduce all Comparison results with other Tools in Table 3
+### Run all cases for Comparison with other Tools in Table 3
 For example, to compare all cases of all flags, execute:
 ```shell
 sudo ./run_benchmarks -allcases -alltools
 ```
-### Detailed Testing for Specific Cases or Tools
+### Testing for Specific Cases or Tools
 To make comparison easier for reviewers, we also provide convenient flags: 
 ```
 sudo ./run_benchmarks '<-[case number]>' '<-[selected tool]>'
