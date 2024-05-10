@@ -43,9 +43,9 @@ The goal of this artifact is to produce results of Table 3 in the paper, includi
 are the same (all in NuSMV format). The only difference is the different .hq formula since the syntax of HyperQB vs AH/AHQ, are slightly different (however, the semantics of formula still conform). 
 
 
-
-
 ## Setting up the Artifact
+For comparisons with other tools, we kindly ask the reviewers to extract the artifact in the *home* directory, i.e., with ${PWD} as /home/artifact/HyperQB... (this is due to AH and AHQ requiring absolute paths to spot).
+
 We provide a one-click shell script to quickly setup everything on ATVA VM.<br/>
 First, download and unzip *atva-artifact.zip*, step into the root directory:
 ```shell
