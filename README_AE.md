@@ -1,12 +1,12 @@
 # README for ATVA24 Tool Papaer Artifact Evaluation
-Title:    HyperQB: A QBF-Based Bounded Model Checker for Hyperproperties
+Title:    HyperQB: A QBF-Based Bounded Model Checker for Hyperproperties <br/>
 Authors:  Tzu-Han Hsu, Borzoo Bonakdarpour, César Sánchez
 
 
 ## Hyperlink to the artifact
-DOI: 
-Zenodo link:
-checksum:
+DOI: <br/>
+Zenodo link: <br/>
+checksum: <br/>
 
 
 ## Environment requirements for the artifact
@@ -24,7 +24,7 @@ Note:   The core technical parts of HyperQB BMC algorithm
 
 
 ## Remarks on this Artifact
-1. We noted that while running our experiments on the ATVA provided VM, the overall runtime *increase* a lot (in comparison to our reported runtime obtained from a MacBook M1 locally).
+1. We noted that while running our experiments on the ATVA VM, the overall runtime *increase* a lot (in comparison to our reported runtime obtained from a MacBook M1 locally).
 2. We noted that in several cases, AutoHyper or AutoHyperQ might report “Unexpected exit code by spot” when running on ATVA VM. This was not detected while running from a MacBook M1 locally, and since this is an issue from other tools probably due to a different platform (instead of HyperQB itself), we did not further debug on it. Please note this differences of the `error` cases we resported in Table 3.  
 3. For fair comparison, we also make sure the models used by other tools 
 are the same (all in NuSMV format). The only difference is to use different .hq formula since the syntax of HyperQB vs AH/AHQ, are slightly different (however, the semantics of formula still conform). 
