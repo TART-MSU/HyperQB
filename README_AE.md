@@ -99,16 +99,16 @@ To make comparison easier for reviewers, we also provide convenient flags which 
 sudo ./run_benchmarks '<-[case number]>' '<-[selected tool]>'
 ```
 which
-[selected tool] ranges from [-HQB | -OLDHQB | -AH | -AHQ]
-[case number] ranges from 0.1 -- 17.1 (please refer to Table 3 for case numbers)
+[selected tool] ranges from [ -HQB | -OLDHQB | -AH | -AHQ ]
+[case number] ranges from 0.1 -- 17.1 (please refer to Table 3 for case numbers).
 
-Here are some examples: 
-To run case 9.1 using HyperQB(-HQB), Old-HyperQB(-OLDHQB), and AutoHyper(-AH):
+Here are some examples: <br/>
+To run `case 9.1` using `HyperQB(-HQB)`, `Old-HyperQB(-OLDHQB)`, and `AutoHyper(-AH)`:
 ```shell
 sudo ./run_benchmarks -9.1 -HQB -OLDHQB -AH 
 ```
 
-To run case 13.2 using all tools (HyperQB(-HQB), Old-HyperQB(-OLDHQB), and AutoHyper(-AH), AutoHyperQ(-AHQ)):
+To run `case 13.2` using all tools (`HyperQB(-HQB)`, `Old-HyperQB(-OLDHQB)`, and `AutoHyper(-AH)`, `AutoHyperQ(-AHQ)`):
 ```shell
 sudo ./run_benchmarks -13.2 -HQB -OLDHQB -AH 
 ```
