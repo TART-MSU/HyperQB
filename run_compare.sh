@@ -1,6 +1,6 @@
 #!/bin/bash
 TIMEFORMAT="TOTAL TIME: %Rs"
-TIMEOUT="10s" 
+TIMEOUT="600s" 
 TIMEOUTMSG="(!) Timeout without results after ${TIMEOUT}"
 
 #####################
@@ -99,8 +99,8 @@ function compare {
 function compare2 {
     # echo "running benchmarks: $7"
     if (${HQB} == "true") || (${ALLTOOLS} -eq "true")  then
-        "[  HyperQB  ]"
-        time timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} 
+        echo "[  HyperQB  ]"
+        timeout ${TIMEOUT} ${HYPERQB} ${1} ${2} ${3} ${4} ${5} ${6} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -213,9 +213,9 @@ function compare5 {
 }
 
 ###################
-# 0.1 Bakery3, S1 #
+# -0.1 Bakery3, S1 #
 ###################
-if ((echo $* | grep -e "0.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-0.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "#####################################"
     echo "### running case 0.1, Bakery3, S1 ###"
     echo "#####################################"
@@ -231,7 +231,7 @@ fi
 ###################
 # 0.2 Bakery3, S2 #
 ###################
-if ((echo $* | grep -e "0.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-0.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "#####################################"
     echo "### running case 0.2, Bakery3, S2 ###"
     echo "#####################################"
@@ -247,7 +247,7 @@ fi
 ###################
 # 0.3 Bakery3, S3 #
 ###################
-if ((echo $* | grep -e "0.3" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-0.3" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "#####################################"
     echo "### running case 0.3, Bakery3, S3 ###"
     echo "#####################################"
@@ -263,7 +263,7 @@ fi
 #####################
 # 1.1 Bakery3, sym1 #
 #####################
-if ((echo $* | grep -e "1.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-1.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "#######################################"
     echo "### running case 1.1, Bakery3, sym1 ###"
     echo "#######################################"
@@ -279,7 +279,7 @@ fi
 #####################
 # 1.2 Bakery3, sym2 #
 #####################
-if ((echo $* | grep -e "1.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-1.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "#######################################"
     echo "### running case 1.2, Bakery3, sym2 ###"
     echo "#######################################"
@@ -295,7 +295,7 @@ fi
 #####################
 # 1.3 Bakery5, sym1 #
 #####################
-if ((echo $* | grep -e "1.3" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-1.3" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "#######################################"
     echo "### running case 1.3, Bakery5, sym3 ###"
     echo "#######################################"
@@ -311,7 +311,7 @@ fi
 #####################
 # 1.4 Bakery5, sym2 #
 #####################
-if ((echo $* | grep -e "1.4" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-1.4" -q) || (echo $* | grep -e "-allcases" -q)) then
     echo "#######################################"
     echo "### running case 1.4, Bakery5, sym3 ###"
     echo "#######################################"
@@ -327,7 +327,10 @@ fi
 ##############
 # 2.1 SNARK1 #
 ##############
-if ((echo $* | grep -e "2.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-2.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "################################"
+    echo "### running case 2.1, SNARK1 ###"
+    echo "################################"
     SMV1='benchmarks/2_snark/snark1_M1_concurrent.smv'
     SMV2='benchmarks/2_snark/snark1_M2_sequential.smv'
     HQ='benchmarks/2_snark/snark1.hq'
@@ -342,7 +345,10 @@ fi
 ########################
 # 3.1 3T_incorrect, NI #
 ########################
-if ((echo $* | grep -e "3.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-3.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "##########################################"
+    echo "### running case 3.1, 3T_incorrect, NI ###"
+    echo "##########################################"
     SMV='benchmarks/3_ni/NI_incorrect.smv'
     HQ='benchmarks/3_ni/NI.hq'
     HQAUTO='benchmarks/3_ni/AH/3.hq'
@@ -355,7 +361,10 @@ fi
 ######################
 # 3.2 3T_correct, NI #
 ######################
-if ((echo $* | grep -e "3.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-3.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "########################################"
+    echo "### running case 3.1, 3T_correct, NI ###"
+    echo "########################################"
     SMV='benchmarks/3_ni/NI_correct.smv'
     HQ='benchmarks/3_ni/NI.hq'
     HQAUTO='benchmarks/3_ni/AH/3.hq'
@@ -368,7 +377,10 @@ fi
 ###########################
 # 4.1 NRP_incorrect, fair #
 ###########################
-if ((echo $* | grep -e "4.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-4.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#############################################"
+    echo "### running case 4.1, NRP_incorrect, fair ###"
+    echo "#############################################"
     SMV='benchmarks/4_nrp/NRP_incorrect.smv'
     HQ='benchmarks/4_nrp/NRP.hq'
     HQAUTO='benchmarks/4_nrp/AH/4.hq'
@@ -381,7 +393,10 @@ fi
 #########################
 # 4.2 NRP_correct, fair #
 #########################
-if ((echo $* | grep -e "4.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-4.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "###########################################"
+    echo "### running case 4.2, NRP_correct, fair ###"
+    echo "###########################################"
     SMV='benchmarks/4_nrp/NRP_correct.smv'
     HQ='benchmarks/4_nrp/NRP.hq'
     HQAUTO='benchmarks/4_nrp/AH/4.hq'
@@ -394,7 +409,7 @@ fi
 ###################
 # 5.1 Planning-rb #
 ###################
-if ((echo $* | grep -e "5.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-5.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/5_planning/rb_100.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
@@ -405,7 +420,7 @@ fi
 ###################
 # 5.2 Planning-rb #
 ###################
-if ((echo $* | grep -e "5.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-5.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/5_planning/rb_400.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
@@ -416,7 +431,7 @@ fi
 ###################
 # 5.3 Planning-rb #
 ###################
-if ((echo $* | grep -e "5.3" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-5.3" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/5_planning/rb_1600.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
@@ -427,7 +442,7 @@ fi
 ###################
 # 5.4 Planning-rb #
 ###################
-if ((echo $* | grep -e "5.4" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-5.4" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/5_planning/rb_3600.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
@@ -438,7 +453,10 @@ fi
 ##############
 # 6.1 Mutant #
 #############
-if ((echo $* | grep -e "6.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-6.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "###########################################"
+    echo "### running case 6.1, Mutation testing  ###"
+    echo "###########################################"
     SMV='benchmarks/6_mutation/mutation.smv'
     HQ='benchmarks/6_mutation/mutation.hq'
     HQAUTO='benchmarks/6_mutation/AH/6.hq'
@@ -449,7 +467,10 @@ fi
 ######################
 # 7.1 2Progs, coterm #
 ######################
-if ((echo $* | grep -e "7.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-7.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#########################################"
+    echo "### running case 7.1, 2Progs, coterm  ###"
+    echo "#########################################"
     SMV1='benchmarks/7_2Progs/prog1.smv'
     SMV2='benchmarks/7_2Progs/prog2.smv'
     HQ='benchmarks/7_2Progs/coterm.hq'
@@ -463,21 +484,26 @@ fi
 ############################
 # 8.1 Wallet1, deniability #
 ############################
-if ((echo $* | grep -e "8.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-8.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "###############################################"
+    echo "### running case 8.1, Wallet1, deniability  ###"
+    echo "###############################################"
     SMV='benchmarks/8_deniability/den_small.smv'
     HQ='benchmarks/8_deniability/den.hq'
     HQAUTO='benchmarks/8_deniability/AH/8.hq'
     K=10
     SEM='-pes'
     MODE='-find'
-    echo "[ HyperQB ]"
     compare3 ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
 ############################
 # 8.2 Wallet2, deniability #
 ############################
-if ((echo $* | grep -e "8.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-8.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "###############################################"
+    echo "### running case 8.2, Wallet2, deniability  ###"
+    echo "###############################################"
     SMV='benchmarks/8_deniability/den.smv'
     HQ='benchmarks/8_deniability/den.hq'
     HQAUTO='benchmarks/8_deniability/AH/8.hq'
@@ -490,7 +516,7 @@ fi
 ##################
 # 9.1 Buffer, OD #
 ##################
-if ((echo $* | grep -e "9.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e " 9.1 " -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/9_buffer/buffer.smv'
     HQ='benchmarks/9_buffer/OD.hq'
     HQAUTO='benchmarks/9_buffer/AH/9.1.hq'
@@ -501,7 +527,7 @@ fi
 ##############################
 # 9.2 Buffer_sched, OD_intra #
 ##############################
-if ((echo $* | grep -e "9.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-9.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/9_buffer/buffer_sched.smv'
     HQ='benchmarks/9_buffer/OD_intra.hq'
     HQAUTO='benchmarks/9_buffer/AH/9.2.hq'
@@ -512,7 +538,7 @@ fi
 ##############################
 # 9.3 Buffer_sched, NI_intra #
 ##############################
-if ((echo $* | grep -e "9.3" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-9.3" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/9_buffer/buffer_sched.smv'
     HQ='benchmarks/9_buffer/NI_intra.hq'
     HQAUTO='benchmarks/9_buffer/AH/9.3.hq'
@@ -523,7 +549,10 @@ fi
 ##############
 # 10.1 NIexp #
 ##############
-if ((echo $* | grep -e "10.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-10.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#######################################"
+    echo "### running case 10.1, NIexp, tini  ###"
+    echo "#######################################"
     SMV='benchmarks/10_NIexp/NIexp.smv'
     HQ='benchmarks/10_NIexp/tini.hq'
     HQAUTO='benchmarks/10_NIexp/AH/10.1.hq'
@@ -536,10 +565,13 @@ fi
 ##############
 # 10.2 NIexp #
 ##############
-if ((echo $* | grep -e "10.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-10.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "#######################################"
+    echo "### running case 10.2, NIexp, tsni  ###"
+    echo "#######################################"
     SMV='benchmarks/10_NIexp/NIexp2.smv'
     HQ='benchmarks/10_NIexp/tsni.hq'
-    HQAUTO='benchmarks/10_NIexp/AH/10.2.hq'
+    HQAUTO='benchmarks/10_NIexp/AH/1-0.2.hq'
     K=10
     SEM='-pes'
     MODE='-find'
@@ -549,7 +581,10 @@ fi
 ################
 # 11.1 2Square #
 ################
-if ((echo $* | grep -e "11.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-11.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "###################################"
+    echo "### running case 11.1, 2Square  ###"
+    echo "###################################"
     SMV='benchmarks/11_2Square/2Square.smv'
     HQ='benchmarks/11_2Square/2Square.hq'
     HQAUTO='benchmarks/11_2Square/AH/11.hq'
@@ -562,7 +597,7 @@ fi
 ######################################
 # 12.1 Mappying Synthesis - examples #
 ######################################
-if ((echo $* | grep -e "12.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-12.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV_A='benchmarks/12_mapsynth/msynth1_MA.smv'
     SMV_B='benchmarks/12_mapsynth/msynth1_MB.smv'
     SMV_M='benchmarks/12_mapsynth/msynth1_MM.smv'
@@ -577,7 +612,7 @@ fi
 #################################################################
 # 12.2 Mappying Synthesis - Alice and Bob with non-interference #
 #################################################################
-if ((echo $* | grep -e "12.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-12.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV_A='benchmarks/12_mapsynth/msynth2_MA.smv'
     SMV_B='benchmarks/12_mapsynth/msynth2_MB.smv'
     SMV_M='benchmarks/12_mapsynth/msynth2_MM.smv'
@@ -592,7 +627,10 @@ fi
 #################
 # 13.1 TEAMLTL1 #
 #################
-if ((echo $* | grep -e "13.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-13.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "####################################"
+    echo "### running case 13.1, TEAMLTL1  ###"
+    echo "####################################"
     SMV='benchmarks/13_teamltl/team1.smv'
     HQ='benchmarks/13_teamltl/team.hq'
     HQAUTO='benchmarks/13_teamltl/AH/13.1.hq'
@@ -605,7 +643,10 @@ fi
 #################
 # 13.2 TEAMLTL2 # 
 #################
-if ((echo $* | grep -e "13.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-13.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "####################################"
+    echo "### running case 13.1, TEAMLTL1  ###"
+    echo "####################################"
     SMV='benchmarks/13_teamltl/team2.smv'
     HQ='benchmarks/13_teamltl/team.hq'
     HQAUTO='benchmarks/13_teamltl/AH/13.2.hq'
@@ -618,7 +659,10 @@ fi
 ########################################
 # 14.1 Non-det1: input non-determinism #
 ########################################
-if ((echo $* | grep -e "14.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-14.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "####################################"
+    echo "### case 14.1: running Non-det1  ###"
+    echo "####################################"
     SMV='benchmarks/14_ndet/NI_v2.smv'
     HQ='benchmarks/14_ndet/NI.hq'
     HQAUTO='benchmarks/14_ndet/AH/14.hq'
@@ -631,7 +675,10 @@ fi
 #############################################
 # 14.2 Non-det2: transition non-determinism #
 #############################################
-if ((echo $* | grep -e "14.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-14.2" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "####################################"
+    echo "### case 14.2: running Non-det2  ###"
+    echo "####################################"
     SMV='benchmarks/14_ndet/NI_v3.smv'
     HQ='benchmarks/14_ndet/NI.hq'
     HQAUTO='benchmarks/14_ndet/AH/14.hq'
@@ -644,7 +691,10 @@ fi
 #############
 # 15.1 CSRF #
 #############
-if ((echo $* | grep -e "15.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-15.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+    echo "########################"
+    echo "### case 15.1, CSRF  ###"
+    echo "########################"
     SMV='benchmarks/15_csrf/csrf.smv'
     HQ='benchmarks/15_csrf/csrf.hq'
     HQAUTO='benchmarks/15_csrf/AH/15.hq'
@@ -657,7 +707,7 @@ fi
 #############
 # 16.1 Bank #
 #############
-if ((echo $* | grep -e "16.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-16.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/16_bank/bank.smv'
     HQ='benchmarks/16_bank/bank.hq'
     HQAUTO='benchmarks/16_bank/AH/16.hq'
@@ -670,7 +720,7 @@ fi
 ############
 # 17.1 ATM #
 ############
-if ((echo $* | grep -e "17.1" -q) || (echo $* | grep -e "-allcases" -q)) then
+if ((echo $* | grep -e "-17.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/17_atm/atm.smv'
     HQ='benchmarks/17_atm/atm.hq'
     HQAUTO='benchmarks/17_atm/AH/17.hq'

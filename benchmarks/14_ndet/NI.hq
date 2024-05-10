@@ -1,4 +1,4 @@
-forall A. exists B.
-F~(*HIGH[A] = HIGH[B]*)
+exists A. forall B.
+~(F~(*HIGH[A] = HIGH[B]*)
 /\
-G(*LOW[A] = LOW[B]*)
+G(*LOW[A] = LOW[B]*))

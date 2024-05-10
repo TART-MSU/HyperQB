@@ -2,13 +2,9 @@
 Title:    HyperQB: A QBF-Based Bounded Model Checker for Hyperproperties
 Authors:  Tzu-Han Hsu, Borzoo Bonakdarpour, César Sánchez
 
-
-
 ## A hyperlink to the artifact (Available Badge)
 DOI: 
 (Zenodo repo for the latest version of artifact)
-
-
 
 ## Environment requirements for the artifact
 - To provide the best evaluating experience for the reviewers, 
@@ -24,8 +20,6 @@ Note:   The core technical parts of HyperQB BMC algorithm
         (i.e., encoding, unrolling, QBF-solving, etc.),
         are still self-contained in this artifact. 
 
-
-
 ## Setting up the Artifact
 We provide a one clock shell script to setup everything on Ubuntu VM:
 
@@ -35,7 +29,6 @@ sudo ./setup.sh
 This script installed all required elements including docker and dotnet 
 (for comparisons with other tools, as presented in our paper).
 
-      
 
 ## Quick Start for Smoke Test
 The smoke test review can be done in following steps
@@ -67,30 +60,71 @@ sudo ./run_benchmarks.sh -light
 Note: it runs only relatively smaller cases (expected time is ~2 mins).
 
 
-
 ## Detailed instructions for Full Review
 Our goal is to present the experiments in the paper. 
 We here provide a easy step by step instructions: 
 
-Step 0. unzip tacas.zip, then
-        ```cd HyperQB```
-
+Step 0. unzip hyperqb-atva.zip, then
+```shell
+cd hyperqb-atva/HyperQB/
+```
 Step 1. next, complete setup automatically, run: 
-        ```sudo ./setup.sh```
+```shell
+sudo ./setup.sh
+```
 
-Step 2. To test small models and simple formulas, run any line below: 
-        ```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```
-        ```sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find```
-        ```sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug```
+### Reproduce all HyperQB results in Table 3
+Please run all cases in Tables 3 using the following command:
+```shell
+sudo ./run_benchmarks -allcases -AHQ
+```
 
-        The script ```run_demo.sh``` contains more examples such that 
-        the reviewer can simply uncommand any case and execute it.
+### Reproduce all Comparison results with other Tools in Table 3
+For example, to compare all cases of all flags, execute:
+```shell
+sudo ./run_benchmarks -allcases -alltools
+```
 
-Step 3. Run a subset of lighter cases to do a quick test on HyperQB, run:
-        ```sudo ./run_benchmarks.sh -light```
+
+### Detailed Testing for Specific Cases or Totls
+To make comparison easier, we provide concenient flags. 
+```shell
+sudo ./run_benchmarks '<-[case number]>' '<-[tool]]>'
+```
+[tool] ranges from [-HQB | -OLDHQB | -AH | -AHQ]
+[case number] ranges from 0.1 -- 17.1 (please refer to Table 3 for case numbers)
+
+For example:
+
+To run case 9.1 using HyperQB(-HQB), Old-HyperQB(-OLDHQB), and AutoHyper(-AH), run:
+```shell
+sudo ./run_benchmarks -9.1 -HQB -OLDHQB -AH 
+```
+
+To run case 13.2 using all tools: HyperQB(-HQB), Old-HyperQB(-OLDHQB), and AutoHyper(-AH), AutoHyperQ(-AHQ), run:
+```shell
+sudo ./run_benchmarks -13.2 -HQB -OLDHQB -AH 
+```
 
 
-Step 4. Setup other tools for comparison: AutoHyper(AH) and AutoHyperQ(QAH)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 3. Setup other tools for comparison: AutoHyper(AH) and AutoHyperQ(QAH)
         We have compiled both tool in advance, the reviewers can choose one 
         of the following to complete this setup. 
 
@@ -132,6 +166,14 @@ Step 5. Experiments Replication
         the reviewer can change the parameter on line10 of ```run_bencmarks.sh```
 
 
+## Reusable 
+Step 2. To test small models and simple formulas, run any line below: 
+        ```sudo ./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt```
+        ```sudo ./hyperqb.sh demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -find```
+        ```sudo ./hyperqb.sh demo/infoflow.smv demo/infoflow.smv demo/infoflow1.hq 5 -pes -debug```
+
+        The script ```run_demo.sh``` contains more examples such that 
+        the reviewer can simply uncommand any case and execute it.
 
 ## Additional Information on Displayed Outputs
 We add a remark that, the "SAT/UNSAT" outcome displayed from 

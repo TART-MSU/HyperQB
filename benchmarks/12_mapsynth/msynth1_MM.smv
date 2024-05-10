@@ -22,3 +22,4 @@ ASSIGN
   next(qs) := qs;
 
 DEFINE
+  FAIL := FALSE; 

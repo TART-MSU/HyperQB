@@ -152,7 +152,6 @@ PARSE_OUTCOME=$(docker run --rm --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/
 
 TIME_PARSE=${PARSE_OUTCOME%:*}
 echo ${TIME_PARSE}
-
 STATENUM=${PARSE_OUTCOME#*:}
 
 # echo "(local parsing)"
@@ -184,7 +183,8 @@ n=${#QS}
 if [ ${n} -eq 2 ]
 then
   GENQBF_OUT=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -P ${P} -k ${k} -F ${QS} -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --fast -new ${ENCODING})
-
+  TIME_GENQBF=${GENQBF_OUT#*': '}
+  TIME_GENQBF=${TIME_GENQBF%' secs'*}
 elif [ ${n} -eq 5 ]
 then
   Q=${OUTFOLDER}I_3.bool
@@ -194,21 +194,32 @@ then
   C=${OUTFOLDER}I_5.bool
   V=${OUTFOLDER}R_5.bool
   GENQBF=${BINLOCATION}/genqbf_v5 # updated genqbf
+  START=$(date +%s.%N)
   GENQBF_OUT=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${Q} -W ${W} -Z ${Z} -X ${X} -C ${C} -V ${V} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n )
+  END=$(date +%s.%N)
+  TIME_GENQBF=$(echo "$END - $START" | bc)
+  # TIME_GENQBF=${GENQBF_OUT}
 else
   lst_NEW_QUANTS="AAE EAA EEA AEA EEE AEE AAAE EAAE AAAE AAEE EAAEE AAAEEE" #special cases we investigate
+  START=$(date +%s.%N)
   if [[ $lst_NEW_QUANTS =~ (^|[[:space:]])${QS}($|[[:space:]]) ]]; then
     GENQBF=${BINLOCATION}/genqbf_v5 # updated genqbf
-    GENQBF_OUT=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n)
+    GENQBF_OUT=$(time ${GENQBF} -I ${I} -R ${R} -J ${J} -S ${S} -Q ${J} -W ${S} -Z ${J} -X ${S} -C ${J} -V ${S} -P ${P} -k ${k} -F ${QS}  -f qcir -o ${QCIR_OUT} -sem ${SEM} -n --debug)
+    # TIME_GENQBF=${GENQBF_OUT}
+    # echo ${GENQBF_OUT}
   else
     ALL_I_R=$(find ${OUTFOLDER}*.bool )
     GENQBF=src/cplusplus/genqbf # with arbitrary quantifiers
-    GENQBF_OUT=$(time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${FORMULA})
-    time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${P}
+    # GENQBF_OUT=$(time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${FORMULA})
+    GENQBF_OUT=$(time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${P})
+    # TIME_GENQBF=${GENQBF_OUT}
+    # echo ${GENQBF_OUT}
+    # time ${GENQBF} ${k} ${SEM} ${QS} ${ALL_I_R} ${P}
   fi
+  END=$(date +%s.%N)
+  TIME_GENQBF=$(echo "$END - $START" | bc)
 fi
-TIME_GENQBF=${GENQBF_OUT#*': '}
-TIME_GENQBF=${TIME_GENQBF%' secs'*}
+
 
 if [ ! -s ${QCIR_OUT} ]; then
         echo ${ERROR} ".qcir file is empty, please check if genqbf error is reported."
@@ -242,6 +253,9 @@ echo   "|  #States:    " ${STATENUM}
 echo   "|  Bound k:    " ${k}
 echo   "|  Encoding:   " ${ENCODING}
 echo   " --------------------------------"
+# echo ${TIME_PARSE}
+# echo ${TIME_GENQBF}
+# echo ${TIME_QUABS}
 echo -n "TOTAL TIME: "
 echo -n ${TIME_PARSE} + ${TIME_GENQBF} + ${TIME_QUABS} | bc | awk '{printf "%.3fs \n", $0}'
 echo   " --------( HyperQB END )---------"

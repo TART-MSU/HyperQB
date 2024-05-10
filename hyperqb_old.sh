@@ -144,13 +144,15 @@ fi
 ####################################################
 # echo "(docker for stable parsing)"
 printf "NuSMV and HyperLTL parsing..." 
-TIME_PARSE=$(docker run --rm --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
+PARSE_OUTCOME=$(docker run --rm --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG}; ")
 # echo "(local parsing)"
 # TRANSLATE=${BINLOCATION}/"translate.py"
 # python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
 # echo "(local pip-built)"
 # TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
-
+TIME_PARSE=${PARSE_OUTCOME%:*}
+echo ${TIME_PARSE}
+STATENUM=${PARSE_OUTCOME#*:}
 
 ### if any error happens in parsing, exit HyperQB ###
 if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
@@ -225,7 +227,7 @@ echo   "|  QCIR size:  " $size "KB"
 echo   "|  QBF solving:" ${OUTCOME}
 echo   "|  Mode:       " ${FLAG}
 echo   "|  Semantics:  " ${SEM}
-echo   "|  #States:    " ${TIME_PARSE}
+echo   "|  #States:    " ${STATENUM}
 echo   "|  Bound k:    " ${k}
 echo   "|  Encoding:   " ${ENCODING}
 echo   " --------------------------------"
