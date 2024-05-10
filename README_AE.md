@@ -84,17 +84,17 @@ We provide different comamnds to:
 3. run specific case with selected tools.
 
 ### Run all cases using HyperQB in Table 3
-Please run all cases in Tables 3 using HyperQB with the following command:
+Run all cases in Tables 3 using HyperQB with the following command:
 ```shell
 sudo ./run_benchmarks -allcases -HQB
 ```
 ### Run all cases for Comparison with other Tools in Table 3
-For example, to compare all cases of all flags, execute:
+Compare all cases among all tools with the following command:
 ```shell
 sudo ./run_benchmarks -allcases -alltools
 ```
 ### Test Specific Cases or Tools in Table 3
-To make comparison easier for reviewers, we also provide convenient flags: 
+To make comparison easier for reviewers, we also provide convenient flags which the reviewer can specify what *case* and which *tools* to run:
 ```
 sudo ./run_benchmarks '<-[case number]>' '<-[selected tool]>'
 ```
