@@ -58,21 +58,21 @@ sudo ./setup.sh
 This script installed all required elements including docker and dotnet.
 A succesful installation should shows the versions of docker and dotnet.
 
-Note: in some rare cases, if any downloading issue happen, please run:
-```sudo snap install docker```
+Note: in some rare cases, if any downloading issue happens, please run:
+```sudo snap install docker``` and 
 ```sudo docker pull tzuhanmsu/hyperqube:latest```
 
 
 ## Quick Start for Smoke Test
 (please make sure "Setting up the Artifact" was succesfully executed before continue!)<br/>
-The smoke test review can be done in following steps
-to check if HyperQB is installable, functional and runnable.  
+The smoke test review can be done in one-click
+to quickly check if HyperQB is installable, functional and runnable.  
 
 Run the following command for quick smoke testing our benchmarks:
 ```shell
 sudo ./run_benchmarks.sh -light -alltools
 ```
-(`-light` specify smaller instances, and `-alltools` runs over all tools presented in Table 3)
+(`-light` specify smaller instances, and `-alltools` runs over HyperQB and all tools for comparisons, as presented in Table 3)
 
 
 ## Detailed instructions for Full Review
