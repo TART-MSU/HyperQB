@@ -150,9 +150,9 @@ ERROR="(!) HyperQB error: "
 echo -n "NuSMV and HyperLTL parsing..." 
 PARSE_OUTCOME=$(docker run --rm --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqube:latest /bin/bash -c "cd mnt/; TIMEFORMAT="%Rs"; python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[*]} ${FORMULA} ${P} ${QSFILE} ${FLAG};")
 
-TIME_PARSE=${PARSE_OUTCOME%:*}
+TIME_PARSE=${PARSE_OUTCOME%':'*}
 echo ${TIME_PARSE}
-STATENUM=${PARSE_OUTCOME#*:}
+STATENUM=${PARSE_OUTCOME#*':'}
 
 # echo "(local parsing)"
 # TRANSLATE=${BINLOCATION}/"translate.py"
@@ -253,9 +253,6 @@ echo   "|  #States:    " ${STATENUM}
 echo   "|  Bound k:    " ${k}
 echo   "|  Encoding:   " ${ENCODING}
 echo   " --------------------------------"
-# echo ${TIME_PARSE}
-# echo ${TIME_GENQBF}
-# echo ${TIME_QUABS}
-echo -n "TOTAL TIME: "
-echo -n ${TIME_PARSE} + ${TIME_GENQBF} + ${TIME_QUABS} | bc | awk '{printf "%.3fs \n", $0}'
+# echo -n "TOTAL TIME: "
+# echo -n ${TIME_PARSE} + ${TIME_GENQBF} + ${TIME_QUABS} | bc | awk '{printf "%.3fs \n", $0}'
 echo   " --------( HyperQB END )---------"
