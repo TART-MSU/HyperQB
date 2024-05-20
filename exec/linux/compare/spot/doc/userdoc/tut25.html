@@ -1,0 +1,571 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2024-05-16 Thu 15:28 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Printing an automaton in "BA format"</title>
+<meta name="author" content="root" />
+<meta name="description" content="Code example for converting HOA into BA format" />
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="spot.css" />
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="tut.html"> UP </a>
+ |
+ <a accesskey="H" href="index.html"> HOME </a>
+</div><div id="content" class="content">
+<h1 class="title">Printing an automaton in "BA format"</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgfb4b444">Conversion in Python</a></li>
+<li><a href="#org97791ab">Conversion in C++</a></li>
+<li><a href="#org7639a2d">Improving the split</a></li>
+</ul>
+</div>
+</div>
+
+<div id="orgfe6e560" class="figure">
+<p><object type="image/svg+xml" data="spot2.svg" class="org-svg" id="spotlogo">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+<p>
+The <a href="https://languageinclusion.org/doku.php?id=tools#the_ba_format">BA format</a> is a textual representation of a Büchi automaton with
+letter-based alphabet, and supported by tools like <a href="https://github.com/Mazzocchi/FORKLIFT">FORKLIFT</a>, <a href="https://languageinclusion.org/doku.php?id=tools">RABIT</a>,
+<a href="http://goal.im.ntu.edu.tw/wiki/doku.php">Goal,</a> or <a href="https://iscasmc.ios.ac.cn/roll/doku.php?id=start">ROLL</a>.  It looks as follows:
+</p>
+
+
+<div id="orgc6d2409" class="figure">
+<p><object type="image/svg+xml" data="tut25-aut.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<pre class="example" id="org7c9039a">
+s₁
+ℓ₁,s₁-&gt;s₂
+ℓ₃,s2-&gt;s1
+ℓ₂,s2-&gt;s3
+ℓ₃,s3-&gt;s1
+s₁
+s₂
+</pre>
+
+<p>
+The first line, <code>s₁</code> represents the initial state, the next block of
+lines of the form <code>letters,src-&gt;dst</code> represent the transitions of the
+automaton, and the last block of lines (containing <code>s₁</code> and <code>s₂</code> in
+the above example) lists the accepting states of the automaton.
+</p>
+
+<p>
+In this format, the letters and the states are arbitrary strings
+that do not include the characters <code>,</code> or <code>-</code>, or <code>&gt;</code>.  The initial
+state can be omitted (the source of the first transition is then
+assumed to be initial), and the list of accepting states may be empty.
+</p>
+
+<p>
+Spot has no support for letter-based alphabet (instead it uses boolean
+formulas over a set of atomic propositions), hence Spot has no support
+for this format as input.
+</p>
+
+<p>
+As an example of <a href="tut21.html">how to custom print an automaton</a>, let us write a
+small tool that will convert any Büchi automaton that Spot can read
+(e.g., a neverclaim from Spin, or an HOA file) into this "BA format".
+</p>
+
+<p>
+Consider the following Büchi automaton obtained from the LTL formula
+<code>a W G(b-&gt;c)</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org6c356fd">ltl2tgba -B <span class="org-string">"a W G(b-&gt;c)"</span> -d
+</pre>
+</div>
+
+<div id="orgb66dc48" class="figure">
+<p><object type="image/svg+xml" data="tut25ex1.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+To create letters out of those formula labels, one trick is to split the transitions over
+the \(2^{\{a,b,c\}}\) possible valuations.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org6b83eee">ltl2tgba -B <span class="org-string">"a W G(b-&gt;c)"</span> | autfilt --split-edges -d
+</pre>
+</div>
+
+<div id="org66415ab" class="figure">
+<p><object type="image/svg+xml" data="tut25ex2.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+Then each label can now be considered as a letter.
+</p>
+
+<div id="outline-container-orgfb4b444" class="outline-2">
+<h2 id="orgfb4b444">Conversion in Python</h2>
+<div class="outline-text-2" id="text-orgfb4b444">
+<div class="org-src-container">
+<pre class="src src-python" id="org731f056"><span class="org-comment-delimiter">#</span><span class="org-comment">!/usr/bin/env python3</span>
+<span class="org-keyword">import</span> spot, sys
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Read the input automaton from standard input, or from a supplied filename.</span>
+<span class="org-variable-name">argc</span> <span class="org-operator">=</span> <span class="org-builtin">len</span>(sys.argv)
+<span class="org-keyword">if</span> argc <span class="org-operator">&lt;</span> 2:
+  <span class="org-variable-name">filename</span> <span class="org-operator">=</span> <span class="org-string">"-"</span>
+<span class="org-keyword">elif</span> argc <span class="org-operator">==</span> 2:
+  <span class="org-variable-name">filename</span> <span class="org-operator">=</span> sys.argv[1]
+<span class="org-keyword">else</span>:
+   <span class="org-builtin">print</span>(<span class="org-string">"pass a single filename, or pipe to stdin"</span>, <span class="org-builtin">file</span><span class="org-operator">=</span>sys.stderr)
+   <span class="org-constant">exit</span>(1)
+
+<span class="org-variable-name">aut</span> <span class="org-operator">=</span> spot.automaton(filename)
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Make sure the acceptance condition is B&#252;chi.  Alternatively,</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">allow "t" acceptance (where every state is accepting), since we</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">can interpret this as a B&#252;chi automaton in which all states are</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">marked as accepting.</span>
+<span class="org-variable-name">acc</span> <span class="org-operator">=</span> aut.acc()
+<span class="org-keyword">if</span> <span class="org-keyword">not</span> (acc.is_buchi() <span class="org-keyword">or</span> acc.is_t()):
+   <span class="org-builtin">print</span>(f<span class="org-string">"unsupported acceptance: </span>{acc.get_acceptance()}<span class="org-string">"</span>, <span class="org-builtin">file</span><span class="org-operator">=</span>sys.stderr)
+   <span class="org-constant">exit</span>(1)
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Transition-based acceptance is not supported by this format;</span>
+<span class="org-comment-delimiter"># </span><span class="org-comment">convert to state-based if it isn't already.</span>
+<span class="org-variable-name">aut</span> <span class="org-operator">=</span> spot.sbacc(aut)
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">We want one minterm per edge, as those will become letters</span>
+<span class="org-variable-name">aut</span> <span class="org-operator">=</span> spot.split_edges(aut)
+
+<span class="org-comment-delimiter"># </span><span class="org-comment">Now simply output the automaton in the BA format</span>
+<span class="org-builtin">print</span>(aut.get_init_state_number())
+<span class="org-keyword">for</span> e <span class="org-keyword">in</span> aut.edges():
+    <span class="org-builtin">print</span>(f<span class="org-string">"</span>{e.cond.<span class="org-builtin">id</span>()}<span class="org-string">,</span>{e.src}<span class="org-string">-&gt;</span>{e.dst}<span class="org-string">"</span>)
+<span class="org-keyword">for</span> s <span class="org-keyword">in</span> <span class="org-builtin">range</span>(aut.num_states()):
+    <span class="org-keyword">if</span> acc.accepting(aut.state_acc_sets(s)):
+       <span class="org-builtin">print</span>(s)
+</pre>
+</div>
+
+<p>
+Let's assume the above script has been saved as <a href="toba.py"><code>toba.py</code></a>.
+</p>
+
+<p>
+We can now convert our previous example in BA format.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">ltl2tgba -B <span class="org-string">"a W G(b-&gt;c)"</span> | ./toba.py
+</pre>
+</div>
+
+<pre class="example" id="org67acdda">
+1
+19,0-&gt;0
+21,0-&gt;0
+22,0-&gt;0
+23,0-&gt;0
+24,0-&gt;0
+10,0-&gt;0
+19,1-&gt;0
+21,1-&gt;0
+22,1-&gt;0
+23,1-&gt;1
+24,1-&gt;1
+25,1-&gt;1
+10,1-&gt;1
+0
+1
+</pre>
+
+<p>
+The BDD <code>e.cond</code> that encodes the Boolean formula labelling edge <code>e</code>
+is printed using <code>e.cond.id()</code> which is the integer identifier
+that uniquely denotes each formula.  This identifier is good enough to
+make letters unique and keep the file short.  However, if you prefer to
+print the formula instead, replace <code>e.cond.id()</code> by
+<code>spot.bdd_format_formula(aut.get_dict(), e.cond)</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org97791ab" class="outline-2">
+<h2 id="org97791ab">Conversion in C++</h2>
+<div class="outline-text-2" id="text-org97791ab">
+<p>
+Here is a C++ function that prints <code>aut</code> on <code>out</code> in BA format, using
+the same logic as in the previous section.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++" id="orgf152aac"><span class="org-preprocessor">#include</span> <span class="org-string">&lt;iostream&gt;</span>
+<span class="org-preprocessor">#include</span> <span class="org-string">&lt;spot/twa/twagraph.hh&gt;</span>
+<span class="org-preprocessor">#include</span> <span class="org-string">&lt;spot/twaalgos/sbacc.hh&gt;</span>
+<span class="org-preprocessor">#include</span> <span class="org-string">&lt;spot/twaalgos/split.hh&gt;</span>
+
+<span class="org-type">void</span> <span class="org-function-name">print_ba_format</span>(<span class="org-constant">std</span>::<span class="org-type">ostream</span>&amp; <span class="org-variable-name">out</span>, <span class="org-constant">spot</span>::<span class="org-type">twa_graph_ptr</span> <span class="org-variable-name">aut</span>)
+{
+  <span class="org-comment-delimiter">// </span><span class="org-comment">The input should have B&#252;chi acceptance.  Alternatively,</span>
+  <span class="org-comment-delimiter">// </span><span class="org-comment">allow "t" acceptance since we can interpret this as a B&#252;chi automaton</span>
+  <span class="org-comment-delimiter">// </span><span class="org-comment">where all states are accepting.</span>
+  <span class="org-keyword">const</span> <span class="org-constant">spot</span>::<span class="org-type">acc_cond</span>&amp; <span class="org-variable-name">acc</span> = aut-&gt;acc();
+  <span class="org-keyword">if</span> (<span class="org-negation-char">!</span>(acc.is_buchi() || acc.is_t()))
+    <span class="org-keyword">throw</span> <span class="org-constant">std</span>::runtime_error(<span class="org-string">"unsupported acceptance condition"</span>);
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">The BA format only support state-based acceptance, so get rid</span>
+  <span class="org-comment-delimiter">// </span><span class="org-comment">of transition-based acceptance if we have some.</span>
+  aut = <span class="org-constant">spot</span>::sbacc(aut);
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">We want one minterm per edge, as those will become letters</span>
+  aut = <span class="org-constant">spot</span>::split_edges(aut);
+
+  out &lt;&lt; aut-&gt;get_init_state_number() &lt;&lt; <span class="org-string">'\n'</span>;
+  <span class="org-keyword">for</span> (<span class="org-keyword">auto</span>&amp; <span class="org-variable-name">e</span>: aut-&gt;edges())
+    out &lt;&lt; e.cond.id() &lt;&lt; <span class="org-string">','</span> &lt;&lt; e.src &lt;&lt; <span class="org-string">"-&gt;"</span> &lt;&lt; e.dst &lt;&lt; <span class="org-string">'\n'</span>;
+
+  <span class="org-type">unsigned</span> <span class="org-variable-name">ns</span> = aut-&gt;num_states();
+  <span class="org-keyword">for</span> (<span class="org-type">unsigned</span> <span class="org-variable-name">s</span> = 0; s &lt; ns; ++s)
+    <span class="org-keyword">if</span> (acc.accepting(aut-&gt;state_acc_sets(s)))
+       out &lt;&lt; s &lt;&lt; <span class="org-string">'\n'</span>;
+}
+</pre>
+</div>
+
+<p>
+Now, what remains to be done is to read some input automaton, so we
+can print it:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++" id="orgdf4a08e"><span class="org-preprocessor">#include</span> <span class="org-string">&lt;spot/parseaut/public.hh&gt;</span>
+
+<span class="org-type">int</span> <span class="org-function-name">main</span>(<span class="org-type">int</span> <span class="org-variable-name">argc</span>, <span class="org-keyword">const</span> <span class="org-type">char</span>** <span class="org-variable-name">argv</span>)
+{
+  <span class="org-keyword">if</span> (argc &gt; 2)
+    {
+      <span class="org-constant">std</span>::cerr &lt;&lt; <span class="org-string">"pass a single filename, or pipe to stdin\n"</span>;
+      <span class="org-keyword">return</span> 1;
+    }
+  <span class="org-keyword">const</span> <span class="org-type">char</span>* <span class="org-variable-name">filename</span> = <span class="org-string">"-"</span>;
+  <span class="org-keyword">if</span> (argc == 2)
+    filename = argv[1];
+  <span class="org-constant">spot</span>::<span class="org-type">parsed_aut_ptr</span> <span class="org-variable-name">pa</span> = parse_aut(filename, <span class="org-constant">spot</span>::make_bdd_dict());
+  <span class="org-keyword">if</span> (pa-&gt;format_errors(<span class="org-constant">std</span>::cerr))
+    <span class="org-keyword">return</span> 1;
+  <span class="org-keyword">if</span> (pa-&gt;aborted)
+    {
+      <span class="org-constant">std</span>::cerr &lt;&lt; <span class="org-string">"--ABORT-- read\n"</span>;
+      <span class="org-keyword">return</span> 1;
+    }
+  print_ba_format(<span class="org-constant">std</span>::cout, pa-&gt;aut);
+  <span class="org-keyword">return</span> 0;
+}
+</pre>
+</div>
+
+<p>
+Unsurprisingly, running the above code on our example automaton
+produces the same output.
+</p>
+
+<pre class="example" id="orgf33dad1">
+1
+19,0-&gt;0
+21,0-&gt;0
+22,0-&gt;0
+23,0-&gt;0
+24,0-&gt;0
+10,0-&gt;0
+19,1-&gt;0
+21,1-&gt;0
+22,1-&gt;0
+23,1-&gt;1
+24,1-&gt;1
+25,1-&gt;1
+10,1-&gt;1
+0
+1
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org7639a2d" class="outline-2">
+<h2 id="org7639a2d">Improving the split</h2>
+<div class="outline-text-2" id="text-org7639a2d">
+<p>
+<code>split_edges()</code> is not the only way to split the edge labels.  Another
+option, introduced in Spot 2.12, is <code>separate_edges()</code>: this looks at
+the labels used in the automaton and intersects them to construct a
+new set of disjoint labels that can be used as a basis for all labels.
+In the worst case, the basis will be equal to \(2^{\{a,b,c\}}\) and this
+reduces to <code>split_edges()</code>.  However in many cases, as in our running
+example, it will require fewer labels.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org0587d02">ltl2tgba -B <span class="org-string">"a W G(b-&gt;c)"</span> | autfilt --separate-edges -d
+</pre>
+</div>
+
+
+<div id="orgb726c92" class="figure">
+<p><object type="image/svg+xml" data="tut25ex3.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+Fixing the above Python/C++ code to use <code>separate_edges()</code> instead of
+<code>split_edges()</code> allows to convert this example using only 3 letters:
+</p>
+
+<pre class="example">
+1
+83,0-&gt;0
+85,0-&gt;0
+85,1-&gt;0
+83,1-&gt;1
+76,1-&gt;1
+0
+1
+</pre>
+</div>
+</div>
+</div>
+</body>
+</html>

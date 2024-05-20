@@ -1,4 +1,0 @@
-state1, "!b", state2;
-state2, "a&b", state3;
-state3, "a", state4 state1;
-state4, "b", state1;

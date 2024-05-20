@@ -1,8 +1,0 @@
-*.dve2C
-*.dve.cpp
-defs
-*.dir
-*.spins
-*.c
-check
-modelcheck

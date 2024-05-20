@@ -1,9 +1,0 @@
-*.log
-*.html
-*.json
-*.csv
-*.tex
-*.pdf
-*.mk
-*.stamp
-auto/

@@ -1,7 +1,0 @@
-*.ltl
-*.csv
-run.mk
-formulas
-stutter_invariance_formulas
-stutter_invariance_randomgraph
-

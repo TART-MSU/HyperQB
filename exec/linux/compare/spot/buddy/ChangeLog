@@ -1,0 +1,3 @@
+2024-05-16  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	* NEWS, configure.ac: Bump version to 2.12.0.dev.

@@ -40,9 +40,9 @@ digraph "" {
 #+begin_example
 s₁
 ℓ₁,s₁->s₂
-ℓ₃,s₂->s₁
-ℓ₂,s₂->s₃
-ℓ₃,s₃->s₁
+ℓ₃,s2->s1
+ℓ₂,s2->s3
+ℓ₃,s3->s1
 s₁
 s₂
 #+end_example
