@@ -1,0 +1,14 @@
+.deps
+Makefile
+Makefile.in
+location.hh
+parsetl.cc
+parsetl.hh
+parsetl.output
+scantl.cc
+position.hh
+readltl
+stack.hh
+*.lo
+*.la
+.libs

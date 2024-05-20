@@ -1,0 +1,1302 @@
+#! /bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs || exit 1
+
+set -e
+
+cat >exp <<EOF
+parity 17;
+0 1 0 7,8;
+8 1 1 2;
+2 3 0 11,12;
+12 3 1 2,3;
+3 2 0 13,14;
+14 2 1 2,3;
+13 2 1 1,4;
+4 1 0 8,15;
+15 1 1 5,6;
+6 1 0 8,15;
+5 2 0 16,17;
+17 2 1 2;
+16 2 1 5,6;
+1 1 0 9,10;
+10 1 1 2,3;
+9 1 1 1,5;
+11 3 1 1,4;
+7 1 1 1,2;
+parity 13;
+0 1 0 1,2;
+2 1 1 3;
+3 3 0 5,4;
+4 2 1 12,3;
+12 2 0 5,4;
+5 1 1 6,7;
+7 1 0 9,8;
+8 3 1 12,3;
+9 1 1 11,10;
+10 2 0 9,8;
+11 1 0 9,8;
+6 1 0 13,4;
+13 1 1 6,10;
+1 1 1 6,3;
+parity 5;
+0 1 0 2,3;
+3 3 1 1;
+1 1 0 4,5;
+5 2 1 1,1;
+4 3 1 0,1;
+2 1 1 0,0;
+EOF
+
+: > out
+for algo in ds sd lar; do
+    ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --algo=$algo --print-pg >>out
+done
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 1 1 0 1 0
+2
+2
+i0 a
+o0 b
+EOF
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger=isop >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 1 1 0 1 0
+2
+2
+i0 a
+o0 b
+EOF
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger=isop+dc >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 1 1 0 1 0
+2
+2
+i0 a
+o0 b
+EOF
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger=isop+ud >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 1 1 0 1 0
+2
+2
+i0 a
+o0 b
+EOF
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger=isop+sub1 >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 1 1 0 1 0
+2
+2
+i0 a
+o0 b
+EOF
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger=isop+sub2 >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 1 1 0 1 0
+2
+2
+i0 a
+o0 b
+EOF
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger=isop,isop+dc,isop+ud >out
+diff out exp
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger=ite >out
+diff out exp
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger=ite+ud+dc >out
+diff out exp
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --aiger >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 3 1 1 2 1
+2
+4 1
+6
+6
+6 2 4
+i0 a
+o0 b
+o1 c
+EOF
+ltlsynt --ins=a --outs=b,c -f 'GFa <-> (GFb & GFc)' \
+        --algo=ds --simplify=no --aiger=isop >out
+diff out exp
+
+ltlsynt --ins=a --outs=b,c -f 'GFa <-> (GFb & GFc)' \
+        --algo=ds --simplify=no --aiger=optim >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 2 1 1 2 0
+2
+4 1
+2
+2
+i0 a
+o0 b
+o1 c
+EOF
+ltlsynt --ins=a --outs=b,c -f 'GFa <-> (GFb & GFc)' \
+        --algo=ds --simplify=no --aiger=isop+dc >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 3 1 1 2 1
+2
+4 1
+6
+6
+6 2 4
+i0 a
+o0 b
+o1 c
+EOF
+ltlsynt --ins=a --outs=b,c -f 'GFa <-> (GFb & GFc)' \
+        --algo=ds --simplify=no --aiger=ite >out
+diff out exp
+
+cat >exp <<EOF
+there are 1 subformulas
+trying to create strategy directly for GFa <-> GFb
+direct strategy was found.
+EOF
+ltlsynt --ins='a' --outs='b' -f 'GFa <-> GFb' --verbose --realizability 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+cat >exp <<EOF
+there are 1 subformulas
+trying to create strategy directly for GFa <-> GFb
+translating formula done in X seconds
+direct strategy was found.
+direct strat has 1 states, 2 edges and 0 colors
+simplification took X seconds
+EOF
+ltlsynt --ins=a --outs=b -f 'GFa <-> GFb' --verbose --algo=ps 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+cat >exp <<EOF
+there are 1 subformulas
+trying to create strategy directly for GFe <-> (Fa & Fb & Fc & Fd)
+direct strategy was found.
+EOF
+ltlsynt --ins='a,b,c,d' --outs='e' -f '(Fa & Fb & Fc & Fd) <-> GFe' \
+        --verbose --realizability --algo=lar 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+cat >exp <<EOF
+the following signals can be temporarily removed:
+  i0 := 1
+  i2 := 1
+new formula: GFi1 -> G(i1 <-> o0)
+there are 1 subformulas
+trying to create strategy directly for GFi1 -> G(i1 <-> o0)
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 1 colors
+LAR construction done in X seconds
+DPA has 2 states, 1 colors
+split inputs and outputs done in X seconds
+automaton has 6 states
+solving game with acceptance: co-Büchi
+game solved in X seconds
+EOF
+ltlsynt -f "G(Fi0 && Fi1 && Fi2) -> G(i1 <-> o0)" --algo=lar \
+        --verbose --realizability 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+
+for r in '' '--real'; do
+    opts="$r --ins=a,c --outs=b -f"
+    ltlsynt --algo=ds $opts 'GFa <-> GFb' --csv=FILE || :
+    ltlsynt --algo=sd $opts 'FGa <-> GF(b&XXb)' --csv='>>FILE' || :
+    ltlsynt --algo=ps $opts 'FGa <-> GF(b&XXb)' --csv='>>FILE' || :
+    ltlsynt --algo=lar $opts 'FGc <-> GF(!b&XXb)' --csv='>>FILE' || :
+    ltlsynt --algo=lar.old $opts 'FGa <-> GF(c&a)' --csv='>>FILE' || :
+    test 6 = `wc -l < FILE`
+    # Make sure all lines in FILE have the same number of commas
+    sed 's/[^,]//g' < FILE |
+        ( read first
+          while read l; do
+              test "x$first" = "x$l" || exit 1
+          done)
+done
+for a in sd ds lar lar.old; do
+    test 1 = `grep -c ",.$a.," FILE` || exit 1
+done
+
+# ltlsynt --algo=lar --ins=a --outs=b -f 'FGa <-> GF(c&a)' --print-pg --csv >out
+# grep parity out
+# grep 'FGa.*,"lar",' out
+# grep formula out
+
+
+F0='(G ((((req) -> (X ((grant) && (X ((grant) && (X (grant))))))) && ((grant)
+-> (X (! (grant))))) && ((cancel) -> (X ((! (grant)) U (go))))))'
+IN0='cancel, go, req'
+OUT0='grant'
+EXP0='UNREALIZABLE'
+F1='(G ((((req) -> (X ((grant) || (X ((grant) || (X (grant))))))) && ((grant)
+-> (X (! (grant))))) && ((cancel) -> (X ((! (grant)) U (go))))))'
+IN1='cancel, go, req'
+OUT1='grant'
+EXP1='UNREALIZABLE'
+F2='((G ((cancel) -> (X (go)))) -> (G ((((req) -> (X ((grant) || (X ((grant) ||
+(X (grant))))))) && ((grant) -> (X (! (grant))))) && ((cancel) -> (X ((!
+(grant)) U (go)))))))'
+IN2='cancel, go, req'
+OUT2='grant'
+EXP2='REALIZABLE'
+F3='((G ((cancel) -> (X ((go) || (X (go)))))) -> (G ((((req) -> (X ((grant) ||
+(X ((grant) || (X (grant))))))) && ((grant) -> (X (! (grant))))) && ((cancel)
+-> (X ((! (grant)) U (go)))))))'
+IN3='cancel, go, req'
+OUT3='grant'
+EXP3='REALIZABLE'
+F4='((G ((cancel) -> (X ((go) || (X (go)))))) -> (G ((((req) -> (X (((grant) ||
+(cancel)) || (X (((grant) || (cancel)) || (X ((grant) || (cancel)))))))) &&
+((grant) -> (X (! (grant))))) && ((cancel) -> (X ((! (grant)) U (go)))))))'
+IN4='cancel, go, req'
+OUT4='grant'
+EXP4='REALIZABLE'
+F5='((G ((cancel) -> (X ((go) || (X ((go) || (X (go)))))))) -> (G ((((req) ->
+(X (((grant) || (cancel)) || (X (((grant) || (cancel)) || (X ((grant) ||
+(cancel)))))))) && ((grant) -> (X (! (grant))))) && ((cancel) -> (X ((!
+(grant)) U (go)))))))'
+IN5='cancel, go, req'
+OUT5='grant'
+EXP5='REALIZABLE'
+F6='((G ((cancel) -> (X ((go) || (X (go)))))) -> (G ((((cancel) -> (X ((!
+(grant)) U (go)))) && ((grant) -> (X (! (grant))))) && ((req) -> (((grant) ||
+(cancel)) || (X (((grant) || (cancel)) || (X (((grant) || (cancel)) || (X
+((grant) || (cancel))))))))))))'
+IN6='cancel, go, req'
+OUT6='grant'
+EXP6='REALIZABLE'
+F7='(! ((G ((req) -> (F (ack)))) && (G ((go) -> (F (grant))))))'
+IN7='go, req'
+OUT7='ack, grant'
+EXP7='UNREALIZABLE'
+F8='(((G ((((r1) -> (F (a1))) && ((r2) -> (F (a2)))) && (! ((a1) && (a2))))) &&
+(((a1) U (r1)) || (G (a1)))) && (((a2) U (r2)) || (G (a2))))'
+IN8='r1, r2'
+OUT8='a1, a2'
+EXP8='UNREALIZABLE'
+F9='((((G (((((((r0) -> (F (a0))) && ((r1) -> (F (a1)))) && ((r2) -> (F (a2))))
+&& (! ((a0) && (a1)))) && (! ((a0) && (a2)))) && (! ((a1) && (a2))))) && (((a0)
+U (r0)) || (G (a0)))) && (((a1) U (r1)) || (G (a1)))) && (((a2) U (r2)) || (G
+(a2))))'
+IN9='r0, r1, r2'
+OUT9='a0, a1, a2'
+EXP9='UNREALIZABLE'
+IN10='a, b, c'
+OUT10='p0, p1, p2'
+F10='G (p0 && ! p1 && ! p2 || (! p0 && p1 && ! p2) || (! p0 && ! p1 && p2)) &&
+  (F (G a) || F (G b) || G (F c) <-> (G (F p0) || (G (F p1) && ! G (F p2))))'
+EXP10='REALIZABLE'
+
+for i in 0 1 7 8 9; do
+  F=$(eval echo \$F$i)
+  IN=$(eval echo \$IN$i)
+  OUT=$(eval echo \$OUT$i)
+  EXP=$(eval echo \$EXP$i)
+
+  for algo in sd ds lar; do
+    test $EXP = $(ltlsynt -f "$F" --ins="$IN" --outs="$OUT" --realizability \
+    --algo=$algo)
+  done
+done
+
+for i in 2 3 4 5 6 10; do
+  F=$(eval echo \$F$i)
+  IN=$(eval echo \$IN$i)
+  OUT=$(eval echo \$OUT$i)
+  EXP=$(eval echo \$EXP$i)
+
+  ltl2tgba -f "!($F)" > negf_aut$i
+
+  # test ltlsynt
+  for algo in sd ds ps lar lar.old; do
+    ltlsynt -f "$F" --ins="$IN" --outs="$OUT" --algo=$algo > out$i || true
+    REAL=`head -1 out$i`
+    test $REAL = $EXP
+    tail -n +2 out$i > res$i
+    # check that the L(strategy) is included in L(F)
+    autfilt -q -v --intersect=negf_aut$i res$i
+    # check that all environment actions are possible
+    autfilt --remove-ap="$OUT" res$i | autfilt --dualize | autfilt --is-empty -q
+  done
+done
+
+cat >exp <<EOF
+REALIZABLE
+HOA: v1
+States: 3
+Start: 0
+AP: 1 "p0"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic
+controllable-AP: 0
+--BODY--
+State: 0
+[t] 1
+State: 1
+[t] 2
+State: 2
+[!0] 2
+--END--
+EOF
+ltlsynt --outs=p0 -x tls-impl=0 --polar=no --simpl=no \
+        -f '!XXF(p0 & (p0 M Gp0))' > out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+HOA: v1
+States: 1
+Start: 0
+AP: 1 "p0"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic
+controllable-AP: 0
+--BODY--
+State: 0
+[!0] 0
+--END--
+EOF
+ltlsynt --outs=p0 -x tls-impl=1 --polar=no -f '!XXF(p0 & (p0 M Gp0))' > out
+diff out exp
+ltlsynt --outs=p0 -x tls-impl=0 -f '!XXF(p0 & (p0 M Gp0))' > out
+diff out exp
+
+ltlsynt --outs=p0 -f '!XXF(p0 & (p0 M Gp0))' > out
+diff out exp
+
+f='Fp0 U XX((p0 & F!p1) | (!p0 & Gp1))'
+ltlsynt --verbose --algo=ps --outs p1 --ins p0 -f "$f" -x"dpa-simul=1" 2>err
+grep 'DPA has 13 states' err
+ltlsynt -x dpa-simul=0 --verbose --algo=ps --outs=p1 --ins=p0 -f "$f" 2>err
+grep 'DPA has 29 states' err
+ltlsynt --verbose -x wdba-minimize=1 --algo=ps --outs=p1 --ins=p0 -f "$f" 2>err
+grep 'DPA has 12 states' err
+
+ltlsynt --outs=p1 -f "$f" -x"dpa-simul=1" --simpl=no | grep 'States: 7'
+ltlsynt --outs=p1 -f "$f" -x"dpa-simul=1" --simpl=bisim | grep 'States: 7'
+ltlsynt --outs=p1 -f "$f" -x"dpa-simul=1" --simpl=bwoa | grep 'States: 6'
+ltlsynt --outs=p1 -f "$f" -x"dpa-simul=1" | grep 'States: 6'
+ltlsynt --outs=p1 -f "$f" -x"dpa-simul=1" --simpl=sat | grep 'States: 3'
+ltlsynt --outs=p1 -f "$f" -x"dpa-simul=1" --simpl=bisim-sat | grep 'States: 3'
+ltlsynt --outs=p1 -f "$f" -x"dpa-simul=1" --simpl=bwoa-sat | grep 'States: 6'
+
+# The following used to raise an exception because of a bug in
+# split_2step_fast_here().
+for i in 0 1 2 3 4 5; do
+    ltlsynt --ins=a -f 'GFa <-> GFb' --simplify=$i | grep 'States: 1'
+done
+
+cat >exp <<EOF
+REALIZABLE
+aag 34 4 3 2 27
+2
+4
+6
+8
+10 39
+12 62
+14 68
+25
+31
+16 11 13
+18 14 16
+20 10 12
+22 15 20
+24 19 23
+26 11 12
+28 15 26
+30 19 29
+32 7 9
+34 16 32
+36 15 32
+38 35 37
+40 3 32
+42 2 4
+44 6 42
+46 8 42
+48 5 32
+50 10 14
+52 12 14
+54 41 45
+56 47 49
+58 51 53
+60 54 56
+62 58 60
+64 33 51
+66 42 53
+68 64 66
+i0 i0
+i1 i1
+i2 i2
+i3 i3
+o0 o0
+o1 o1
+EOF
+ltlsynt -f "G((i0 && i1)<->X(o0)) && G((i2|i3)<->X(o1))" --outs="o0,o1"\
+        --aiger=isop+ud --algo=lar --decompose=no --simpl=no >out
+diff out exp
+
+cat >exp <<EOF
+REALIZABLE
+aag 54 4 3 2 47
+2
+4
+6
+8
+10 39
+12 87
+14 109
+25
+31
+16 11 13
+18 14 16
+20 10 12
+22 15 20
+24 19 23
+26 11 12
+28 15 26
+30 19 29
+32 7 9
+34 16 32
+36 15 32
+38 35 37
+40 3 6
+42 16 40
+44 15 40
+46 3 8
+48 16 46
+50 15 46
+52 2 4
+54 34 52
+56 36 52
+58 5 6
+60 16 58
+62 15 58
+64 5 8
+66 16 64
+68 15 64
+70 43 45
+72 49 51
+74 55 57
+76 61 63
+78 67 69
+80 70 72
+82 74 76
+84 78 80
+86 82 84
+88 6 16
+90 52 88
+92 6 15
+94 52 92
+96 8 16
+98 52 96
+100 8 15
+102 52 100
+104 91 95
+106 99 103
+108 104 106
+i0 i0
+i1 i1
+i2 i2
+i3 i3
+o0 o0
+o1 o1
+EOF
+ltlsynt -f "G((i0 && i1)<->X(o0)) && G((i2|i3)<->X(o1))" --outs="o0,o1"\
+        --aiger=isop --algo=lar --decompose=no --simpl=no >out
+diff out exp
+
+
+cat >exp <<EOF
+REALIZABLE
+aag 18 4 4 2 10
+2
+4
+6
+8
+10 26
+12 28
+14 34
+16 36
+18
+20
+18 11 12
+20 15 16
+22 2 4
+24 10 12
+26 23 25
+28 22 25
+30 14 16
+32 7 9
+34 31 32
+36 31 33
+i0 i0
+i1 i1
+i2 i2
+i3 i3
+o0 o0
+o1 o1
+EOF
+ltlsynt -f "G((i0 && i1)<->X(o0)) && G((i2|i3)<->X(o1))" --outs="o0,o1"\
+  --aiger=isop+ud --algo=lar --decompose=yes --simpl=no >out
+diff out exp
+ltlsynt -f "G((i0 && i1)<->X(o0)) && G((i2|i3)<->X(o1))" --outs="o0,o1"\
+  --aiger=isop+ud --algo=lar --simpl=no  >out
+diff out exp
+
+# Issue #477
+ltlsynt -f 'a U (b' 2>err && exit 1
+test $? -eq 2
+test `wc -l <err` -eq 4
+
+
+cat >expected <<EOF
+REALIZABLE
+HOA: v1
+States: 1
+Start: 0
+AP: 3 "c" "a" "b"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic weak
+controllable-AP: 0
+--BODY--
+State: 0
+[!0&!1 | !0&!2 | 0&1&2] 0
+--END--
+EOF
+ltlsynt --ins=a,b -f 'G (a & b <=> c)' >stdout
+diff stdout expected
+ltlsynt --outs=c -f 'G (a & b <=> c)' >stdout
+diff stdout expected
+
+
+ltlsynt --ins=a,b --outs=c,a -f 'GFa | FGc | GFb' 2>stderr && :
+test $? -eq 2
+grep "'a' appears in both" stderr
+
+ltlsynt --ins=a --outs=c -f 'GFa | FGb | GFc' 2>stderr && :
+test $? -eq 2
+grep "one.*should match 'b'" stderr
+ltlsynt -f 'GFa | FGb | GFc' 2>stderr && :
+test $? -eq 2
+grep "[-]-ins or --outs" stderr
+
+# Try to find a direct strategy for GFa <-> GFb and a direct strategy for
+# Gc
+cat >exp <<EOF
+the following signals can be temporarily removed:
+  c := d
+new formula: GFa <-> GFb
+there are 1 subformulas
+trying to create strategy directly for GFa <-> GFb
+translating formula done in X seconds
+direct strategy was found.
+direct strat has 1 states, 2 edges and 0 colors
+simplification took X seconds
+EOF
+ltlsynt -f '(GFa <-> GFb) && (G(c <-> d))' --outs=b,c --verbose 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Try to find a direct strategy for (GFa <-> GFb) & G(c <-> d). The
+# order should not impact the result
+for f in "(GFa <-> GFb) & G(c <-> d)" "(GFb <-> GFa) & G(c <-> d)" \
+         "G(c <-> d) & (GFa <-> GFb)" "G(c <-> d) & (GFb <-> GFa)"
+do
+  cat >exp <<EOF
+trying to create strategy directly for $f
+translating formula done in X seconds
+direct strategy was found.
+direct strat has 1 states, 2 edges and 0 colors
+simplification took X seconds
+EOF
+  ltlsynt -f "$f" --outs=b,c --verbose --decompose=0 \
+        --global-equiv=no --verify 2> out
+  sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+  diff outx exp
+done
+
+# # Ltlsynt should be able to detect that G(a&c) is not input-complete so it is
+# # impossible to find a strategy.
+cat >exp <<EOF
+the following signals can be temporarily removed:
+  c := 1
+new formula: (GFb <-> GFa) & Ga
+trying to create strategy directly for (GFb <-> GFa) & Ga
+no strategy exists.
+EOF
+ltlsynt -f '(GFb <-> GFa) && G(a&c)' --outs=b,c --verbose\
+                                     --decompose=0 2> out || true
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# # ltlsynt should be able to create a strategy when the last G
+# is input-complete.
+cat >exp <<EOF
+trying to create strategy directly for (GFb <-> GFa) & G((a & c) | (!a & !c))
+translating formula done in X seconds
+direct strategy was found.
+direct strat has 1 states, 2 edges and 0 colors
+simplification took X seconds
+EOF
+ltlsynt -f '(GFb <-> GFa) && (G((a&c)|(!a&!c)))' --outs=b,c --verbose\
+                                                 --verify --decompose=0 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Direct strategy for persistence
+
+cat >exp <<EOF
+trying to create strategy directly for Fa <-> FGb
+translating formula done in X seconds
+direct strategy was found.
+direct strat has 2 states, 3 edges and 0 colors
+simplification took X seconds
+EOF
+ltlsynt -f "Fa <-> FGb" --outs=b,c --verbose --decompose=0 --verify 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Test verbose aiger
+
+cat >exp <<EOF
+trying to create strategy directly for Ga <-> Gb
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 4 states and 1 colors
+LAR construction done in X seconds
+DPA has 4 states, 1 colors
+split inputs and outputs done in X seconds
+automaton has 10 states
+solving game with acceptance: Büchi
+game solved in X seconds
+simplification took X seconds
+AIG circuit was created in X seconds and has 0 latches and 0 gates
+EOF
+ltlsynt -f "Ga <-> Gb" --outs=b --verbose --decompose=0 --verify --aiger 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula (b & (b | y)) -> y
+trying to create strategy directly for (b & (b | y)) -> y
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 0 colors
+LAR construction done in X seconds
+DPA has 2 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 4 states
+solving game with acceptance: all
+game solved in X seconds
+simplification took X seconds
+working on subformula (a | x) -> x
+trying to create strategy directly for (a | x) -> x
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 0 colors
+LAR construction done in X seconds
+DPA has 2 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 4 states
+solving game with acceptance: all
+game solved in X seconds
+simplification took X seconds
+AIG circuit was created in X seconds and has 0 latches and 0 gates
+EOF
+ltlsynt -f '((a|x) & (b | y) & b) => (x & y)' \
+        --outs="x,y" --aiger=ite --pol=no --verify --verbose 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+cat >exp <<EOF
+the following signals can be temporarily removed:
+  b := 1
+  a := 1
+new formula: x & y
+  x := 1
+  y := 1
+new formula: 1
+there are 1 subformulas
+trying to create strategy directly for 1
+direct strategy was found.
+direct strat has 1 states, 1 edges and 0 colors
+simplification took X seconds
+AIG circuit was created in X seconds and has 0 latches and 0 gates
+EOF
+ltlsynt -f '((a|x) & (b | y) & b) => (x & y)' \
+        --outs="x,y" --aiger=ite --verify --verbose 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Here, G!(!x | !y) should be Gx & Gy
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula Gx
+trying to create strategy directly for Gx
+direct strategy was found.
+direct strat has 1 states, 1 edges and 0 colors
+simplification took X seconds
+working on subformula Gy
+trying to create strategy directly for Gy
+direct strategy was found.
+direct strat has 1 states, 1 edges and 0 colors
+simplification took X seconds
+AIG circuit was created in X seconds and has 0 latches and 0 gates
+EOF
+ltlsynt -f 'G!(!x | !y)' --outs="x, y" --pol=no --aiger=ite \
+        --verify --verbose 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Here, !F(a | b) should be G(!a) & G(!b)
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula G!a
+trying to create strategy directly for G!a
+no strategy exists.
+EOF
+ltlsynt -f '!F(a|b)' --outs=b --pol=no --decompose=yes \
+        --aiger --verbose 2> out || true
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Here, G!(a -> b) should be G(a) & G(!b)
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula Ga
+trying to create strategy directly for Ga
+no strategy exists.
+EOF
+ltlsynt -f 'G!(a -> b)' --outs=b --decompose=yes --aiger\
+                        --pol=no --verbose 2> out || true
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Here, (a & b) U (b & c) should be (a U (b & c)) & (b U (b & c))
+cat >exp <<EOF
+there are 1 subformulas
+trying to create strategy directly for (a & b) U (b & c)
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 1 colors
+LAR construction done in X seconds
+DPA has 2 states, 1 colors
+split inputs and outputs done in X seconds
+automaton has 5 states
+solving game with acceptance: Büchi
+game solved in X seconds
+simplification took X seconds
+AIG circuit was created in X seconds and has 0 latches and 0 gates
+EOF
+ltlsynt -f '(a & b) U (b & c)' --outs=b,c --decompose=yes --aiger --verbose\
+                               --pol=no --verify 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Here, a => (b & c & d) should be
+# (a => b) & (a => c) & (a => d)
+cat >exp <<EOF
+there are 3 subformulas
+working on subformula a -> b
+trying to create strategy directly for a -> b
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 0 colors
+LAR construction done in X seconds
+DPA has 2 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 4 states
+solving game with acceptance: all
+game solved in X seconds
+simplification took X seconds
+working on subformula a -> c
+trying to create strategy directly for a -> c
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 0 colors
+LAR construction done in X seconds
+DPA has 2 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 4 states
+solving game with acceptance: all
+game solved in X seconds
+simplification took X seconds
+working on subformula a -> d
+trying to create strategy directly for a -> d
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 0 colors
+LAR construction done in X seconds
+DPA has 2 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 4 states
+solving game with acceptance: all
+game solved in X seconds
+simplification took X seconds
+AIG circuit was created in X seconds and has 0 latches and 0 gates
+EOF
+ltlsynt -f 'a => (b & c & d)' --outs=b,c,d, --decompose=yes\
+                              --pol=no --verbose --aiger 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Here, !(F(a | b)) should be G!a & G!b
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula G!a
+trying to create strategy directly for G!a
+no strategy exists.
+EOF
+ltlsynt -f '!(F(a | b))' --outs=b, --decompose=yes \
+                         --verbose --pol=no --aiger 2> out || true
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+ltlsynt --ins="" -f "GFa"
+ltlsynt --outs="" -f "GFb" | grep "UNREALIZABLE"
+
+ltlsynt --outs="" -f "1"
+
+ltlsynt --outs="" --ins="" -f "GFa" 2>&1 | \
+  grep "one of --ins or --outs should match 'a'"
+
+LTL='(((((G (((((((g_0) && (G (! (r_0)))) -> (F (! (g_0)))) && (((g_0) &&
+(X ((! (r_0)) && (! (g_0))))) -> (X ((r_0) R (! (g_0)))))) && (((g_1) &&
+(G (! (r_1)))) -> (F (! (g_1))))) && (((g_1) && (X ((! (r_1)) && (! (g_1))))) ->
+(X ((r_1) R (! (g_1)))))) && (((! (g_0)) && (true)) || ((true) && (! (g_1))))))
+&& ((r_0) R (! (g_0)))) && (G ((r_0) -> (F (g_0))))) && ((r_1) R (! (g_1)))) &&
+(G ((r_1) -> (F (g_1)))))'
+OUT='g_0, g_1'
+ltlsynt --outs="$OUT" -f "$LTL" --aiger=both+ud\
+  --algo=acd | grep "aag 8 2 2 2 4"
+ltlsynt --outs="$OUT" -f "$LTL" --aiger=both+ud\
+  --algo=lar | grep "aag 34 2 3 2 29"
+
+ltlsynt -f 'G(c) & (G(a) <-> GFb)' --outs=b,c --decompose=yes\
+                                   --verbose --pol=no --realizability 2> out
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula Gc
+trying to create strategy directly for Gc
+direct strategy was found.
+working on subformula Ga <-> GFb
+trying to create strategy directly for Ga <-> GFb
+direct strategy was found.
+EOF
+diff out exp
+
+ltlsynt -f 'G(c) & (G(a) <-> GFb)' --outs=b,c --decompose=yes --pol=no \
+                                   --verbose --realizability --bypass=no 2> out
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula Gc
+translating formula done in X seconds
+automaton has 1 states and 0 colors
+LAR construction done in X seconds
+DPA has 1 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 2 states
+solving game with acceptance: all
+game solved in X seconds
+working on subformula Ga <-> GFb
+translating formula done in X seconds
+automaton has 2 states and 2 colors
+LAR construction done in X seconds
+DPA has 2 states, 2 colors
+split inputs and outputs done in X seconds
+automaton has 5 states
+solving game with acceptance: Streett 1
+game solved in X seconds
+EOF
+
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# ACD verbose
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula GFa <-> GFb
+translating formula done in X seconds
+automaton has 1 states and 2 colors
+ACD construction done in X seconds
+DPA has 2 states, 2 colors
+split inputs and outputs done in X seconds
+automaton has 6 states
+solving game with acceptance: generalized-Streett 1 1
+game solved in X seconds
+simplification took X seconds
+working on subformula Gc
+translating formula done in X seconds
+automaton has 1 states and 0 colors
+ACD construction done in X seconds
+DPA has 1 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 2 states
+solving game with acceptance: all
+game solved in X seconds
+simplification took X seconds
+EOF
+ltlsynt -f '(GFa <-> GFb) && (Gc)' --outs=b,c --verbose --bypass=no\
+                                   --algo=acd --pol=no 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+# Bypass: check that in G(b1) ∧ (Büchi ↔ GF(b2)), b1 and b2 don't share an AP.
+# We do it because  G(o1 ∨ o2) ∧ (GFi ↔ GFo1) is realizable while
+# G(o1) ∧ (GFi ↔ GFo1) is not realizable. So we cannot conclude if
+# they share an AP.
+cat >exp <<EOF
+there are 1 subformulas
+trying to create strategy directly for Go1 & (GFi <-> GFo1)
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 1 states and 1 colors
+LAR construction done in X seconds
+DPA has 1 states, 1 colors
+split inputs and outputs done in X seconds
+automaton has 3 states
+solving game with acceptance: Büchi
+game solved in X seconds
+EOF
+ltlsynt -f "G(o1) & (GFi <-> GFo1)" --outs="o1" --verbose\
+                                    --bypass=yes --pol=no 2> out || true
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+cat >exp <<EOF
+there are 1 subformulas
+trying to create strategy directly for G(o1 | o2) & (GFi <-> GFo1)
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 1 states and 2 colors
+LAR construction done in X seconds
+DPA has 2 states, 2 colors
+split inputs and outputs done in X seconds
+automaton has 6 states
+solving game with acceptance: Streett 1
+game solved in X seconds
+simplification took X seconds
+EOF
+ltlsynt -f "G(o1|o2) & (GFi <-> GFo1)" --outs="o1,o2" --verbose\
+                                       --bypass=yes --pol=no 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+cat >exp <<EOF
+the following signals can be temporarily removed:
+  o2 := 1
+new formula: GFi <-> GFo1
+there are 1 subformulas
+trying to create strategy directly for GFi <-> GFo1
+translating formula done in X seconds
+direct strategy was found.
+direct strat has 1 states, 2 edges and 0 colors
+simplification took X seconds
+EOF
+ltlsynt -f "G(o1|o2) & (GFi <-> GFo1)" --outs="o1,o2" --verbose\
+                                       --bypass=yes 2> out
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+
+# Test the loop around polarity/global-equiv
+cat >exp <<EOF
+the following signals can be temporarily removed:
+  r3 := 1
+new formula: G(i <-> o) & G(o <-> o2) & G(!o | !o3) & GFo3
+  o := i
+  o2 := i
+new formula: GFo3 & G(!i | !o3)
+  i := 1
+new formula: GFo3 & G!o3
+there are 1 subformulas
+trying to create strategy directly for GFo3 & G!o3
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 1 states and 0 colors
+LAR construction done in X seconds
+DPA has 1 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 3 states
+solving game with acceptance: co-Büchi
+game solved in X seconds
+UNREALIZABLE
+EOF
+ltlsynt -f 'G(o<->i) & G(o2 <-> o) & G(!o | !o3) & G(r3 -> Fo3)' \
+        --ins=i,r3 --verbose 2>out 1>&2 && exit 1
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+
+# Test --dot and --hide-status
+ltlsynt -f 'i <-> Fo' --ins=i --aiger --dot | grep arrowhead=dot
+ltlsynt -f 'i <-> Fo' --ins=i --print-game-hoa --dot | grep 'shape="diamond"'
+ltlsynt -f 'i <-> Fo' --ins=i --dot --hide-status > res
+cat >exp <<EOF
+digraph "" {
+  rankdir=LR
+  node [shape="circle"]
+  I [label="", style=invis, width=0]
+  I -> 0
+  0 [label="0"]
+  0 -> 0 [label="i / o"]
+  0 -> 1 [label="!i / !o"]
+  1 [label="1"]
+  1 -> 1 [label="1 / !o"]
+}
+EOF
+diff res exp
+
+
+# The following formula, generated from SPIReadManag.tlsf exhibited a bug
+# in the decomposition.
+s1="G(!((!o15 & !((!o14 & o16) <-> (o14 & !o16))) <-> (o15 & !(o14 | o16)))"
+s2=" & !((!o12 & !((!o11 & o13) <-> (o11 & !o13))) <-> (o12 & !(o11 | o13)))"
+s3=" & !((o09 & !o10) <-> (!o09 & o10)) & !((o07 & !o08) <-> (!o07 & o08))"
+s4=" & !((!o05 & !((!o04 & o06) <-> (o04 & !o06))) <-> (o05 & !(o04 | o06)))"
+s5=" & !((!o02 & !((!o01 & o03) <-> (o01 & !o03))) <-> (o02 & !(o01 | o03))))"
+s6=" & ((G!(i2 & i7) & G(o15 -> Fi3)) -> (Go09 & G(o14 <-> (i6 & !i7)) & "
+s7="G(o07 <-> (i7 & i8)) & G((i7 & i8) -> (o11 U i3)) & GFo12 & G(o04 <-> "
+s8="(i4 & i6)) & G(o05 <-> !(i4 & i6)) & G(o15 <-> (i7 & i8)) & G(i7 -> o02) & "
+s9="G((!i7 & !(i1 & i2 & !i5 & i6)) -> o03) & G(o01 <-> (i1 & i2 & !i5 & i6))))"
+s=$s1$s2$s3$s4$s5$s6$s7$s8$s9
+ltlsynt --decomp=yes -f "$s" --realizability >out
+ltlsynt --decomp=no --outs='/^o[0-9]*$/' -f "$s" --realizability >>out
+ltlsynt --decomp=no --outs='/^o[0-9]$/' -f "$s" --realizability >>out && :
+ltlsynt  -f "$s" --ins='/^i[0-9]*$/' --realizability >>out
+cat >expected <<EOF
+REALIZABLE
+REALIZABLE
+UNREALIZABLE
+REALIZABLE
+EOF
+diff out expected
+
+f1="((G ((p0) <-> (! (p1)))) && (((((F ((b) && (G (F (a))))) ||\
+  (F ((c) && (G (F (! (a))))))) && (F (b))) && (F (c))) <-> (G (F (p0)))))"
+ltlsynt -f "$f1" --outs="p1, p0" --aiger > out1.hoa
+ltlsynt -f "$f1" --outs="p1, /^p/" --aiger > out2.hoa
+diff out1.hoa out2.hoa
+
+# issue #557
+ltlsynt  -f 'G(in1 <-> out0) & G(in0 <-> out1)' --ins=in1,in0 --verb 2>err >out
+grep := err > err2
+cat >err2.ex <<EOF
+  out0 := in1
+  out1 := in0
+EOF
+diff err2 err2.ex
+grep -F '[!0&!1&!2&!3 | !0&!1&2&3 | 0&1&!2&!3 | 0&1&2&3] 0' out
+
+ltlsynt -f 'G((in1 && in2) <-> XXout2) && G((in1 | !in2) -> Fout2)' \
+        --realizability >out && :
+test $? -eq 1
+# specitying --outs=in2 should have priority over regular expressions
+ltlsynt -f 'G((in1 && in2) <-> XXout2) && G((in1 | !in2) -> Fout2)' \
+        --realizability --ins='/^i/' --outs='out2,in2' >>out
+cat >expected <<EOF
+UNREALIZABLE
+REALIZABLE
+EOF
+diff out expected
+
+ltlsynt --ins='/^in/,/env/' --outs='/^out/,/control/' \
+  -f 'G(controlenv <-> input)' 2>err && :
+test $? -eq 2
+grep 'controlenv.*matches both' err
+
+
+ltlsynt --polarity=1 --global-e=1 -f 'G(i -> Xo) & G(!i -> F!o)' --real
+ltlsynt --polarity=0 --global-e=0 -f 'G(i -> Xo) & G(!i -> F!o)' --real
+
+cat >exp <<EOF
+there are 2 subformulas
+working on subformula G(i1 -> (o1 | !o2)) & G(i2 -> X(!o1 | o2))
+the following signals can be temporarily removed:
+  i1 := 1
+  i2 := 1
+new formula: G(o1 | !o2) & GX(!o1 | o2)
+trying to create strategy directly for G(o1 | !o2) & GX(!o1 | o2)
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 0 colors
+LAR construction done in X seconds
+DPA has 2 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 4 states
+solving game with acceptance: all
+game solved in X seconds
+simplification took X seconds
+working on subformula G(!i1 -> (o3 | !o4)) & G(!i2 -> X(!o3 | o4))
+the following signals can be temporarily removed:
+  i1 := 0
+  i2 := 0
+new formula: G(o3 | !o4) & GX(!o3 | o4)
+trying to create strategy directly for G(o3 | !o4) & GX(!o3 | o4)
+direct strategy might exist but was not found.
+translating formula done in X seconds
+automaton has 2 states and 0 colors
+LAR construction done in X seconds
+DPA has 2 states, 0 colors
+split inputs and outputs done in X seconds
+automaton has 4 states
+solving game with acceptance: all
+game solved in X seconds
+simplification took X seconds
+REALIZABLE
+HOA: v1
+States: 1
+Start: 0
+AP: 6 "o1" "o2" "o3" "o4" "i1" "i2"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic
+controllable-AP: 0 1 2 3
+--BODY--
+State: 0
+[!0&!1&!2&!3 | !0&!1&2&3 | 0&1&!2&!3 | 0&1&2&3] 0
+--END--
+EOF
+f1='G(i1->(o1|!o2)) & G(!i1->(o3|!o4)) & G(i2->X(!o1|o2)) & G(!i2->X(!o3|o4))'
+ltlsynt -f "$f1" --verbose 2>out 1>&2
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+gg='G(i2 -> (!o1 | o2)) & G(!i2 -> (!o3 | o4))'
+cat >exp <<EOF
+the following signals can be temporarily removed:
+  o5 := 1
+new formula: G(i1 -> (o1 | !o2)) & G(!i1 -> (o3 | !o4)) & $gg
+there are 2 subformulas
+working on subformula G(i1 -> (o1 | !o2)) & G(i2 -> (!o1 | o2))
+the following signals can be temporarily removed:
+  i1 := 1
+  i2 := 1
+new formula: G(o1 | !o2) & G(!o1 | o2)
+  o2 := o1
+new formula: G(o1 | !o1)
+trying to create strategy directly for G(o1 | !o1)
+direct strategy was found.
+direct strat has 1 states, 1 edges and 0 colors
+simplification took X seconds
+working on subformula G(!i1 -> (o3 | !o4)) & G(!i2 -> (!o3 | o4))
+the following signals can be temporarily removed:
+  i1 := 0
+  i2 := 0
+new formula: G(o3 | !o4) & G(!o3 | o4)
+  o4 := o3
+new formula: G(o3 | !o3)
+trying to create strategy directly for G(o3 | !o3)
+direct strategy was found.
+direct strat has 1 states, 1 edges and 0 colors
+simplification took X seconds
+REALIZABLE
+HOA: v1
+States: 1
+Start: 0
+AP: 7 "o1" "o2" "o3" "o4" "o5" "i1" "i2"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic weak
+controllable-AP: 0 1 2 3 4
+--BODY--
+State: 0
+[!0&!1&!2&!3&4 | !0&!1&2&3&4 | 0&1&!2&!3&4 | 0&1&2&3&4] 0
+--END--
+EOF
+f2='G(i1->(o1|!o2)) & G(!i1->(o3|!o4)) & G(i2->(!o1|o2)) & G(!i2->(!o3|o4))&Go5'
+ltlsynt -f "$f2" --verbose 2>out 1>&2
+sed 's/ [0-9.e-]* seconds/ X seconds/g' out > outx
+diff outx exp
+
+gg='G(i2->(!o1 | o2)) & G(!i2->(!o3 | o4))'
+hh='0&1&3&!5&6 | 0&!3&!4&!5&6 | !1&2&!3&5&6 | !1&!3&!4&!5&6 | '
+ii='1&!2&3&!5&6 | 1&!2&4&5&6 | !2&!3&!4&!5&6 | !2&!3&4&5&6'
+cat >exp <<EOF
+the following signals can be temporarily removed:
+  o5 := 1
+new formula: G(i1->(o1 | !o2)) & G(!i1->(o3 | !o4)) & $gg
+there are 2 subformulas
+working on subformula G(i1->(o1 | !o2)) & G(i2->(!o1 | o2))
+trying to create strategy directly for G(i1->(o1 | !o2)) & G(i2->(!o1 | o2))
+direct strategy was found.
+direct strat has 1 states, 1 edges and 0 colors
+simplification took X seconds
+working on subformula G(!i1->(o3 | !o4)) & G(!i2->(!o3 | o4))
+trying to create strategy directly for G(!i1->(o3 | !o4)) & G(!i2->(!o3 | o4))
+direct strategy was found.
+direct strat has 1 states, 1 edges and 0 colors
+simplification took X seconds
+REALIZABLE
+HOA: v1
+States: 1
+Start: 0
+AP: 7 "o1" "o2" "i1" "i2" "o3" "o4" "o5"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic weak
+controllable-AP: 0 1 4 5 6
+--BODY--
+State: 0
+[!0&!1&2&5&6 | !0&!1&3&!5&6 | !0&!2&4&5&6 | 0&1&2&5&6 | $hh$ii] 0
+--END--
+EOF
+f2='G(i1->(o1|!o2)) & G(!i1->(o3|!o4)) & G(i2->(!o1|o2)) & G(!i2->(!o3|o4))&Go5'
+ltlsynt -f "$f2" --polarity=before-decom --verbose 2>out 1>&2
+sed 's/ [0-9.e-]* seconds/ X seconds/g;s/ -> /->/g;' out > outx
+diff outx exp

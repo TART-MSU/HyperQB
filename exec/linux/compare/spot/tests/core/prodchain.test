@@ -1,0 +1,82 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs
+set -e
+
+set x
+shift
+for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 \
+         22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42; do
+  ltl2tgba "{a[*$i]}[]->GFb" > $i.hoa
+  set x "$@" --product $i.hoa
+  shift
+done
+shift
+if [ $MAX_ACCSETS -eq 32 ]; then
+  autfilt "$@" 2> error && exit 1
+  grep 'Too many acceptance sets used' error
+fi
+autfilt -B --low "$@" > result
+test "4,7,16,1" = `autfilt --stats=%s,%e,%t,%a result`
+
+set x
+shift
+for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 \
+         22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42; do
+  set x "$@" --product-or $i.hoa
+  shift
+done
+shift
+autfilt -B --low "$@" > result
+test "45,89,180,1" = `autfilt --stats=%s,%e,%t,%a result`
+
+
+set x
+shift
+for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 \
+         22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42; do
+  ltl2tgba -D --cobuchi -S "{a[*$i]}<>->FGb" > $i.hoa
+  set x "$@" --product $i.hoa
+  shift
+done
+shift
+autfilt --cobuchi --high -D -S "$@" > result
+test "44,47,92,1" = `autfilt --stats=%s,%e,%t,%a result`
+
+: > stats
+set x
+shift
+for i in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 \
+         22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42; do
+  ltl2tgba -D --cobuchi "{a[*$i]}<>->FGb" > $i.hoa
+  set x "$@" --product-or $i.hoa
+  shift
+  test $i -eq 1 && shift # remove the first --product
+  test 2,3,6,1 = `autfilt --high --small --cobuchi "$@" --stats=%s,%e,%t,%a`
+  test 3,5,10,1 = \
+       `autfilt --high --small --cobuchi "$@" | autfilt -S --stats=%s,%e,%t,%a`
+done
+
+if [ $MAX_ACCSETS -eq 32 ]; then
+  autfilt "$@" 2> error && exit 1
+  grep 'Too many acceptance sets used' error
+fi
+
+true

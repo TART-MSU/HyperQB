@@ -1,0 +1,23 @@
+#+OPTIONS: H:2 num:nil toc:t html-postamble:nil ^:nil
+#+EMAIL: spot@lrde.epita.fr
+#+HTML_LINK_HOME: index.html
+#+MACRO: LASTDATE 2024-05-14
+
+#+NAME: SPOT_VERSION
+#+BEGIN_SRC python :exports none :results value :wrap org
+return "2.12"
+#+END_SRC
+
+#+NAME: TARBALL_LINK
+#+BEGIN_SRC python :exports none :var version=SPOT_VERSION :results output :wrap org
+  print(f"[[http://www.lrde.epita.fr/dload/spot/spot-{version}.tar.gz][=spot-{version}.tar.gz=]]")
+#+END_SRC
+
+#+NAME: NEWS_LINK
+#+BEGIN_SRC python :exports none :var version=SPOT_VERSION :results output :wrap org
+  version = str(version).replace('.', '-')
+  print(f"[[https://gitlab.lre.epita.fr/spot/spot/blob/spot-{version}/NEWS][summary of the changes]]")
+#+END_SRC
+
+#+ATTR_HTML: :id spotlogo
+[[file:spot2.svg]]

@@ -1,0 +1,305 @@
+# -*- coding: utf-8 -*-
+#+TITLE: =ltlsynt=
+#+DESCRIPTION: Spot command-line tool for synthesizing AIGER circuits from LTL/PSL formulas.
+#+INCLUDE: setup.org
+#+HTML_LINK_UP: tools.html
+#+PROPERTY: header-args:sh :results verbatim :exports both
+
+* Basic usage
+
+This tool synthesizes reactive controllers from LTL/PSL formulas.
+
+Consider a set $I$ of /input/ atomic propositions, a set $O$ of output atomic
+propositions, and a PSL formula \phi over the propositions in $I \cup O$.  A
+*reactive controller* realizing \phi is a function $c: (2^{I})^\star \times 2^I \mapsto
+2^O$ such that, for every \omega-word $(u_i)_{i \in N} \in (2^I)^\omega$ over
+the input propositions, the word $(u_i \cup c(u_0 \dots u_{i-1}, u_i))_{i \in
+N}$ satisfies \phi.
+
+If a reactive controller exists, then one with finite memory
+exists. Such controllers are easily represented as automata (or more
+specifically as Mealy machines).  In the automaton representing the
+controller, the acceptance condition is irrelevant and trivially true.
+
+=ltlsynt= has three mandatory options:
+- =--ins=: a comma-separated list of input atomic propositions, or input regexes enclosed in slashes;
+- =--outs=: a comma-separated list of output atomic propositions, or output regexes enclosed in slashes;
+- =--formula= or =--file=: a specification in LTL or PSL.
+
+One of =--ins= or =--outs= may be omitted, as any atomic proposition
+not listed as input can be assumed to be output and vice versa.  If
+both are omitted, =ltlsynts= will assume ~--ins=/^[iI]/~ and
+~--outs=/^[oO]/~, i.e., atomic propositions will be classified as
+input or output based on their first letter.
+
+The following example illustrates the synthesis of a controller
+ensuring that input =i1= and =i2= are both true initially if and only
+if eventually output =o1= will go from true to false at some point.
+Note that this is an equivalence, not an implication.
+
+#+NAME: example
+#+BEGIN_SRC sh :exports both
+ltlsynt -f '(i1 & i2) <-> F(o1 & X(!o1))'
+#+END_SRC
+
+#+RESULTS: example
+#+begin_example
+REALIZABLE
+HOA: v1
+States: 3
+Start: 0
+AP: 3 "i1" "i2" "o1"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic
+controllable-AP: 2
+--BODY--
+State: 0
+[0&1&2] 1
+[!0&2 | !1&2] 2
+State: 1
+[!2] 1
+State: 2
+[2] 2
+--END--
+#+end_example
+
+The output is composed of two parts:
+- The first part is a single line stating =REALIZABLE= or
+  =UNREALIZABLE=; the presence of this line, required by the [[http://http://www.syntcomp.org/][SyntComp
+  competition]], can be disabled with option =--hide-status=.
+- The second part, only present in the =REALIZABLE= case, is an
+  automaton describing the controller.
+
+The controller contains the line =controllable-AP: 2=, which means
+that this automaton should be interpreted as a Mealy machine where
+=o0= is part of the output.  Using the =--dot= option, makes it easier
+to visualize this machine.
+
+#+NAME: exampledot
+#+BEGIN_SRC sh :exports code
+ltlsynt -f '(i1 & i2) <-> F(o1 & X(!o1))' --hide-status --dot
+#+END_SRC
+
+#+BEGIN_SRC dot :file ltlsyntex.svg :var txt=exampledot :exports results
+  $txt
+#+END_SRC
+
+#+RESULTS:
+[[file:ltlsyntex.svg]]
+
+The following example illustrates the case of an unrealizable specification. As
+=a= is an input proposition, there is no way to guarantee that it will
+eventually hold.
+
+#+BEGIN_SRC sh :epilogue true
+ltlsynt --ins=a -f 'F a'
+#+END_SRC
+
+#+RESULTS:
+: UNREALIZABLE
+
+By default, the controller is output in HOA format, but it can be
+output as an And-Inverter-Graph in [[http://fmv.jku.at/aiger/][AIGER format]] using the =--aiger=
+flag. This is the output format required for the [[http://syntcomp.org/][SYNTCOMP]] competition.
+
+#+NAME: exampleaig
+#+BEGIN_SRC sh :exports both
+ltlsynt -f '(i1 & i2) <-> F(o1 & X(!o1))' --aiger
+#+END_SRC
+
+#+RESULTS: exampleaig
+#+begin_example
+REALIZABLE
+aag 18 2 2 1 14
+2
+4
+6 23
+8 37
+7
+10 6 9
+12 4 9
+14 5 10
+16 13 15
+18 2 17
+20 3 10
+22 19 21
+24 7 8
+26 4 24
+28 5 7
+30 27 29
+32 2 31
+34 3 7
+36 33 35
+i0 i1
+i1 i2
+o0 o1
+#+end_example
+
+The above format is not very human friendly.  Again, by passing both
+=--aiger= and =--dot=, one can display the And-Inverter-Graph representing
+the controller:
+
+#+NAME: exampleaigdot
+#+BEGIN_SRC sh :exports code
+ltlsynt -f '(i1 & i2) <-> F(o1 & X(!o1))' --hide-status --aiger --dot
+#+END_SRC
+
+#+BEGIN_SRC dot :file ltlsyntexaig.svg :var txt=exampleaigdot :exports results
+  $txt
+#+END_SRC
+
+#+RESULTS:
+[[file:ltlsyntexaig.svg]]
+
+In the above diagram, round nodes represent AND gates.  Small black
+circles represent inversions (or negations), colored triangles are
+used to represent input signals (at the bottom) and output signals (at
+the top), and finally rectangles represent latches.  A latch is a one
+bit register that delays the signal by one step.  Initially, all
+latches are assumed to contain =false=, and they emit their value from
+the =L0_out= and =L1_out= rectangles at the bottom.  Their input value,
+to be emitted at the next step, is received via the =L0_in= and =L1_in=
+boxes at the top.  In =ltlsynt='s encoding, the set of latches is used
+to keep track of the current state of the Mealy machine.
+
+The generation of a controller can be disabled with the flag
+=--realizability=.  In this case, =ltlsynt='s output is limited to
+=REALIZABLE= or =UNREALIZABLE=.
+
+* TLSF
+
+=ltlsynt= was made with the [[http://syntcomp.org/][SYNTCOMP]] competition in mind, and more
+specifically the TLSF track of this competition.  TLSF is a high-level
+specification language created for the purpose of this competition.
+Fortunately, the SYNTCOMP organizers also provide a tool called
+[[https://github.com/reactive-systems/syfco][=syfco=]] which can translate a TLSF specification to an LTL formula.
+
+The following line shows how a TLSF specification called =FILE= can
+be synthesized using =syfco= and =ltlsynt=:
+
+#+BEGIN_SRC sh :export code
+ltlsynt --tlsf FILE
+#+END_SRC
+
+The above =--tlsf= option will call =syfco= (which must be on your
+=$PATH=) to perform the conversion and extract output signals, as if
+you had used:
+
+#+BEGIN_SRC sh :export code
+LTL=$(syfco -f ltlxba -m fully FILE)
+OUT=$(syfco --print-output-signals FILE)
+ltlsynt --formula="$LTL" --outs="$OUT"
+#+END_SRC
+
+
+* Internal details
+
+The tool reduces the synthesis problem to a parity game, and solves the parity
+game using Zielonka's recursive algorithm.  The process can be pictured as follows.
+
+[[file:ltlsynt.svg]]
+
+LTL decomposition consist in splitting the specification into multiple
+smaller constraints on disjoint subsets of the output values (as
+described by [[https://arxiv.org/abs/2103.08459][Finkbeiner, Geier, and Passing]]), solve those constraints
+separately, and then combine them while encoding the AIGER circuit.
+This is enabled by default, but can be disabled by passing option
+=--decompose=no=.
+
+The ad hoc construction on the top is just a shortcut for some type of
+constraints that can be solved directly by converting the constraint
+into a DBA.
+
+Otherwise, conversion to parity game (represented by the blue zone) is
+done using one of several algorithms specified by the =--algo= option.
+The game is then solved, producing a strategy if the game is realizable.
+
+If =ltlsynt= is in =--realizability= mode, the process stops here
+
+In synthesis mode, the strategy is first simplified.  How this is done
+can be fine-tuned with option =--simplify=:
+#+BEGIN_SRC sh :exports results
+ltlsynt --help | sed -n '/--simplify=/,/^$/p' | sed '$d'
+#+END_SRC
+#+RESULTS:
+:       --simplify=no|bisim|bwoa|sat|bisim-sat|bwoa-sat
+:                              simplification to apply to the controler (no)
+:                              nothing, (bisim) bisimulation-based reduction,
+:                              (bwoa) bissimulation-based reduction with output
+:                              assignment, (sat) SAT-based minimization,
+:                              (bisim-sat) SAT after bisim, (bwoa-sat) SAT after
+:                              bwoa.  Defaults to 'bwoa'.
+
+Finally, the strategy is encoded into [[http://fmv.jku.at/aiger/][AIGER]].  The =--aiger= option can
+take an argument to specify a type of encoding to use: by default it
+is =ite= for if-then-else, because it follows the structure of BDD
+used to encode the conditions in the strategy.  An alternative
+encoding is =isop= where condition are first put into
+irredundant-sum-of-product, or =both= if both encodings should be
+tried.  Additionally, these optiosn can accept the suffix =+ud= (use
+dual) to attempt to encode each condition and its negation and keep
+the smallest one, =+dc= (don't care) to take advantage of /don't care/
+values in the output, and one of =+sub0=, =+sub1=, or =+sub2= to test
+various grouping of variables in the encoding.  Multiple encodings can
+be tried by separating them using commas.  For instance
+=--aiger=isop,isop+dc,isop+ud= will try three different encodings.
+
+* Other useful options
+
+You can also ask =ltlsynt= to print to obtained parity game into
+[[https://github.com/tcsprojects/pgsolver][PGSolver]] format, with the flag =--print-pg=, or in the HOA format,
+using =--print-game-hoa=.  These flags deactivate the resolution of the
+parity game.  Note that if any of those flag is used with =--dot=, the game
+will be printed in the Dot format instead:
+
+#+NAME: examplegamedot
+#+BEGIN_SRC sh :exports code
+ltlsynt -f '(i1 & i2) <-> F(o1 & X(!o1))' --print-game-hoa --dot
+#+END_SRC
+#+BEGIN_SRC dot :file ltlsyntexgame.svg :var txt=examplegamedot :exports results
+  $txt
+#+END_SRC
+#+RESULTS:
+[[file:ltlsyntexgame.svg]]
+
+For benchmarking purpose, the =--csv= option can be used to record
+intermediate statistics about the resolution.
+
+The =--verify= option requests that the produced strategy or aiger
+circuit are compatible with the specification.  This is done by
+ensuring that they do not intersect the negation of the specification.
+
+* References
+
+The initial reduction from LTL to parity game is described in the
+following paper:
+
+- *Reactive Synthesis from LTL Specification with Spot*, /Thibaud Michaud/,
+  /Maximilien Colange/.  Presented in SYNT@CAV'18.  ([[https://www.lrde.epita.fr/dload/papers/michaud.18.synt.pdf][pdf]] | [[https://www.lrde.epita.fr/~max/bibtexbrowser.php?key=michaud.18.synt&bib=perso.bib][bib]])
+
+Further improvements are described in the following paper:
+
+- *Improvements to =ltlsynt=*, /Florian Renkin/, /Philipp Schlehuber/,
+  /Alexandre Duret-Lutz/, and /Adrien Pommellet/.  Presented at the
+  SYNT'21 workshop.  ([[https://www.lrde.epita.fr/~adl/dl/adl/renkin.21.synt.pdf][pdf]] | [[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#renkin.21.synt][bib]])
+
+Simplification of Mealy machines is discussed in the following papers:
+
+- *Effective reductions of Mealy machines*, /Florian Renkin/,
+  /Philipp Schlehuber-Caissier/, /Alexandre Duret-Lutz/, and /Adrien Pommellet/.
+  Presented at FORTE'22.  ([[https://www.lrde.epita.fr/~adl/dl/adl/renkin.22.forte.pdf][pdf]] | [[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#renkin.22.forte][bib]])
+- *The Mealy-machine reduction functions of Spot*, /Florian Renkin/,
+  /Philipp Schlehuber-Caissier/, /Alexandre Duret-Lutz/, and /Adrien Pommellet/.
+  Science of Computer Programming, 230(102995), August 2023. ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#renkin.23.fmsd][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/renkin.23.fmsd.pdf][pdf]])
+
+A more recent paper covering many aspects of =ltlsynt= is the following
+
+- *Dissecting ltlsynt*, /Florian Renkin/, /Philipp
+  Schlehuber-Caissier/, /Alexandre Duret-Lutz/, and Adrien Pommellet.
+  In Formal Methods in System Design, 2023.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#renkin.23.scp][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/renkin.23.scp.pdf][pdf]])
+
+#  LocalWords:  utf ltlsynt AIGER html args mapsto SRC acc aiger TLSF
+#  LocalWords:  UNREALIZABLE unrealizable SYNTCOMP realizability Proc
+#  LocalWords:  syfco ltlxba Zielonka's Thibaud Michaud Maximilien
+#  LocalWords:  Colange PGSolver

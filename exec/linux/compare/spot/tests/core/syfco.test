@@ -1,0 +1,54 @@
+#! /bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs || exit 1
+set -e
+
+# Test that we can pass a tlsf specification to ltlsynt.  This
+# only work if syfco is installed.
+
+(syfco --version) || exit 77
+
+cat >test.tlsf <<EOF
+INFO {
+  TITLE:       "example"
+  DESCRIPTION: "test case"
+  SEMANTICS:   Mealy
+  TARGET:      Mealy
+}
+MAIN {
+  INPUTS { in; }
+  OUTPUTS { out; }
+  GUARANTEE { G((in) <-> X(out)); }
+}
+EOF
+
+test REALIZABLE = `ltlsynt --tlsf test.tlsf --realizability`
+test UNREALIZABLE = `ltlsynt --tlsf test.tlsf --outs=foo --realizability`
+test UNREALIZABLE = `ltlsynt --outs=foo --tlsf test.tlsf --realizability`
+
+# --tlsf can be used several time
+ltlsynt --tlsf test.tlsf > out1
+ltlsynt --tlsf test.tlsf --tlsf test.tlsf > out2
+cat out1 out1 > out11
+diff out11 out2
+
+ltlsynt --tlsf test.tlsf --tlsf test.tlsf --print-game > pgame.hoa
+ltlsynt --from-pgame pgame.hoa > out3
+diff out2 out3

@@ -1,0 +1,9 @@
+Makefile.in
+Makefile
+lexer.cxx
+parser.cxx
+parser.c
+parser.h
+.deps
+.libs
+bddcalc

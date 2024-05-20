@@ -1,0 +1,281 @@
+The DiVinE 2 model checker
+[http://web.archive.org/web/20120723095042/http://divine.fi.muni.cz/index.html]
+used to have a specification language called DVE, for modelling
+processes synchonizing through channels
+[http://web.archive.org/web/20120723095115/http://divine.fi.muni.cz/language.html].
+
+A lot of models can be found in the BEEM database at
+http://paradise.fi.muni.cz/beem/
+
+The LTSmin group [https://ltsmin.utwente.nl/] patched
+DiVinE and to compile models as dynamic libraries. This dynamic
+library provides a very simple C interface (no C++) and extra
+information about state variables (name, type, possible values).
+They also distribute SpinS, a compiler for PROMELA models generating
+dynamic libraries with the same interface.
+
+Spot uses this interface so you will need to install their version of
+these tools to use Spot with DVE or PROMELA models.
+
+The source code for our interface is in spot/ltsmin/ and generates a
+separate library, libspotltsmin.so, that has to be linked in addition
+to libspot.so.  The current directory contains some testing code based
+on a toy modelchecker built upon the above interface: using it require
+an installation of DiVinE or SpinS (preferably both for testing
+purpose).
+
+
+Installation of DiVinE
+======================
+
+Use the following commands to compile and install the patched version
+of DiVinE.
+
+  git clone https://gitlab.lre.epita.fr/spot/divine-ltsmin-deb
+  cd divine-ltsmin-deb
+  mkdir _build && cd _build
+  cmake .. -DMURPHI=OFF -DHOARD=OFF -DGUI=OFF -DRX_PATH= -DCMAKE_INSTALL_PREFIX=$HOME/usr
+  make
+  make install
+
+The CMAKE_INSTALL_PREFIX variable is the equivalent of the --prefix
+option of configure scripts.  If you decide to install in $HOME/usr
+like I do, make sure that $HOME/usr/bin is in your PATH.  If you omit
+the CMAKE_INSTALL_PREFIX setting, it will default to /usr/local.
+
+If you are using MacOS, you must add option -DHOARD=OF to the cmake
+command line in order to  make it compile without errors. Also,
+DiVinE 2 only compiles with the GNU std C++ library; as a consequence,
+you must provide the option -DCMAKE_CXX_FLAGS="-stdlib=libstdc++" to
+the cmake command line.
+
+The above git repository is our own copy of the LTSmin fork of Divine,
+that we patched to generate Debian packages for amd64.  If you use
+our Debian repository [https://spot.lrde.epita.fr/install.html#Debian]
+you can actually install this version of divine with just:
+
+  apt-get install divine-ltsmin
+
+After installation, you can check that compilation works by running
+the following command on any DVE model.  It should create a file
+model.dve2C (which is a dynamic library).
+
+  divine compile --ltsmin model.dve
+
+
+Installation of SpinS
+======================
+
+The extended version of SpinJa is called SpinS and should be included
+with LTSmin.  You can download LTSmin from their website
+[http://ltsmin.utwente.nl/] and install it following the INSTALL
+instructions.
+
+To compile a promela model, simply run the following command:
+  spins model.pm
+
+It should create a dynamic library called model.pm.spins in the
+current directory.
+
+
+Usage with Spot
+===============
+
+  The function load_dve2() defined in dve2.hh in this directory will
+  accept either a model or its compiled version as file argument.  In
+  the former case, it will call "divine compile --ltsmin model.dve" or
+  "spins model.pm" depending on the file extension, only if a compiled
+  model with the corresponding file extension (.dve2C or .spins) does
+  not exist or is older.  Then it will load the compiled model
+  dynamically.
+
+  load_dve2() also requires a set of atomic propositions that should
+  be observed in the model.  These are usually the atomic propositions
+  that occur in the formula to verify, but it might be a larger set.
+
+  There are two kinds of atomic propositions, those that refer to the
+  state of a process, and those that compare the value of a variable.
+  Let's have some example on an excerpt of the beem-peterson.4.dve
+  model included in this directory:
+
+    byte pos[4];
+    byte step[4];
+
+    process P_0 {
+    byte j=0, k=0;
+    state NCS, CS, wait ,q2,q3;
+    init NCS;
+    trans
+     NCS -> wait { effect j = 1; },
+     wait -> q2  { guard j < 4; effect pos[0] = j;},
+     q2 -> q3 { effect step[j-1] = 0, k = 0; },
+     q3 -> q3 { guard k < 4 && (k == 0 || pos[k] < j); effect k = k+1;},
+     q3 -> wait { guard step[j-1] != 0 || k == 4; effect j = j+1;},
+     wait -> CS { guard j == 4; },
+     CS -> NCS { effect pos[0] = 0;};
+    }
+
+  The following atomic propositions could be used in LTL formula:
+
+    P_0.CS          Process P_0 is in state CS.
+    "pos[3] < 3"    Global variable pos[3] is less than 3.
+    "P_0.j >= 2"    Process P_0's variable j is greater or equal to 2.
+    P_0.j           This is equivalent to "P_0.j != 0".
+
+  Comparison operators available are "<", ">", ">=", "<=", "==", and
+  "!=".  The left operand should always be a variable and the right
+  operand should always be a number, so you cannot write something
+  like "P_0.j <= P_0.i".
+
+  Because the LTL parser knows nothing about the details of the
+  languages we interface with, every atomic proposition that cannot be
+  expressed using only alphanumeric characters (plus `_' and `.')
+  should be enclosed in double quote.
+
+  Caveat: "P_0.j >= 2" and " P_0.j>=2" (watch the spaces!) are
+  considered to be two distinct atomic propositions with the same
+  semantics.
+
+
+Examples
+========
+
+  Using the modelcheck program built into this directory, we can verify
+  that the critical section is accessed infinitely often by some
+  processes using:
+
+    % ./modelcheck --model beem-peterson.4.dve --formula '!GF(P_0.CS|P_1.CS|P_2.CS|P_3.CS)' --is-empty
+    2239039 unique states visited
+    0 strongly connected components in search stack
+    11449204 transitions explored
+    1024245 items max in DFS search stack
+    111081 pages allocated for emptiness check
+    no accepting run found
+
+  Process P_0 can starve, waiting to enter in critical section:
+
+     % ./modelcheck --model beem-peterson.4.dve --formula '!G(P_0.wait -> F P_0.CS)' --is-empty
+     3978 unique states visited
+     31 strongly connected components in search stack
+     4723 transitions explored
+     3302 items max in DFS search stack
+     1099 pages allocated for emptiness check
+     an accepting run exists (use -c to print it)
+
+   Variable pos[1] is not always < 3 (this formula makes no sense, it
+   is just to demonstrate the use of double quote).
+
+     % ./modelcheck --model beem-peterson.4.dve --formula '!G("pos[1] < 3")' --is-empty
+     130 unique states visited
+     61 strongly connected components in search stack
+     132 transitions explored
+     130 items max in DFS search stack
+     512 pages allocated for emptiness check
+     an accepting run exists (use -c to print it)
+
+
+Two state-compression techniques have been implemented as experiments.
+Prefer the -Z option if your model use only non-negative value less
+than 2^28, it is way faster than -z (which will work for all values).
+
+Activating state compression will often reduce runtime.  Compare:
+
+$ ./modelcheck --model beem-peterson.4.dve --formula '!GF(P_0.CS|P_1.CS|P_2.CS|P_3.CS)' --is-empty --timer
+
+2239039 unique states visited
+0 strongly connected components in search stack
+11449204 transitions explored
+1024245 items max in DFS search stack
+111081 pages allocated for emptiness check
+no accepting run found                       |    user time   |    sys. time   |      total     |
+                  name | ticks        % | ticks        % | ticks        % |   n
+-------------------------------------------------------------------------------
+  loading ltsmin model |     0      0.0 |     0      0.0 |     0      0.0 |   1
+       parsing formula |     0      0.0 |     0      0.0 |     0      0.0 |   1
+running emptiness chec |   672    100.0 |    13    100.0 |   685    100.0 |   1
+   translating formula |     0      0.0 |     0      0.0 |     0      0.0 |   1
+-------------------------------------------------------------------------------
+                 TOTAL |   672    100.0 |    13    100.0 |   685    100.0 |
+
+
+$ ./modelcheck --model beem-peterson.4.dve --formula '!GF(P_0.CS|P_1.CS|P_2.CS|P_3.CS)' --is-empty --timer -z 2
+
+2239039 unique states visited
+0 strongly connected components in search stack
+11449204 transitions explored
+1024245 items max in DFS search stack
+85991 pages allocated for emptiness check
+no accepting run found
+		       |    user time   |    sys. time   |      total     |
+                  name | ticks        % | ticks        % | ticks        % |   n
+-------------------------------------------------------------------------------
+  loading ltsmin model |    40      6.1 |     2     16.7 |    42      6.2 |   1
+       parsing formula |     0      0.0 |     0      0.0 |     0      0.0 |   1
+running emptiness chec |   620     93.8 |    10     83.3 |   630     93.6 |   1
+   translating formula |     1      0.2 |     0      0.0 |     1      0.1 |   1
+-------------------------------------------------------------------------------
+                 TOTAL |   661    100.0 |    12    100.0 |   673    100.0 |
+
+
+It's a 14% speedup in this case, be the improvement can be more
+important on larger models.
+
+The parallel deadlock detection has also been implemented is this tool:
+
+% ./modelcheck --model beem-peterson.4.dve   --has-deadlock  --csv -p 1
+
+       Thread #0: on CPU 0
+
+       ---- Thread number : 0
+       1119560 unique states visited
+       3864896 transitions explored
+       78157 items max in DFS search stack
+       1316 milliseconds
+       Find following the csv: thread_id,walltimems,type,states,transitions
+       @th_0,1316,NO-DEADLOCK,1119560,3864896
+
+       Summary :
+       No no deadlock found!
+       Find following the csv: model,walltimems,memused,type,states,transitions
+       #beem-peterson.4.dve,1317,103681,NO-DEADLOCK,1119560,3864896
+
+
+Running the same algorithm with 3 threads save 40% of the computation time:
+
+$ ./modelcheck --model beem-peterson.4.dve   --has-deadlock  --csv -p 3
+
+       Thread #1: on CPU 1
+       Thread #2: on CPU 2
+       Thread #0: on CPU 0
+
+       ---- Thread number : 0
+       417923 unique states visited
+       1418775 transitions explored
+       56403 items max in DFS search stack
+       819 milliseconds
+       Find following the csv: thread_id,walltimems,type,states,transitions
+       @th_0,819,NO-DEADLOCK,417923,1418775
+
+       ---- Thread number : 1
+       526175 unique states visited
+       1813440 transitions explored
+       69322 items max in DFS search stack
+       819 milliseconds
+       Find following the csv: thread_id,walltimems,type,states,transitions
+       @th_1,819,NO-DEADLOCK,526175,1813440
+
+       ---- Thread number : 2
+       404501 unique states visited
+       1411645 transitions explored
+       61888 items max in DFS search stack
+       819 milliseconds
+       Find following the csv: thread_id,walltimems,type,states,transitions
+       @th_2,819,NO-DEADLOCK,404501,1411645
+
+       Summary :
+       No no deadlock found!
+       Find following the csv: model,walltimems,memused,type,states,transitions
+       #beem-peterson.4.dve,820,158211,NO-DEADLOCK,404501,1411645
+
+One can observe that when possible (i.e., if the OS allows it) we try
+has much as possible to pin threads to a CPU.

@@ -1,0 +1,156 @@
+#! /bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs || exit 1
+
+set -e
+
+# From SYNTCOMP
+cat >aut7.hoa <<EOF
+HOA: v1
+name: "GFa | G(b <-> Xa)"
+Start: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+AP: 2 "a" "b"
+controllable-AP: 1
+properties: explicit-labels trans-labels
+--BODY--
+State: 0
+ [t] 1
+ [1] 2
+ [!1] 3
+State: 1 "GFa"
+ [0] 1 {0}
+ [!0] 1
+State: 2 "a & G(b <-> Xa)" {0}
+ [0&1] 2
+ [0&!1] 3
+State: 3 "!a & G(b <-> Xa)" {0}
+ [!0&1] 2
+ [!0&!1] 3
+--END--
+EOF
+
+test UNREALIZABLE = `ltlsynt --realizability --from-pgame aut7.hoa`
+
+grep -v controllable-AP aut7.hoa > aut7b.hoa
+run 2 ltlsynt --realizability --from-pgame aut7b.hoa 2>stderr
+grep 'aut7b.*controllable-AP' stderr
+
+
+# From SYNTCOMP
+cat >UnderapproxDemo2.ehoa <<EOF
+HOA: v1
+States: 4
+Start: 0
+AP: 4 "u0y0x" "u0y0y" "p0p0p0x" "p0p0p0y"
+controllable-AP: 1 0
+acc-name: parity max even 3
+Acceptance: 3 Inf(2) | (Fin(1) & Inf(0))
+properties: trans-labels explicit-labels trans-acc colored complete
+properties: deterministic
+--BODY--
+State: 0
+[!0&1&2&!3 | 0&!1&2&!3] 1 {1}
+[!0&1&!2&!3 | 0&!1&!2&!3] 0 {2}
+[!0&1&3 | 0&!1&3] 2 {1}
+[!0&!1 | 0&1] 3 {1}
+State: 1
+[!0&1&!3 | 0&!1&!3] 1 {1}
+[!0&1&3 | 0&!1&3] 2 {1}
+[!0&!1 | 0&1] 3 {1}
+State: 2
+[!0&1 | 0&!1] 2 {2}
+[!0&!1 | 0&1] 3 {1}
+State: 3
+[t] 3 {1}
+--END--
+EOF
+
+test UNREALIZABLE = `ltlsynt --realizability --from-pgame UnderapproxDemo2.ehoa`
+
+# From SYNTCOMP
+cat >starve.ehoa <<EOF
+HOA: v1
+name: "G(!r | Fg)"
+States: 2
+Start: 0
+AP: 2 "r" "g"
+acc-name: parity min odd 3
+Acceptance: 3 Fin(0) & (Inf(1) | Fin(2))
+properties: trans-labels explicit-labels trans-acc colored complete
+properties: deterministic stutter-invariant
+controllable-AP: 1
+--BODY--
+State: 0
+[!0 | 1] 0 {1}
+[0&!1] 1 {2}
+State: 1
+[1] 0 {1}
+[!1] 1 {2}
+--END--
+EOF
+
+test REALIZABLE = `ltlsynt --realizability --from-pgame starve.ehoa`
+
+cat >expect <<EOF
+REALIZABLE
+HOA: v1
+States: 1
+Start: 0
+AP: 2 "r" "g"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic
+controllable-AP: 1
+--BODY--
+State: 0
+[!0] 0
+[0&1] 0
+--END--
+EOF
+ltlsynt --from-pgame starve.ehoa >results
+diff expect results
+
+ltlsynt --realizability --from-pgame starve.ehoa \
+        --from-pgame UnderapproxDemo2.ehoa \
+        --from-pgame aut7.hoa --csv=out.csv >result || :
+cat >expect <<EOF
+REALIZABLE
+UNREALIZABLE
+UNREALIZABLE
+EOF
+diff result expect
+cat out.csv
+test 4 = `wc -l < out.csv`
+
+ltlsynt --from-pgame starve.ehoa \
+        --from-pgame UnderapproxDemo2.ehoa \
+        --from-pgame aut7.hoa --csv=out.csv >result || :
+test 4 = `wc -l < out.csv`
+cut -d, -f 9,10,11,12,13 <out.csv >right
+end='"strat_num_states","strat_num_edges"'
+cat >expect <<EOF
+"realizable","dpa_num_states","dpa_num_states_env",$end
+1,4,2,1,2
+0,9,4,0,0
+0,10,5,0,0
+EOF
+diff right expect

@@ -1,0 +1,63 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs
+
+set -e
+
+# For issue #521.
+
+# The following formula used to take hours or days to translate with
+# default settings (nobody was patient enough to wait) because
+# automata-based containment checks were run to exprop=1.
+
+cat >formula.ltl <<'EOF'
+!a & !b & !c & !d & e & f & G(g & h & i & j & ((!c & !d) | (!c & d) |
+(c & !d) | (c & d)) & ((!a & !b) | (!a & b) | (a & !b) | (a & b)) &
+(k -> !l) & (f -> k) & (l -> !k) & (f -> !l) & (l -> !f) & (m -> !n) &
+(m -> o) & (p -> !q) & (m -> !r) & (p -> !m) & (s -> !e) & (r -> !s) &
+(e -> n) & (m -> !t) & (t -> !s) & (q -> u) & (o -> !t) & (m -> !p) &
+(u -> o) & (p -> !v) & (q -> v) & (n -> w) & (x -> !s) & (u -> !t) &
+(p -> w) & (u -> !p) & (t -> n) & (m -> !x) & (q -> !e) & (p -> !u) &
+(s -> !n) & (s -> o) & (s -> m) & (v -> !e) & (x -> n) & (s -> !r) &
+(e -> x) & (e -> !q) & (n -> r) & (w -> !s) & (m -> q) & (s -> !t) &
+(u -> !x) & (e -> p) & (e -> !m) & (s -> !p) & (p -> r) & (e -> !o) &
+(e -> !v) & (t -> x) & (q -> o) & (q -> !n) & (t -> !q) & (r -> !m) &
+(t -> p) & (t -> !m) & (s -> !x) & (v -> o) & (e -> w) & (n -> !s) &
+(q -> !t) & (t -> !o) & (x -> !q) & (e -> !u) & (q -> !p) & (t -> !v) &
+(p -> !s) & (m -> u) & (x -> !m) & (v -> !t) & (s -> q) & (v -> !p) &
+(m -> v) & (r -> w) & (t -> w) & (e -> t) & (e -> r) & (q -> !x) &
+(t -> !u) & (p -> n) & (m -> !e) & (u -> v) & (x -> w) & (o -> !e) &
+(x -> !u) & (s -> !w) & (u -> !e) & (t -> r) & (s -> u) & (e -> !s) &
+(s -> v) & (n -> !q) & (x -> r) & (n -> !m) & (p -> x) & ((!a & !b &
+!c & !d) | (!a & b & !c & d) | (a & !b & c & !d) | (a & b & c & d)) &
+((!c & !d & k & o) -> X(!c & d)) & ((!c & !d & l & v & !(k & o)) ->
+X(!c & d)) & ((!c & !d) -> ((!(k & o) & !(l & v)) -> X(!c & !d))) &
+((!c & d & k & t) -> X(!c & !d)) & ((!c & d & l & p & !(k & t)) -> X(!c
+& !d)) & ((!c & d & k & u & !(l & p & !(k & t))) -> X(c & !d)) & ((!c &
+d & l & q & !(k & u & !(l & p & !(k & t)))) -> X(c & !d)) & ((!c & d) ->
+((!(k & t) & !(l & p) & !(k & u) & !(l & q)) -> X(!c & d))) & ((c & !d
+& k & x) -> X(!c & d)) & ((c & !d & l & n & !(k & x)) -> X(!c & d)) &
+((c & !d & k & m & !(l & n & !(k & x))) -> X(c & d)) & ((c & !d & l &
+s & !(k & m & !(l & n & !(k & x)))) -> X(c & d)) & ((c & !d) -> ((!(k &
+x) & !(l & n) & !(k & m) & !(l & s)) -> X(c & !d))) & ((c & d & k & r)
+-> X(c & !d)) & ((c & d & l & w & !(k & r)) -> X(c & !d)) & ((c & d) ->
+((!(k & r) & !(l & w)) -> X(c & d))))
+EOF
+test 5 = `tr -d "\r\n" < formula.ltl | ltl2tgba --stats=%s`

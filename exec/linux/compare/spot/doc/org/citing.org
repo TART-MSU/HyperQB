@@ -1,0 +1,131 @@
+# -*- coding: utf-8 -*-
+#+TITLE: Citing Spot
+#+DESCRIPTION: Paper related to Spot
+#+INCLUDE: setup.org
+#+HTML_LINK_UP: index.html
+
+* Generic reference
+
+If you need to cite the Spot project, the latest tool paper about
+it is the following reference:
+
+- *From Spot 2.0 to Spot 2.10: What's new?*, /Alexandre Duret-Lutz/,
+  /Etienne Renault/, /Maximilien Colange/, /Florian Renkin/,
+  /Alexandre Gbaguidi Aisse/, /Philipp Schlehuber-Caissier/, /Thomas
+  Medioni/, /Antoine Martin/, /Jérôme Dubois/, /Clément Gillard/, and
+  Henrich Lauko/. In Proc. of CAV'22, LNCS 13372, pp. 174--187.
+  Haifa, Israel, Aug. 2022.
+  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#duret.22.cav][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/duret.22.cav.pdf][pdf]])
+
+#+begin_note
+  Tools evolve while published papers don't.  Please always specify
+  the version of Spot (or any other tool) you are using when citing it
+  in a paper.  Future versions might have different behaviors.
+#+end_note
+
+* Other, more specific, references
+
+Alternatively, you may also like to reference these papers to
+be more specific about a particular aspect of Spot.
+
+- *Manipulating LTL formulas using Spot 1.0*, /Alexandre Duret-Lutz/.
+  In Proc. of ATVA'13, LNCS 8172, pp. 442--445.  Hanoi, Vietnam,
+  Oct. 2013.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#duret.13.atva][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/duret.13.atva.pdf][pdf]] | [[https://www.lrde.epita.fr/~adl/dl/adl/duret.13.atva.slides.pdf][slides]])
+
+  This focuses on the tools [[file:ltlfilt.org][=ltlfilt=]], [[file:randltl.org][=randltl=]], and [[file:ltlcross.org][=ltlcross=]].
+
+- *LTL translation improvements in Spot 1.0*, /Alexandre Duret-Lutz/.
+  Int. J. on Critical Computer-Based Systems, 5(1/2), pp. 31--54,
+  March 2014.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#duret.14.ijccbs][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/duret.14.ijccbs.draft.pdf][pdf]])
+
+  This describes the translation from LTL to TGBA used by the
+  [[file:ltl2tgba.org][=ltl2tgba=]] tool.
+
+- *Model checking using generalized testing automata*, /Ala Eddine Ben
+  Salem/, /Alexandre Duret-Lutz/, and /Fabrice Kordon/.  In
+  Transactions on Petri Nets and Other Models of Concurrency (ToPNoC
+  VI), LNCS 7400, p. 94--112, 2012.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#bensalem.12.topnoc][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/bensalem.12.topnoc.pdf][pdf]])
+
+  This describes the generalized testing automata produced by the
+  [[file:ltl2tgta.org][=ltl2tgta=]] tool.
+
+- *SAT-based minimization of deterministic ω-automata*, /Souheib
+  Baarir/ and /Alexandre Duret-Lutz/.  In Proc. of LPAR'15, LNCS 9450,
+  pp. 79--87.  Nov. 2015.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#baarir.15.lpar][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/baarir.15.lpar.pdf][pdf]])
+
+  This describes our [[file:satmin.org][SAT-based minimization technique]], working with
+  deterministic automata of arbitrary acceptance condition.
+
+- *Practical stutter-invariance checks for ω-regular languages*,
+  /Thibaud Michaud/ and /Alexandre Duret-Lutz/.  In Proc. of SPIN'15,
+  LNCS 9232, pp. 84--101.  Aug. 2015.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#michaud.15.spin][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/michaud.15.spin.pdf][pdf]])
+
+  Explains how the stutter-invariance checks of Spot are implemented.
+
+- *The Hanoi Omega-Automata format*, /Tomáš Babiak/, /František
+  Blahoudek/, /Alexandre Duret-Lutz/, /Joachim Klein/, /Jan
+  Křetínský/, /David Müller/, /David Parker/, and /Jan Strejček/.  In
+  Proc. of CAV'15, LNCS 9206, pp. 479--486.  July 2015.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#babiak.15.cav][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/babiak.15.cav.pdf][pdf]] |
+  [[https://www.lrde.epita.fr/~adl/dl/adl/babiak.15.cav.slides.pdf][slides]] | [[https://www.lrde.epita.fr/~adl/dl/adl/babiak.15.cav.poster.pdf][poster]])
+
+  Presents the automaton format [[file:hoa.org][supported by Spot]] and [[http://adl.github.io/hoaf/support.html][several other
+  tools]].
+
+- *Generic Emptiness Check for Fun and Profit*,
+  /Christel Baier/, /František Blahoudek/, /Alexandre Duret-Lutz/,
+  /Joachim Klein/, /David Müller/, and /Jan Strejček/.
+  In. Proc. of ATVA'19, LNCS 11781, pp. 445--461, Oct 2019.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#baier.19.atva][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/baier.19.atva.pdf][pdf]] |
+  [[https://www.lrde.epita.fr/~adl/dl/adl/baier.19.atva.slides.mefosyloma.pdf][slides1]] | [[https://www.lrde.epita.fr/~adl/dl/adl/baier.19.atva.slides.pdf][slides2]])
+
+  Presents the generic emptiness-check implemented in Spot.
+
+- *Practical Applications of the Alternating Cycle Decomposition*,
+  /Antonio Casares/, /Alexandre Duret-Lutz/, /Klara J. Meyer/, /Florian Renkin/,
+  and /Salomon Sickert/.
+  In. Proc. of TACAS'22, LNCS 13244, pp. 99--117, Apr 2022.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#casares.22.tacas][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/casares.22.tacas.pdf][pdf]] |
+  [[https://www.lrde.epita.fr/~adl/dl/adl/casares.22.tacas.slides.pdf][slides1]] | [[https://www.lrde.epita.fr/~adl/dl/adl/casares.22.tacas.slides2.pdf][slides2]])
+
+  Shows applications of the ACD implemented in Spot.
+
+- *Dissecting ltlsynt*,
+  /Florian Renkin/, /Philipp Schlehuber-Caissier/, /Alexandre Duret-Lutz/,
+  and /Adrien Pommellet/.
+  In Formal Methods in System Design, 2023.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#renkin.23.scp][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/renkin.23.scp.pdf][pdf]])
+
+  Discuss the implementation of [[file:ltlsynt.org][=ltlsynt=]].
+
+* Obsolete references
+
+- *Spot 2.0 — a framework for LTL and ω-automata manipulation*,
+  /Alexandre Duret-Lutz/, /Alexandre Lewkowicz/, /Amaury Fauchille/,
+  /Thibaud Michaud/, /Etienne Renault/, and /Laurent Xu/.  In Proc.
+  of ATVA'16, LNCS 9938, pp. 122--129.  Chiba, Japan, Oct. 2016.
+  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#duret.16.atva2][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/duret.16.atva2.pdf][pdf]])
+
+  This provides a quick overview of the entire project (the features
+  of the library, [[file:tools.org][the tools]], the Python bindings), and provides many
+  references detailing more specific aspects.
+
+- *Spot: an extensible model checking library using transition-based
+  generalized Büchi automata*, /Alexandre Duret-Lutz/ and /Denis
+  Poitrenaud/. In Proc. of MASCOTS'04, pp. 76--83.  Volendam, The
+  Netherlands, Oct. 2004. Volendam.  ([[https://www.lrde.epita.fr/~adl/dl/adl_bib.html#duret.04.mascots][bib]] | [[https://www.lrde.epita.fr/~adl/dl/adl/duret.04.mascots.draft.pdf][pdf]])
+
+  For a while, this used to be the only paper presenting Spot as a
+  model-checking library.
+
+- *Reactive Synthesis from LTL Specification with Spot*,
+  /Thibaud Michaud/, /Maximilien Colange/.
+  In Proc. of SYNT@CAV'18.  ([[https://www.lrde.epita.fr/~max/bibtexbrowser.php?key=michaud.18.synt&bib=perso.bib][bib]] | [[https://www.lrde.epita.fr/dload/papers/michaud.18.synt.pdf][pdf]])
+
+  Was the first presentation of the tool [[file:ltlsynt.org][=ltlsynt=]].  The paper
+  *Dissecting ltlsynt*, mentioned earlier, is more up-to-date.
+
+
+#  LocalWords:  utf html Alexandre Duret Lutz Lewkowicz Amaury Xu pdf
+#  LocalWords:  Fauchille Thibaud Michaud Etienne Proc ATVA LNCS TGBA
+#  LocalWords:  ltlfilt randltl ltlcross tgba Eddine Fabrice Kordon
+#  LocalWords:  Petri ToPNoC tgta Souheib Baarir LPAR Tomáš Babiak
+#  LocalWords:  František Blahoudek Joachim Křetínský Müller Strejček
+#  LocalWords:  CAV Maximilien Colange ltlsynt Christel Baier
+#  LocalWords:  Poitrenaud Volendam

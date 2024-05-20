@@ -1,0 +1,114 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs
+set -e
+
+# all tools should be able to use %l as serial number for their output
+
+# Make sure serial numbers count the output automata
+randaut -n10 --name='aut %l' 2 |
+  autfilt -N3..5 --name='%M/out %l' |
+  autfilt --stats=%M >out
+cat >exp <<EOF
+aut 2/out 0
+aut 3/out 1
+aut 4/out 2
+EOF
+diff out exp
+
+# Create different files
+randaut -n3 2 -oaut-%l.hoa
+test -f aut-0.hoa
+test -f aut-1.hoa
+test -f aut-2.hoa
+
+# Split an output
+cat aut-0.hoa aut-1.hoa aut-2.hoa > aut.hoa
+rm aut-?.hoa
+autfilt aut.hoa -o aut-%l.hoa
+
+# check serial output in various tools
+genaut --m-nba=2..3 --name='%F=%L/%l' | autfilt --stats=%M >out
+genltl --and-f=2..3 --stats=%F=%L/%l >> out
+ltl2tgba a b --name=%f/%l | autfilt --stats=%M >> out
+ltldo -f a -f b ltl2tgba --name=%f/%l | autfilt --stats=%M >> out
+genltl --or-g=2..5 --stats=%L,%l,%f |
+  ltlfilt -F -/3 -N 2..3 --stats='%<,%l' >>out
+randltl -n10 3 --stats=%l,%f |
+  ltlfilt -F -/2 -N 2..3 --stats='%<,%l' >> out
+cat >exp<<EOF
+m-nba=2/0
+m-nba=3/1
+and-f=2/0
+and-f=3/1
+a/0
+b/1
+a/0
+b/1
+3,1,0
+4,2,1
+1,0
+2,1
+EOF
+diff -u out exp
+
+
+# Split on more than 1024 files.  In Spot < 2.12 this was likely
+# to run out of file descriptors, because they weren't closed.
+randaut -Q3 2 -n 2000 -o randaut-%l.hoa
+test 2000 = `ls -l randaut-*.hoa | wc -l`
+# likewise for LTL formulas
+randltl 2 -n 2000 -o randltl-%l.ltl
+test 2000 = `ls -l randltl-*.ltl | wc -l`
+
+
+# Test the code path that works that has to reopen files
+randltl -n100 --tree-size 1 26 --allow-dups -o '%f'.ltl --format=pass1
+randltl -n100 --tree-size 1 26 --allow-dups -o '>>%f'.ltl --format=pass2
+(uniq -c p1.ltl; uniq -c p20.ltl) | sed 's/^ *\([0-9][0-9]*\)  */\1 /g' >out
+cat >expected <<EOF
+4 pass1
+4 pass2
+5 pass1
+5 pass2
+EOF
+diff out expected
+
+# The case where the output filename is a computed "-".
+ltl2tgba 1 --name '-' > naut-.hoa
+for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+  ltl2tgba 1 --name "file$i" > naut$i.hoa
+done
+autfilt naut*.hoa naut*.hoa --output='>>%M' --format=%M > stdout
+cat >expected <<EOF
+-
+-
+EOF
+diff stdout expected
+cat >expected7 <<EOF
+file7
+file7
+EOF
+diff file7 expected7
+cat >expected15 <<EOF
+file15
+file15
+EOF
+diff file15 expected15

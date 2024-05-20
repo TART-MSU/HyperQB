@@ -1,0 +1,78 @@
+#! /bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# More checks for ltlfilt
+
+. ./defs || exit 1
+
+set -e
+
+cat >formulas.ltl <<EOF
+G(i1 <-> Xo1)
+F(i1 xor i2) <-> F(o1)
+i1 <-> F(o1 xor o2)
+F(i1) <-> G(o2)
+EOF
+
+ltlsynt --ins=i1,i2 -F formulas.ltl -f 'o1 & F(i1 <-> o2)' -q --csv=out.csv &&\
+    exit 2
+test $? -eq 1 || exit 2
+
+test -z "$PYTHON" && exit 77
+
+cat >test.py <<EOF
+import sys
+try:
+  import pandas
+  import numpy as np
+except ImportError:
+  sys.exit(77)
+
+x = pandas.read_csv("out.csv")
+x.to_csv('filtered.csv',
+         columns=('formula', 'algo', 'realizable', 'strat_num_states'),
+         index=False)
+EOF
+
+# will exit 77 if panda is not installed
+$PYTHON test.py
+
+cat >expected <<EOF
+formula,algo,realizable,strat_num_states
+G(i1 <-> Xo1),lar,1,3
+F(i1 xor i2) <-> Fo1,lar,1,2
+i1 <-> F(o1 xor o2),lar,1,3
+Fi1 <-> Go2,lar,0,0
+o1 & F(i1 <-> o2),lar,1,2
+EOF
+
+diff filtered.csv expected
+
+# ltlfilt should be able to read the first columns
+mv filtered.csv input.csv
+ltlsynt --ins=i1,i2 -F input.csv/-1 --csv=out.csv -q && exit 2
+test $? -eq 1
+$PYTHON test.py
+diff filtered.csv expected
+
+grep -v 0,0 filtered.csv >input.csv
+ltlsynt --ins=i1,i2 -F input.csv/-1 --csv=out.csv -q || exit 2
+$PYTHON test.py
+diff filtered.csv input.csv

@@ -1,0 +1,62 @@
+#! /bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs || exit 1
+
+set -x
+
+ltlsynt --ins=a,c --outs=b -f 'GF(a <-> XXXc) <-> GFb' --print-game-hoa >out
+grep spot-state-player: out
+autfilt out >out2
+diff out out2
+ltlsynt --ins=a,c --outs=b -f 'GF(a <-> XXXc) <-> GFb' --print-game-hoa=l >out3
+test 1 = `wc -l < out3`
+cmp out out3 && exit 1
+autfilt out3 >out2
+diff out out2
+
+autfilt --dot out3 | grep diamond
+
+cat <<EOF >bug.hoa
+HOA: v1 States: 11 Start: 3 AP: 3 "a" "b" "c"
+acc-name: Streett 1 Acceptance: 2 Fin(0) | Inf(1) spot-state-player: 0
+0 0 0 1 1 1 1 1 1 --BODY-- State: 0 [t] 4 {0} State: 1 [t] 5 {0}
+State: 2 [0] 6 {0} [!0] 7 {0} State: 3 [0] 8 {0} [!0] 5 {0} State: 4
+[t] 0 {1} State: 5 [!1] 0 {0} [1] 1 {0} State: 6 [t] 2 {0} State: 7
+[t] 0 {0} State: 8 [!1] 2 {0} [1] 3 {1} State: 9 [t] 10 {0} State: 10
+[t] 9 {0} --END--
+EOF
+autfilt bug.hoa 2> error && exit 1
+cat error
+grep 'bug.hoa:2.69-68:.* has 11 states.*state-player has 10 entries' error
+
+cat <<EOF >bug2.hoa
+HOA: v1 States: 11 Start: 3 AP: 3 "a" "b" "c"
+acc-name: Streett 1 Acceptance: 2 Fin(0) | Inf(1) spot-state-player: 0
+0 0 0 1 3 1 1 a 1 0--BODY-- State: 0 [t] 4 {0} State: 1 [t] 5 {0}
+State: 2 [0] 6 {0} [!0] 7 {0} State: 3 [0] 8 {0} [!0] 5 {0} State: 4
+[t] 0 {1} State: 5 [!1] 0 {0} [1] 1 {0} State: 6 [t] 2 {0} State: 7
+[t] 0 {0} State: 8 [!1] 2 {0} [1] 3 {1} State: 9 [t] 10 {0} State: 10
+[t] 9 {0} --END--
+EOF
+autfilt bug2.hoa 2> error && exit 1
+cat error
+grep 'bug2.hoa:3.9: player should be 0 or 1' error
+grep 'bug2.hoa:3.15:.*unexpected' error
+grep 'bug2.hoa:2.51-3.13: ignoring state-player.* 8 entries.* 11 states' error

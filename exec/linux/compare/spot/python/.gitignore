@@ -1,0 +1,14 @@
+.deps
+.libs
+Makefile
+Makefile.in
+*.la
+buddy.py*
+*.lo
+*.loT
+*_wrap.*
+*.pyc
+*/spotimg
+spot/impl.py
+spot/ltsmin.py
+spot/gen.py

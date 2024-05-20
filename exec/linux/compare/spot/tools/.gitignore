@@ -1,0 +1,13 @@
+ar-lib
+depcomp
+install-sh
+missing
+mkinstalldirs
+py-compile
+config.guess
+config.sub
+ltmain.sh
+compile
+ylwrap
+x-to-1
+test-driver

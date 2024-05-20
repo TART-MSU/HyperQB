@@ -1,0 +1,334 @@
+# -*- coding: utf-8 -*-
+#+TITLE: Printing an automaton in "BA format"
+#+DESCRIPTION: Code example for converting HOA into BA format
+#+INCLUDE: setup.org
+#+HTML_LINK_UP: tut.html
+#+PROPERTY: header-args:sh :results verbatim :exports both
+#+PROPERTY: header-args:python :results output :exports both
+#+PROPERTY: header-args:C+++ :results verbatim
+
+The [[https://languageinclusion.org/doku.php?id=tools#the_ba_format][BA format]] is a textual representation of a Büchi automaton with
+letter-based alphabet, and supported by tools like [[https://github.com/Mazzocchi/FORKLIFT][FORKLIFT]], [[https://languageinclusion.org/doku.php?id=tools][RABIT]],
+[[http://goal.im.ntu.edu.tw/wiki/doku.php][Goal,]] or [[https://iscasmc.ios.ac.cn/roll/doku.php?id=start][ROLL]].  It looks as follows:
+
+#+BEGIN_SRC dot :file tut25-aut.svg :exports results
+digraph "" {
+  rankdir=LR
+  label=<[Büchi]>
+  labelloc="t"
+  node [shape="circle"]
+  node [style="filled", fillcolor="#ffffa0"]
+  fontname="Lato"
+  node [fontname="Lato"]
+  edge [fontname="Lato"]
+  node[fontsize=12] fontsize=12 stylesheet="spot.css" edge[arrowhead=vee, arrowsize=.7, fontsize=12]
+  I [label="", style=invis, width=0]
+  I -> 1
+  1 [label=<s₁>, peripheries=2]
+  2 [label=<s₂>, peripheries=2]
+  3 [label=<s₃>]
+  1 -> 2 [label=<ℓ₁>]
+  2 -> 1 [label=<ℓ₃>]
+  2 -> 3 [label=<ℓ₂>]
+  3 -> 1 [label=<ℓ₃>]
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:tut25-aut.svg]]
+
+#+begin_example
+s₁
+ℓ₁,s₁->s₂
+ℓ₃,s₂->s₁
+ℓ₂,s₂->s₃
+ℓ₃,s₃->s₁
+s₁
+s₂
+#+end_example
+
+The first line, ~s₁~ represents the initial state, the next block of
+lines of the form ~letters,src->dst~ represent the transitions of the
+automaton, and the last block of lines (containing ~s₁~ and ~s₂~ in
+the above example) lists the accepting states of the automaton.
+
+In this format, the letters and the states are arbitrary strings
+that do not include the characters ~,~ or ~-~, or ~>~.  The initial
+state can be omitted (the source of the first transition is then
+assumed to be initial), and the list of accepting states may be empty.
+
+Spot has no support for letter-based alphabet (instead it uses boolean
+formulas over a set of atomic propositions), hence Spot has no support
+for this format as input.
+
+As an example of [[file:tut21.org][how to custom print an automaton]], let us write a
+small tool that will convert any Büchi automaton that Spot can read
+(e.g., a neverclaim from Spin, or an HOA file) into this "BA format".
+
+Consider the following Büchi automaton obtained from the LTL formula
+=a W G(b->c)=.
+
+#+NAME: tut25ex1
+#+BEGIN_SRC sh :exports code
+ltl2tgba -B "a W G(b->c)" -d
+#+END_SRC
+#+BEGIN_SRC dot :file tut25ex1.svg :var txt=tut25ex1 :exports results
+$txt
+#+END_SRC
+
+#+RESULTS:
+[[file:tut25ex1.svg]]
+
+To create letters out of those formula labels, one trick is to split the transitions over
+the $2^{\{a,b,c\}}$ possible valuations.
+
+#+NAME: tut25ex2
+#+BEGIN_SRC sh :exports code
+ltl2tgba -B "a W G(b->c)" | autfilt --split-edges -d
+#+END_SRC
+#+BEGIN_SRC dot :file tut25ex2.svg :var txt=tut25ex2 :exports results
+$txt
+#+END_SRC
+
+#+RESULTS:
+[[file:tut25ex2.svg]]
+
+Then each label can now be considered as a letter.
+
+* Conversion in Python
+
+
+#+NAME: toba.py
+#+begin_src python :exports code :eval no
+  #!/usr/bin/env python3
+  import spot, sys
+
+  # Read the input automaton from standard input, or from a supplied filename.
+  argc = len(sys.argv)
+  if argc < 2:
+    filename = "-"
+  elif argc == 2:
+    filename = sys.argv[1]
+  else:
+     print("pass a single filename, or pipe to stdin", file=sys.stderr)
+     exit(1)
+
+  aut = spot.automaton(filename)
+
+  # Make sure the acceptance condition is Büchi.  Alternatively,
+  # allow "t" acceptance (where every state is accepting), since we
+  # can interpret this as a Büchi automaton in which all states are
+  # marked as accepting.
+  acc = aut.acc()
+  if not (acc.is_buchi() or acc.is_t()):
+     print(f"unsupported acceptance: {acc.get_acceptance()}", file=sys.stderr)
+     exit(1)
+
+  # Transition-based acceptance is not supported by this format;
+  # convert to state-based if it isn't already.
+  aut = spot.sbacc(aut)
+
+  # We want one minterm per edge, as those will become letters
+  aut = spot.split_edges(aut)
+
+  # Now simply output the automaton in the BA format
+  print(aut.get_init_state_number())
+  for e in aut.edges():
+      print(f"{e.cond.id()},{e.src}->{e.dst}")
+  for s in range(aut.num_states()):
+      if acc.accepting(aut.state_acc_sets(s)):
+         print(s)
+#+end_src
+
+#+RESULTS:
+
+Let's assume the above script has been saved as [[file:toba.py][=toba.py=]].
+
+#+begin_src sh :noweb yes :results silent :exports results
+cat >toba.py <<'EOF'
+<<toba.py>>
+EOF
+chmod 0755 toba.py
+#+end_src
+
+We can now convert our previous example in BA format.
+
+#+begin_src sh
+ltl2tgba -B "a W G(b->c)" | ./toba.py
+#+end_src
+
+#+RESULTS:
+#+begin_example
+1
+19,0->0
+21,0->0
+22,0->0
+23,0->0
+24,0->0
+10,0->0
+19,1->0
+21,1->0
+22,1->0
+23,1->1
+24,1->1
+25,1->1
+10,1->1
+0
+1
+#+end_example
+
+The BDD ~e.cond~ that encodes the Boolean formula labelling edge ~e~
+is printed using ~e.cond.id()~ which is the integer identifier
+that uniquely denotes each formula.  This identifier is good enough to
+make letters unique and keep the file short.  However, if you prefer to
+print the formula instead, replace =e.cond.id()= by
+=spot.bdd_format_formula(aut.get_dict(), e.cond)=.
+
+* Conversion in C++
+
+Here is a C++ function that prints =aut= on =out= in BA format, using
+the same logic as in the previous section.
+
+#+NAME: printba
+#+BEGIN_SRC C++
+  #include <iostream>
+  #include <spot/twa/twagraph.hh>
+  #include <spot/twaalgos/sbacc.hh>
+  #include <spot/twaalgos/split.hh>
+
+  void print_ba_format(std::ostream& out, spot::twa_graph_ptr aut)
+  {
+    // The input should have Büchi acceptance.  Alternatively,
+    // allow "t" acceptance since we can interpret this as a Büchi automaton
+    // where all states are accepting.
+    const spot::acc_cond& acc = aut->acc();
+    if (!(acc.is_buchi() || acc.is_t()))
+      throw std::runtime_error("unsupported acceptance condition");
+
+    // The BA format only support state-based acceptance, so get rid
+    // of transition-based acceptance if we have some.
+    aut = spot::sbacc(aut);
+
+    // We want one minterm per edge, as those will become letters
+    aut = spot::split_edges(aut);
+
+    out << aut->get_init_state_number() << '\n';
+    for (auto& e: aut->edges())
+      out << e.cond.id() << ',' << e.src << "->" << e.dst << '\n';
+
+    unsigned ns = aut->num_states();
+    for (unsigned s = 0; s < ns; ++s)
+      if (acc.accepting(aut->state_acc_sets(s)))
+         out << s << '\n';
+  }
+#+END_SRC
+
+#+begin_src sh :results silent :exports results
+ltl2tgba -B "a W G(b->c)" >tut25.hoa
+#+end_src
+
+Now, what remains to be done is to read some input automaton, so we
+can print it:
+
+#+NAME: maincpp
+#+BEGIN_SRC C++ :noweb strip-export :cmdline "tut25.hoa" :exports results :exports both
+  #include <spot/parseaut/public.hh>
+  <<printba>>
+  int main(int argc, const char** argv)
+  {
+    if (argc > 2)
+      {
+        std::cerr << "pass a single filename, or pipe to stdin\n";
+        return 1;
+      }
+    const char* filename = "-";
+    if (argc == 2)
+      filename = argv[1];
+    spot::parsed_aut_ptr pa = parse_aut(filename, spot::make_bdd_dict());
+    if (pa->format_errors(std::cerr))
+      return 1;
+    if (pa->aborted)
+      {
+        std::cerr << "--ABORT-- read\n";
+        return 1;
+      }
+    print_ba_format(std::cout, pa->aut);
+    return 0;
+  }
+#+END_SRC
+
+Unsurprisingly, running the above code on our example automaton
+produces the same output.
+
+#+RESULTS: maincpp
+#+begin_example
+1
+19,0->0
+21,0->0
+22,0->0
+23,0->0
+24,0->0
+10,0->0
+19,1->0
+21,1->0
+22,1->0
+23,1->1
+24,1->1
+25,1->1
+10,1->1
+0
+1
+#+end_example
+
+#+begin_src sh :results silent :exports results
+rm -f tut25.hoa
+#+end_src
+
+* Improving the split
+
+=split_edges()= is not the only way to split the edge labels.  Another
+option, introduced in Spot 2.12, is =separate_edges()=: this looks at
+the labels used in the automaton and intersects them to construct a
+new set of disjoint labels that can be used as a basis for all labels.
+In the worst case, the basis will be equal to $2^{\{a,b,c\}}$ and this
+reduces to =split_edges()=.  However in many cases, as in our running
+example, it will require fewer labels.
+
+#+NAME: tut25ex3
+#+BEGIN_SRC sh :exports code
+ltl2tgba -B "a W G(b->c)" | autfilt --separate-edges -d
+#+END_SRC
+
+#+BEGIN_SRC dot :file tut25ex3.svg :var txt=tut25ex3 :exports results
+$txt
+#+END_SRC
+
+#+RESULTS:
+[[file:tut25ex3.svg]]
+
+Fixing the above Python/C++ code to use =separate_edges()= instead of
+=split_edges()= allows to convert this example using only 3 letters:
+
+#+NAME: toba.py
+#+begin_src python :exports results
+  import spot
+  aut = spot.translate("a W G(b->c)", "BA")
+  aut = spot.separate_edges(aut)
+  acc = aut.acc()
+  print(aut.get_init_state_number())
+  for e in aut.edges():
+     print(f"{e.cond.id()},{e.src}->{e.dst}")
+  for s in range(aut.num_states()):
+      if acc.accepting(aut.state_acc_sets(s)):
+         print(s)
+#+end_src
+
+#+RESULTS: toba.py
+: 1
+: 83,0->0
+: 85,0->0
+: 85,1->0
+: 83,1->1
+: 76,1->1
+: 0
+: 1

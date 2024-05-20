@@ -1,0 +1,55 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs
+set -e
+
+# make sure option -x reports unknown arguments
+ltl2tgba - -x foo </dev/null 2>error && exit 1
+grep "ltl2tgba: option 'foo' was not used" error
+ltl2tgba -F- -x ba-simul,foo,bar </dev/null 2>error && exit 1
+grep -v 'ba-simul' error
+grep -- "- 'foo'" error
+grep -- "- 'bar'" error
+
+# Likewise for --sat-minimise
+
+ltl2tgba -f FGa | autfilt -D |
+autfilt --sat-minimize='acc="co-Buchi",other' 2>error && exit 1
+grep "autfilt: option 'other' was not used" error
+
+# Make sure wdba-det-max has an effect
+f='G(!p0 | (!p2 U (p1 | (!p2 & p3 & X(!p2 U p4)))) | G!p1)'
+test 4,1 = `ltl2tgba --stats=%s,%d "$f"`
+test 6,0 = `ltl2tgba -x wdba-det-max=4 --stats=%s,%d "$f"`
+
+# Make sure simul-max has an effect
+f=`genltl --ms-phi-h=8`
+test 511 -eq `ltl2tgba -P -D --stats=%s "$f"`
+test 511 -lt `ltl2tgba -P -D -x simul-max=512 --stats=%s "$f"`
+
+# Illustrate issue #455: the simulation-based reduction applied before
+# tba-det can cause the creation of a DBA that is harder to reduce.
+# Hopefully and improvement to the simulation-based reduction should
+# reduce the third automaton in the same way as the fourth.
+L=ltl2tgba
+test 4,7 = `$L -xtba-det,simul=0 -D 'F(!p0 | GFp1)' --stats=%s,%e`
+test 4,8 = `$L -xtba-det,simul=1,dba-simul=0 -D 'F(!p0 | GFp1)' --stats=%s,%e`
+test 3,7 = `$L -xtba-det,simul=1 -D 'F(!p0 | GFp1)' --stats=%s,%e`
+test 2,4 = `$L -xtba-det,simul=0,dba-simul=1 -D 'F(!p0 | GFp1)' --stats=%s,%e`

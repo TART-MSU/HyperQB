@@ -1,0 +1,13 @@
+Doxyfile
+Makefile
+Makefile.in
+spot.html
+spot.latex
+spot.tag
+*.pdf
+stamp
+*.tmp
+dot
+org-stamp
+doxygen_sqlite3.db
+/userdoc/

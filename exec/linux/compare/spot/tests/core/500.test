@@ -1,0 +1,42 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs
+
+set -e
+
+# The LTL parser used to exhibit a worse-than-quadratic behavior on
+# n-ary operators with many children.  See issue #500.  Before the
+# fix, this test would run for ages.
+
+awk 'BEGIN{x="s0"; for(i = 1; i < 40000; ++i) x=x " | s" i;  print x;}' |
+  ltlfilt --stats=%x > out
+test 40000 = `cat out`
+
+awk 'BEGIN{x="s0"; for(i = 1; i < 40000; ++i) x=x " & s" i;  print x;}' |
+  ltlfilt --stats=%x > out
+test 40000 = `cat out`
+
+awk 'BEGIN{x="s0"; for(i = 1; i < 40000; ++i) x=x ";s" i;  print "{" x "}";}' |
+  ltlfilt --stats=%x > out
+test 40000 = `cat out`
+
+awk 'BEGIN{x="s0"; for(i = 1; i < 40000; ++i) x=x ":s" i;  print "{" x "}";}' |
+  ltlfilt --stats=%x > out
+test 40000 = `cat out`

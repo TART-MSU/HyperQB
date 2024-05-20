@@ -1,0 +1,116 @@
+#!/bin/sh
+# -*- coding: utf-8 -*-
+# Copyright (C) by the Spot authors, see the AUTHORS file for details.
+#
+# This file is part of Spot, a model checking library.
+#
+# Spot is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Spot is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+. ./defs
+
+set -e
+
+genaut --cycle-log-nba=3  > in1.hoa
+test 3 -eq `grep -c '{0}' in1.hoa`
+autfilt --reduce-acceptance-set in1.hoa > out1.hoa
+autfilt --enlarge-acceptance-set in1.hoa > out1l.hoa
+autfilt --reduce-acceptance-set out1l.hoa > out1r.hoa
+autfilt --enlarge-acceptance-set out1r.hoa > out1rl.hoa
+test 1 -eq `grep -c '{0}' out1.hoa`
+test 9 -eq `grep -c '{0}' out1l.hoa`
+test 1 -eq `grep -c '{0}' out1r.hoa`
+diff out1l.hoa out1rl.hoa
+autfilt --reduce-acceptance-set -S in1.hoa > out1b.hoa
+autfilt --enlarge-acceptance-set -S in1.hoa > out1lb.hoa
+autfilt --enlarge-acceptance-set -S out1b.hoa > out1lbb.hoa
+test 1 -eq `grep -c '{0}' out1b.hoa`
+test 3 -eq `grep -c '{0}' out1lb.hoa`
+test 3 -eq `grep -c '{0}' out1lbb.hoa`
+diff out1.hoa out1b.hoa
+diff out1lb.hoa out1lbb.hoa
+
+cat >in2.hoa <<EOF
+HOA: v1
+States: 3
+Start: 0
+AP: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+properties: trans-labels explicit-labels state-acc colored complete
+--BODY--
+State: 0 {0}
+[t] 0
+[t] 1
+[t] 2
+State: 1 {0}
+[t] 2
+State: 2 {0}
+[t] 0
+--END--
+EOF
+autfilt --reduce-acceptance-set in2.hoa > out2.hoa
+autfilt --reduce-acceptance-set -S in2.hoa > out2b.hoa
+autfilt --enlarge-acceptance-set out2.hoa > out2l.hoa
+autfilt --enlarge-acceptance-set -S out2b.hoa > out2bl.hoa
+
+cat >ex2.hoa <<EOF
+HOA: v1
+States: 3
+Start: 0
+AP: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+properties: trans-labels explicit-labels trans-acc complete
+--BODY--
+State: 0
+[t] 0 {0}
+[t] 1
+[t] 2
+State: 1
+[t] 2
+State: 2
+[t] 0 {0}
+--END--
+EOF
+
+cat >ex2b.hoa <<EOF
+HOA: v1
+States: 3
+Start: 0
+AP: 0
+acc-name: Buchi
+Acceptance: 1 Inf(0)
+properties: trans-labels explicit-labels state-acc complete
+--BODY--
+State: 0 {0}
+[t] 0
+[t] 1
+[t] 2
+State: 1
+[t] 2
+State: 2
+[t] 0
+--END--
+EOF
+
+diff out2.hoa ex2.hoa
+diff out2b.hoa ex2b.hoa
+diff out2l.hoa in2.hoa
+diff out2bl.hoa in2.hoa
+
+randaut -n 20 -b -a.7 2 |
+  autcross --language-preserved --verbose \
+     'autfilt --reduce-acceptance-set' \
+     'autfilt --enlarge-acceptance-set' \
+     'autfilt --enlarge-acceptance-set --reduce-acceptance-set'
