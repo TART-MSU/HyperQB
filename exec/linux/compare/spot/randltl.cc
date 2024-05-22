@@ -180,6 +180,7 @@ parse_opt(int key, char* arg, struct argp_state* as)
       break;
     case 'S':
       output = spot::randltlgenerator::SERE;
+      output_ratexp = true;
       break;
     case OPT_BOOLEAN_PRIORITIES:
       opt_pB = arg;

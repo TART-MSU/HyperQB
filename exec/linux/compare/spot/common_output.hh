@@ -36,6 +36,7 @@ enum output_format_t { spot_output, spin_output, utf8_output,
 extern output_format_t output_format;
 extern bool full_parenth;
 extern bool escape_csv;
+extern bool output_ratexp;
 
 #define COMMON_X_OUTPUT_SPECS(where)                                    \
       "number of atomic propositions " #where "; "      \

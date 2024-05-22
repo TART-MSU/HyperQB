@@ -45,6 +45,7 @@ output_format_t output_format = spot_output;
 bool full_parenth = false;
 bool escape_csv = false;
 char output_terminator = '\n';
+bool output_ratexp = false;
 
 static const argp_option options[] =
   {
@@ -105,7 +106,10 @@ stream_formula(std::ostream& out,
         report_not_ltl(f, filename, linenum, "LBT");
       break;
     case spot_output:
-      spot::print_psl(out, f, full_parenth);
+      if (output_ratexp)
+        spot::print_sere(out, f, full_parenth);
+      else
+        spot::print_psl(out, f, full_parenth);
       break;
     case spin_output:
       if (f.is_ltl_formula())
@@ -120,10 +124,16 @@ stream_formula(std::ostream& out,
         report_not_ltl(f, filename, linenum, "Wring");
       break;
     case utf8_output:
-      spot::print_utf8_psl(out, f, full_parenth);
+      if (output_ratexp)
+        spot::print_utf8_sere(out, f, full_parenth);
+      else
+        spot::print_utf8_psl(out, f, full_parenth);
       break;
     case latex_output:
-      spot::print_latex_psl(out, f, full_parenth);
+      if (output_ratexp)
+        spot::print_latex_sere(out, f, full_parenth);
+      else
+        spot::print_latex_psl(out, f, full_parenth);
       break;
     case count_output:
     case quiet_output:
@@ -224,7 +234,7 @@ namespace
     }
   };
 
-  class formula_printer final: protected spot::formater
+  class formula_printer final: public spot::formater
   {
   public:
     formula_printer(std::ostream& os, const char* format)
@@ -392,6 +402,7 @@ output_formula(std::ostream& out,
   else
     {
       formula_with_location fl = { f, filename, linenum, prefix, suffix };
+      format->set_output(out);
       format->print(fl, ptimer);
     }
 }
@@ -420,7 +431,27 @@ output_formula_checked(spot::formula f, spot::process_timer* ptimer,
       auto [it, b] = outputfiles.try_emplace(fname, nullptr);
       if (b)
         it->second.reset(new output_file(fname.c_str()));
+      else
+        // reopen if the file has been closed; see below
+        it->second->reopen_for_append(fname);
       out = &it->second->ostream();
+
+      // If we have opened fewer than 10 files, we keep them all open
+      // to avoid wasting time on open/close calls.
+      //
+      // However we cannot keep all files open, especially in
+      // scenarios were we use thousands of files only once.  To keep
+      // things simple, we only close the previous file if it is not
+      // the current output.  This way we still save the close/open
+      // cost when consecutive formulas are sent to the same file.
+      static output_file* previous = nullptr;
+      static const std::string* previous_name = nullptr;
+      if (previous
+          && outputfiles.size() > 10
+          && &previous->ostream() != out)
+        previous->close(*previous_name);
+      previous = it->second.get();
+      previous_name = &it->first;
     }
   output_formula(*out, f, ptimer, filename, linenum, prefix, suffix);
   *out << output_terminator;

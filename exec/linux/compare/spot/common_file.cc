@@ -44,13 +44,30 @@ output_file::output_file(const char* name, bool force_append)
   os_ = of_.get();
 }
 
+void
+output_file::reopen_for_append(const std::string& name)
+{
+  if (of_ && of_->is_open())     // nothing to do
+    return;
+  const char* cname = name.c_str();
+  if (cname[0] == '>' && cname[1] == '>')
+    cname += 2;
+  if (name[0] == '-' && name[1] == 0)
+    {
+      os_ = &std::cout;
+      return;
+    }
+  of_->open(cname, std::ios_base::app);
+  if (!*of_)
+    error(2, errno, "cannot reopen '%s'", cname);
+}
 
 void output_file::close(const std::string& name)
 {
   // We close of_, not os_, so that we never close std::cout.
   if (os_)
     os_->flush();
-  if (of_)
+  if (of_ && of_->is_open())
     of_->close();
   if (os_ && !*os_)
     error(2, 0, "error writing to %s",

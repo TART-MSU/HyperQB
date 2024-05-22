@@ -37,6 +37,8 @@ public:
 
   void close(const std::string& name);
 
+  void reopen_for_append(const std::string& name);
+
   bool append() const
   {
     return append_;
