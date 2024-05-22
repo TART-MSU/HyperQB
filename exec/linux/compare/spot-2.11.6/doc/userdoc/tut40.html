@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-08-01 Tue 20:00 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Using games to check a simulation</title>
+<meta name="author" content="root" />
+<meta name="description" content="Code example for using games in Spot" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="spot.css" />
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="tut.html"> UP </a>
+ |
+ <a accesskey="H" href="index.html"> HOME </a>
+</div><div id="content" class="content">
+<h1 class="title">Using games to check a simulation</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgdc06b76">Python</a></li>
+<li><a href="#orga412e12">C++</a></li>
+</ul>
+</div>
+</div>
+
+<div id="orga7d9795" class="figure">
+<p><object type="image/svg+xml" data="spot2.svg" class="org-svg" id="spotlogo">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+<p>
+This example demonstrates how to use Spot's game interface to compute
+a simulation-relation between the states of an automaton.  This
+algorithm is inspired from <a href="https://homepages.inf.ed.ac.uk/kousha/siam_j2005.pdf">Fair Simulation Relations, Parity Games,
+and State Space Reduction for Büchi Automata (Kousha Etessami and
+Thomas Wilke, and Rebecca A. Schuller)</a>.
+</p>
+
+<p>
+The code below is intended for demonstration of how to construct and
+use games.  Spot contains some other (and faster) implementation to
+reduce an automaton using simulation-based reductions (see
+<code>spot.simulation()</code> and <code>spot.reduce_direct_sim()</code>).
+</p>
+
+<p>
+Let us start with a definition of simulation for transition-based
+generalized-Büchi automata: A state \(s'\) simulates \(s\) iff for any
+transition \((s,c,a,d)\) leaving \(s\), there exists a transition
+\((s',c',a',d')\) leaving \(s'\) with a condition \(c'\) that covers \(c\),
+some colors \(a'\supseteq a\) that covers the colors of \(a\) other
+transition, and reaching a destination state \(d'\) that simulates \(d\).
+</p>
+
+<p>
+In the following automaton, for instance, state 5 simulates state 1,
+and state 4 simulates state 0.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-hoa" id="org6a232b1"><span class="org-hoa-header-uppercase">HOA:</span> v1
+<span class="org-hoa-header-uppercase">States:</span> 6
+<span class="org-hoa-header-uppercase">Start:</span> 0
+<span class="org-hoa-header-uppercase">AP:</span> 2 <span class="org-string">"a"</span> <span class="org-string">"b"</span>
+<span class="org-hoa-header-uppercase">Acceptance:</span> 1 <span class="org-hoa-builtin">Inf</span>(<span class="org-hoa-acceptance-set">0</span>)
+<span class="org-hoa-keyword">--BODY--</span>
+<span class="org-hoa-header-uppercase">State:</span> 0
+[<span class="org-hoa-ap-number">1</span>] 1
+[<span class="org-hoa-ap-number">1</span>] 2
+<span class="org-hoa-header-uppercase">State:</span> 1
+[<span class="org-hoa-ap-number">0</span>&amp;<span class="org-hoa-ap-number">1</span>] 1
+<span class="org-hoa-header-uppercase">State:</span> 2
+[<span class="org-hoa-ap-number">0</span>] 3
+<span class="org-hoa-header-uppercase">State:</span> 3
+[<span class="org-hoa-ap-number">1</span>] 3 {<span class="org-hoa-acceptance-set">0</span>}
+<span class="org-hoa-header-uppercase">State:</span> 4
+[<span class="org-hoa-ap-number">1</span>] 5
+<span class="org-hoa-header-uppercase">State:</span> 5
+[<span class="org-hoa-ap-number">0</span>] 5 {<span class="org-hoa-acceptance-set">0</span>}
+<span class="org-hoa-keyword">--END--</span>
+</pre>
+</div>
+
+
+<div id="orgf22a72e" class="figure">
+<p><object type="image/svg+xml" data="tut40in.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+
+<p>
+Whether two states are in simulation can be decided as a game between
+two players.  If the game is in state \((q,q')\), spoiler (player 0)
+first selects a transition from state \(q\), and duplicator (player 1)
+then has to chose a compatible transition from state \(q'\).  Duplicator
+of course wins if it always manages to select compatibles transitions,
+otherwise spoiler wins.
+</p>
+
+<p>
+The game arena can be encoded by associating each state to a pair of
+integers.  States owned by player 0 (rounded rectangles) are pairs
+\((q,q')\) denoting the position of each player.  States owned by player
+1 (diamonds) are pairs \((e,q')\) where \(e\) is the number of the
+edges that player 0 just took (those numbers appears as <code>#1</code>, <code>#2</code>,
+etc. in the previous picture).
+</p>
+
+<p>
+Here is how the game arena look like starting from \((q,q')=(4,0)\):
+</p>
+
+
+<div id="orge16a7db" class="figure">
+<p><object type="image/svg+xml" data="tut40gameunsolved.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+In this game, player 1, wins if it has a strategy to force the game to
+satisfy the acceptance condition.  Here the acceptance condition is
+just true, so any infinite play will satisfy it.
+</p>
+
+<p>
+Clearly, it is enough for player 1 to always go to \((5,1)\) when
+possible.  If Spot is used to solve this game, the result can be
+presented as follows, where greens states represents states from which
+player 1 has a winning strategy, and red states are states from which
+player 0 has a winning strategy.  The highlighted arrows show those
+strategies.
+</p>
+
+
+<div id="org99730a6" class="figure">
+<p><object type="image/svg+xml" data="tut40gamesolved.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+
+<p>
+Since player 1 is winning from state \((4,0)\), we know that state 4
+simulates state 0.  Also since player 1 would also win from state
+\((5,1)\), we can tell that state 5 simulates state 1.  We also learn
+that state 5 does not simulates states 2 and 3.  We could build other
+games, or add more state to this game, to learn about other pairs of
+states.
+</p>
+
+<div id="outline-container-orgdc06b76" class="outline-2">
+<h2 id="orgdc06b76">Python</h2>
+<div class="outline-text-2" id="text-orgdc06b76">
+<p>
+We now look at how to create such a game in Python.
+</p>
+
+<p>
+Essentially, a game in Spot is just an automaton equiped with a <a href="concepts.html#named-properties">named
+property "state-player"</a> that hold a Boolean vector indicating the
+owner of each state.  The game can be created using the usual
+automaton interface, and the owners are set by calling
+<code>game.set_state_players()</code> with a vector of Boolean at the very end.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org0e23031"><span class="org-keyword">import</span> spot
+<span class="org-keyword">from</span> spot <span class="org-keyword">import</span> buddy
+
+<span class="org-keyword">def</span> <span class="org-function-name">direct_sim_game</span>(aut, s1, s2):
+    <span class="org-keyword">if</span> s1 &gt;= aut.num_states() <span class="org-keyword">or</span> s2 &gt;= aut.num_states():
+        <span class="org-keyword">raise</span> <span class="org-type">ValueError</span>(<span class="org-string">'invalid state number'</span>)
+    <span class="org-keyword">assert</span> aut.acc().is_generalized_buchi()
+
+    <span class="org-variable-name">game</span> = spot.make_twa_graph()
+    <span class="org-comment-delimiter"># </span><span class="org-comment">The names of the states are pairs of integers</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">(q,q') for states owned by player 0</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">(e,q') for states owned by player 1</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">These arrays are indiced by state numbers.</span>
+    <span class="org-variable-name">names</span> = []
+    <span class="org-variable-name">owners</span> = []
+    <span class="org-comment-delimiter"># </span><span class="org-comment">The reverse assotiation (x,y) -&gt; state number</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">must be kept for each player, since (x,y) can mean two different thing.</span>
+    <span class="org-variable-name">s_orig_states</span> = {}
+    <span class="org-variable-name">d_orig_states</span> = {}
+    <span class="org-comment-delimiter"># </span><span class="org-comment">a list of player 0 states to process</span>
+    <span class="org-variable-name">todo</span> = []
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Create the state (i, j) for a player if it does not exist yet and</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">return the state's number in the game.</span>
+    <span class="org-keyword">def</span> <span class="org-function-name">get_game_state</span>(player, i, j):
+        <span class="org-variable-name">orig_state</span> = s_orig_states <span class="org-keyword">if</span> player <span class="org-keyword">else</span> d_orig_states
+        <span class="org-keyword">if</span> (i, j) <span class="org-keyword">in</span> <span class="org-variable-name">orig_state</span>:
+          <span class="org-keyword">return</span> orig_state[(i, j)]
+        s = game.new_state()
+        names.append((i, j))
+        owners.append(player)
+        <span class="org-variable-name">orig_state</span>[(i, j)] = s
+        <span class="org-comment-delimiter"># </span><span class="org-comment">If it is a new state for Player 0 (spoiler)</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">we need to process it.</span>
+        <span class="org-keyword">if</span> <span class="org-keyword">not</span> <span class="org-variable-name">player</span>:
+            todo.append(s)
+        <span class="org-keyword">return</span> s
+
+    game.set_init_state(get_game_state(<span class="org-constant">False</span>, s1, s2))
+    <span class="org-keyword">while</span> todo:
+        cur = todo.pop()
+        <span class="org-comment-delimiter"># </span><span class="org-comment">todo contains only player 0's states, named with pairs</span>
+        <span class="org-comment-delimiter"># </span><span class="org-comment">of states.</span>
+        (<span class="org-variable-name">s_src</span>, <span class="org-variable-name">d_src</span>) = names[cur]
+
+        <span class="org-comment-delimiter"># </span><span class="org-comment">Player 0 is allowed to pick edge from s_src:</span>
+        <span class="org-keyword">for</span> s_edge <span class="org-keyword">in</span> aut.out(s_src):
+            edge_idx = aut.edge_number(s_edge)
+            <span class="org-variable-name">st2</span> = get_game_state(<span class="org-constant">True</span>, edge_idx, d_src)
+            <span class="org-comment-delimiter"># </span><span class="org-comment">label the edge with true, because it's an automaton,</span>
+            <span class="org-comment-delimiter"># </span><span class="org-comment">but we do not use this label for the game.</span>
+            game.new_edge(cur, st2, buddy.bddtrue)
+
+            <span class="org-comment-delimiter"># </span><span class="org-comment">Player 1 then try to find an edge with the</span>
+            <span class="org-comment-delimiter"># </span><span class="org-comment">a compatible same condition and colors, from d_src.</span>
+            <span class="org-keyword">for</span> d_edge <span class="org-keyword">in</span> aut.out(d_src):
+                <span class="org-keyword">if</span> (buddy.bdd_implies(d_edge.cond, s_edge.cond) \
+                    <span class="org-keyword">and</span> d_edge.acc.subset(s_edge.acc)):
+                    <span class="org-variable-name">st3</span> = get_game_state(<span class="org-constant">False</span>, s_edge.dst, d_edge.dst)
+                    game.new_edge(st2, st3, buddy.bddtrue)
+
+    <span class="org-comment-delimiter"># </span><span class="org-comment">Name each state with a string, just so we can read the pairs</span>
+    <span class="org-comment-delimiter"># </span><span class="org-comment">when the automaton is displayed.</span>
+    game.set_state_names(<span class="org-builtin">list</span>(<span class="org-builtin">map</span>(<span class="org-builtin">str</span>, names)))
+    <span class="org-comment-delimiter"># </span><span class="org-comment">This only line is actually what turns an automaton into a game!</span>
+    game.set_state_players(owners)
+    <span class="org-keyword">return</span> game
+</pre>
+</div>
+
+<p>
+To solve a safety game <code>g</code> that has been created by the above method,
+it is enough to just call <code>solve_safety_game(g)</code>.  The function
+<code>solve_game(g)</code> used below is a more generic interface that looks at
+the acceptance condition of the game to dispatch to the more specific
+game solver.  These functions returns the player winning in the
+initial state.  However, as a side-effect they define additional
+automaton properties that indicate the winner of each state, and the
+associated strategy.
+</p>
+
+<p>
+Therefore to list all simulation pairs we learned from a game starting
+in state \((i,j)\), we could proceed as follow:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python" id="org9ef7d65"><span class="org-keyword">def</span> <span class="org-function-name">list_simulations</span>(aut, i, j):
+    <span class="org-variable-name">g</span> = direct_sim_game(aut, i, j)
+    spot.solve_game(g)
+
+    <span class="org-variable-name">winners</span> = g.get_state_winners()
+    <span class="org-variable-name">owners</span> = g.get_state_players()
+    <span class="org-variable-name">names</span> = g.get_state_names()
+
+    <span class="org-variable-name">simulations</span> = []
+    <span class="org-keyword">for</span> i <span class="org-keyword">in</span> <span class="org-builtin">range</span>(0, g.num_states()):
+        <span class="org-keyword">if</span> winners[i] <span class="org-keyword">and</span> <span class="org-keyword">not</span> owners[i]:
+            simulations.append(<span class="org-builtin">tuple</span>(<span class="org-builtin">map</span>(<span class="org-builtin">int</span>, names[i][1:-1].split(<span class="org-string">', '</span>))))
+
+    <span class="org-keyword">return</span> simulations
+</pre>
+</div>
+
+<p>
+On our running example, that gives:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">
+
+<span class="org-builtin">print</span>(list_simulations(aut, 4, 0))
+</pre>
+</div>
+
+<pre class="example">
+[(4, 0), (5, 1)]
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orga412e12" class="outline-2">
+<h2 id="orga412e12">C++</h2>
+<div class="outline-text-2" id="text-orga412e12">
+<p>
+Here is some almost equivalent code in C++.
+</p>
+
+<p>
+Here instead of naming states with strings, we use the "product-states"
+property, which is usually used to display pair of integers that come from a
+product of automata.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++" id="org10cbb44"><span class="org-preprocessor">#include</span> <span class="org-string">&lt;spot/twaalgos/game.hh&gt;</span>
+<span class="org-preprocessor">#include</span> <span class="org-string">&lt;spot/twa/twagraph.hh&gt;</span>
+
+<span class="org-constant">spot</span>::<span class="org-type">twa_graph_ptr</span> <span class="org-function-name">direct_sim_game</span>(<span class="org-constant">spot</span>::<span class="org-type">const_twa_graph_ptr</span> <span class="org-variable-name">aut</span>,
+                                    <span class="org-type">unsigned</span> <span class="org-variable-name">s1</span>, <span class="org-type">unsigned</span> <span class="org-variable-name">s2</span>)
+{
+  <span class="org-keyword">if</span> (s1 &gt;= aut-&gt;num_states() || s2 &gt;= aut-&gt;num_states())
+    <span class="org-keyword">throw</span> <span class="org-constant">std</span>::runtime_error(<span class="org-string">"direct_sim_game(): invalid state number"</span>);
+
+  <span class="org-keyword">auto</span> <span class="org-variable-name">game</span> = <span class="org-constant">spot</span>::make_twa_graph(<span class="org-constant">spot</span>::make_bdd_dict());
+
+  <span class="org-keyword">auto</span> <span class="org-variable-name">names</span> = <span class="org-keyword">new</span> <span class="org-constant">std</span>::vector&lt;<span class="org-constant">std</span>::<span class="org-type">pair</span>&lt;<span class="org-type">unsigned</span>, <span class="org-type">unsigned</span>&gt;&gt;();
+  game-&gt;set_named_prop(<span class="org-string">"product-states"</span>, names);
+
+  <span class="org-keyword">auto</span> <span class="org-variable-name">owners</span> = <span class="org-keyword">new</span> <span class="org-constant">std</span>::vector&lt;<span class="org-type">bool</span>&gt;();
+  game-&gt;set_named_prop(<span class="org-string">"state-player"</span>, owners);
+
+  <span class="org-constant">std</span>::<span class="org-type">map</span>&lt;<span class="org-constant">std</span>::<span class="org-type">pair</span>&lt;<span class="org-type">unsigned</span>, <span class="org-type">unsigned</span>&gt;, <span class="org-type">unsigned</span>&gt; <span class="org-variable-name">s_orig_states</span>;
+  <span class="org-constant">std</span>::<span class="org-type">map</span>&lt;<span class="org-constant">std</span>::<span class="org-type">pair</span>&lt;<span class="org-type">unsigned</span>, <span class="org-type">unsigned</span>&gt;, <span class="org-type">unsigned</span>&gt; <span class="org-variable-name">d_orig_states</span>;
+  <span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-type">unsigned</span>&gt; <span class="org-variable-name">todo</span>;
+
+  <span class="org-keyword">auto</span> <span class="org-variable-name">new_state</span> = [&amp;](<span class="org-type">bool</span> <span class="org-variable-name">player</span>, <span class="org-type">unsigned</span> <span class="org-variable-name">s1</span>, <span class="org-type">unsigned</span> <span class="org-variable-name">s2</span>)
+  {
+    <span class="org-keyword">auto</span>&amp; <span class="org-variable-name">m</span> = player ? s_orig_states : d_orig_states;
+    <span class="org-keyword">if</span> (<span class="org-keyword">auto</span> <span class="org-variable-name">it</span> = m.find({s1, s2}); it != m.end())
+      <span class="org-keyword">return</span> it-&gt;second;
+    <span class="org-type">unsigned</span> <span class="org-variable-name">s</span> = game-&gt;new_state();
+    names-&gt;emplace_back(s1, s2);
+    owners-&gt;push_back(player);
+    m.insert({{s1, s2}, s});
+    <span class="org-keyword">if</span> (<span class="org-negation-char">!</span>player)
+      todo.push_back(s);
+    <span class="org-keyword">return</span> s;
+  };
+
+  game-&gt;set_init_state(new_state(<span class="org-constant">false</span>, s1, s2));
+  <span class="org-keyword">while</span> (<span class="org-negation-char">!</span>todo.empty())
+    {
+      <span class="org-type">unsigned</span> <span class="org-variable-name">cur</span> = todo.back();
+      todo.pop_back();
+      <span class="org-keyword">auto</span> [s_src, d_src] = (*names)[cur];
+
+      <span class="org-keyword">for</span> (<span class="org-keyword">const</span> <span class="org-keyword">auto</span>&amp; <span class="org-variable-name">s_edge</span> : aut-&gt;out(s_src))
+        {
+          <span class="org-type">unsigned</span> <span class="org-variable-name">edge_idx</span> = aut-&gt;edge_number(s_edge);
+          <span class="org-type">unsigned</span> <span class="org-variable-name">st2</span> = new_state(<span class="org-constant">true</span>, edge_idx, d_src);
+          game-&gt;new_edge(cur, st2, bddtrue);
+          <span class="org-keyword">for</span> (<span class="org-keyword">const</span> <span class="org-keyword">auto</span>&amp; <span class="org-variable-name">d_edge</span> : aut-&gt;out(d_src))
+            <span class="org-keyword">if</span> (bdd_implies(d_edge.cond, s_edge.cond)
+                &amp;&amp; d_edge.acc.subset(s_edge.acc))
+              {
+                <span class="org-type">unsigned</span> <span class="org-variable-name">st3</span> = new_state(<span class="org-constant">false</span>, s_edge.dst, d_edge.dst);
+                game-&gt;new_edge(st2, st3, bddtrue);
+              }
+        }
+    }
+
+  <span class="org-keyword">return</span> game;
+}
+
+<span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-constant">std</span>::<span class="org-type">pair</span>&lt;<span class="org-type">int</span>,<span class="org-type">int</span>&gt;&gt;
+<span class="org-function-name">list_simulation</span>(<span class="org-constant">spot</span>::<span class="org-type">const_twa_graph_ptr</span> <span class="org-variable-name">aut</span>,
+                <span class="org-type">unsigned</span> <span class="org-variable-name">i</span>, <span class="org-type">unsigned</span> <span class="org-variable-name">j</span>)
+{
+  <span class="org-keyword">auto</span> <span class="org-variable-name">g</span> = direct_sim_game(aut, i, j);
+  <span class="org-constant">spot</span>::solve_game(g);
+
+  <span class="org-keyword">const</span> <span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-type">bool</span>&gt;&amp; <span class="org-variable-name">winners</span> = <span class="org-constant">spot</span>::get_state_winners(g);
+  <span class="org-keyword">const</span> <span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-type">bool</span>&gt;&amp; <span class="org-variable-name">owners</span> = <span class="org-constant">spot</span>::get_state_players(g);
+
+  <span class="org-keyword">typedef</span> <span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-constant">std</span>::<span class="org-type">pair</span>&lt;<span class="org-type">unsigned</span>, <span class="org-type">unsigned</span>&gt;&gt; <span class="org-type">names_t</span>;
+  <span class="org-keyword">auto</span> <span class="org-variable-name">names</span> = *g-&gt;get_named_prop&lt;<span class="org-type">names_t</span>&gt;(<span class="org-string">"product-states"</span>);
+
+  <span class="org-constant">std</span>::<span class="org-type">vector</span>&lt;<span class="org-constant">std</span>::<span class="org-type">pair</span>&lt;<span class="org-type">int</span>,<span class="org-type">int</span>&gt;&gt; <span class="org-variable-name">res</span>;
+
+  <span class="org-type">unsigned</span> <span class="org-variable-name">n</span> = g-&gt;num_states();
+  <span class="org-keyword">for</span> (<span class="org-type">unsigned</span> <span class="org-variable-name">i</span> = 0; i &lt; n; ++i)
+    <span class="org-keyword">if</span> (winners[i] &amp;&amp; <span class="org-negation-char">!</span>owners[i])
+      res.emplace_back(names[i]);
+  <span class="org-keyword">return</span> res;
+}
+</pre>
+</div>
+
+<p>
+Now to execute the above code on our example automaton, we just
+need to read the automaton from a file.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-C++" id="orgf1bbd1e"><span class="org-preprocessor">#include</span> <span class="org-string">&lt;iostream&gt;</span>
+<span class="org-preprocessor">#include</span> <span class="org-string">&lt;spot/twa/twagraph.hh&gt;</span>
+<span class="org-preprocessor">#include</span> <span class="org-string">&lt;spot/parseaut/public.hh&gt;</span>
+
+<span class="org-type">int</span> <span class="org-function-name">main</span>()
+{
+  <span class="org-constant">spot</span>::<span class="org-type">parsed_aut_ptr</span> <span class="org-variable-name">pa</span> = parse_aut(<span class="org-string">"tut40.hoa"</span>, <span class="org-constant">spot</span>::make_bdd_dict());
+  <span class="org-keyword">if</span> (pa-&gt;format_errors(<span class="org-constant">std</span>::cerr))
+    <span class="org-keyword">return</span> 1;
+  <span class="org-keyword">if</span> (pa-&gt;aborted)
+    {
+      <span class="org-constant">std</span>::cerr &lt;&lt; <span class="org-string">"--ABORT-- read\n"</span>;
+      <span class="org-keyword">return</span> 1;
+    }
+  <span class="org-keyword">for</span> (<span class="org-keyword">auto</span> [i,j]: list_simulation(pa-&gt;aut, 4, 0))
+    <span class="org-constant">std</span>::cout &lt;&lt; i &lt;&lt; <span class="org-string">" simulates "</span> &lt;&lt; j &lt;&lt; <span class="org-string">'\n'</span>;
+  <span class="org-keyword">return</span> 0;
+}
+</pre>
+</div>
+
+<pre class="example">
+4 simulates 0
+5 simulates 1
+</pre>
+</div>
+</div>
+</div>
+</body>
+</html>

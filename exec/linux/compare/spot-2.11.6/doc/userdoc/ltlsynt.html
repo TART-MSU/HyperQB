@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-08-01 Tue 19:59 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>=ltlsynt=</title>
+<meta name="author" content="root" />
+<meta name="description" content="Spot command-line tool for synthesizing AIGER circuits from LTL/PSL formulas." />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="spot.css" />
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'right',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'center',
+      displayIndent: '0em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="tools.html"> UP </a>
+ |
+ <a accesskey="H" href="index.html"> HOME </a>
+</div><div id="content" class="content">
+<h1 class="title"><code>ltlsynt</code></h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orga7d82e3">Basic usage</a></li>
+<li><a href="#org900a2ad">TLSF</a></li>
+<li><a href="#orgc4a5ba9">Internal details</a></li>
+<li><a href="#org94fe6fe">Other useful options</a></li>
+<li><a href="#org4c382d1">References</a></li>
+</ul>
+</div>
+</div>
+
+<div id="org8d2c20a" class="figure">
+<p><object type="image/svg+xml" data="spot2.svg" class="org-svg" id="spotlogo">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<div id="outline-container-orga7d82e3" class="outline-2">
+<h2 id="orga7d82e3">Basic usage</h2>
+<div class="outline-text-2" id="text-orga7d82e3">
+<p>
+This tool synthesizes reactive controllers from LTL/PSL formulas.
+</p>
+
+<p>
+Consider a set \(I\) of <i>input</i> atomic propositions, a set \(O\) of output atomic
+propositions, and a PSL formula &phi; over the propositions in \(I \cup O\).  A
+<b>reactive controller</b> realizing &phi; is a function \(c: (2^{I})^\star \times 2^I \mapsto
+2^O\) such that, for every &omega;-word \((u_i)_{i \in N} \in (2^I)^\omega\) over
+the input propositions, the word \((u_i \cup c(u_0 \dots u_{i-1}, u_i))_{i \in
+N}\) satisfies &phi;.
+</p>
+
+<p>
+If a reactive controller exists, then one with finite memory
+exists. Such controllers are easily represented as automata (or more
+specifically as Mealy machines).  In the automaton representing the
+controller, the acceptance condition is irrelevant and trivially true.
+</p>
+
+<p>
+<code>ltlsynt</code> has three mandatory options:
+</p>
+<ul class="org-ul">
+<li><code>--ins</code>: a comma-separated list of input atomic propositions;</li>
+<li><code>--outs</code>: a comma-separated list of output atomic propositions;</li>
+<li><code>--formula</code> or <code>--file</code>: a specification in LTL or PSL.</li>
+</ul>
+
+<p>
+One of <code>--ins</code> or <code>--outs</code> may be omitted, as any atomic proposition not listed
+as input can be assumed to be output and vice-versa.
+</p>
+
+<p>
+The following example illustrates the synthesis of a controller
+ensuring that input <code>i1</code> and <code>i2</code> are both true initially if and only
+if eventually output <code>o1</code> will go from true to false at some point.
+Note that this is an equivalence, not an implication.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org2cdda4d">ltlsynt --ins=i1,i2 -f <span class="org-string">'(i1 &amp; i2) &lt;-&gt; F(o1 &amp; X(!o1))'</span>
+</pre>
+</div>
+
+<pre class="example" id="orga58f975">
+REALIZABLE
+HOA: v1
+States: 3
+Start: 0
+AP: 3 "i1" "i2" "o1"
+acc-name: all
+Acceptance: 0 t
+properties: trans-labels explicit-labels state-acc deterministic
+controllable-AP: 2
+--BODY--
+State: 0
+[0&amp;1&amp;2] 1
+[!0&amp;2 | !1&amp;2] 2
+State: 1
+[!2] 1
+State: 2
+[2] 2
+--END--
+</pre>
+
+<p>
+The output is composed of two parts:
+</p>
+<ul class="org-ul">
+<li>The first one is a single line <code>REALIZABLE</code> or <code>UNREALIZABLE</code>; the presence of this
+line, required by the <a href="http://http//www.syntcomp.org/">SyntComp competition</a>, can be disabled with option <code>--hide-status</code>.</li>
+<li>The second one, only present in the <code>REALIZABLE</code> case, is an automaton describing the controller.</li>
+</ul>
+
+<p>
+The controller contains the line <code>controllable-AP: 2</code>, which means that this automaton
+should be interpreted as a Mealy machine where <code>o0</code> is part of the output.
+Using the <code>--dot</code> option, makes it easier to visualize this machine.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org43cdc77">ltlsynt --ins=i1,i2 -f <span class="org-string">'(i1 &amp; i2) &lt;-&gt; F(o1 &amp; X(!o1))'</span> --hide-status --dot
+</pre>
+</div>
+
+
+<div id="org6be18f5" class="figure">
+<p><object type="image/svg+xml" data="ltlsyntex.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+The following example illustrates the case of an unrealizable specification. As
+<code>a</code> is an input proposition, there is no way to guarantee that it will
+eventually hold.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">ltlsynt --ins=a -f <span class="org-string">'F a'</span>
+</pre>
+</div>
+
+<pre class="example">
+UNREALIZABLE
+</pre>
+
+
+<p>
+By default, the controller is output in HOA format, but it can be
+output as an And-Inverter-Graph in <a href="http://fmv.jku.at/aiger/">AIGER format</a> using the <code>--aiger</code>
+flag. This is the output format required for the <a href="http://syntcomp.org/">SYNTCOMP</a> competition.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org578399d">ltlsynt --ins=i1,i2 -f <span class="org-string">'(i1 &amp; i2) &lt;-&gt; F(o1 &amp; X(!o1))'</span> --aiger
+</pre>
+</div>
+
+<pre class="example" id="org145f118">
+REALIZABLE
+aag 18 2 2 1 14
+2
+4
+6 23
+8 37
+7
+10 6 9
+12 4 9
+14 5 10
+16 13 15
+18 2 17
+20 3 10
+22 19 21
+24 7 8
+26 4 24
+28 5 7
+30 27 29
+32 2 31
+34 3 7
+36 33 35
+i0 i1
+i1 i2
+o0 o1
+</pre>
+
+<p>
+The above format is not very human friendly.  Again, by passing both
+<code>--aiger</code> and <code>--dot</code>, one can display the And-Inverter-Graph representing
+the controller:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org95f1117">ltlsynt --ins=i1,i2 -f <span class="org-string">'(i1 &amp; i2) &lt;-&gt; F(o1 &amp; X(!o1))'</span> --hide-status --aiger --dot
+</pre>
+</div>
+
+
+<div id="orgbf21357" class="figure">
+<p><object type="image/svg+xml" data="ltlsyntexaig.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+In the above diagram, round nodes represent AND gates.  Small black
+circles represent inversions (or negations), colored triangles are
+used to represent input signals (at the bottom) and output signals (at
+the top), and finally rectangles represent latches.  A latch is a one
+bit register that delays the signal by one step.  Initially, all
+latches are assumed to contain <code>false</code>, and them emit their value from
+the <code>L0_out</code> and <code>L1_out</code> rectangles at the bottom.  Their input value,
+to be emitted at the next step, is received via the <code>L0_in</code> and <code>L1_in</code>
+boxes at the top.  In <code>ltlsynt</code>'s encoding, the set of latches is used
+to keep track of the current state of the Mealy machine.
+</p>
+
+<p>
+The generation of a controller can be disabled with the flag
+<code>--realizability</code>.  In this case, <code>ltlsynt</code>'s output is limited to
+<code>REALIZABLE</code> or <code>UNREALIZABLE</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org900a2ad" class="outline-2">
+<h2 id="org900a2ad">TLSF</h2>
+<div class="outline-text-2" id="text-org900a2ad">
+<p>
+<code>ltlsynt</code> was made with the <a href="http://syntcomp.org/">SYNTCOMP</a> competition in mind, and more
+specifically the TLSF track of this competition.  TLSF is a high-level
+specification language created for the purpose of this competition.
+Fortunately, the SYNTCOMP organizers also provide a tool called
+<a href="https://github.com/reactive-systems/syfco"><code>syfco</code></a> which can translate a TLSF specification to an LTL formula.
+</p>
+
+<p>
+The following line shows how a TLSF specification called <code>FILE</code> can
+be synthesized using <code>syfco</code> and <code>ltlsynt</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">ltlsynt --tlsf FILE
+</pre>
+</div>
+
+<p>
+The above <code>--tlsf</code> option will call <code>syfco</code> to perform the conversion
+and extract output signals, as if you had used:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span class="org-variable-name">LTL</span>=$(syfco -f ltlxba -m fully FILE)
+<span class="org-variable-name">OUT</span>=$(syfco --print-output-signals FILE)
+ltlsynt --formula=<span class="org-string">"$LTL"</span> --outs=<span class="org-string">"$OUT"</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc4a5ba9" class="outline-2">
+<h2 id="orgc4a5ba9">Internal details</h2>
+<div class="outline-text-2" id="text-orgc4a5ba9">
+<p>
+The tool reduces the synthesis problem to a parity game, and solves the parity
+game using Zielonka's recursive algorithm.  The process can be pictured as follows.
+</p>
+
+
+<div id="org04ce5bf" class="figure">
+<p><object type="image/svg+xml" data="ltlsynt.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+LTL decomposition consist in splitting the specification into multiple
+smaller constraints on disjoint subsets of the output values (as
+described by <a href="https://arxiv.org/abs/2103.08459">Finkbeiner, Geier, and Passing</a>), solve those constraints
+separately, and then combine them while encoding the AIGER circuit.
+This is enabled by default, but can be disabled by passing option
+<code>--decompose=no</code>.
+</p>
+
+<p>
+The ad hoc construction on the top is just a shortcut for some type of
+constraints that can be solved directly by converting the constraint
+into a DBA.
+</p>
+
+<p>
+Otherwise, conversion to parity game (represented by the blue zone) is
+done using one of several algorithms specified by the <code>--algo</code> option.
+The game is then solved, producing a strategy if the game is realizable.
+</p>
+
+<p>
+If <code>ltlsynt</code> is in <code>--realizability</code> mode, the process stops here
+</p>
+
+<p>
+In synthesis mode, the strategy is first simplified.  How this is done
+can be fine-tuned with option <code>--simplify</code>:
+</p>
+<pre class="example">
+--simplify=no|bisim|bwoa|sat|bisim-sat|bwoa-sat
+                       simplification to apply to the controller (no)
+                       nothing, (bisim) bisimulation-based reduction,
+                       (bwoa) bisimulation-based reduction with output
+                       assignment, (sat) SAT-based minimization,
+                       (bisim-sat) SAT after bisim, (bwoa-sat) SAT after
+                       bwoa.  Defaults to 'bwoa'.
+</pre>
+
+
+<p>
+Finally, the strategy is encoded into <a href="http://fmv.jku.at/aiger/">AIGER</a>.  The <code>--aiger</code> option can
+take an argument to specify a type of encoding to use: by default it
+is <code>ite</code> for if-then-else, because it follows the structure of BDD
+used to encode the conditions in the strategy.  An alternative
+encoding is <code>isop</code> where condition are first put into
+irredundant-sum-of-product, or <code>both</code> if both encodings should be
+tried.  Additionally, these optiosn can accept the suffix <code>+ud</code> (use
+dual) to attempt to encode each condition and its negation and keep
+the smallest one, <code>+dc</code> (don't care) to take advantage of <i>don't care</i>
+values in the output, and one of <code>+sub0</code>, <code>+sub1</code>, or <code>+sub2</code> to test
+various grouping of variables in the encoding.  Multiple encodings can
+be tried by separating them using commas.  For instance
+<code>--aiger=isop,isop+dc,isop+ud</code> will try three different encodings.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org94fe6fe" class="outline-2">
+<h2 id="org94fe6fe">Other useful options</h2>
+<div class="outline-text-2" id="text-org94fe6fe">
+<p>
+You can also ask <code>ltlsynt</code> to print to obtained parity game into
+<a href="https://github.com/tcsprojects/pgsolver">PGSolver</a> format, with the flag <code>--print-pg</code>, or in the HOA format,
+using <code>--print-game-hoa</code>.  These flag deactivate the resolution of the
+parity game.  Note that if any of those flag is used with <code>--dot</code>, the game
+will be printed in the Dot format instead:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh" id="org50f70b7">ltlsynt --ins=i1,i2 -f <span class="org-string">'(i1 &amp; i2) &lt;-&gt; F(o1 &amp; X(!o1))'</span> --print-game-hoa --dot
+</pre>
+</div>
+
+<div id="org0f2c43d" class="figure">
+<p><object type="image/svg+xml" data="ltlsyntexgame.svg" class="org-svg">
+Sorry, your browser does not support SVG.</object>
+</p>
+</div>
+
+<p>
+For benchmarking purpose, the <code>--csv</code> option can be used to record
+intermediate statistics about the resolution.
+</p>
+
+<p>
+The <code>--verify</code> option requests that the produced strategy or aiger
+circuit are compatible with the specification.  This is done by
+ensuring that they do not intersect the negation of the specification.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4c382d1" class="outline-2">
+<h2 id="org4c382d1">References</h2>
+<div class="outline-text-2" id="text-org4c382d1">
+<p>
+The initial reduction from LTL to parity game is described in the
+following paper:
+</p>
+
+<ul class="org-ul">
+<li><b>Reactive Synthesis from LTL Specification with Spot</b>, <i>Thibaud Michaud</i>,
+<i>Maximilien Colange</i>.  Presented in SYNT@CAV'18.  (<a href="https://www.lrde.epita.fr/dload/papers/michaud.18.synt.pdf">pdf</a> | <a href="https://www.lrde.epita.fr/~max/bibtexbrowser.php?key=michaud.18.synt&amp;bib=perso.bib">bib</a>)</li>
+</ul>
+
+<p>
+Further improvements are described in the following paper:
+</p>
+
+<ul class="org-ul">
+<li><b>Improvements to <code>ltlsynt</code></b>, <i>Florian Renkin</i>, <i>Philipp Schlehuber</i>,
+<i>Alexandre Duret-Lutz</i>, and <i>Adrien Pommellet</i>.  Presented at the
+SYNT'21 workshop.  (<a href="https://www.lrde.epita.fr/~adl/dl/adl/renkin.21.synt.pdf">pdf</a> | <a href="https://www.lrde.epita.fr/~adl/dl/adl_bib.html#renkin.21.synt">bib</a>)</li>
+</ul>
+
+<p>
+Simplification of Mealy machines is discussed in:
+</p>
+
+<ul class="org-ul">
+<li><b>Effective reductions of Mealy machines</b>, <i>Florian Renkin</i>,
+<i>Philipp Schlehuber-Caissier</i>, <i>Alexandre Duret-Lutz</i>, and <i>Adrien Pommellet</i>.
+Presented at FORTE'22.  (<a href="https://www.lrde.epita.fr/~adl/dl/adl/renkin.22.forte.pdf">pdf</a> | <a href="https://www.lrde.epita.fr/~adl/dl/adl_bib.html#renkin.22.forte">bib</a>)</li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	Release Spot 2.11.6
+
+	* NEWS, configure.ac, doc/org/setup.org: Update version.
+
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	mention the bug fixed in BuDDy
+
+	* NEWS: Explain the bug fixed in previous patch and reported in
+	issue #535.
+	* THANKS: Add Guillermo.
+
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	* .gitlab-ci.yml: temporary disable raspbian.
+
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	improve coverage of LaTeX/utf8 printers for SERE
+
+	* bin/common_output.cc, bin/common_output.hh,
+	bin/randltl.cc: Adjust so that running "randltl -S" use
+	the SERE flavor of the spot/latex/utf8 formula printers.
+	* tests/core/latex.test, tests/core/utf8.test,
+	tests/python/ltlparse.py: Add more test cases.
+
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	bin: cover more tmpfile failure when running as root
+
+	* tests/core/ltlcross5.test: reorganize to test missing directory
+	before permission issues, as the latter cannot be run as root.
+
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	tests: add some test to cover autcross' univ-edges removal
+
+	* tests/core/ltl3ba.test: Here.
+
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	aiger: order the inputs of binary AND gates
+
+	* spot/twaalgos/aiger.cc: Here.
+	* tests/core/ltlsynt.test: Adjust, and add test case for aiger=optim.
+
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	acc: remove some dead functions
+
+	* spot/twa/acc.hh, spot/twa/acc.cc (has_parity_prefix,
+	is_parity_max_equiv): Remove.
+	* spot/twa/acc.hh, spot/twa/twagraph.cc,
+	spot/twa/twagraph.hh (apply_permutation): Remove.
+
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	bin: fix handling for --output & --format with LTL outputs
+
+	* bin/common_output.cc: Set the output stream for LTL formats.

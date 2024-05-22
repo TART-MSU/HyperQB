@@ -1,0 +1,7 @@
+2023-08-01  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	fix cache index of bdd_forall
+
+	Fix a 20 year old typo that caused a bug reported by Guillermo Perez.
+
+	* src/bddop.c (bdd_forall, bdd_forallcomp): Fix the cache index.
