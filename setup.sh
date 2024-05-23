@@ -1,5 +1,4 @@
 #!/bin/bash
-
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   echo "HyperQB setup starts for $OSTYPE"
   apt update
@@ -21,6 +20,8 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
   echo "check dotnet installataion: "
   dotnet --version
+  echo "HyperQB setup finished."
+  
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   echo "HyperQB setup starts for $OSTYPE"
   # BINLOCATION="exec/mac"
@@ -29,7 +30,6 @@ else
   exit 1 
 fi
 
-echo "HyperQB setup success!"
 
 
 ######################################
