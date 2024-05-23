@@ -1,4 +1,4 @@
 {
-    "autfilt":"/home/tacas23/tacas/spot-2.11.5/bin/autfilt",
-    "ltl2tgba":"/home/tacas23/tacas/spot-2.11.5/bin/ltl2tgba"
+    "autfilt":"/home/artifact/HyperQB/exec/linux/compare/spot/autfilt",
+    "ltl2tgba":"/home/artifact/HyperQB/exec/linux/compare/spot/ltl2tgba"
 }
