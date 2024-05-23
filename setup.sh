@@ -20,11 +20,12 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
   echo "check dotnet installataion: "
   dotnet --version
+
+  chown -R artifact build_today/
   echo "HyperQB setup finished."
   
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   echo "HyperQB setup starts for $OSTYPE"
-  # BINLOCATION="exec/mac"
 else
   echo "sorry, current OS not supported yet :("
   exit 1 

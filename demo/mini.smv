@@ -1,5 +1,10 @@
 -- curr: a
--- next: (a -> ~a') /\ (~a -> a)
+-- next: (a -> ~a') /\ (~a -> a')
+
+
+
+
+
 MODULE main
  VAR
     a: boolean;

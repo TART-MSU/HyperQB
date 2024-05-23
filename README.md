@@ -2,26 +2,33 @@
 Title:    HyperQB: A QBF-Based Bounded Model Checker for Hyperproperties <br/>
 Authors:  Tzu-Han Hsu, Borzoo Bonakdarpour, César Sánchez
 
+HyperQB is a home-grown tool of Bounded Model Checking for Hyperproperties.
+
+Hyperproperty specifies and reasons about important requirements among multiple traces. We implement our QBF-based algorithm for Bounded Model Checking for Hyperproperty as a tool, HyperQB.
+
+HyperQB includes several parts:
+- NuSMV model parsing and Boolean encoding of transition relation and specification,
+- HyperLTL formula translation,
+- QBF encoding of unfolding with bound k using specific semantics,
+- QBF solving with QBF solver QuAbs.  
+
+Our code is under MIT license as presented in LICENSE.tex,
+while the existing tool, QuAbs, is under AGPL license.  
 
 ## Hyperlink to the artifact
-DOI: [10.5281/zenodo.11170365](10.5281/zenodo.11170365) <br/>
-Zenodo link: [https://zenodo.org/records/11170365](https://zenodo.org/records/11170365)<br/>
-checksum: eac5f1857b5d9d0761c5a177bf7bf9ea13ea07faf32b0108f9c9a7d206f14f14 <br/>
-Public access:[https://github.com/TART-MSU/HyperQB](https://github.com/TART-MSU/HyperQB) 
+* DOI: [...](...) <br/>
+* Zenodo link: <br/>
+* checksum: <br/>
+* Public access:[https://github.com/TART-MSU/HyperQB](https://github.com/TART-MSU/HyperQB) 
 
 
 ## Environment requirements for the artifact
-- To provide the best evaluating experience for the reviewers, 
-we have tested this artifact on the provided VM *Artifact_VM_Ubuntu_22.04.ova*
+- To provide the best evaluating experience for the reviewers, we have tested this artifact on the officially provided VM **Artifact_VM_Ubuntu_22.04.ova**
 
-- Each binary executable is already pre-compiled by us on the VM!:D
-(i.e., no further extra compilation needed from the reviewers).  
+- Each binary executable is already pre-compiled by us on the VM!:D No further extra compilation needed from the reviewers.  
 
-- Our artifact is partially using Docker image to 
-reduce the reviewer's burden on the dependencies installation.
-Note:   The core technical parts of HyperQB BMC algorithm
-        (i.e., encoding, unrolling, QBF-solving, etc.),
-        are still self-contained in this artifact. 
+- Our artifact is partially using Docker image to reduce the reviewer's burden on the dependencies installation.
+Note:   The core technical parts of HyperQB BMC algorithm (i.e., encoding, unrolling, QBF-solving, etc.), are still self-contained in this artifact. 
 
 
 ## Structure 
@@ -36,7 +43,8 @@ The goal of this artifact is to produce results of Table 3 in the paper, includi
 1. Results produced by HyperQB (HQB).
 2. Comparisons of HyperQB with [24], AutoHyper (AH)[2], and AutoHyperQ (AHQ) [3].
 
-## Remarks on this Artifact
+
+## Quick Remarks on this Artifact
 1. We notice that while running our experiments on the ATVA VM, the overall runtime *increase* a lot (in comparison to our reported runtime in Table 3, obtained from running on a MacBook M1 locally).
 2. We notice that in several cases, AH/AHQ might report *“Unexpected exit code by spot”* when running on ATVA VM. This was not detected while running from a MacBook M1 locally, and since this is an issue (probably due to a different platform) from other tools we used for comparisons, and is not about HyperQB itself, we did not further debug on it. Please note this differences of the `error` cases we reported in Table 3.  
 3. For fair comparison, we also make sure the models used by other tools 
@@ -53,38 +61,43 @@ cd artifact/HyperQB/
 ```
 Next, run the shell script to setup the environment on the VM:
 ```shell
-sudo ./setup.sh
+./setup.sh
 ```
-(ps. authentication might be needed here, enter "artifact" in the ATVA VM)
-This script installed all required elements including docker and dotnet.
-A succesful installation should shows the versions of docker and dotnet.
-
-Note: in some rare cases, if any downloading issue happens, please run:
+<!-- (ps. authentication might be needed here, enter "artifact" in the ATVA VM) -->
+This script installed all required elements including *docker* and *dotnet*. A succesful installation should shows the versions of docker and dotnet at the end of executing `setup.sh`.
+Note: in some rare cases, if any downloading issue happens in the VM, please run:
 ```sudo snap install docker``` and 
 ```sudo docker pull tzuhanmsu/hyperqube:latest```
 
+## First Example and Tool Output Interpretation
+We here provide a minimal example of how to interpret HyperQB's inputs and outputs. 
+
+First, one can execute the following command
+```shell
+./hyperqb.sh demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt
+```
+This indicates that HyperQB is checking the hyperproperty formula `demo/mini.hq`, on the model `demo/mini.smv` (note that this is a specific case, such that 2 quantifiers in the formula follows the same model, one could, of course, create alias to distinguish the first and second model). Other given parameters include: `3` as the number of execution steps to unroll (i.e., the "bound" in BMC), `-pes` as the chosen bounded semantics (we provided 4 semantics, please refer to .....), and `-bughunt` as the mode of exploring buggy trace as traditional BMC technique (i.e., the input formula is negated).
+
 
 ## Quick Start for Smoke Test
-(please make sure "Setting up the Artifact" was succesfully executed before continue!)<br/>
-The smoke test review can be done in one-click
-to quickly check if HyperQB is installable, functional and runnable.  
+(Note: please make sure "Setting up the Artifact" was succesfully executed before continue)<br/>
+The smoke test review can be done in one-click, to quickly check if HyperQB is installable, functional and runnable.  
 
 Run the following command for quick smoke testing our benchmarks:
 ```shell
 sudo ./run_benchmarks.sh -light -alltools
 ```
-(`-light` specify smaller instances, and `-alltools` runs over HyperQB and all tools for comparisons, as presented in Table 3)
+The options `-light` specify smaller instances, and `-alltools` runs over HyperQB and all tools for comparisons, as presented in Table 3 and Table 4. 
 
 
 ## Detailed instructions for Full Review
-(please make sure "Setting up the Artifact" was succesfully executed before continue!)<br/>
-Our goal is to present the experiments in Table 3 of the paper. 
-We provide different comamnds to:
-1. run all cases using HyperQB,
-2. run all cases using HyperQB and all other tools (AH/AHQ),
-3. run specific case with selected tools.
+(Note: please make sure "Setting up the Artifact" was succesfully executed before continue!)<br/>
+Our goal is to present the experiments in Table 3 and Table 4 of the tool paper. To provide better review experience, we offer different comamnds to let the reviewer customize each test, including:
+1. run all cases using only HyperQB (HQB),
+2. run all cases using HyperQB and all other tools (AH and AHQ),
+3. run specific case with selected tools (HQB, AH, or AHQ).
 
-### Run all cases using HyperQB in Table 3
+### Run all cases using HyperQB in Table 3 and Table 4
 Run all cases in Tables 3 using HyperQB with the following command:
 ```shell
 sudo ./run_benchmarks -allcases -HQB
@@ -116,40 +129,8 @@ sudo ./run_benchmarks -13.2 -HQB -OLDHQB -AH -AHQ
 
 Thank you for using HyperQB!
 
-## General Usage of HyperQB (Reusable Badge)
 
-# Welcome to HyperQB!!!
-HyperQB is a home-grown tool of Bounded Model Checking for Hyperproperties.
-
-Hyperproperty specifies and reasons about important requirements among multiple traces. We implement our QBF-based algorithm for Bounded Model Checking for Hyperproperty as a tool, HyperQB.
-
-HyperQB includes several parts:
-- NuSMV model parsing and Boolean encoding of transition relation and specification,
-- HyperLTL formula translation,
-- QBF encoding of unfolding with bound k using specific semantics,
-- QBF solving with QBF solver QuAbs.  
-
-Our code is under MIT license as presented in LICENSE.tex,
-while the existing tool, QuAbs, is under AGPL license.  
-
-
-## Get Started
-You can start using HyperQB in 2 simple steps:
-1. First install [docker](https://docs.docker.com/get-docker/). 
-HyperQB will automatically pull the image and execute the scripts to avoid possible hassle of compiling dependencies!
-
-2. Next, clone the repository and step into the repo:
-```shell
-git clone https://github.com/TART-MSU/HyperQB.git
-```
-```shell
-cd HyperQB
-```
-You are now ready to run HyperQB!:D
-
-
-
-## How to Use
+## General Usage of HyperQB (reusable badge)
 To run HyperQB, execute ```hyperqb.sh``` with the following inputs:
 - `<list of models>` written in NuSMV format (as .smv files),
 - `<formula>` written in the grammar described in Sec. 4 (as a .hq file),
@@ -184,7 +165,7 @@ the reviewer can simply uncommand any case and execute it.
 
 
 
-## Experiments
+## Summary of Experiments
 (all models and formulas are in directory benchmarks)
 
 Our evaluations include the following cases,<br/>

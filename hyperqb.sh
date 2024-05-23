@@ -50,7 +50,6 @@ QCIR_OUT=${OUTFOLDER}HQ.qcir
 ERROR="(!) HyperQB error: "
 
 
-
 ######################################
 ### create output files containers ###
 ######################################
