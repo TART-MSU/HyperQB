@@ -9,7 +9,7 @@
       "FsOmegaLib/1.0.0": {
         "dependencies": {
           "FParsec": "1.1.1",
-          "FSharp.Core": "7.0.0"
+          "FSharp.Core": "8.0.102"
         },
         "runtime": {
           "FsOmegaLib.dll": {}
@@ -17,7 +17,7 @@
       },
       "FParsec/1.1.1": {
         "dependencies": {
-          "FSharp.Core": "7.0.0"
+          "FSharp.Core": "8.0.102"
         },
         "runtime": {
           "lib/netstandard2.0/FParsec.dll": {
@@ -30,11 +30,11 @@
           }
         }
       },
-      "FSharp.Core/7.0.0": {
+      "FSharp.Core/8.0.102": {
         "runtime": {
           "lib/netstandard2.1/FSharp.Core.dll": {
-            "assemblyVersion": "7.0.0.0",
-            "fileVersion": "7.0.22.57105"
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.1.224.8102"
           }
         },
         "resources": {
@@ -94,12 +94,12 @@
       "path": "fparsec/1.1.1",
       "hashPath": "fparsec.1.1.1.nupkg.sha512"
     },
-    "FSharp.Core/7.0.0": {
+    "FSharp.Core/8.0.102": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-GD8crD4owKN2wQh7O/oWA8I32ipwIh+0ZRWeFclqCRY2jhNq00bg2AZH/H0PUMNFkJNKf85XQfBZWjILF4UgxQ==",
-      "path": "fsharp.core/7.0.0",
-      "hashPath": "fsharp.core.7.0.0.nupkg.sha512"
+      "sha512": "sha512-dbDcZMZMd9U+NLnttYINUoaOfau6dkq1/OdvF3xVL7SFsSaYqPEnAoWx8mvvfoGmnsTR3a660v7UmuxsajeEqA==",
+      "path": "fsharp.core/8.0.102",
+      "hashPath": "fsharp.core.8.0.102.nupkg.sha512"
     }
   }
 }
