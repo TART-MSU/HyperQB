@@ -279,6 +279,7 @@ ERRNO_H =
 ETAGS = etags
 EXEEXT = 
 FGREP = /usr/bin/grep -F
+FILECMD = file
 FLOAT_H = 
 GETOPT_CDEFS_H = getopt-cdefs.h
 GETOPT_H = getopt.h
