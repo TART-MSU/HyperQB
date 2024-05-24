@@ -17,15 +17,16 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   mkdir build_today/
   chown -R artifact build_today/
 
-  ### Extract Docker Image
-  echo "[ setup docker images ]"
-  apt-get install docker-ce
-  systemctl start docker
-  # docker pull tzuhanmsu/hyperqube:latest --> this require internet access
-  groupadd docker
-  usermod -aG docker $USER
-  newgrp docker
-  docker load < hyperqb_docker.tar.gz
+  ./setdocker.sh
+  # ### Extract Docker Image
+  # echo "[ setup docker images ]"
+  # # apt-get install docker-ce
+  # # systemctl start docker
+  # # docker pull tzuhanmsu/hyperqube:latest --> this require internet access
+  # groupadd docker
+  # usermod -aG docker $USER
+  # newgrp docker
+  # docker load < hyperqb_docker.tar.gz
 
   echo "(!) Notice please make sure the PATH of main HyperQB/ folder is placed in: /home/artifact/HyperQB"
   echo "(This is in order to correctly run comparison with other tools, which require specific absolute path into their sub-tool)"
