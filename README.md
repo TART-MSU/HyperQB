@@ -73,6 +73,9 @@ Next, run the shell script to setup the environment on the VM and load:
 ```shell
 sudo ./setup.sh
 ```
+```shell
+newgrp docker
+```
 (ps. authentication might be needed here, enter "artifact" in the ATVA VM)
 This script installed all required elements. A succesful installation should display the version of docker.
 Note: in very rare cases, if any image reading issue happens in the VM (since this is the major update in revision so we want to make sure the reviewers still get the chance to run our tool), please run the following manually:
