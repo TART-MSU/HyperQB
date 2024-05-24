@@ -66,15 +66,13 @@ For comparisons with other tools, we kindly ask the reviewers to extract the art
 
 We provide a one-click shell script to quickly setup everything on [ATVA VM](https://zenodo.org/records/10928976).<br/>
 First, download and unzip *HyperQB.zip*, step into the root directory:
+(!) Notice that since other tools we used for comparing with HyperQB requried absolute paht for sub-tool, please make sure the unzipped folder is located in the home directory (i.e., `home/artofact/HyperQB`)
 ```shell
-cd artifact/HyperQB/
+cd HyperQB/
 ```
 Next, run the shell script to setup the environment on the VM and load:
 ```shell
-sudo ./setup.sh
-```
-```shell
-newgrp docker
+sudo ./setup.sh && newgrp docker
 ```
 (ps. authentication might be needed here, enter "artifact" in the ATVA VM)
 This script installed all required elements. A succesful installation should display the version of docker.

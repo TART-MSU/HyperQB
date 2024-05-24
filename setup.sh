@@ -20,15 +20,14 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
   ### Extract Docker Image from package
   echo "[ setup docker images ]"
-  groupadd docker
-  usermod -aG docker ${USER}
   echo "checking Docker Daemon is running correctly"
   until docker ps > /dev/null 2>&1
   do
     sleep 1
   done
+  groupadd docker
+  usermod -aG docker ${USER}
   echo "docker Daemon is ready"
-  usermod -a -G docker artifact
   echo "preparing for extracting image from .tar.gz"
   docker load < hyperqb_docker.tar.gz
 
