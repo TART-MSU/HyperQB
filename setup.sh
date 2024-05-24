@@ -14,11 +14,10 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 
   ### .NET tool for running AutoHyper and AutoHyperQ
   echo "[ setpup dotnet for comparison with AH and AHQ... ]"
-  apt-get update && \
-    apt-get install -y dotnet-sdk-7.0
-  apt-get update && \
-    apt-get install -y aspnetcore-runtime-7.0
-  apt-get install -y dotnet-runtime-7.0
+  apt-get update && apt-get install -y dotnet-sdk-7.0
+  # apt-get update && \
+  #   apt-get install -y aspnetcore-runtime-7.0
+  # apt-get install -y dotnet-runtime-7.0
 
   echo "[ setup container of temp-generated files ]"
   mkdir build_today/
