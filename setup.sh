@@ -5,8 +5,14 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   echo "[ setup docker and a helper image... ]"
   snap refresh
   snap install docker
-  docker pull tzuhanmsu/hyperqube:latest
+  docker load < hyperqb_docker.tar.gz
+  # docker pull tzuhanmsu/hyperqube:latest
+  groupadd docker
+  usermod -aG docker $USER
+  newgrp docker
 
+
+  ### .NET tool for running AutoHyper and AutoHyperQ
   echo "[ setpup dotnet for comparison with AH and AHQ... ]"
   apt-get update && \
     apt-get install -y dotnet-sdk-7.0
@@ -14,23 +20,21 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     apt-get install -y aspnetcore-runtime-7.0
   apt-get install -y dotnet-runtime-7.0
 
-  echo "[ checking installations ]"
+  echo "[ setup container of temp-generated files ]"
+  mkdir build_today/
+  chown -R artifact build_today/
+
+  echo "[ checking installations... ]"
   echo "check docker installation: "
   docker --version
-
   echo "check dotnet installataion: "
   dotnet --version
 
-  chown -R artifact build_today/
   echo "HyperQB setup finished."
-  
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-  echo "HyperQB setup starts for $OSTYPE"
 else
-  echo "sorry, current OS not supported yet :("
+  echo "sorry, this setup script is designed for Ubuntu 22.04 VM for now"
   exit 1 
 fi
-
 
 
 ######################################
