@@ -255,7 +255,10 @@ Our evaluations include the following cases, covering all instances in `Table 3`
 | #17.1 |  Data Breach in ATM Machine |
 
 
-## Additional Instruction of Compiling Other Tools
+## Additional Information on Sources of Other Tools used In this artifact
+* AutoHyper: https://github.com/AutoHyper/AutoHyper
+* AutoHyperQ: https://github.com/AutoHyper/AutoHyperQ
+* Spot (subtool of both tools): https://spot.lre.epita.fr/
 
 ## People
 Authors:
