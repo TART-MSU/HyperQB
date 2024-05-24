@@ -1,35 +1,35 @@
 #!/bin/bash
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  systemctl stop unattended-upgrades
+  
   echo "HyperQB setup starts for $OSTYPE"
+  systemctl stop unattended-upgrades
   apt update
+
+  ### Docker setup
   echo "[ setup docker and a helper image... ]"
   snap refresh
   snap install docker
-
-  # docker pull tzuhanmsu/hyperqube:latest
-  # docker load < hyperqb_docker.tar.gz
-  # groupadd docker
-  # usermod -aG docker $USER
-  # newgrp docker
-
+  echo "check docker installation: "
+  docker --version
 
   ### .NET tool for running AutoHyper and AutoHyperQ
   echo "[ setpup dotnet for comparison with AH and AHQ... ]"
   apt-get update && apt-get install -y dotnet-sdk-7.0
-  # apt-get update && \
-  #   apt-get install -y aspnetcore-runtime-7.0
-  # apt-get install -y dotnet-runtime-7.0
+  echo "check dotnet installataion: "
+  dotnet --version
 
+  ### Temporary container setup (only give permission to R/W into this folder)
   echo "[ setup container of temp-generated files ]"
   mkdir build_today/
   chown -R artifact build_today/
 
-  echo "[ checking installations... ]"
-  echo "check docker installation: "
-  docker --version
-  echo "check dotnet installataion: "
-  dotnet --version
+  ### Extract Docker Image
+  echo "[ setup docker images ]"
+  # docker pull tzuhanmsu/hyperqube:latest --> this require internet access
+  docker load < hyperqb_docker.tar.gz
+  groupadd docker
+  usermod -aG docker $USER
+  newgrp docker
 
   echo "HyperQB setup finished."
 else
