@@ -15,6 +15,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   ### Temporary container setup (only give permission to R/W into this folder)
   echo "[ setup container of temp-generated files ]"
   mkdir build_today/
+  sleep 1
   chown -R artifact build_today/
 
   ### Extract Docker Image from package
@@ -26,7 +27,9 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   do
     sleep 1
   done
-  echo "docker Daemon is ready, preparing for extracting image from .tar.gz"
+  echo "docker Daemon is ready"
+  usermod -a -G docker artifact
+  echo "preparing for extracting image from .tar.gz"
   docker load < hyperqb_docker.tar.gz
 
   echo "[ check: folder directory ]"
