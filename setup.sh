@@ -1,15 +1,17 @@
 #!/bin/bash
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  systemctl stop unattended-upgrades
   echo "HyperQB setup starts for $OSTYPE"
   apt update
   echo "[ setup docker and a helper image... ]"
   snap refresh
   snap install docker
-  docker load < hyperqb_docker.tar.gz
+
   # docker pull tzuhanmsu/hyperqube:latest
-  groupadd docker
-  usermod -aG docker $USER
-  newgrp docker
+  # docker load < hyperqb_docker.tar.gz
+  # groupadd docker
+  # usermod -aG docker $USER
+  # newgrp docker
 
 
   ### .NET tool for running AutoHyper and AutoHyperQ
