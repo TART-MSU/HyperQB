@@ -1,0 +1,5 @@
+2023-04-20  Alexandre Duret-Lutz  <adl@lrde.epita.fr>
+
+	release Spot 2.11.5
+
+	* NEWS, configure.ac, doc/org/setup.org: Update version.
