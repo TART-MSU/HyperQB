@@ -12,12 +12,6 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   echo "check docker installation: "
   docker --version
 
-  ### .NET tool for running AutoHyper and AutoHyperQ
-  echo "[ setpup dotnet for comparison with AH and AHQ... ]"
-  apt-get update && apt-get install -y dotnet-sdk-7.0
-  echo "check dotnet installataion: "
-  dotnet --version
-
   ### Temporary container setup (only give permission to R/W into this folder)
   echo "[ setup container of temp-generated files ]"
   mkdir build_today/
@@ -31,6 +25,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   usermod -aG docker $USER
   newgrp docker
 
+  echo "(!) Notice (!) In order to correctly run comparison with other tools, which require specific absolute path into their sub-tool, please make sure the PATH of main HyperQB/ folder is placed in: /home/artifact/HyperQB"
   echo "HyperQB setup finished."
 else
   echo "sorry, this setup script is designed for Ubuntu 22.04 VM for now"

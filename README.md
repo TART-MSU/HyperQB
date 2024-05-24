@@ -64,10 +64,10 @@ are the same (all in NuSMV format). The only difference is the different .hq for
 
 
 ## Setting up the Artifact
-For comparisons with other tools, we kindly ask the reviewers to extract the artifact in the *home* directory, i.e., with ${PWD} as /home/artifact/HyperQB... (this is due to AH and AHQ requiring absolute paths to spot).
+For comparisons with other tools, we kindly ask the reviewers to extract the artifact in the *home* directory, i.e., with `${PWD}` as `/home/artifact/HyperQB` (this is due to AH and AHQ requiring absolute paths to spot).
 
-We provide a one-click shell script to quickly setup everything on ATVA VM.<br/>
-First, download and unzip *artifact.zip*, step into the root directory:
+We provide a one-click shell script to quickly setup everything on [ATVA VM](https://zenodo.org/records/10928976).<br/>
+First, download and unzip *HyperQB.zip*, step into the root directory:
 ```shell
 cd artifact/HyperQB/
 ```
@@ -255,6 +255,8 @@ Our evaluations include the following cases, covering all instances in `Table 3`
 | #16.1 |  Information Leaking in Banking System |
 | #17.1 |  Data Breach in ATM Machine |
 
+
+## Additional Instruction of Compiling Other Tools
 
 ## People
 Authors:
