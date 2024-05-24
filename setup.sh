@@ -17,14 +17,13 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   mkdir build_today/
   chown -R artifact build_today/
 
-  ./setdocker.sh
-  # ### Extract Docker Image
+  ### Extract Docker Image
   # echo "[ setup docker images ]"
   # # apt-get install docker-ce
   # # systemctl start docker
   # # docker pull tzuhanmsu/hyperqube:latest --> this require internet access
   # groupadd docker
-  # usermod -aG docker $USER
+  # usermod -aG docker ${USER}
   # newgrp docker
   # docker load < hyperqb_docker.tar.gz
 

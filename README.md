@@ -24,34 +24,32 @@ The dataflow of HyperQB includes several parts:
 HyperQB is under MIT license as presented in `LICENSE.txt`, while the existing solver we use, `QuAbs`, is under AGPL license.  
 
 
-
 ## Environment requirements for the artifact
 * To provide the best evaluating experience for the reviewers, we have tested this artifact on the officially provided VM *Artifact_VM_Ubuntu_22.04.ova* (downloaded from https://zenodo.org/records/10928976).
 * Each binary executable is already pre-compiled by us on the ATVA VM!:D No further extra compilation hassle needed from the reviewers.
-<!-- - However, to show self-containese, we have includes all the sources (include other tools that we use for comparison, in src/)   -->
+* To show our artifact is self-contained, we have includes all the sources (include other tools that we use for comparison as zip files, in `src/`)  
 * Our artifact is partially using Docker image to reduce the reviewer's burden on the dependencies installation. (Note: The core technical parts of HyperQB BMC algorithm (i.e., encoding, unrolling, QBF-solving, etc.), are still self-contained in this artifact.)
 
 
-
 ## Clarification on Internet Access: 
-We aim for both "Available & Reusable" badges, as a result, the internet connection should be avoided as much as possible. To achieve this, we clarify the parts that we adjusted to self-contained package, and parts that requires partial internet access due to other tools (but the HyperQB itself).
+We aim for both "Available & Reusable" badges, as a result, the internet connection should be avoided as much as possible. To achieve this, we clarify the adjustment to a self-contained docker image, and the .NET installation due to other tools (but not the HyperQB itself). In general:
 
-1. we packaged the Docker image as `hyperqb_docker.tar.gz`, and deply the image by running `docker load < hyperqb_docker.tar.gz` (this will be executed in `setup.sh`)
-2. the only installation that requires Internet access is `dotnet`, which is required by two other tools that we use for comparison (AutoHyper and AutoHyperQ), but not HyperQB itself, besides, this process is following the [standard installation instructions for Ubuntu 22.04](https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-install?pivots=os-linux-ubuntu-2204&tabs=dotnet8), and it is not accessing Github or any private repositories. Hence, we claim this does not break the self-containess of receiving "Available & Reusable" badges.      
+1. we packaged the Docker image as `hyperqb_docker.tar.gz`, and deploy the image by running `docker load < hyperqb_docker.tar.gz` (this will be executed in `setup.sh`)
+2. the only installation that requires Internet access is `dotnet`, which is required by two other tools that we use for comparison (AutoHyper and AutoHyperQ), but not HyperQB itself. In order to have our artifact fully self-contained, we have pre-compiled all executable and remove the installtion of .NET in `setup.sh`.       
 
 
 
 ## Artifact Structure 
-Our artifact `HyperQB/` is structured follows:
+Our artifact `HyperQB/` is structured as follows:
 * `benchmarks/` contains benchmarks we used for evaluation.
 * `demo/` contains small instances as demonstrative examples.
 * `exec/` contains all pre-compiled executable (for different platforms), including AutoHyper (AH), and AutoHyperQ (AHQ), which are the tools we did comparison with on the benchmarks.
 * `src/` contains the source code of HyperQB. 
-when running HyperQB the temp containers `build_today` and `build_cex` will also be created.
+* when running HyperQB the temp containers `build_today` and `build_cex` will also be listed.
 
 The goal of this artifact is to produce results of Table 3 and Table 4 in the paper, including:
-* Results produced by HyperQB (HQB).
-* Comparisons of HyperQB with previous prototype (OLDHQB) [24] , AutoHyper (AH) [2], and AutoHyperQ (AHQ) [3].
+* Results produced by HyperQB.
+* Comparisons of HyperQB with previous prototype[24] , AutoHyper[2], and AutoHyperQ[3].
 
 
 
