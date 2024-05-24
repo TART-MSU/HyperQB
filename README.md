@@ -34,7 +34,7 @@ HyperQB is under MIT license as presented in `LICENSE.txt`, while the existing s
 ## Clarification on Internet Access: 
 We aim for both "Available & Reusable" badges, as a result, the internet connection should be avoided as much as possible. To achieve this, we clarify the adjustment to a self-contained docker image, and the .NET installation due to other tools (but not the HyperQB itself). In general:
 
-1. we packaged the Docker image as `hyperqb_docker.tar.gz`, and deploy the image by running `docker load < hyperqb_docker.tar.gz` (this will be executed in `setup.sh`)
+1. we packaged the Docker image as `hyperqb_docker.tar.gz`, and deploy the image by running `docker load < hyperqb_docker.tar.gz` (by executing `sudo ./setdocker.sh` right after `sudo setup.sh`).
 2. the only installation that requires Internet access is `dotnet`, which is required by two other tools that we use for comparison (AutoHyper and AutoHyperQ), but not HyperQB itself. In order to have our artifact fully self-contained, we have pre-compiled all executable and remove the installtion of .NET in `setup.sh`.       
 
 
@@ -69,13 +69,13 @@ First, download and unzip *HyperQB.zip*, step into the root directory:
 ```shell
 cd artifact/HyperQB/
 ```
-Next, run the shell script to setup the environment on the VM:
+Next, run the shell script to setup the environment on the VM and load:
 ```shell
 sudo ./setup.sh
 ```
 (ps. authentication might be needed here, enter "artifact" in the ATVA VM)
-This script installed all required elements including *docker* and *dotnet*. A succesful installation should shows the versions of docker and dotnet at the end of executing `setup.sh`.
-Note: in very rare cases, if any image reading issue happens in the VM (since this is the major update in revision), please run:
+This script installed all required elements. A succesful installation should display the version of docker.
+Note: in very rare cases, if any image reading issue happens in the VM (since this is the major update in revision so we want to make sure the reviewers still get the chance to run our tool), please run the following manually:
 ```sudo snap install docker``` and 
 ```sudo docker pull tzuhanmsu/hyperqube:latest```
 

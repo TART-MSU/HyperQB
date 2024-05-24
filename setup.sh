@@ -17,18 +17,23 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   mkdir build_today/
   chown -R artifact build_today/
 
-  ### Extract Docker Image
-  # echo "[ setup docker images ]"
-  # # apt-get install docker-ce
-  # # systemctl start docker
-  # # docker pull tzuhanmsu/hyperqube:latest --> this require internet access
-  # groupadd docker
-  # usermod -aG docker ${USER}
-  # newgrp docker
-  # docker load < hyperqb_docker.tar.gz
+  ### Extract Docker Image from package
+  echo "[ setup docker images ]"
+  groupadd docker
+  usermod -aG docker ${USER}
+  echo "checking Docker Daemon is running correctly"
+  until docker ps > /dev/null 2>&1
+  do
+    sleep 1
+  done
+  echo "docker Daemon is ready, preparing for extracting image from .tar.gz"
+  docker load < hyperqb_docker.tar.gz
 
-  echo "(!) Notice please make sure the PATH of main HyperQB/ folder is placed in: /home/artifact/HyperQB"
-  echo "(This is in order to correctly run comparison with other tools, which require specific absolute path into their sub-tool)"
+  echo "[ check: folder directory ]"
+  echo "(!) Notice please make sure the PATH of main HyperQB/ folder is placed in:"
+  echo "/home/artifact/HyperQB"
+  echo "(This is in order to correctly run comparison with other tools, which require specific absolute paths in their structure)"
+  echo ""
   echo "HyperQB setup finished."
 else
   echo "sorry, this setup script is designed for Ubuntu 22.04 VM for now"
