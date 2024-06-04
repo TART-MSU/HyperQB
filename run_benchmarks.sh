@@ -682,7 +682,7 @@ if ((echo $* | grep -e "-13.1" -q) || (echo $* | grep -e "-allcases" -q) || (ech
     echo "### running case 13.1, TEAMLTL1  ###"
     echo "####################################"
     SMV='benchmarks/13_teamltl/team1.smv'
-    HQ='benchmarks/13_teamltl/team.hq'
+    HQ='benchmarks/13_teamltl/team1.hq'
     HQAUTO='benchmarks/13_teamltl/AH/13.1.hq'
     K=10
     SEM='-pes'
@@ -698,7 +698,7 @@ if ((echo $* | grep -e "-13.2" -q) || (echo $* | grep -e "-allcases" -q) || (ech
     echo "### running case 13.2, TEAMLTL2  ###"
     echo "####################################"
     SMV='benchmarks/13_teamltl/team2.smv'
-    HQ='benchmarks/13_teamltl/team.hq'
+    HQ='benchmarks/13_teamltl/team2.hq'
     HQAUTO='benchmarks/13_teamltl/AH/13.2.hq'
     K=20
     SEM='-pes'

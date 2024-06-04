@@ -12,6 +12,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   echo "check docker installation: "
   docker --version
 
+
   ### Temporary container setup (only give permission to R/W into this folder)
   echo "[ setup container of temp-generated files ]"
   mkdir build_today/
