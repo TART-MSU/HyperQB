@@ -1,4 +1,4 @@
 {
-    "autfilt":"/Users/tzuhan/research/HyperQB/exec/mac/compare/spot-2.11.5/autfilt",
-    "ltl2tgba":"/Users/tzuhan/research/HyperQB/exec/mac/compare/spot-2.11.5/ltl2tgba"
+    "autfilt":"/Users/tzuhan/install/spot-2.11.5/bin/autfilt",
+    "ltl2tgba":"/Users/tzuhan/install/spot-2.11.5/bin/ltl2tgba"
 }
