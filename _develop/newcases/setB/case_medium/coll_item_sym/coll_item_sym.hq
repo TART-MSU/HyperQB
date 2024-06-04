@@ -1,1 +1,0 @@
-forall A. forall B.  {(*cs[A] = ccs[B]*) /\ (*cr[A] = ccr[B]*) /\ (*ci[A] = cci[B]*) /\ (*ct[A] = cct[B]*) /\ (*ccs[A] = cs[B]*) /\ (*ccr[A] = cr[B]*) /\ (*cci[A] = ci[B]*) /\ (*cct[A] = ct[B]*)} -> ((*res[A] = 0*) /\ (*res[B] = 0*)) \/ ((*res[A] < 0*) /\ (*res[B] > 0*)) \/ ((*res[A] > 0*) /\ (*res[B] < 0*))

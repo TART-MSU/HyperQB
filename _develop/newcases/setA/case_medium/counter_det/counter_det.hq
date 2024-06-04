@@ -1,1 +1,0 @@
-forall A. forall B. G(((*n[A] = n[B]*) /\ (*x[A] = x[B]*)) -> (*c[A] = c[B]*))

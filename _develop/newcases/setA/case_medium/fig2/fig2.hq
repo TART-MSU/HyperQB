@@ -1,1 +1,0 @@
-forall A. forall B. F((*PC[A]=1* /\ *PC[B]=1* /\ *x[A]=x[B]*)) -> G(*x[A] = x[B]*)

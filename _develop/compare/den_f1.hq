@@ -1,8 +1,0 @@
-forall A. exists B. exists C.
-G(
-  (*debits_amount[A]=debits_amount[B]*)
-  /\
-  (*debits_amount[A]=debits_amount[C]*)
-  /\
-  ~(*init_balance[B]=init_balance[C]*)
-)

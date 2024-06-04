@@ -1,1 +1,0 @@
-forall A. forall B. G(*x[A] = x[B]*)
