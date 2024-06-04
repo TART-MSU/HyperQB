@@ -1,0 +1,174 @@
+MODULE main
+ VAR
+    arr_a0: 0..7;
+    arr_a1: 0..7;
+    arr_a2: 0..7;
+    arr_a3: 0..7;
+    arr_a4: 0..7;
+    arr_a5: 0..7;
+    arr_a6: 0..7;
+
+    arr_b0: 0..7;
+    arr_b1: 0..7;
+    arr_b2: 0..7;
+    arr_b3: 0..7;
+    arr_b4: 0..7;
+    arr_b5: 0..7;
+    arr_b6: 0..7;
+
+    arr_d0: 0..7;
+    arr_d1: 0..7;
+    arr_d2: 0..7;
+    arr_d3: 0..7;
+    arr_d4: 0..7;
+    arr_d5: 0..7;
+    arr_d6: 0..7;
+
+    -- (N = 7)
+    int_i: 0..7;
+    int_N: 0..7;
+
+    PC: 1..5;
+    halt: boolean;
+ ASSIGN
+    -- Initial Conditions
+    init(arr_a0):= 1;
+    init(arr_a1):= 2;
+    init(arr_a2):= 3;
+    init(arr_a3):= 4;
+    init(arr_a4):= 5;
+    init(arr_a5):= 6;
+    init(arr_a6):= 7;
+
+    init(arr_b0):= 7;
+    init(arr_b1):= 7;
+    init(arr_b2):= 7;
+    init(arr_b3):= 7;
+    init(arr_b4):= 7;
+    init(arr_b5):= 7;
+    init(arr_b6):= 7;
+
+    init(arr_d0):= 0;
+    init(arr_d1):= arr_b0; -- modify
+    init(arr_d2):= 0;
+    init(arr_d3):= 0;
+    init(arr_d4):= 0;
+    init(arr_d5):= 0;
+    init(arr_d6):= 0;
+
+    init(int_i) := 1;
+    init(int_N) := 7;
+
+    init(PC):= 1; -- program counter starts at 1.
+    init(halt):= FALSE;
+
+
+    -- Transition Relations
+    next(arr_a0) := arr_a0;
+    next(arr_a1) := arr_a1;
+    next(arr_a2) := arr_a2;
+    next(arr_a3) := arr_a3;
+    next(arr_a4) := arr_a4;
+    next(arr_a5) := arr_a5;
+    next(arr_a6) := arr_a6;
+
+
+    next(arr_b0) :=
+      case
+        TRUE: arr_b0;
+      esac;
+    next(arr_b1) :=
+      case
+        (PC=2) & (int_i=1): arr_a1;
+        TRUE: arr_b1;
+      esac;
+    next(arr_b2) :=
+      case
+        (PC=2) & (int_i=2): arr_a2;
+        TRUE: arr_b2;
+      esac;
+    next(arr_b3) :=
+      case
+        (PC=2) & (int_i=3): arr_a3;
+        TRUE: arr_b3;
+      esac;
+    next(arr_b4) :=
+      case
+        (PC=2) & (int_i=4): arr_a4;
+        TRUE: arr_b4;
+      esac;
+    next(arr_b5) :=
+      case
+        (PC=2) & (int_i=5): arr_a5;
+        TRUE: arr_b5;
+      esac;
+    next(arr_b6) :=
+      case
+        (PC=2) & (int_i=6): arr_a6;
+        TRUE: arr_b6;
+      esac;
+
+
+    next(arr_d0) :=
+      case
+        TRUE: arr_d0;
+      esac;
+    next(arr_d1) :=
+      case
+        TRUE: arr_d1;
+      esac;
+    next(arr_d2) :=
+      case
+        (PC=3) & (int_i=1): arr_b1;
+        TRUE: arr_d2;
+      esac;
+    next(arr_d3) :=
+      case
+        (PC=3) & (int_i=2): arr_b2;
+        TRUE: arr_d3;
+      esac;
+    next(arr_d4) :=
+      case
+        (PC=3) & (int_i=3): arr_b3;
+        TRUE: arr_d4;
+      esac;
+    next(arr_d5) :=
+      case
+        (PC=3) & (int_i=4): arr_b4;
+        TRUE: arr_d5;
+      esac;
+    next(arr_d6) :=
+      case
+        (PC=3) & (int_i=5): arr_b5;
+        TRUE: arr_d6;
+      esac;
+
+
+    next(int_i) :=
+      case
+        (PC=4) & (int_i<int_N): int_i+1;
+        TRUE: int_i;
+      esac;
+
+    next(int_N) :=
+      case
+        TRUE: int_N;
+      esac;
+
+
+    next(PC) :=
+      case
+        (PC=1) & (int_i<(int_N - 1)): 2; -- while (i<N):
+        (PC=1) & (int_i>=int_N): 5; -- while (i<N):
+        (PC=2): 3; -- arr_b[i] = arr_a[i];
+        (PC=3): 4; -- arr_d[i] = arr_b[i-1];
+        (PC=4): 1; -- i++
+        (PC=5): 5;
+        TRUE: PC;
+      esac;
+
+    next(halt) :=
+      case
+        (PC=5): TRUE;
+        TRUE: halt;
+      esac;

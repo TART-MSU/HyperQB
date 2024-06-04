@@ -1,0 +1,77 @@
+-- int main(int amount, int balance, int act){
+-- 1 int ErrorLog; -- vars
+-- 2 ErrorLog = 0; -- init
+-- 3 observe;  
+-- 4 if (act != 1){
+-- 5    balance = balance + amount; // deposit
+-- 6    ErrorLog = 2; // "success "}
+-- 7 else {
+-- 8    if (amount > balance){ // withdraw
+--9         balance = 0;
+-- 10   ErrorLog = 1; // "not enough balance";}
+-- 11   else {
+-- 12       balance = balance - amount;
+-- 13       ErrorLog = 2; // "success "}}
+
+-- 14 @{balance} balance = balance;
+-- 15 @{ErrorLog} ErrorLog = ErrorLog;
+
+-- 16 observe;
+-- 16 return 0;}
+
+-- No NuSMV syntax errors, tested with a dummy .hq
+
+
+MODULE main
+    VAR
+        amount: 0..10;
+        balance: 0..40;
+        act: 0..5;
+        ErrorLog: 0..2;
+        observe: boolean;
+        PC: 1..17;
+
+    ASSIGN
+        init(ErrorLog):= 0;
+        -- init(observe):= FALSE;
+        init(PC):= 1;
+
+        next(act):= act; -- frozen var
+        next(amount):= amount; -- frozen var
+
+
+        next(ErrorLog) :=
+            case
+                (PC=6): 2;
+                (PC=10): 1;
+                (PC=12): 2;
+                TRUE: ErrorLog;
+            esac;
+
+        next(balance) :=
+            case
+                (PC=5 & ((balance + amount) <= 40)): balance + amount; -- avoid overflow
+                (PC=9): 0;
+                (PC=12 & ((balance - amount) >= 0)): balance - amount;
+                (PC=12 & ((balance - amount) < 0)): 0; -- avoid negative numbers
+                TRUE: balance;
+            esac;
+
+        next(PC) :=
+            case
+                (PC=4 & act != 1): 5;  -- if statement true
+                (PC=6): 14; -- fall to end
+
+
+                (PC=4 & act = 1): 7;   -- fall to else
+
+                (PC=8 & amount > balance): 9;
+                (PC=8 & amount <= balance): 11; -- fall to inner else
+
+                (PC=10): 14; -- fall to end
+
+                (PC=17): 17;
+                TRUE: PC+1;
+            esac;
+
+

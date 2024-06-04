@@ -1,0 +1,1 @@
+forall A. forall B. G((*l[A] = l[B]*) -> (*res[A] = res[B]*))

@@ -1,0 +1,84 @@
+-- [program]
+-- /*
+-- function (int x):
+-- 1: observe := true
+--    if star = true:
+-- 2:      y = 2 * x;
+-- 3:      while y > 0:
+--             y = y - 1;
+--             x = 2 * x;
+--   else: -- if star = false
+-- 4:      y = x;
+-- 5:      while y > 0:
+--             y = y - 1;
+--             x = 4 * x;
+-- 6: observe := true
+-- */
+ 
+MODULE main
+VAR
+    x: 0..10; -- THH: test with smaller value for debugging, let's say 10
+    y: 0..20; -- THH: y is at most 2*x, so 20 is enough, it helps simplify next(y)
+    star: boolean;
+    observe: boolean;
+    PC: 1..6;
+ 
+ASSIGN
+    --init(x) := 0;
+    init(y) := 0;
+    -- init(star) := FALSE; -- THH: star is nondeterministic input so you should not initialize here (this is why the program leak information by either taking the if or the else cloud) 
+    init(observe) := TRUE;
+    init(PC) := 1;
+ 
+    next(x) := 
+        case
+            (PC = 3 & x < 5): 2 * x; -- THH: adjust the x bounde accordingly
+            (PC = 5 & x < 2): 2 * x; -- THH: adjust the x bounde accordingly
+            TRUE: x;
+        esac;
+ 
+    next(y) :=
+        case
+            -- (PC = 2 & x < 5 & y < 5): 2 * x;
+            (PC = 2): 2 * x; -- THH: y will never go over bound now, no need to check 
+            -- (PC = 4 & x < 10 & y < 10): x;
+            (PC = 4): x; -- THH: y will never go over bound now, no need to check 
+            -- (PC = 3 | PC = 5) & y > 0 & y < 10 & x < 10: y - 1;
+            (PC = 3 | PC = 5) & y > 0 : y - 1; -- THH: just check if y reaches 0
+            TRUE: y;
+        esac;
+ 
+    next(PC) :=
+        case
+            (PC = 1 & star): 2;
+            (PC = 1 & !star): 4;
+            (PC = 2): 3;
+            (PC = 4): 5;
+            -- THH: this is the biggest logical error, look at the loop guard again, it says "while y>0, stays in the loop, and break out the loop whenever it is not (meaning y <=0)". I think you put the opposite condition in your original code... (also, negation of > is always <= :) 
+            -- (PC = 3 | PC = 5) & y > 0: 6; -- break out of loop (either)
+            (PC = 3 | PC = 5) & (y <= 0): 6; -- break out of loop (either)
+            -- (PC = 3) & y < 0: 3; -- stay in loop (first)
+            (PC = 3) & y > 0: 3; -- stay in loop (first)
+            -- (PC = 5) & y < 0: 5; -- stay in loop (second)
+            (PC = 5) & y > 0: 5; -- stay in loop (second)
+            (PC = 6): 6;
+            TRUE: PC;
+        esac;
+ 
+    next(observe) :=
+        case
+            (PC = 1 | PC = 6): TRUE;
+            TRUE: observe;
+        esac;
+
+    next(star) := star;
+
+-- wrong formula: 
+-- forall A. forall B. G((*x[A] = x[B]*) -> (*x[A] = x[B]*)) 
+-- this is wrong because if the two sides of implication are exactly the same, then the whole thing is always vacuously true (that's why no bug would really happen, so no SAT).
+-- below is the correct formula to express "if the input x in two traces are the same, the x should always stays the same". (we can use PC to express what's happening at the beginning of a program)
+-- correct formula: 
+-- forall A. forall B. F((*PC[A]=1* /\ *PC[B]=1* /\ *x[A]=x[B]*)) -> G(*x[A] = x[B]*) 
+
+-- once you correct the model and formula, you should get SAT. Notice that k=5 is enough if you set x:=0..10 and y:=0..20, if you go to larger number, you will need to increase k (think about how many time that while loop would loop!)
+ 
