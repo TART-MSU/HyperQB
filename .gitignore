@@ -4,4 +4,6 @@ build*
 *.hoa
 _develop/hyperQB/
 _develop/HyperRust/
-
+_develop/NuSMVparser/
+_develop/WebUI/
+_develop/newencoding/
