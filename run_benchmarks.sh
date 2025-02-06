@@ -1,7 +1,4 @@
 #!/bin/bash
-TIMEFORMAT="TOTAL TIME: %Rs"
-TIMEOUT="600s" 
-TIMEOUTMSG="(!) Timeout without results after ${TIMEOUT}"
 
 #####################
 ### OS parameters ###
@@ -14,13 +11,25 @@ else
   echo "sorry, current OS not supported yet :("
   exit 1 
 fi
-AUTOHYPER="${BINLOCATION}/compare/AH/AutoHyper" 
-AUTOHYPERQ="${BINLOCATION}/compare/AHQ/AutoHyperQ"
-HYPERQB="./hyperqb.sh"
-OLDHYPERQB="./hyperqb_old.sh"
 
 #######################
-### Tool parameters ###
+### TIME parameters ###
+#######################
+TIMEFORMAT="TOTAL TIME: %Rs"
+TIMEOUT="600s" 
+TIMEOUTMSG="(!) Timeout without results after ${TIMEOUT}"
+
+######################
+### BIN parameters ###
+######################
+HYPERQB="./hyperqb.sh"
+OLDHYPERQB="./hyperqb_old.sh"
+AUTOHYPER="/Users/tzuhan/Install/autohyper/app/AutoHyper"
+# AUTOHYPER="${BINLOCATION}/compare/AH/AutoHyper"
+AUTOHYPERQ="${BINLOCATION}/compare/AHQ/AutoHyperQ"
+
+#######################
+### TOOL parameters ###
 #######################
 HQB=false
 OLDHQB=false
@@ -29,8 +38,6 @@ AHQ=false
 ALLCASES=false
 ALLTOOLS=false
 COMPARE=false
-
-
 for i in "$@" ; do
     if [[ $i == "-HQB" ]] ; then
         HQB=true
@@ -80,7 +87,7 @@ function compare {
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[  AutoHyper  ]"
-        time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${6} --debug
+        time timeout ${TIMEOUT} ${AUTOHYPER} --witness --log --nusmv ${1} ${6} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -118,7 +125,7 @@ function compare2 {
     if (${AH} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[  AutoHyper  ]"
-        time timeout ${TIMEOUT} ${AUTOHYPER} --nusmv ${1} ${7} --debug
+        time timeout ${TIMEOUT} ${AUTOHYPER} --witness --log --nusmv ${1} ${2} ${7} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -127,7 +134,7 @@ function compare2 {
     if (${AHQ} == "true") || (${ALLTOOLS} -eq "true") then
         echo ""
         echo "[  AutoHyperQ  ]"
-        time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${7} 
+        time timeout ${TIMEOUT} ${AUTOHYPERQ} --nusmv ${1} ${2} ${7} 
         if [ $? -eq 124 ]; then
             echo ${TIMEOUTMSG}
         fi
@@ -213,7 +220,7 @@ function compare5 {
 }
 
 ###################
-# -0.1 Bakery3, S1 #
+# 0.1 Bakery3, S1 #
 ###################
 if ((echo $* | grep -e "-0.1" -q) || (echo $* | grep -e "-allcases" -q) || (echo $* | grep -e "-light" -q)) then
     echo "#####################################"
@@ -334,10 +341,12 @@ if ((echo $* | grep -e "-2.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV1='benchmarks/2_snark/snark1_M1_concurrent.smv'
     SMV2='benchmarks/2_snark/snark1_M2_sequential.smv'
     HQ='benchmarks/2_snark/snark1.hq'
-    HQAUTO='benchmarks/2_snark/AH/2.1_neg.hq'
+    HQAUTO='benchmarks/2_snark/AH/2.1.hq'
     K=18
-    SEM='-pes'
-    MODE='-bughunt'
+    # SEM='-pes'
+    # MODE='-bughunt'
+    SEM='-opt'
+    MODE='-find'
     compare2 ${SMV1} ${SMV2} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
@@ -439,7 +448,9 @@ if ((echo $* | grep -e "-5.1" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/5_planning/rb_100.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
-    K=20; SEM='-opt' ; MODE='-find'
+    K=20 
+    SEM='-opt'  
+    MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
@@ -453,7 +464,9 @@ if ((echo $* | grep -e "-5.2" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/5_planning/rb_400.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
-    K=40; SEM='-opt' ; MODE='-find'
+    K=40 
+    SEM='-opt'  
+    MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
@@ -467,7 +480,9 @@ if ((echo $* | grep -e "-5.3" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/5_planning/rb_1600.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
-    K=80; SEM='-opt' ; MODE='-find'
+    K=80 
+    SEM='-opt'  
+    MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
@@ -481,7 +496,9 @@ if ((echo $* | grep -e "-5.4" -q) || (echo $* | grep -e "-allcases" -q)) then
     SMV='benchmarks/5_planning/rb_3600.smv'
     HQ='benchmarks/5_planning/rb_formula.hq'
     HQAUTO='benchmarks/5_planning/AH/5.hq'
-    K=120; SEM='-opt' ; MODE='-find'
+    K=120 
+    SEM='-opt'  
+    MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
@@ -495,7 +512,9 @@ if ((echo $* | grep -e "-6.1" -q) || (echo $* | grep -e "-allcases" -q) || (echo
     SMV='benchmarks/6_mutation/mutation.smv'
     HQ='benchmarks/6_mutation/mutation.hq'
     HQAUTO='benchmarks/6_mutation/AH/6.hq'
-    K=10; SEM='-opt' ; MODE='-find'
+    K=10 
+    SEM='-opt'  
+    MODE='-find'
     compare ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}
 fi
 
@@ -526,7 +545,7 @@ if ((echo $* | grep -e "-8.1" -q) || (echo $* | grep -e "-allcases" -q) || (echo
     SMV='benchmarks/8_deniability/den_small.smv'
     HQ='benchmarks/8_deniability/den.hq'
     HQAUTO='benchmarks/8_deniability/AH/8.hq'
-    K=10
+    K=12
     SEM='-pes'
     MODE='-find'
     compare3 ${SMV} ${SMV} ${SMV} ${HQ} ${K} ${SEM} ${MODE} ${HQAUTO}

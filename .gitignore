@@ -1,9 +1,13 @@
 local/
 build*
+_*
+-*/
 *.DS_store
 *.hoa
+
 _develop/hyperQB/
 _develop/HyperRust/
 _develop/NuSMVparser/
 _develop/WebUI/
 _develop/newencoding/
+_develop/archive

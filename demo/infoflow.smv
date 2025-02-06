@@ -14,7 +14,7 @@ MODULE main
     halt: boolean;
  ASSIGN
     -- Initial Conditions, here are dummy values.
-    init(high):= FALSE;
+    init(high):= {TRUE, FALSE};
     init(low) := FALSE;
     init(halt):= FALSE;
     init(PC):= 1; -- but program counter starts at 1.

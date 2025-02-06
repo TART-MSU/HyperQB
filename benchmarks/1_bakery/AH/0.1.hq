@@ -1,14 +1,22 @@
-forall A. forall B.
-!(G
+exists A. exists B.
+G
 (
-    ({p1_line=1}_A <-> {p2_line=1}_B)
+    ({"p1_line"_A=0} <-> {"p2_line"_B=0}) 
     &
-    ({p2_line=1}_A <-> {p1_line=1}_B)
+    ({"p2_line"_A=0} <-> {"p1_line"_B=0})
+    &
+    ({"p1_line"_A=1} <-> {"p2_line"_B=1})
+    &
+    ({"p2_line"_A=1} <-> {"p1_line"_B=1})
+    &
+    ({"p1_line"_A=4} <-> {"p2_line"_B=4})
+    &
+    ({"p2_line"_A=4} <-> {"p1_line"_B=4})
 )
 &
 F
 (
-    !({p1_line}_A = {p2_line}_B) 
+    !({"p1_line"_A = "p2_line"_B}) 
     |
-    !({p2_line}_A = {p1_line}_B)
-))
+    !({"p2_line"_A = "p1_line"_B})
+)

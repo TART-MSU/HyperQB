@@ -18,22 +18,22 @@ else
   exit 1 
 fi
 
-
 ###################
 ### executables ###
 ###################
 ARBITRARY_PARSER=${BINLOCATION}/parser.py
 GENQBF=${BINLOCATION}/genqbf_partialmulti # new - multigate
-# GENQBF=src/expression/bin/genqbf # testing
-# GENQBF=${BINLOCATION}/genqbf # new - multigate 
+# GENQBF=${BINLOCATION}/genqbf_bingate # old - binarygate
 QUABS=${BINLOCATION}/quabs
+MAP=${BINLOCATION}/util_mapvars
+PARSE_BOOL=${BINLOCATION}/util_parsebools
 
 
 #########################
 ### Output file names ###
 #########################
 DATE="today"
-OUTFOLDER="build_"${DATE}"/"
+OUTFOLDER="_output:"${DATE}"/"
 CEXFOLDER="build_cex/"
 MAP_OUT1=${OUTFOLDER}_byName.cex
 MAP_OUT2=${OUTFOLDER}_byTime.cex
@@ -255,3 +255,14 @@ echo   " --------------------------------"
 echo -n "TOTAL TIME: "
 echo ${TIME_PARSE} + ${TIME_GENQBF} + ${TIME_QUABS} | bc | awk '{printf "%.3fs \n", $0}'
 echo   " --------( HyperQB END )---------"
+
+
+##############################
+### Counterexample Mapping ###
+##############################
+# javac ${MAP}.java
+java ${MAP}.java ${QCIR_OUT} ${QUABS_OUT} ${MAP_OUT1} ${MAP_OUT2}
+javac ${PARSE_BOOL}.java
+java ${PARSE_BOOL}.java ${MAP_OUT2} ${PARSE_OUT}
+# echo  "(under condtruction...)"
+# python3 ${PARSE_OUTPUT} ${MAP_OUT2} ${PARSE_OUT} ${k}
