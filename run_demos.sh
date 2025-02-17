@@ -4,10 +4,10 @@
 ############################
 HYPERQB="./hyperqb.sh"
 OLDHYPERQB="./hyperqb_old.sh"
-AUTOHYPER="/Users/tzuhan/Install/autohyper/app/AutoHyper"
+# AUTOHYPER="/Users/tzuhan/Install/autohyper/app/AutoHyper"
 
 ### [demo 0: run simple_krip with simple_krip_formula]
-# ${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt -NN
+${HYPERQB} demo/mini.smv demo/mini.smv demo/mini.hq 3 -pes -bughunt -NN
 # ${HYPERQB} demo/mini2.smv demo/mini2.smv demo/mini2.hq 3 -pes -bughunt -NY
 
 ### [demo 1: run info-flow example]
@@ -88,9 +88,9 @@ AUTOHYPER="/Users/tzuhan/Install/autohyper/app/AutoHyper"
 
 # time ${AUTOHYPER} --witness --log --nusmv test/snark1_conc_NEW.smv test/snark1_seq_NEW.smv test/snark_AH.hq 
 
-${HYPERQB} test/snark1_conc_NEW.smv test/snark1_seq_NEW.smv test/snark.hq 18 -pes -find
-rm _develop/HyperRust/cases/snark/*.bool
-cp _output:today/*.bool _develop/HyperRust/cases/snark/
+# ${HYPERQB} test/snark1_conc_NEW.smv test/snark1_seq_NEW.smv test/snark.hq 18 -pes -find
+# rm _develop/HyperRust/cases/snark/*.bool
+# cp _output:today/*.bool _develop/HyperRust/cases/snark/
 
 # ${HYPERQB} demo/bakery.smv demo/bakery.smv demo/bakery.hq 10 -pes -debug
 # rm _develop/HyperRust/cases/bakery/*.bool
