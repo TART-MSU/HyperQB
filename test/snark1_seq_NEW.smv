@@ -1,0 +1,420 @@
+--SNARK1
+-- // SNARK structure (sequential calls):
+-- // 0   ------- STAND BY: could go to line:1/ line:10/ line:19
+-- // 	  
+-- // 1   - popRight() starts
+-- // 2	  - popping
+-- // 3	  - popRight() returns
+-- //     
+-- // 4   - pushRight() starts
+-- // 5	  - pushing...
+-- // 6	  - pushRight() returns	
+-- // 	  
+-- // 7	  - popLeft() starts
+-- // 8	  - popping...
+-- // 9   - popLeft()returns 
+MODULE main
+VAR
+	-- ##############################################################################
+	RightHat: 0..2; -- could be DUNNY, x, y, or z
+	LeftHat: 0..2; -- could be DUMMY, x, y, or z
+
+	AllNodes[0][0]: 0..2;
+	AllNodes[0][1]: 0..2;
+	AllNodes[1][0]: 0..2;
+	AllNodes[1][1]: 0..2;
+	AllNodes[2][0]: 0..2;
+	AllNodes[2][1]: 0..2;
+
+	First_ProcID: 1..2;
+	Second_ProcID: 1..2;
+
+	proc1.modifying: boolean;
+	proc1.pushRightSTART: boolean;
+	proc1.pushRightEND: boolean;
+	proc1.popRightSTART: boolean;
+	proc1.popRightEND: boolean;
+	proc1.popLeftSTART: boolean;
+	proc1.popLeftEND: boolean;
+
+	proc2.modifying: boolean;
+	proc2.pushRightSTART: boolean;
+	proc2.pushRightEND: boolean;
+	proc2.popRightSTART: boolean;
+	proc2.popRightEND: boolean;
+	proc2.popLeftSTART: boolean;
+	proc2.popLeftEND: boolean;
+
+	BOTH_MODIFYING: boolean;
+	FAIL: boolean;
+
+	-- ##############################################################################
+
+
+	-- ##############################################################################
+	-- Proc 1 VAR
+	proc1.line: 0..9;
+	-- ##############################################################################
+
+	-- ##############################################################################
+	-- Proc 2 VAR
+	proc2.line: 0..9;
+	-- ##############################################################################
+
+
+	-- ##############################################################################
+	-- Queue Var 
+	newnode : 0..2; -- for push right
+	popRightFAIL: boolean;
+	temp_popRightFAIL:  boolean;
+	-- ##############################################################################
+
+
+	ASSIGN
+
+		-- ##############################################################################
+		-- Global ASSIGN
+		init(First_ProcID) 	:= 1;
+		init(Second_ProcID) := 2;
+		next(First_ProcID)	:= First_ProcID;
+		next(Second_ProcID)	:= Second_ProcID;
+
+		
+		init(AllNodes[0][0]) := 0;
+		init(AllNodes[0][1]) := 0; -- DUMMY
+		init(AllNodes[1][0]) := 0;
+		init(AllNodes[1][1]) := 0; -- X
+		init(AllNodes[2][0]) := 2;
+		init(AllNodes[2][1]) := 2; -- Y
+		-- ##############################################################################
+
+
+		-- ##############################################################################
+		-- Proc 1 ASSIGN
+		init(proc1.line) := 0;
+		next(proc1.line) :=
+			case
+				(proc1.line=0 & First_ProcID=1)  : {1}; -- STAND BY 
+				(proc1.line=0 & First_ProcID=2)  : {4,7}; -- STAND BY
+				(proc1.line=1)  : {2}; -- popRight() starts, changing nodes
+				-- (proc1.line=2)	: {2,3}; -- complete nondeterminism
+				(proc1.line=2 & LeftHat=0 & RightHat=0)  : {2,3}; -- wait
+				(proc1.line=2 & LeftHat=1 & RightHat=1)  : {2,3}; -- wait
+				(proc1.line=2 & LeftHat=1 & RightHat=2)  : {2,3}; -- wait
+				(proc1.line=3)  : {0}; -- popRight() Return, End
+
+				(proc1.line=4)  : {5}; -- pushRight() starts, changing nodes
+				(proc1.line=5) 	: {5,6}; -- wait
+				(proc1.line=6) 	: {0}; -- pushRight() return
+
+				(proc1.line=7)  : {8}; -- popLeft() starts, changing nodes
+				-- (proc1.line=8)	: {8,9}; -- complete nondeterminism
+				(proc1.line=8 & LeftHat=1 & RightHat=1) : {8,9}; -- wait
+				(proc1.line=8 & LeftHat=2 & RightHat=2) : {8,9}; -- wait
+				(proc1.line=8 & LeftHat=1 & RightHat=2) : {8,9}; -- wait
+				(proc1.line=9)  : {0}; -- 
+				TRUE: proc1.line; -- default case
+			esac;
+		-- ##############################################################################
+
+		-- ##############################################################################
+		-- Proc 2 ASSIGN
+		init(proc2.line) := 0;
+		next(proc2.line) :=
+			case
+				(proc2.line=0 & Second_ProcID=1)  : {1}; -- STAND BY
+				(proc2.line=0 & Second_ProcID=2)  : {4,7}; -- STAND BY
+				(proc2.line=1)  : {2}; -- popRight() starts, changing nodes
+				-- (proc2.line=2)	: {2,3}; -- complete nondeterminism
+				(proc2.line=2 & LeftHat=0 & RightHat=0)  : {2,3}; -- wait
+				(proc2.line=2 & LeftHat=1 & RightHat=1)  : {2,3}; -- wait
+				(proc2.line=2 & LeftHat=1 & RightHat=2)  : {2,3}; -- wait
+				(proc2.line=3)  : {0}; -- popRight() Return, End
+
+				(proc2.line=4)  : {5}; -- pushRight() starts, changing nodes
+				(proc2.line=5) 	: {5,6}; -- wait
+				(proc2.line=6) 	: {0}; -- pushRight() return
+
+				(proc2.line=7)  : {8}; -- popLeft() starts, changing nodes
+				-- (proc2.line=8)	: {8,9}; -- complete nondeterminism
+				(proc2.line=8 & LeftHat=0 & RightHat=0) : {8,9}; -- wait
+				(proc2.line=8 & LeftHat=1 & RightHat=1) : {8,9}; -- wait
+				(proc2.line=8 & LeftHat=2 & RightHat=2) : {8,9}; -- wait
+				(proc2.line=8 & LeftHat=1 & RightHat=2) : {8,9}; -- wait
+				(proc2.line=9)  : {0}; -- 
+				TRUE: proc2.line; -- default case
+			esac;
+		-- ##############################################################################
+
+
+
+		-- ##############################################################################
+		-- Queue ASSIGN
+
+		init(newnode) := 2;
+		next(newnode) := newnode;
+
+		-- for delaying return
+		init(temp_popRightFAIL) := FALSE;
+		next(temp_popRightFAIL) :=
+			case
+				((proc1.line=1) & (RightHat = 0)) : TRUE;
+				((proc2.line=1) & (RightHat = 0)) : TRUE;
+				TRUE: temp_popRightFAIL;
+			esac;
+
+
+		-- to cehck, use GlobalQueue-popRightFAIL[tid]
+		init(popRightFAIL) := FALSE;
+		next(popRightFAIL) :=
+			case
+				((proc1.line=3) & (temp_popRightFAIL)) : TRUE;
+				((proc2.line=3) & (temp_popRightFAIL)) : TRUE;
+				TRUE: popRightFAIL;
+			esac;
+
+		init(RightHat) := 1;
+		next(RightHat) :=
+			case
+				BOTH_MODIFYING : RightHat;
+				-- popRight
+				((proc1.line=1) & (RightHat = 2)) : 1;
+				((proc1.line=1) & (RightHat = 1)) : 0;
+				-- pushRight
+				(proc1.line=4) : 2;
+				-- popLeft
+				((proc1.line=7) & (RightHat = 1)) : 0;
+				((proc1.line=7) & (RightHat = 2)) : 1;
+
+				-- popRight
+				((proc2.line=1) & (RightHat = 2)) : 1;
+				((proc2.line=1) & (RightHat = 1)) : 0;
+				-- pushRight
+				(proc2.line=4) : 2;
+				-- popLeft
+				((proc2.line=7) & (RightHat = 1)) : 0;
+				((proc2.line=7) & (RightHat = 2)) : 1;
+				TRUE: RightHat;
+			esac;
+
+		init(LeftHat) := 1;
+		next(LeftHat) :=
+			case
+				BOTH_MODIFYING : LeftHat;
+				-- popRight
+				((proc1.line=1) & (LeftHat = 1)) : 0;
+				-- pushRight
+				-- popLeft
+				((proc1.line=7) & (RightHat = 1)) : 2;
+				-- popRight
+				((proc2.line=1) & (LeftHat = 1)) : 0;
+				-- pushRight
+				-- popLeft
+				((proc2.line=7) & (RightHat = 1)) : 2;
+				TRUE: LeftHat;
+			esac;
+
+			--- GLOBAL variables for double-ended queue
+			next(AllNodes[0][0]) := AllNodes[0][0]; -- DUMMY
+			next(AllNodes[0][1]) := AllNodes[0][1]; -- DUMMY
+
+			-- X -> L
+			next(AllNodes[1][0]) :=
+				case
+					TRUE: AllNodes[1][0];
+				esac;
+
+			-- X -> R
+			next(AllNodes[1][1]) :=
+				case
+					BOTH_MODIFYING : AllNodes[1][1];
+					((proc1.line=1) & (RightHat=1)): 1;
+					((proc1.line=4) & (RightHat=1)): 2; -- push y
+					((proc1.line=7) & (LeftHat=1)): 1;
+
+					((proc2.line=1) & (RightHat=1)): 1;
+					((proc2.line=4) & (RightHat=1)): 2; -- push y
+					((proc2.line=7) & (LeftHat=1)): 1;
+					TRUE: AllNodes[1][1];
+				esac;
+
+			-- Y -> L
+			next(AllNodes[2][0]) :=
+				case
+					BOTH_MODIFYING : AllNodes[2][0];
+					((proc1.line=1) & (RightHat=2)): 2;
+					((proc1.line=4) & (RightHat=1)): 1;
+					((proc1.line=7) & (LeftHat=1)) : 0;
+
+					((proc2.line=1) & (RightHat=2)): 2;
+					((proc2.line=4) & (RightHat=1)): 1;
+					((proc2.line=7) & (LeftHat=1)) : 0;
+					TRUE: AllNodes[2][0];
+				esac;
+
+			-- Y -> R
+			next(AllNodes[2][1]) :=
+				case
+					BOTH_MODIFYING : AllNodes[2][1];
+					((proc1.line=4) & (RightHat=1)): 0;
+					((proc2.line=4) & (RightHat=1)): 0;
+					TRUE: AllNodes[2][1];
+				esac;
+
+		-- ##############################################################################
+
+		-- NEW: get rid of define
+
+		init(FAIL) := FALSE;
+		next(FAIL) := 
+		case
+			(BOTH_MODIFYING) : TRUE;
+			TRUE: FALSE;
+		esac;
+
+		init(BOTH_MODIFYING) := FALSE;
+		next(BOTH_MODIFYING) :=
+		case
+			(proc1.modifying & proc2.modifying) : TRUE;
+			TRUE : FALSE;
+		esac;
+
+		init(proc1.modifying):= FALSE;
+		next(proc1.modifying):=
+			case
+				(proc1.line=1 | proc1.line=4| proc1.line=7 |
+					proc1.line=2 | proc1.line=5| proc1.line=8) : TRUE;
+				TRUE: FALSE;
+			esac;
+
+		init(proc1.popRightSTART):= FALSE;
+		next(proc1.popRightSTART):=
+			case
+				(proc1.line=1) : TRUE;
+				(proc1.line=3) : FALSE;
+				TRUE: proc1.popRightSTART;
+			esac;
+		init(proc1.popRightEND):= TRUE;
+		next(proc1.popRightEND):=
+			case
+				(proc1.line=1) : FALSE;
+				(proc1.line=3) : TRUE;
+				TRUE: proc1.popRightEND;
+			esac;
+
+
+		init(proc1.pushRightSTART):= FALSE;
+		next(proc1.pushRightSTART):=
+			case
+				(proc1.line=4) : TRUE;
+				(proc1.line=6) : FALSE;
+				TRUE: proc1.pushRightSTART;
+			esac;
+		init(proc1.pushRightEND):= TRUE;
+		next(proc1.pushRightEND):=
+			case
+				(proc1.line=4) : FALSE;
+				(proc1.line=6) : TRUE;
+				TRUE: proc1.pushRightEND;
+			esac;
+
+
+		init(proc1.popLeftSTART):= FALSE;
+		next(proc1.popLeftSTART):=
+			case
+				(proc1.line=7) :TRUE;
+				(proc1.line=9) : FALSE;
+				TRUE: proc1.popLeftSTART;
+			esac;
+		init(proc1.popLeftEND):= TRUE;
+		next(proc1.popLeftEND):=
+			case
+				(proc1.line=7) :FALSE;
+				(proc1.line=9) : TRUE;
+				TRUE: proc1.popLeftEND;
+			esac;
+
+
+		init(proc2.modifying):= FALSE;
+		next(proc2.modifying):=
+			case
+				(proc2.line=1 | proc2.line=4| proc2.line=7 |
+					proc2.line=2 | proc2.line=5| proc2.line=8) : TRUE;
+				TRUE: FALSE;
+			esac;
+
+		init(proc2.popRightSTART):= FALSE;
+		next(proc2.popRightSTART):=
+			case
+				(proc2.line=1) : TRUE;
+				(proc2.line=3) : FALSE;
+				TRUE: proc2.popRightSTART;
+			esac;
+		init(proc2.popRightEND):= TRUE;
+		next(proc2.popRightEND):=
+			case
+				(proc2.line=1) : FALSE;
+				(proc2.line=3) : TRUE;
+				TRUE: proc2.popRightEND;
+			esac;
+
+
+		init(proc2.pushRightSTART):= FALSE;
+		next(proc2.pushRightSTART):=
+			case
+				(proc2.line=4) : TRUE;
+				(proc2.line=6) : FALSE;
+				TRUE: proc2.pushRightSTART;
+			esac;
+		init(proc2.pushRightEND):= TRUE;
+		next(proc2.pushRightEND):=
+			case
+				(proc2.line=4) : FALSE;
+				(proc2.line=6) : TRUE;
+				TRUE: proc2.pushRightEND;
+			esac;
+
+
+		init(proc2.popLeftSTART):= FALSE;
+		next(proc2.popLeftSTART):=
+			case
+				(proc2.line=7) :TRUE;
+				(proc2.line=9) : FALSE;
+				TRUE: proc2.popLeftSTART;
+			esac;
+		init(proc2.popLeftEND):= TRUE;
+		next(proc2.popLeftEND):=
+			case
+				(proc2.line=7) :FALSE;
+				(proc2.line=9) : TRUE;
+				TRUE: proc2.popLeftEND;
+			esac;
+
+
+	DEFINE 
+		-- ##############################################################################
+		-- Proc 1 DEFINE
+		-- proc1.popRightSTART 	:= proc1.line=1 | proc1.line=2 | proc1.line=3;
+		-- proc1.popRightEND 		:= proc1.line=0 ;
+		-- proc1.pushRightSTART	:= proc1.line=4 | proc1.line=5;
+		-- proc1.pushRightEND		:= proc1.line=0 ;
+		-- proc1.popLeftSTART		:= proc1.line=7 | proc1.line=8;
+		-- proc1.popLeftEND		:= proc1.line=0 ;
+		-- proc1.modifying			:= proc1.line=1 | proc1.line=4| proc1.line=7;
+		-- ##############################################################################
+
+		-- ##############################################################################
+		-- Proc 2 DEFINE
+		-- proc2.popRightSTART 	:= proc2.line=1 | proc2.line=2 | proc2.line=3;
+		-- proc2.popRightEND 		:= proc2.line=0 ;
+		-- proc2.pushRightSTART	:= proc2.line=4 | proc2.line=5;
+		-- proc2.pushRightEND		:= proc2.line=0 ;
+		-- proc2.popLeftSTART		:= proc2.line=7 | proc2.line=8;
+		-- proc2.popLeftEND		:= proc2.line=0 ;
+		-- proc2.modifying			:= proc2.line=1 | proc2.line=4| proc2.line=7;
+		-- ##############################################################################
+
+		-- ##############################################################################
+		-- Queue DEFINE
+		-- BOTH_MODIFYING := (proc1.modifying & proc2.modifying);
+		-- ##############################################################################

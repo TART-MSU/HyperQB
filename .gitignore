@@ -13,3 +13,7 @@ _develop/newencoding/
 _develop/archive
 
 run_*
+
+*.class
+util_mapvars
+util_parsebools

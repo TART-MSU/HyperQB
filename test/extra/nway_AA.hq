@@ -1,0 +1,1 @@
+forall A. forall B. F(*i[A] = 0* \/ *i[A] = 0*)

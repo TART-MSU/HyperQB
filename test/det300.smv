@@ -1,0 +1,12 @@
+
+MODULE main
+ VAR
+    PC: 0..300;
+ ASSIGN
+    -- Initial Conditions, here are dummy values.
+    init(PC):= 0; 
+
+    -- Transition Relations
+    next(PC) := {0};
+
+

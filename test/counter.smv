@@ -1,0 +1,16 @@
+
+MODULE main
+ VAR
+    i: 0..3;
+
+ ASSIGN
+    -- Initial Conditions
+    init(i):= 0;
+
+    -- Transition Relations
+    next(i) := 
+      case
+        (i=3): 3;
+        TRUE: {i, (i+1)};
+      esac;
+

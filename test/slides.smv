@@ -1,0 +1,30 @@
+
+MODULE main
+ VAR
+    p: boolean;
+    q: boolean;
+    
+ ASSIGN
+    -- Initial Conditions
+    init(p):= FALSE;
+    init(q):= FALSE;
+    -- init(c):= TRUE;
+    
+
+    -- Transition Relations
+    next(p) :=
+      case
+        ((!p) & (!q)) : {TRUE, FALSE};
+        ((!p) & (q)) : {FALSE};
+        ((p)  & (!q)) : {TRUE, FALSE};
+        ((p)  & (q)) : {FALSE};
+      esac;
+
+    next(q) :=
+      case
+        ((!p) & (!q)) : {TRUE, FALSE};
+        ((!p) & (q)) : {FALSE};
+        ((p)  & (!q)) : {TRUE, FALSE};
+        ((p)  & (q)) : {FALSE};
+      esac;
+

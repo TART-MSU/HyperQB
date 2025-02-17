@@ -1,0 +1,2 @@
+forall A. exists B.
+G(!(high[A] <-> high[B])) /\ G(low[A]<->low[B])
