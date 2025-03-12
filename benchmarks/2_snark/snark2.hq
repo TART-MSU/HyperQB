@@ -1,4 +1,4 @@
-forall A. fexists B.
+forall A. exists B.
 ~(G(~GlobalQueue-FAIL[A] /\ ~GlobalQueue-COLLISION[A]) /\
 F~(((proc1.popRightSTART[A] <-> proc1.popRightSTART[B]) /\ (proc1.popRightEND[A] <-> proc1.popRightEND[B])
 /\ (proc1.pushRightSTART[A] <-> proc1.pushRightSTART[B]) /\ (proc1.pushRightEND[A] <-> proc1.pushRightEND[B])

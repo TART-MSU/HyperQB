@@ -348,7 +348,7 @@ def main_model_parse(smv_file_name, bitblasting_dict, parsed_madel_file_I_name, 
 	#####################################
 	### try to fix oveflow issue
 	# def gen_R():
-	counter = 0;
+	counter = 0
 	all_transitions = []
 	# print(fsm.pick_all_states(fsm.reachable_states))
 	R_bool = open(parsed_madel_file_R_name, "w")

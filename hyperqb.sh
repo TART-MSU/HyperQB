@@ -2,6 +2,9 @@
 TIMEFORMAT="%Rs"
 echo "(hyperqb with updated genqbf)"
 
+# (TODO) a simple patch to avoid broken pipe, to be fixed later
+trap "" SIGPIPE
+
 ### HyperQB parameters ###
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   BINLOCATION="exec/linux"
@@ -124,6 +127,8 @@ TIME_PARSE=$(docker run --platform linux/amd64 -v ${PWD}:/mnt tzuhanmsu/hyperqub
 # python3 ${TRANSLATE} ${OUTFOLDER} ${MODELS[@]} ${FORMULA}  ${P} ${QSFILE} ${FLAG}
 # echo "(local pip-built)"
 # TIME_PARSE=$(time python3 ${ARBITRARY_PARSER} ${OUTFOLDER} ${MODELS[@]} ${FORMULA} ${P} ${QSFILE} ${FLAG})
+
+
 
 ### if any error happens in parsing, exit HyperQB
 if [[ "${TIME_PARSE}" == *"$ERROR"* ]]; then
